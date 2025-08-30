@@ -3,16 +3,21 @@ import TaskCard from './TaskCard';
 
 const Column = ({ id, title, tasks }) => {
   // Hooks untuk element droppable
-  const { setNodeRef } = useDroppable({ id: id });
+  const { setNodeRef, over } = useDroppable({ id });
 
   return (
-    <div className="flex flex-1 w-80 flex-col rounded-lg bg-neutral-100 p-4">
+    <div
+      className={`flex flex-1 w-80 flex-col rounded-lg bg-neutral-100 p-4 ${
+        over?.id === id &&
+        'bg-neutral-200 outline-2 outline-blue-500 outline-dashed'
+      }`}
+    >
       <h2
         className={`text-xl mb-4 font-semibold
-        ${title === 'To Do' ? 'text-rose-600' : ''} 
-        ${title === 'In Progress' ? 'text-orange-600' : ''} 
-        ${title === 'Done' ? 'text-green-600' : ''}
-        ${title === 'Archived' ? 'text-slate-600' : ''}`}
+        ${title === 'TO DO' ? 'text-rose-600' : ''} 
+        ${title === 'ON PROGRESS' ? 'text-orange-600' : ''} 
+        ${title === 'DONE' ? 'text-green-600' : ''}
+        ${title === 'ARCHIVED' ? 'text-slate-600' : ''}`}
       >
         {title}
       </h2>
@@ -22,8 +27,8 @@ const Column = ({ id, title, tasks }) => {
             key={task.id}
             id={task.id}
             status={task.status}
-            title={task.title}
-            description={task.description}
+            content={task.content}
+            detail={task.detail}
           />
         ))}
       </div>

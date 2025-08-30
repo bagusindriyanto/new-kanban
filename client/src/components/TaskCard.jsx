@@ -1,10 +1,11 @@
 import { useDraggable } from '@dnd-kit/core';
 
-const TaskCard = ({ id, status, title, description }) => {
+const TaskCard = ({ id, status, content, detail }) => {
   // Hooks untuk elemen draggable
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: id,
-  });
+  const { attributes, listeners, setNodeRef, isDragging, transform } =
+    useDraggable({
+      id,
+    });
 
   const style = transform
     ? {
@@ -18,14 +19,15 @@ const TaskCard = ({ id, status, title, description }) => {
       {...listeners}
       {...attributes}
       style={style}
-      className={`cursor-grab rounded-lg p-4 shadow-sm hover:shadow-md bg-linear-135
-        ${status === 'TODO' ? 'from-rose-500 to-rose-600' : ''} 
-        ${status === 'IN_PROGRESS' ? 'from-orange-500 to-orange-600' : ''} 
-        ${status === 'DONE' ? 'from-green-500 to-green-600' : ''}
-        ${status === 'ARCHIVED' ? 'from-gray-500 to-gray-600' : ''}`}
+      className={`cursor-grab rounded-lg p-4 shadow-sm hover:shadow-lg bg-linear-135
+        ${isDragging ? 'scale-105' : ''}
+        ${status === 'todo' ? 'from-rose-500 to-rose-600' : ''} 
+        ${status === 'on progress' ? 'from-orange-500 to-orange-600' : ''} 
+        ${status === 'done' ? 'from-green-500 to-green-600' : ''}
+        ${status === 'archived' ? 'from-gray-500 to-gray-600' : ''}`}
     >
-      <h3 className="font-medium text-white">{title}</h3>
-      <p className="mt-2 text-sm text-white">{description}</p>
+      <h3 className="font-medium text-lg text-white">{content}</h3>
+      <p className="mt-2 text-sm text-white">{detail}</p>
     </div>
   );
 };
