@@ -1,17 +1,32 @@
 import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import { formatTimestamp } from '../services/formatTimestamp.js';
+import ControlButton from './ControlButton';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
-const TaskCard = ({ id, status, content, detail }) => {
+const TaskCard = ({ picName, task }) => {
+  // Destructure isi props
+  const {
+    id,
+    status,
+    content,
+    detail,
+    timestamp_todo,
+    timestamp_progress,
+    timestamp_done,
+    timestamp_archived,
+    minute_pause,
+    minute_activity,
+    pause_time,
+  } = task;
   // Hooks untuk elemen draggable
   const { attributes, listeners, setNodeRef, isDragging, transform } =
     useDraggable({
       id,
     });
 
-  const style = transform
-    ? {
-        transform: `translate(${transform.x}px, ${transform.y}px)`,
-      }
-    : undefined;
+  const style = { transform: CSS.Translate.toString(transform) };
 
   return (
     <div
@@ -19,15 +34,48 @@ const TaskCard = ({ id, status, content, detail }) => {
       {...listeners}
       {...attributes}
       style={style}
-      className={`cursor-grab rounded-lg p-4 shadow-sm hover:shadow-lg bg-linear-135
+      className={`cursor-grab rounded-lg px-3 py-2 shadow-sm hover:shadow-lg
         ${isDragging ? 'scale-105' : ''}
-        ${status === 'todo' ? 'from-rose-500 to-rose-600' : ''} 
-        ${status === 'on progress' ? 'from-orange-500 to-orange-600' : ''} 
-        ${status === 'done' ? 'from-green-500 to-green-600' : ''}
-        ${status === 'archived' ? 'from-gray-500 to-gray-600' : ''}`}
+        ${status === 'todo' ? 'bg-rose-500' : ''} 
+        ${status === 'on progress' ? 'bg-orange-500' : ''} 
+        ${status === 'done' ? 'bg-green-500' : ''}
+        ${status === 'archived' ? 'bg-gray-500' : ''}`}
     >
-      <h3 className="font-medium text-lg text-white">{content}</h3>
-      <p className="mt-2 text-sm text-white">{detail}</p>
+      <div className="flex justify-between gap-2 items-start">
+        <h3 className="font-bold text-lg text-white">{content}</h3>
+        <h4 className="font-medium text-base text-white">{picName || '-'}</h4>
+      </div>
+      <p className="mt-1 font-medium text-sm text-white">{detail}</p>
+      <div className="my-2 grid grid-cols-2 font-extralight text-[10px] text-white">
+        <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
+        <p>
+          Progress:{' '}
+          {timestamp_progress ? formatTimestamp(timestamp_progress) : '-'}
+        </p>
+        <p>Done: {timestamp_done ? formatTimestamp(timestamp_done) : '-'}</p>
+        <p>
+          Archived:{' '}
+          {timestamp_archived ? formatTimestamp(timestamp_archived) : '-'}
+        </p>
+        <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
+        <p>Pause Minutes: {minute_pause}</p>
+      </div>
+      <div className="flex flex-row-reverse justify-between items-center">
+        <div className="flex gap-1">
+          <ControlButton>
+            <ArrowLeftIcon />
+          </ControlButton>
+          <ControlButton>
+            <ArrowRightIcon />
+          </ControlButton>
+        </div>
+        {(status === 'done' || status === 'archived') && (
+          <p className="font-medium text-sm text-white">
+            Activity Minutes:{' '}
+            <span className="font-normal">{minute_activity || 0}</span>
+          </p>
+        )}
+      </div>
     </div>
   );
 };

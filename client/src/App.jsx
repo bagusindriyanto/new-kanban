@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import Button from './components/Button';
+import NavButton from './components/NavButton';
 import Column from './components/Column';
 import Modal from './components/Modal';
 import { DndContext } from '@dnd-kit/core';
@@ -9,15 +9,27 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 const App = () => {
   // State untuk task
   const [tasks, setTasks] = useState([]);
+  const [pics, setPics] = useState([]);
 
   // Get tasks data
   const fetchTasks = async () => {
     try {
-      const res = await fetch('http://localhost/kanban/api/tasks.php');
+      const res = await fetch('http://192.168.1.14:8080/kanban/api/tasks.php');
       const data = await res.json();
       setTasks(data);
     } catch (err) {
       console.error('Failed to fetch tasks', err);
+    }
+  };
+
+  // Get pics data
+  const fetchPics = async () => {
+    try {
+      const res = await fetch('http://192.168.1.14:8080/kanban/api/pics.php');
+      const data = await res.json();
+      setPics(data);
+    } catch (err) {
+      console.error('Failed to fetch pics', err);
     }
   };
 
@@ -43,6 +55,7 @@ const App = () => {
   // Ambil tasks ketika halaman dimuat
   useEffect(() => {
     fetchTasks();
+    fetchPics();
   }, []);
 
   // Fungsi untuk handle task yang di drag
@@ -68,9 +81,9 @@ const App = () => {
       <nav className="flex items-center justify-between bg-sky-950 px-5 py-3">
         <h1 className="text-2xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2">
-          <Button>Add Activity</Button>
-          <Button>Add PIC</Button>
-          <Button>Add Task</Button>
+          <NavButton>Add Activity</NavButton>
+          <NavButton>Add PIC</NavButton>
+          <NavButton>Add Task</NavButton>
         </div>
       </nav>
       <div className="flex gap-4 p-4 flex-1">
@@ -83,6 +96,7 @@ const App = () => {
               key={column.id}
               id={column.id}
               title={column.title}
+              pics={pics}
               tasks={tasks.filter((task) => task.status === column.id)}
             />
           ))}

@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import TaskCard from './TaskCard';
 
-const Column = ({ id, title, tasks }) => {
+const Column = ({ id, title, pics, tasks }) => {
   // Hooks untuk element droppable
   const { setNodeRef, over } = useDroppable({ id });
 
@@ -25,10 +25,8 @@ const Column = ({ id, title, tasks }) => {
         {tasks.map((task) => (
           <TaskCard
             key={task.id}
-            id={task.id}
-            status={task.status}
-            content={task.content}
-            detail={task.detail}
+            picName={pics.find((p) => p.id === task.pic_id)?.name}
+            task={task}
           />
         ))}
       </div>
