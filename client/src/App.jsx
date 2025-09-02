@@ -14,7 +14,7 @@ const App = () => {
   // Get tasks data
   const fetchTasks = async () => {
     try {
-      const res = await fetch('http://192.168.1.14:8080/kanban/api/tasks.php');
+      const res = await fetch('http://localhost/kanban/api/tasks.php');
       const data = await res.json();
       setTasks(data);
     } catch (err) {
@@ -25,7 +25,7 @@ const App = () => {
   // Get pics data
   const fetchPics = async () => {
     try {
-      const res = await fetch('http://192.168.1.14:8080/kanban/api/pics.php');
+      const res = await fetch('http://localhost/kanban/api/pics.php');
       const data = await res.json();
       setPics(data);
     } catch (err) {
