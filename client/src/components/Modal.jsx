@@ -6,6 +6,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+// import AddForm from './AddForm';
+import TaskForm from './TaskForm';
 
 const Modal = ({ open, onOpenChange, title }) => {
   return (
@@ -13,11 +15,10 @@ const Modal = ({ open, onOpenChange, title }) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
+        {/* <AddForm /> */}
+        <TaskForm />
       </DialogContent>
     </Dialog>
   );

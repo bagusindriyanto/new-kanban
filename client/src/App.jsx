@@ -5,6 +5,7 @@ import Column from './components/Column';
 import Modal from './components/Modal';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { Toaster } from '@/components/ui/sonner';
 
 const App = () => {
   // State untuk task
@@ -68,10 +69,6 @@ const App = () => {
     setModalType(type);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   // Fungsi untuk handle task yang di drag
   const handleDragEnd = (event) => {
     // Ambil posisi drag element = active dan drop element = over
@@ -133,9 +130,11 @@ const App = () => {
       {/* <Modal /> */}
       <Modal
         open={isModalOpen}
-        onOpenChange={handleCloseModal}
+        onOpenChange={setIsModalOpen}
         title={modalType}
       ></Modal>
+      {/* Toast */}
+      <Toaster position="top-center" richColors />
     </div>
   );
 };
