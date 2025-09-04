@@ -1,6 +1,9 @@
-const NavButton = ({ children }) => {
+const NavButton = ({ children, onClick }) => {
   return (
-    <button className="rounded-lg bg-blue-500 transition duration-300 ease-in-out hover:bg-blue-600 px-3 py-2 text-white font-semibold cursor-pointer">
+    <button
+      onClick={onClick}
+      className="rounded-md bg-blue-500 transition duration-300 ease-in-out hover:bg-blue-600 px-3 py-2 text-white font-semibold cursor-pointer"
+    >
       {children}
     </button>
   );

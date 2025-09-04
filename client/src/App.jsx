@@ -11,6 +11,10 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [pics, setPics] = useState([]);
 
+  // State untuk buka tutup modal
+  const [modalType, setModalType] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Get tasks data
   const fetchTasks = async () => {
     try {
@@ -58,6 +62,16 @@ const App = () => {
     fetchPics();
   }, []);
 
+  const handleOpenModal = (type) => {
+    setIsModalOpen(true);
+    // Set tipe modalnya
+    setModalType(type);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   // Fungsi untuk handle task yang di drag
   const handleDragEnd = (event) => {
     // Ambil posisi drag element = active dan drop element = over
@@ -77,16 +91,24 @@ const App = () => {
   };
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <nav className="flex items-center justify-between bg-sky-950 px-5 py-3">
+    <div className="h-screen flex flex-col">
+      {/* Header */}
+      <header className="flex items-center justify-between bg-sky-950 px-5 py-3">
         <h1 className="text-2xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2">
-          <NavButton>Add Activity</NavButton>
-          <NavButton>Add PIC</NavButton>
-          <NavButton>Add Task</NavButton>
+          <NavButton onClick={() => handleOpenModal('Tambah Activity')}>
+            Add Activity
+          </NavButton>
+          <NavButton onClick={() => handleOpenModal('Tambah PIC')}>
+            Add PIC
+          </NavButton>
+          <NavButton onClick={() => handleOpenModal('Tambah Task')}>
+            Add Task
+          </NavButton>
         </div>
-      </nav>
-      <div className="flex gap-4 p-4 flex-1">
+      </header>
+      {/* Main */}
+      <main className="flex gap-4 p-4 flex-1">
         <DndContext
           onDragEnd={handleDragEnd}
           modifiers={[restrictToWindowEdges]}
@@ -101,14 +123,20 @@ const App = () => {
             />
           ))}
         </DndContext>
-      </div>
+      </main>
+      {/* Footer */}
       <footer className="flex items-center justify-center bg-sky-950 py-2">
         <p className="text-white">
           &copy; {new Date().getFullYear()} Kanban App
         </p>
       </footer>
       {/* <Modal /> */}
-    </main>
+      <Modal
+        open={isModalOpen}
+        onOpenChange={handleCloseModal}
+        title={modalType}
+      ></Modal>
+    </div>
   );
 };
 
