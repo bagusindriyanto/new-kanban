@@ -6,38 +6,91 @@ import Modal from './components/Modal';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Toaster } from '@/components/ui/sonner';
+import useActivities from './stores/activitiesStore';
+import usePics from './stores/picsStore';
+import useTasks from './stores/tasksStore';
 
 const App = () => {
-  // State untuk task
-  const [tasks, setTasks] = useState([]);
-  const [pics, setPics] = useState([]);
+  // State untuk data
+  const pics = usePics((state) => state.pics);
+  const tasks = useTasks((state) => state.tasks);
+  const moveTask = useTasks((state) => state.moveTask);
 
   // State untuk buka tutup modal
   const [modalType, setModalType] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Get tasks data
-  const fetchTasks = async () => {
-    try {
-      const res = await fetch('http://localhost/kanban/api/tasks.php');
-      const data = await res.json();
-      setTasks(data);
-    } catch (err) {
-      console.error('Failed to fetch tasks', err);
-    }
-  };
+  // State untuk id form
+  const [idForm, setIdForm] = useState(null);
 
-  // Get pics data
-  const fetchPics = async () => {
-    try {
-      const res = await fetch('http://localhost/kanban/api/pics.php');
-      const data = await res.json();
-      setPics(data);
-    } catch (err) {
-      console.error('Failed to fetch pics', err);
-    }
-  };
+  // Fungsi panggil data
+  const fetchActivities = useActivities((state) => state.fetchData);
+  const fetchPics = usePics((state) => state.fetchData);
+  const fetchTasks = useTasks((state) => state.fetchData);
 
+  // Add activity
+  // const addActivity = async (name) => {
+  //   try {
+  //     const res = await fetch('http://localhost/kanban/api/activities.php', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ name }),
+  //     });
+  //     if (!res.ok) throw new Error('Failed to add activity');
+  //     // const newActivity = await res.json();
+  //     // setActivities((prev) => [newActivity, ...prev]);
+  //     await fetchActivities(); // Refresh tasks in case new activity is needed
+  //   } catch (err) {
+  //     alert(err.message);
+  //   }
+  // };
+
+  // Add PIC
+  // const addPic = async (name) => {
+  //   try {
+  //     const res = await fetch('http://localhost/kanban/api/pics.php', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ name }),
+  //     });
+  //     if (!res.ok) throw new Error('Failed to add PIC');
+  //     // const newPic = await res.json();
+  //     // setPics((prev) => [newPic, ...prev]);
+  //     await fetchPics(); // Refresh tasks in case new PIC is needed
+  //   } catch (err) {
+  //     alert(err.message);
+  //   }
+  // };
+
+  // Add Task
+  // const addTask = async (content, pic_id, detail) => {
+  //   try {
+  //     const now = new Date().toISOString();
+  //     const res = await fetch('http://localhost/kanban/api/tasks.php', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         content,
+  //         pic_id,
+  //         detail,
+  //         status: 'todo',
+  //         timestamp_todo: now,
+  //         timestamp_progress: null,
+  //         timestamp_done: null,
+  //         timestamp_archived: null,
+  //         minute_pause: 0,
+  //         minute_activity: 0,
+  //         pause_time: null,
+  //       }),
+  //     });
+  //     if (!res.ok) throw new Error('Failed to add task');
+  //     await fetchTasks();
+  //   } catch (err) {
+  //     alert(err.message);
+  //   }
+  // };
+
+  // Kolom status
   const columns = [
     {
       id: 'todo',
@@ -59,14 +112,23 @@ const App = () => {
 
   // Ambil tasks ketika halaman dimuat
   useEffect(() => {
-    fetchTasks();
-    fetchPics();
+    const fetchAll = () => {
+      fetchActivities();
+      fetchPics();
+      fetchTasks();
+    };
+    fetchAll();
+    const interval = setInterval(fetchAll, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleOpenModal = (type) => {
+  const handleOpenModal = (type, id) => {
+    // Buka Modal
     setIsModalOpen(true);
     // Set tipe modalnya
     setModalType(type);
+    // Set id formnya
+    setIdForm(id);
   };
 
   // Fungsi untuk handle task yang di drag
@@ -79,11 +141,7 @@ const App = () => {
       const taskId = active.id;
       const newStatus = over.id;
       // Update state tasks
-      setTasks(() =>
-        tasks.map((task) =>
-          task.id === taskId ? { ...task, status: newStatus } : task
-        )
-      );
+      moveTask(taskId, newStatus);
     }
   };
 
@@ -93,14 +151,16 @@ const App = () => {
       <header className="flex items-center justify-between bg-sky-950 px-5 py-3">
         <h1 className="text-2xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2">
-          <NavButton onClick={() => handleOpenModal('Tambah Activity')}>
-            Add Activity
+          <NavButton
+            onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
+          >
+            Tambah Activity
           </NavButton>
-          <NavButton onClick={() => handleOpenModal('Tambah PIC')}>
-            Add PIC
+          <NavButton onClick={() => handleOpenModal('Tambah PIC', 'addPic')}>
+            Tambah PIC
           </NavButton>
-          <NavButton onClick={() => handleOpenModal('Tambah Task')}>
-            Add Task
+          <NavButton onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
+            Tambah Task
           </NavButton>
         </div>
       </header>
@@ -132,6 +192,7 @@ const App = () => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         title={modalType}
+        idForm={idForm}
       ></Modal>
       {/* Toast */}
       <Toaster position="top-center" richColors />

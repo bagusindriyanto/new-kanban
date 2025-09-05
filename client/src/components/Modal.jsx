@@ -3,13 +3,16 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogFooter,
   DialogTitle,
-  DialogTrigger,
+  DialogClose,
 } from '@/components/ui/dialog';
-// import AddForm from './AddForm';
+import { Button } from '@/components/ui/button';
+import ActivityForm from './ActivityForm';
+import PICForm from './PICForm';
 import TaskForm from './TaskForm';
 
-const Modal = ({ open, onOpenChange, title }) => {
+const Modal = ({ open, onOpenChange, title, idForm }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -17,8 +20,19 @@ const Modal = ({ open, onOpenChange, title }) => {
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        {/* <AddForm /> */}
-        <TaskForm />
+        {idForm === 'addActivity' && <ActivityForm />}
+        {idForm === 'addPic' && <PICForm />}
+        {idForm === 'addTask' && <TaskForm />}
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Batal
+            </Button>
+          </DialogClose>
+          <Button type="submit" form={idForm}>
+            Kirim
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -1,20 +1,10 @@
-'use client';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import {
   Command,
   CommandEmpty,
@@ -24,104 +14,102 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Check, ChevronsUpDown } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import useActivities from '@/stores/activitiesStore';
+import usePics from '@/stores/picsStore';
 
-const formSchema = z.object({
-  activity: z.string('Mohon pilih activity!'),
+// const activities = [
+//   { label: 'English', value: 'en' },
+//   { label: 'French', value: 'fr' },
+//   { label: 'German', value: 'de' },
+//   { label: 'Spanish', value: 'es' },
+//   { label: 'Portuguese', value: 'pt' },
+//   { label: 'Russian', value: 'ru' },
+//   { label: 'Japanese', value: 'ja' },
+//   { label: 'Korean', value: 'ko' },
+//   { label: 'Chinese', value: 'zh' },
+//   { label: 'Indonesian', value: 'id' },
+//   { label: 'Malaysia', value: 'my' },
+//   { label: 'Philipines', value: 'ph' },
+//   { label: 'Singapore', value: 'sg' },
+//   { label: 'Thailand', value: 'th' },
+//   { label: 'India', value: 'in' },
+//   { label: 'New Zealand', value: 'nz' },
+//   { label: 'Canada', value: 'cd' },
+// ];
+
+// const pics = [
+//   { label: 'Annisa', value: 'Annisa' },
+//   { label: 'Bagus', value: 'Bagus' },
+//   { label: 'Indah', value: 'Indah' },
+//   { label: 'Dani', value: 'Dani' },
+//   { label: 'Ahmudi', value: 'Ahmudi' },
+//   { label: 'Joe', value: 'Joe' },
+//   { label: 'Jane', value: 'Jane' },
+//   { label: 'Doe', value: 'Doe' },
+//   { label: 'John', value: 'John' },
+//   { label: 'Dika', value: 'Dika' },
+//   { label: 'Bimo', value: 'Bimo' },
+//   { label: 'Windah', value: 'Windah' },
+//   { label: 'Nadiem', value: 'Nadiem' },
+// ];
+
+const FormSchema = z.object({
+  activity: z.string('Mohon pilih salah satu activity.'),
   pic: z.string().optional(),
   detail: z.string().optional(),
 });
 
-export default function MyForm() {
-  const activities = [
-    {
-      label: 'Sewing',
-      value: 'Sewing',
-    },
-    {
-      label: 'Packing',
-      value: 'Packing',
-    },
-    {
-      label: 'Meeting',
-      value: 'Meeting',
-    },
-    {
-      label: 'Learning1',
-      value: 'Learning1',
-    },
-    {
-      label: 'Learning2',
-      value: 'Learning2',
-    },
-    {
-      label: 'Learning3',
-      value: 'Learning3',
-    },
-    {
-      label: 'Learning4',
-      value: 'Learning4',
-    },
-    {
-      label: 'Learning5',
-      value: 'Learning5',
-    },
-    {
-      label: 'Learning6',
-      value: 'Learning6',
-    },
-    {
-      label: 'Learning7',
-      value: 'Learning7',
-    },
-    {
-      label: 'Learning8',
-      value: 'Learning8',
-    },
-    {
-      label: 'Learning9',
-      value: 'Learning9',
-    },
-    {
-      label: 'Learning10',
-      value: 'Learning10',
-    },
-  ];
+export default function TaskForm() {
+  // Fetch activity
+  const activities = useActivities((state) => state.activities);
+  // Fetch pics
+  const pics = usePics((state) => state.pics);
+
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit(values) {
-    try {
-      console.log(values);
-      // toast(
-      //   <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-      //     <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-      //   </pre>
-      // );
-      toast.success('Event has been created');
-    } catch (error) {
-      console.error('Form submission error', error);
-      toast.error('Failed to submit the form. Please try again.');
-    }
+  function onSubmit(data) {
+    toast('You submitted the following values', {
+      description: (
+        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 pt-2">
+      <form
+        id="addTask"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
         <div className="grid grid-cols-12 gap-4">
+          {/* Activity */}
           <div className="col-span-6">
             <FormField
               control={form.control}
               name="activity"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Activity *</FormLabel>
+                  <FormLabel className="gap-1">
+                    Activity<span className="text-red-500">*</span>
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -135,36 +123,43 @@ export default function MyForm() {
                         >
                           {field.value
                             ? activities.find(
-                                (activity) => activity.value === field.value
-                              )?.label
+                                (activity) => activity.name === field.value
+                              )?.name
                             : 'Pilih activity'}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
+                    <PopoverContent className="PopoverContent p-0">
                       <Command>
-                        <CommandInput placeholder="Cari activity..." />
-                        <CommandList>
-                          <CommandEmpty>No activity found.</CommandEmpty>
+                        <CommandInput
+                          placeholder="Cari activity..."
+                          className="h-9"
+                        />
+                        <CommandList
+                          onWheel={(e) => {
+                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                          }}
+                        >
+                          <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
                             {activities.map((activity) => (
                               <CommandItem
-                                value={activity.label}
-                                key={activity.value}
+                                value={activity.name}
+                                key={activity.id}
                                 onSelect={() => {
-                                  form.setValue('activity', activity.value);
+                                  form.setValue('activity', activity.name);
                                 }}
                               >
+                                {activity.name}
                                 <Check
                                   className={cn(
-                                    'mr-2 h-4 w-4',
-                                    activity.value === field.value
+                                    'ml-auto',
+                                    activity.name === field.value
                                       ? 'opacity-100'
                                       : 'opacity-0'
                                   )}
                                 />
-                                {activity.label}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -172,13 +167,12 @@ export default function MyForm() {
                       </Command>
                     </PopoverContent>
                   </Popover>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
+          {/* PIC */}
           <div className="col-span-6">
             <FormField
               control={form.control}
@@ -198,37 +192,42 @@ export default function MyForm() {
                           )}
                         >
                           {field.value
-                            ? activities.find(
-                                (activity) => activity.value === field.value
-                              )?.label
+                            ? pics.find((pic) => pic.name === field.value)?.name
                             : 'Pilih PIC'}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
+                    <PopoverContent className="PopoverContent p-0">
                       <Command>
-                        <CommandInput placeholder="Cari PIC..." />
-                        <CommandList>
-                          <CommandEmpty>No activity found.</CommandEmpty>
+                        <CommandInput
+                          placeholder="Cari PIC..."
+                          className="h-9"
+                        />
+                        <CommandList
+                          onWheel={(e) => {
+                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                          }}
+                        >
+                          <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
-                            {activities.map((activity) => (
+                            {pics.map((pic) => (
                               <CommandItem
-                                value={activity.label}
-                                key={activity.value}
+                                value={pic.name}
+                                key={pic.id}
                                 onSelect={() => {
-                                  form.setValue('pic', activity.value);
+                                  form.setValue('pic', pic.name);
                                 }}
                               >
+                                {pic.name}
                                 <Check
                                   className={cn(
-                                    'mr-2 h-4 w-4',
-                                    activity.value === field.value
+                                    'ml-auto',
+                                    pic.name === field.value
                                       ? 'opacity-100'
                                       : 'opacity-0'
                                   )}
                                 />
-                                {activity.label}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -243,6 +242,7 @@ export default function MyForm() {
           </div>
         </div>
 
+        {/* Detail */}
         <FormField
           control={form.control}
           name="detail"
@@ -256,12 +256,10 @@ export default function MyForm() {
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );
