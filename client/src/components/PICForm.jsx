@@ -12,12 +12,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import usePics from '@/stores/picStore';
 
 const FormSchema = z.object({
-  pic: z.string().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
+  pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
 });
 
 export default function PICForm() {
+  const addPic = usePics((state) => state.addPic);
+  const error = usePics((state) => state.error);
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -25,15 +29,14 @@ export default function PICForm() {
     },
   });
 
-  function onSubmit(data) {
-    toast('You submitted the following values', {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  const onSubmit = async (data) => {
+    await toast.promise(addPic(data.pic), {
+      loading: 'Sedang mengirim...',
+      success: `'${data.pic}' telah ditambahkan ke daftar PIC`,
+      error: `Error: ${error}`,
     });
-  }
+    form.reset(); // reset form setelah submit
+  };
 
   return (
     <Form {...form}>

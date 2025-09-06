@@ -6,9 +6,9 @@ import Modal from './components/Modal';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Toaster } from '@/components/ui/sonner';
-import useActivities from './stores/activitiesStore';
-import usePics from './stores/picsStore';
-import useTasks from './stores/tasksStore';
+import useActivities from './stores/activityStore';
+import usePics from './stores/picStore';
+import useTasks from './stores/taskStore';
 
 const App = () => {
   // State untuk data
@@ -24,71 +24,9 @@ const App = () => {
   const [idForm, setIdForm] = useState(null);
 
   // Fungsi panggil data
-  const fetchActivities = useActivities((state) => state.fetchData);
-  const fetchPics = usePics((state) => state.fetchData);
-  const fetchTasks = useTasks((state) => state.fetchData);
-
-  // Add activity
-  // const addActivity = async (name) => {
-  //   try {
-  //     const res = await fetch('http://localhost/kanban/api/activities.php', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ name }),
-  //     });
-  //     if (!res.ok) throw new Error('Failed to add activity');
-  //     // const newActivity = await res.json();
-  //     // setActivities((prev) => [newActivity, ...prev]);
-  //     await fetchActivities(); // Refresh tasks in case new activity is needed
-  //   } catch (err) {
-  //     alert(err.message);
-  //   }
-  // };
-
-  // Add PIC
-  // const addPic = async (name) => {
-  //   try {
-  //     const res = await fetch('http://localhost/kanban/api/pics.php', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ name }),
-  //     });
-  //     if (!res.ok) throw new Error('Failed to add PIC');
-  //     // const newPic = await res.json();
-  //     // setPics((prev) => [newPic, ...prev]);
-  //     await fetchPics(); // Refresh tasks in case new PIC is needed
-  //   } catch (err) {
-  //     alert(err.message);
-  //   }
-  // };
-
-  // Add Task
-  // const addTask = async (content, pic_id, detail) => {
-  //   try {
-  //     const now = new Date().toISOString();
-  //     const res = await fetch('http://localhost/kanban/api/tasks.php', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({
-  //         content,
-  //         pic_id,
-  //         detail,
-  //         status: 'todo',
-  //         timestamp_todo: now,
-  //         timestamp_progress: null,
-  //         timestamp_done: null,
-  //         timestamp_archived: null,
-  //         minute_pause: 0,
-  //         minute_activity: 0,
-  //         pause_time: null,
-  //       }),
-  //     });
-  //     if (!res.ok) throw new Error('Failed to add task');
-  //     await fetchTasks();
-  //   } catch (err) {
-  //     alert(err.message);
-  //   }
-  // };
+  const fetchActivities = useActivities((state) => state.fetchActivities);
+  const fetchPics = usePics((state) => state.fetchPics);
+  const fetchTasks = useTasks((state) => state.fetchTasks);
 
   // Kolom status
   const columns = [

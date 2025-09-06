@@ -2,7 +2,9 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { formatTimestamp } from '../services/formatTimestamp.js';
 import ControlButton from './ControlButton';
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { PauseIcon } from '@heroicons/react/24/solid';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
 const TaskCard = ({ picName, task }) => {
@@ -20,6 +22,7 @@ const TaskCard = ({ picName, task }) => {
     minute_activity,
     pause_time,
   } = task;
+
   // Hooks untuk elemen draggable
   const { attributes, listeners, setNodeRef, isDragging, transform } =
     useDraggable({
@@ -65,8 +68,16 @@ const TaskCard = ({ picName, task }) => {
           <ControlButton>
             <ArrowLeftIcon />
           </ControlButton>
+          {status === 'on progress' && (
+            <ControlButton>
+              <PauseIcon />
+            </ControlButton>
+          )}
           <ControlButton>
             <ArrowRightIcon />
+          </ControlButton>
+          <ControlButton>
+            <EllipsisHorizontalIcon />
           </ControlButton>
         </div>
         {(status === 'done' || status === 'archived') && (

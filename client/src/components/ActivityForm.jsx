@@ -12,12 +12,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import useActivities from '@/stores/activityStore';
 
 const FormSchema = z.object({
-  activity: z.string().nonempty({ message: 'Mohon tuliskan nama activity.' }),
+  activity: z
+    .string()
+    .trim()
+    .nonempty({ message: 'Mohon tuliskan nama activity.' }),
 });
 
 export default function ActivityForm() {
+  const addActivity = useActivities((state) => state.addActivity);
+  const error = useActivities((state) => state.error);
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -25,15 +32,14 @@ export default function ActivityForm() {
     },
   });
 
-  function onSubmit(data) {
-    toast('You submitted the following values', {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  const onSubmit = async (data) => {
+    await toast.promise(addActivity(data.activity), {
+      loading: 'Sedang mengirim...',
+      success: `'${data.activity}' telah ditambahkan ke daftar activity`,
+      error: `Error: ${error}`,
     });
-  }
+    form.reset(); // reset form setelah submit
+  };
 
   return (
     <Form {...form}>

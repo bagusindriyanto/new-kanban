@@ -97,7 +97,7 @@ function handlePost($pdo, $input)
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':content' => $content, ':pic_id' => $pic_id, ':detail' => $detail, ':status' => $status, ':timestamp_todo' => $timestamp_todo, ':timestamp_progress' => $timestamp_progress, ':timestamp_done' => $timestamp_done, ':timestamp_archived' => $timestamp_archived, ':minute_pause' => $minute_pause, ':minute_activity' => $minute_activity, ':pause_time' => $pause_time]);
     http_response_code(201);
-    echo json_encode(["id" => $pdo->lastInsertId(), "content" => $input['content'], "pic_id" => $input['pic_id'], "detail" => $input['detail'], "status" => $input['status']], JSON_NUMERIC_CHECK);
+    echo json_encode(["id" => $pdo->lastInsertId(), "content" => $content, "pic_id" => $pic_id, "detail" => $detail, "status" => $status, 'timestamp_todo' => $timestamp_todo, 'timestamp_progress' => $timestamp_progress, 'timestamp_done' => $timestamp_done, 'timestamp_archived' => $timestamp_archived, 'minute_pause' => $minute_pause, 'minute_activity' => $minute_activity, 'pause_time' => $pause_time], JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Failed to add Task: ' . $e->getMessage()]);

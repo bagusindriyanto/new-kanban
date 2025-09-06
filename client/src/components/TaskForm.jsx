@@ -27,70 +27,37 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import useActivities from '@/stores/activitiesStore';
-import usePics from '@/stores/picsStore';
-
-// const activities = [
-//   { label: 'English', value: 'en' },
-//   { label: 'French', value: 'fr' },
-//   { label: 'German', value: 'de' },
-//   { label: 'Spanish', value: 'es' },
-//   { label: 'Portuguese', value: 'pt' },
-//   { label: 'Russian', value: 'ru' },
-//   { label: 'Japanese', value: 'ja' },
-//   { label: 'Korean', value: 'ko' },
-//   { label: 'Chinese', value: 'zh' },
-//   { label: 'Indonesian', value: 'id' },
-//   { label: 'Malaysia', value: 'my' },
-//   { label: 'Philipines', value: 'ph' },
-//   { label: 'Singapore', value: 'sg' },
-//   { label: 'Thailand', value: 'th' },
-//   { label: 'India', value: 'in' },
-//   { label: 'New Zealand', value: 'nz' },
-//   { label: 'Canada', value: 'cd' },
-// ];
-
-// const pics = [
-//   { label: 'Annisa', value: 'Annisa' },
-//   { label: 'Bagus', value: 'Bagus' },
-//   { label: 'Indah', value: 'Indah' },
-//   { label: 'Dani', value: 'Dani' },
-//   { label: 'Ahmudi', value: 'Ahmudi' },
-//   { label: 'Joe', value: 'Joe' },
-//   { label: 'Jane', value: 'Jane' },
-//   { label: 'Doe', value: 'Doe' },
-//   { label: 'John', value: 'John' },
-//   { label: 'Dika', value: 'Dika' },
-//   { label: 'Bimo', value: 'Bimo' },
-//   { label: 'Windah', value: 'Windah' },
-//   { label: 'Nadiem', value: 'Nadiem' },
-// ];
+import useActivities from '@/stores/activityStore';
+import usePics from '@/stores/picStore';
+import useTasks from '@/stores/taskStore';
 
 const FormSchema = z.object({
-  activity: z.string('Mohon pilih salah satu activity.'),
-  pic: z.string().optional(),
+  content: z.string('Mohon pilih salah satu activity.'),
+  pic_id: z.number().optional(),
   detail: z.string().optional(),
 });
 
 export default function TaskForm() {
   // Fetch activity
-  const activities = useActivities((state) => state.activities);
+  const contents = useActivities((state) => state.activities);
   // Fetch pics
   const pics = usePics((state) => state.pics);
+  // Add Tasks
+  const addTasks = useTasks((state) => state.addTask);
+  const error = useTasks((state) => state.error);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit(data) {
-    toast('You submitted the following values', {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  const onSubmit = async (data) => {
+    await toast.promise(addTasks(data), {
+      loading: 'Sedang mengirim...',
+      success: 'Task telah ditambahkan',
+      error: `Error: ${error}`,
     });
-  }
+    form.reset(); // reset form setelah submit
+  };
 
   return (
     <Form {...form}>
@@ -104,7 +71,7 @@ export default function TaskForm() {
           <div className="col-span-6">
             <FormField
               control={form.control}
-              name="activity"
+              name="content"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel className="gap-1">
@@ -122,8 +89,8 @@ export default function TaskForm() {
                           )}
                         >
                           {field.value
-                            ? activities.find(
-                                (activity) => activity.name === field.value
+                            ? contents.find(
+                                (content) => content.name === field.value
                               )?.name
                             : 'Pilih activity'}
                           <ChevronsUpDown className="opacity-50" />
@@ -143,19 +110,19 @@ export default function TaskForm() {
                         >
                           <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
-                            {activities.map((activity) => (
+                            {contents.map((content) => (
                               <CommandItem
-                                value={activity.name}
-                                key={activity.id}
+                                value={content.name}
+                                key={content.id}
                                 onSelect={() => {
-                                  form.setValue('activity', activity.name);
+                                  form.setValue('content', content.name);
                                 }}
                               >
-                                {activity.name}
+                                {content.name}
                                 <Check
                                   className={cn(
                                     'ml-auto',
-                                    activity.name === field.value
+                                    content.name === field.value
                                       ? 'opacity-100'
                                       : 'opacity-0'
                                   )}
@@ -176,7 +143,7 @@ export default function TaskForm() {
           <div className="col-span-6">
             <FormField
               control={form.control}
-              name="pic"
+              name="pic_id"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>PIC</FormLabel>
@@ -192,7 +159,7 @@ export default function TaskForm() {
                           )}
                         >
                           {field.value
-                            ? pics.find((pic) => pic.name === field.value)?.name
+                            ? pics.find((pic) => pic.id === field.value)?.name
                             : 'Pilih PIC'}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -216,14 +183,14 @@ export default function TaskForm() {
                                 value={pic.name}
                                 key={pic.id}
                                 onSelect={() => {
-                                  form.setValue('pic', pic.name);
+                                  form.setValue('pic_id', pic.id);
                                 }}
                               >
                                 {pic.name}
                                 <Check
                                   className={cn(
                                     'ml-auto',
-                                    pic.name === field.value
+                                    pic.id === field.value
                                       ? 'opacity-100'
                                       : 'opacity-0'
                                   )}
