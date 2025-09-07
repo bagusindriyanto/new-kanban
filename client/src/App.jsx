@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
 import './App.css';
-import NavButton from './components/NavButton';
-import Column from './components/Column';
-import Modal from './components/Modal';
+import { useEffect, useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Toaster } from '@/components/ui/sonner';
+import NavButton from './components/NavButton';
+import Column from './components/Column';
+import Modal from './components/Modal';
 import useActivities from './stores/activityStore';
 import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
@@ -17,12 +17,10 @@ const App = () => {
   const tasks = useTasks((state) => state.tasks);
   const moveTask = useTasks((state) => state.moveTask);
 
-  // State untuk buka tutup modal
-  const [modalType, setModalType] = useState(null);
+  // State untuk modal
   const setIsModalOpen = useModal((state) => state.setIsModalOpen);
-
-  // State untuk id form
-  const [idForm, setIdForm] = useState(null);
+  const setModalTitle = useModal((state) => state.setModalTitle);
+  const setFormId = useModal((state) => state.setFormId);
 
   // Fungsi panggil data
   const fetchActivities = useActivities((state) => state.fetchActivities);
@@ -61,13 +59,13 @@ const App = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleOpenModal = (type, id) => {
+  const handleOpenModal = (title, id) => {
     // Buka modalnya
     setIsModalOpen(true);
     // Set tipe modalnya
-    setModalType(type);
+    setModalTitle(title);
     // Set id formnya
-    setIdForm(id);
+    setFormId(id);
   };
 
   // Fungsi untuk handle task yang di drag
@@ -127,7 +125,7 @@ const App = () => {
         </p>
       </footer>
       {/* <Modal /> */}
-      <Modal title={modalType} idForm={idForm}></Modal>
+      <Modal></Modal>
       {/* Toast */}
       <Toaster position="top-center" richColors />
     </div>

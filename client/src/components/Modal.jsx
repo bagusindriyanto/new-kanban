@@ -11,11 +11,14 @@ import { Button } from '@/components/ui/button';
 import ActivityForm from './ActivityForm';
 import PICForm from './PICForm';
 import TaskForm from './TaskForm';
+import UpdateTaskForm from './UpdateTaskForm';
 import useModal from '@/stores/modalStore';
 
-const Modal = ({ title, idForm }) => {
+const Modal = () => {
   const isModalOpen = useModal((state) => state.isModalOpen);
   const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+  const title = useModal((state) => state.modalTitle);
+  const formId = useModal((state) => state.formId);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -24,16 +27,16 @@ const Modal = ({ title, idForm }) => {
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        {idForm === 'addActivity' && <ActivityForm />}
-        {idForm === 'addPic' && <PICForm />}
-        {idForm === 'addTask' && <TaskForm />}
+        {formId === 'addActivity' && <ActivityForm />}
+        {formId === 'addPic' && <PICForm />}
+        {formId === 'addTask' && <TaskForm />}
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Batal
             </Button>
           </DialogClose>
-          <Button type="submit" form={idForm}>
+          <Button type="submit" form={formId}>
             Kirim
           </Button>
         </DialogFooter>

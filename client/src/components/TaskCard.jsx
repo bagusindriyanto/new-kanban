@@ -1,11 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { formatTimestamp } from '../services/formatTimestamp.js';
-import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { PauseIcon } from '@heroicons/react/24/solid';
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import {
   DropdownMenu,
@@ -13,6 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { formatTimestamp } from '../services/formatTimestamp.js';
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { PauseIcon } from '@heroicons/react/24/solid';
+import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 // import { Trash2Icon } from 'lucide-react';
 
 const TaskCard = ({ picName, task }) => {
@@ -30,9 +30,6 @@ const TaskCard = ({ picName, task }) => {
     minute_activity,
     pause_time,
   } = task;
-
-  // Hooks untuk elemen dropdown menu
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Hooks untuk elemen draggable
   const { attributes, listeners, setNodeRef, isDragging, transform } =
@@ -97,16 +94,16 @@ const TaskCard = ({ picName, task }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>
-                <span>
+                <button className="flex flex-row text-center items-center gap-2">
                   <PencilSquareIcon />
-                </span>
-                <span>Edit</span>
+                  <span>Edit</span>
+                </button>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <span className="text-red-500">
-                  <TrashIcon />
-                </span>
-                <span className="text-red-500">Hapus</span>
+                <button className="flex flex-row text-center items-center gap-2">
+                  <TrashIcon className="text-red-500" />
+                  <span className="text-red-500">Hapus</span>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -32,21 +32,31 @@ import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
 import useModal from '@/stores/modalStore';
 
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { id } from 'date-fns/locale';
+import { TimePickerDemo } from './ui/time-picker-demo';
+
 const FormSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
   pic_id: z.number().optional(),
   detail: z.string().optional(),
-  status: z.enum(['todo', 'on progress', 'done', 'archived'], {
-    error: 'Status harus dipilih',
-  }),
-  timestamp_todo: z.iso.datetime({
-    offset: true,
-    error: 'Tanggal tidak sesuai',
-  }),
+  // status: z.enum(['todo', 'on progress', 'done', 'archived'], {
+  //   error: 'Status harus dipilih',
+  // }),
+
+  // timestamp_todo: z.iso.datetime({
+  //   offset: true,
+  //   error: 'Tanggal tidak sesuai',
+  // }),
+
+  timestamp_todo: z.date('Tanggal tidak sesuai.'),
+
   // timestamp_progress:,
   // timestamp_done:,
   // timestamp_archived:,
-  minute_pause: z.number().min(0, 'Durasi pause harus 0 atau lebih').default(0),
+  // minute_pause: z.number().min(0, 'Durasi pause harus 0 atau lebih').default(0),
   // minute_activity: z
   //   .number()
   //   .min(0, { message: 'Durasi aktivitas harus 0 atau lebih' })
@@ -70,17 +80,29 @@ export default function UpdateTaskForm() {
 
   const onSubmit = async (data) => {
     const taskData = {
-      contents: data.contents,
+      content: data.content,
       pic_id: data.pic_id,
       detail: data.detail,
-      status: data.status,
+      // status: data.status,
+      timestamp_todo: data.timestamp_todo.toISOString(),
     };
 
-    await toast.promise(updateTask(data), {
-      loading: 'Sedang memperbarui task...',
-      success: 'Task telah diperbarui',
-      error: `Error: ${error}`,
-    });
+    console.log(taskData);
+
+    // toast({
+    //   title: 'You submitted the following values:',
+    //   description: (
+    //     <pre>
+    //       <code>{JSON.stringify(taskData, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // });
+
+    // await toast.promise(updateTask(data), {
+    //   loading: 'Sedang memperbarui task...',
+    //   success: 'Task telah diperbarui',
+    //   error: `Error: ${error}`,
+    // });
     form.reset(); // reset form setelah submit
     setIsModalOpen(false);
   };
@@ -249,6 +271,55 @@ export default function UpdateTaskForm() {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Timestamp Todo */}
+        <FormField
+          control={form.control}
+          name="timestamp_todo"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-left">Timestamp To Do</FormLabel>
+              <Popover>
+                <FormControl>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-[280px] justify-start text-left font-normal',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? (
+                        format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                      ) : (
+                        <span>Pilih tanggal dan waktu</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                </FormControl>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    locale={id}
+                    // captionLayout="dropdown"
+                    weekStartsOn={1}
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    initialFocus
+                  />
+                  <div className="p-3 border-t border-border">
+                    <TimePickerDemo
+                      setDate={field.onChange}
+                      date={field.value}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
