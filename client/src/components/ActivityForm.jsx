@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import useActivities from '@/stores/activityStore';
+import useModal from '@/stores/modalStore';
 
 const FormSchema = z.object({
   activity: z
@@ -24,6 +25,8 @@ const FormSchema = z.object({
 export default function ActivityForm() {
   const addActivity = useActivities((state) => state.addActivity);
   const error = useActivities((state) => state.error);
+  // Close Modal
+  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -35,10 +38,11 @@ export default function ActivityForm() {
   const onSubmit = async (data) => {
     await toast.promise(addActivity(data.activity), {
       loading: 'Sedang mengirim...',
-      success: `'${data.activity}' telah ditambahkan ke daftar activity`,
+      success: `"${data.activity}" telah ditambahkan ke daftar activity`,
       error: `Error: ${error}`,
     });
     form.reset(); // reset form setelah submit
+    setIsModalOpen(false);
   };
 
   return (

@@ -36,15 +36,30 @@ const FormSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
   pic_id: z.number().optional(),
   detail: z.string().optional(),
+  status: z.enum(['todo', 'on progress', 'done', 'archived'], {
+    error: 'Status harus dipilih',
+  }),
+  timestamp_todo: z.iso.datetime({
+    offset: true,
+    error: 'Tanggal tidak sesuai',
+  }),
+  // timestamp_progress:,
+  // timestamp_done:,
+  // timestamp_archived:,
+  minute_pause: z.number().min(0, 'Durasi pause harus 0 atau lebih').default(0),
+  // minute_activity: z
+  //   .number()
+  //   .min(0, { message: 'Durasi aktivitas harus 0 atau lebih' })
+  //   .default(0),
 });
 
-export default function TaskForm() {
+export default function UpdateTaskForm() {
   // Fetch activity
   const contents = useActivities((state) => state.activities);
   // Fetch pics
   const pics = usePics((state) => state.pics);
   // Add Tasks
-  const addTask = useTasks((state) => state.addTask);
+  const updateTask = useTasks((state) => state.updateTask);
   const error = useTasks((state) => state.error);
   // Close Modal
   const setIsModalOpen = useModal((state) => state.setIsModalOpen);
@@ -54,9 +69,16 @@ export default function TaskForm() {
   });
 
   const onSubmit = async (data) => {
-    await toast.promise(addTask(data), {
-      loading: 'Sedang mengirim...',
-      success: 'Task telah ditambahkan',
+    const taskData = {
+      contents: data.contents,
+      pic_id: data.pic_id,
+      detail: data.detail,
+      status: data.status,
+    };
+
+    await toast.promise(updateTask(data), {
+      loading: 'Sedang memperbarui task...',
+      success: 'Task telah diperbarui',
       error: `Error: ${error}`,
     });
     form.reset(); // reset form setelah submit
@@ -66,7 +88,7 @@ export default function TaskForm() {
   return (
     <Form {...form}>
       <form
-        id="addTask"
+        id="updateTask"
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6"
       >

@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/sonner';
 import useActivities from './stores/activityStore';
 import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
+import useModal from './stores/modalStore';
 
 const App = () => {
   // State untuk data
@@ -18,7 +19,7 @@ const App = () => {
 
   // State untuk buka tutup modal
   const [modalType, setModalType] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
 
   // State untuk id form
   const [idForm, setIdForm] = useState(null);
@@ -61,7 +62,7 @@ const App = () => {
   }, []);
 
   const handleOpenModal = (type, id) => {
-    // Buka Modal
+    // Buka modalnya
     setIsModalOpen(true);
     // Set tipe modalnya
     setModalType(type);
@@ -126,12 +127,7 @@ const App = () => {
         </p>
       </footer>
       {/* <Modal /> */}
-      <Modal
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        title={modalType}
-        idForm={idForm}
-      ></Modal>
+      <Modal title={modalType} idForm={idForm}></Modal>
       {/* Toast */}
       <Toaster position="top-center" richColors />
     </div>

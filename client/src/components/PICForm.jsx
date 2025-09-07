@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import usePics from '@/stores/picStore';
+import useModal from '@/stores/modalStore';
 
 const FormSchema = z.object({
   pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
@@ -21,6 +22,8 @@ const FormSchema = z.object({
 export default function PICForm() {
   const addPic = usePics((state) => state.addPic);
   const error = usePics((state) => state.error);
+  // Close Modal
+  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -32,10 +35,11 @@ export default function PICForm() {
   const onSubmit = async (data) => {
     await toast.promise(addPic(data.pic), {
       loading: 'Sedang mengirim...',
-      success: `'${data.pic}' telah ditambahkan ke daftar PIC`,
+      success: `"${data.pic}" telah ditambahkan ke daftar PIC`,
       error: `Error: ${error}`,
     });
     form.reset(); // reset form setelah submit
+    setIsModalOpen(false);
   };
 
   return (

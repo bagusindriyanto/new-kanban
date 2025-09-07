@@ -11,10 +11,14 @@ import { Button } from '@/components/ui/button';
 import ActivityForm from './ActivityForm';
 import PICForm from './PICForm';
 import TaskForm from './TaskForm';
+import useModal from '@/stores/modalStore';
 
-const Modal = ({ open, onOpenChange, title, idForm }) => {
+const Modal = ({ title, idForm }) => {
+  const isModalOpen = useModal((state) => state.isModalOpen);
+  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

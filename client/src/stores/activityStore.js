@@ -6,7 +6,7 @@ const useActivities = create((set) => ({
   error: null,
   fetchActivities: async () => {
     // Set isLoading to true while fetching data
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
 
     try {
       const res = await fetch('http://localhost/kanban/api/activities.php');
@@ -19,7 +19,7 @@ const useActivities = create((set) => ({
     }
   },
   addActivity: async (name) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const res = await fetch('http://localhost/kanban/api/activities.php', {
         method: 'POST',

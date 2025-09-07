@@ -6,7 +6,7 @@ const usePics = create((set) => ({
   error: null,
   fetchPics: async () => {
     // Set isLoading to true while fetching data
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
 
     try {
       const res = await fetch('http://localhost/kanban/api/pics.php');
@@ -20,7 +20,7 @@ const usePics = create((set) => ({
   },
 
   addPic: async (name) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const res = await fetch('http://localhost/kanban/api/pics.php', {
         method: 'POST',

@@ -1,11 +1,19 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { formatTimestamp } from '../services/formatTimestamp.js';
-import ControlButton from './ControlButton';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { PauseIcon } from '@heroicons/react/24/solid';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+// import { Trash2Icon } from 'lucide-react';
 
 const TaskCard = ({ picName, task }) => {
   // Destructure isi props
@@ -22,6 +30,9 @@ const TaskCard = ({ picName, task }) => {
     minute_activity,
     pause_time,
   } = task;
+
+  // Hooks untuk elemen dropdown menu
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Hooks untuk elemen draggable
   const { attributes, listeners, setNodeRef, isDragging, transform } =
@@ -65,20 +76,40 @@ const TaskCard = ({ picName, task }) => {
       </div>
       <div className="flex flex-row-reverse justify-between items-center">
         <div className="flex gap-1">
-          <ControlButton>
+          {/* Control Button */}
+          {/* <button className="rounded-full size-6 bg-black/15 text-white p-1">
             <ArrowLeftIcon />
-          </ControlButton>
+          </button>
           {status === 'on progress' && (
-            <ControlButton>
+            <button className="rounded-full size-6 bg-black/15 text-white p-1">
               <PauseIcon />
-            </ControlButton>
+            </button>
           )}
-          <ControlButton>
+          <button className="rounded-full size-6 bg-black/15 text-white p-1">
             <ArrowRightIcon />
-          </ControlButton>
-          <ControlButton>
-            <EllipsisHorizontalIcon />
-          </ControlButton>
+          </button> */}
+          {/* Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="rounded-full size-6 bg-black/15 text-white p-1">
+                <EllipsisHorizontalIcon />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <span>
+                  <PencilSquareIcon />
+                </span>
+                <span>Edit</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <span className="text-red-500">
+                  <TrashIcon />
+                </span>
+                <span className="text-red-500">Hapus</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         {(status === 'done' || status === 'archived') && (
           <p className="font-medium text-sm text-white">
