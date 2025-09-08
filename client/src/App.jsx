@@ -73,6 +73,8 @@ const App = () => {
     // Ambil posisi drag element = active dan drop element = over
     const { active, over } = event;
     // Jika element di drag ke daerah yang bukan droppable
+    console.log('Active: ', active.id, '; Over: ', over);
+
     if (over && active.id !== over.id) {
       // Update task ketika di drag
       const taskId = active.id;

@@ -6,6 +6,16 @@ import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -13,6 +23,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -39,12 +50,17 @@ import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
 
 const FormSchema = z.object({
-  content: z.string('Mohon pilih salah satu activity.'),
+  content: z.string('Activity harus dipilih.'),
   pic_id: z.number().optional(),
+  status: z.enum(['todo', 'on progress', 'done', 'archived'], {
+    error: 'Status harus dipilih.',
+  }),
+  minute_pause: z
+    .number()
+    .min(0, 'Durasi pause harus 0 atau lebih.')
+    .default(0),
+  pause_time: z.boolean(),
   detail: z.string().optional(),
-  // status: z.enum(['todo', 'on progress', 'done', 'archived'], {
-  //   error: 'Status harus dipilih',
-  // }),
 
   // timestamp_todo: z.iso.datetime({
   //   offset: true,
@@ -52,15 +68,9 @@ const FormSchema = z.object({
   // }),
 
   timestamp_todo: z.date('Tanggal tidak sesuai.'),
-
-  // timestamp_progress:,
-  // timestamp_done:,
-  // timestamp_archived:,
-  // minute_pause: z.number().min(0, 'Durasi pause harus 0 atau lebih').default(0),
-  // minute_activity: z
-  //   .number()
-  //   .min(0, { message: 'Durasi aktivitas harus 0 atau lebih' })
-  //   .default(0),
+  timestamp_progress: z.date('Tanggal tidak sesuai.'),
+  timestamp_done: z.date('Tanggal tidak sesuai.'),
+  timestamp_archived: z.date('Tanggal tidak sesuai.'),
 });
 
 export default function UpdateTaskForm() {
@@ -68,7 +78,12 @@ export default function UpdateTaskForm() {
   const contents = useActivities((state) => state.activities);
   // Fetch pics
   const pics = usePics((state) => state.pics);
-  // Add Tasks
+  // Fetch selected task value
+  const tasks = useTasks((state) => state.tasks);
+  const selectedTaskId = useTasks((state) => state.selectedTaskId);
+  const task = tasks.filter((task) => task.id === selectedTaskId);
+
+  // Update Tasks
   const updateTask = useTasks((state) => state.updateTask);
   const error = useTasks((state) => state.error);
   // Close Modal
@@ -79,14 +94,19 @@ export default function UpdateTaskForm() {
   });
 
   const onSubmit = async (data) => {
+    const pause_time = data.pause_time ? new Date() : null;
     const taskData = {
       content: data.content,
       pic_id: data.pic_id,
-      detail: data.detail,
-      // status: data.status,
+      status: data.status,
+      minute_pause: data.minute_pause,
+      pause_time: pause_time !== null ? pause_time.toISOString() : null,
       timestamp_todo: data.timestamp_todo.toISOString(),
+      timestamp_progress: data.timestamp_progress.toISOString(),
+      timestamp_done: data.timestamp_done.toISOString(),
+      timestamp_archived: data.timestamp_archived.toISOString(),
+      detail: data.detail,
     };
-
     console.log(taskData);
 
     // toast({
@@ -107,8 +127,10 @@ export default function UpdateTaskForm() {
     setIsModalOpen(false);
   };
 
+  // Form
   return (
     <Form {...form}>
+      <h1>{selectedTaskId}</h1>
       <form
         id="updateTask"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -255,6 +277,273 @@ export default function UpdateTaskForm() {
               )}
             />
           </div>
+          {/* Status */}
+          <div className="col-span-4">
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih status task" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Status</SelectLabel>
+                        <SelectItem value="todo">To Do</SelectItem>
+                        <SelectItem value="on progress">On Progress</SelectItem>
+                        <SelectItem value="done">Done</SelectItem>
+                        <SelectItem value="archived">Archived</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          {/* Minute Pause */}
+          <div className="col-span-4">
+            <FormField
+              control={form.control}
+              name="minute_pause"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lama Pause</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          {/* Pause Time */}
+          <div className="col-span-4">
+            <FormField
+              control={form.control}
+              name="pause_time"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between">
+                  <FormLabel>Activity di Pause?</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Grid Timestamp */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Timestamp Todo */}
+          <FormField
+            control={form.control}
+            name="timestamp_todo"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-left">Timestamp To Do</FormLabel>
+                <Popover>
+                  <FormControl>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value ? (
+                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                        ) : (
+                          <span>Pilih tanggal dan waktu</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                  </FormControl>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      // captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                    <div className="p-3 border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Timestamp On Progress */}
+          <FormField
+            control={form.control}
+            name="timestamp_progress"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-left">
+                  Timestamp On Progress
+                </FormLabel>
+                <Popover>
+                  <FormControl>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value ? (
+                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                        ) : (
+                          <span>Pilih tanggal dan waktu</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                  </FormControl>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      // captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                    <div className="p-3 border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Timestamp Done */}
+          <FormField
+            control={form.control}
+            name="timestamp_done"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-left">Timestamp Done</FormLabel>
+                <Popover>
+                  <FormControl>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value ? (
+                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                        ) : (
+                          <span>Pilih tanggal dan waktu</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                  </FormControl>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      // captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                    <div className="p-3 border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Timestamp Archived */}
+          <FormField
+            control={form.control}
+            name="timestamp_archived"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-left">Timestamp Archived</FormLabel>
+                <Popover>
+                  <FormControl>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value ? (
+                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                        ) : (
+                          <span>Pilih tanggal dan waktu</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                  </FormControl>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      // captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                    <div className="p-3 border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         {/* Detail */}
@@ -271,55 +560,6 @@ export default function UpdateTaskForm() {
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Timestamp Todo */}
-        <FormField
-          control={form.control}
-          name="timestamp_todo"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-left">Timestamp To Do</FormLabel>
-              <Popover>
-                <FormControl>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        'w-[280px] justify-start text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? (
-                        format(field.value, 'PPP, HH:mm:ss', { locale: id })
-                      ) : (
-                        <span>Pilih tanggal dan waktu</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                </FormControl>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    locale={id}
-                    // captionLayout="dropdown"
-                    weekStartsOn={1}
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                  <div className="p-3 border-t border-border">
-                    <TimePickerDemo
-                      setDate={field.onChange}
-                      date={field.value}
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
               <FormMessage />
             </FormItem>
           )}

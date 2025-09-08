@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 const useTasks = create((set) => ({
   tasks: [],
+  selectedTaskId: null,
+  setSelectedTaskId: (taskId) => set({ selectedTaskId: taskId }),
   isLoading: false,
   error: null,
 

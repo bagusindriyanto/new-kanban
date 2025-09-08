@@ -30,13 +30,18 @@ const Modal = () => {
         {formId === 'addActivity' && <ActivityForm />}
         {formId === 'addPic' && <PICForm />}
         {formId === 'addTask' && <TaskForm />}
+        {formId === 'updateTask' && <UpdateTaskForm />}
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              className="cursor-pointer"
+              type="button"
+              variant="secondary"
+            >
               Batal
             </Button>
           </DialogClose>
-          <Button type="submit" form={formId}>
+          <Button className="cursor-pointer" type="submit" form={formId}>
             Kirim
           </Button>
         </DialogFooter>

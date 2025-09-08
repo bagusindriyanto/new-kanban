@@ -9,10 +9,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { formatTimestamp } from '../services/formatTimestamp.js';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
+import { GripVertical } from 'lucide-react';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { PauseIcon } from '@heroicons/react/24/solid';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import useModal from '@/stores/modalStore';
+import useTasks from '@/stores/taskStore';
 // import { Trash2Icon } from 'lucide-react';
 
 const TaskCard = ({ picName, task }) => {
@@ -31,50 +34,88 @@ const TaskCard = ({ picName, task }) => {
     pause_time,
   } = task;
 
+  // State untuk modal
+  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+  const setModalTitle = useModal((state) => state.setModalTitle);
+  const setFormId = useModal((state) => state.setFormId);
+
+  // State untuk pilih task saat ini
+  const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
+
+  const handleOpenModal = (taskId, title, formId) => {
+    // Buka modalnya
+    setIsModalOpen(true);
+    // Set id task yang dipilih
+    setSelectedTaskId(taskId);
+    // Set tipe modalnya
+    setModalTitle(title);
+    // Set id formnya
+    setFormId(formId);
+  };
+
   // Hooks untuk elemen draggable
-  const { attributes, listeners, setNodeRef, isDragging, transform } =
-    useDraggable({
-      id,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    isDragging,
+    transform,
+  } = useDraggable({
+    id,
+  });
 
   const style = { transform: CSS.Translate.toString(transform) };
 
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       style={style}
-      className={`cursor-grab rounded-lg px-3 py-2 shadow-sm hover:shadow-lg
+      className={`cursor-default flex flex-row rounded-lg overflow-hidden shadow-sm hover:shadow-lg
         ${isDragging ? 'scale-105' : ''}
         ${status === 'todo' ? 'bg-rose-500' : ''} 
         ${status === 'on progress' ? 'bg-orange-500' : ''} 
         ${status === 'done' ? 'bg-green-500' : ''}
         ${status === 'archived' ? 'bg-gray-500' : ''}`}
     >
-      <div className="flex justify-between gap-2 items-start">
-        <h3 className="font-bold text-lg text-white">{content}</h3>
-        <h4 className="font-medium text-base text-white">{picName || '-'}</h4>
+      {/* Handle Drag */}
+      <div
+        ref={setActivatorNodeRef}
+        {...listeners}
+        {...attributes}
+        className={`cursor-grab flex justify-center items-center text-white/50
+        ${status === 'todo' ? 'bg-rose-600' : ''} 
+        ${status === 'on progress' ? 'bg-orange-600' : ''} 
+        ${status === 'done' ? 'bg-green-600' : ''}
+        ${status === 'archived' ? 'bg-gray-600' : ''}`}
+      >
+        <GripVertical />
       </div>
-      <p className="mt-1 font-medium text-sm text-white">{detail}</p>
-      <div className="my-2 grid grid-cols-2 font-extralight text-[10px] text-white">
-        <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
-        <p>
-          Progress:{' '}
-          {timestamp_progress ? formatTimestamp(timestamp_progress) : '-'}
-        </p>
-        <p>Done: {timestamp_done ? formatTimestamp(timestamp_done) : '-'}</p>
-        <p>
-          Archived:{' '}
-          {timestamp_archived ? formatTimestamp(timestamp_archived) : '-'}
-        </p>
-        <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
-        <p>Pause Minutes: {minute_pause}</p>
-      </div>
-      <div className="flex flex-row-reverse justify-between items-center">
-        <div className="flex gap-1">
-          {/* Control Button */}
-          {/* <button className="rounded-full size-6 bg-black/15 text-white p-1">
+      {/* Content */}
+      <div className="flex-1 px-3 py-2">
+        <div className="flex justify-between gap-2 items-start">
+          <h3 className="font-bold text-lg text-white">{content}</h3>
+          <h4 className="font-medium text-base text-white">{picName || '-'}</h4>
+        </div>
+        <p className="mt-1 font-medium text-sm text-white">{detail}</p>
+        <div className="my-2 grid grid-cols-2 font-extralight text-[10px] text-white">
+          <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
+          <p>
+            Progress:{' '}
+            {timestamp_progress ? formatTimestamp(timestamp_progress) : '-'}
+          </p>
+          <p>Done: {timestamp_done ? formatTimestamp(timestamp_done) : '-'}</p>
+          <p>
+            Archived:{' '}
+            {timestamp_archived ? formatTimestamp(timestamp_archived) : '-'}
+          </p>
+          <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
+          <p>Pause Minutes: {minute_pause}</p>
+        </div>
+        <div className="flex flex-row-reverse justify-between items-center">
+          <div className="flex gap-1">
+            {/* Control Button */}
+            {/* <button className="rounded-full size-6 bg-black/15 text-white p-1">
             <ArrowLeftIcon />
           </button>
           {status === 'on progress' && (
@@ -85,35 +126,47 @@ const TaskCard = ({ picName, task }) => {
           <button className="rounded-full size-6 bg-black/15 text-white p-1">
             <ArrowRightIcon />
           </button> */}
-          {/* Dropdown Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="rounded-full size-6 bg-black/15 text-white p-1">
-                <EllipsisHorizontalIcon />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>
-                <button className="flex flex-row text-center items-center gap-2">
-                  <PencilSquareIcon />
-                  <span>Edit</span>
+            {/* Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={`cursor-pointer rounded-full size-6 text-white p-1 ${
+                    status === 'todo' ? 'bg-rose-600' : ''
+                  } ${status === 'on progress' ? 'bg-orange-600' : ''} ${
+                    status === 'done' ? 'bg-green-600' : ''
+                  } ${status === 'archived' ? 'bg-gray-600' : ''}`}
+                >
+                  <EllipsisHorizontalIcon />
                 </button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button className="flex flex-row text-center items-center gap-2">
-                  <TrashIcon className="text-red-500" />
-                  <span className="text-red-500">Hapus</span>
-                </button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <button
+                    onClick={() =>
+                      handleOpenModal(id, 'Edit Task', 'updateTask')
+                    }
+                    className="w-full flex flex-row text-center items-center gap-2"
+                  >
+                    <PencilSquareIcon />
+                    <span>Edit</span>
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <button className="flex flex-row text-center items-center gap-2">
+                    <TrashIcon className="text-red-500" />
+                    <span className="text-red-500">Hapus</span>
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {(status === 'done' || status === 'archived') && (
+            <p className="font-medium text-sm text-white">
+              Activity Minutes:{' '}
+              <span className="font-normal">{minute_activity || 0}</span>
+            </p>
+          )}
         </div>
-        {(status === 'done' || status === 'archived') && (
-          <p className="font-medium text-sm text-white">
-            Activity Minutes:{' '}
-            <span className="font-normal">{minute_activity || 0}</span>
-          </p>
-        )}
       </div>
     </div>
   );
