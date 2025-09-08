@@ -66,12 +66,12 @@ const useTasks = create((set) => ({
       detail,
       status,
       timestamp_todo,
-      // timestamp_progress,
-      // timestamp_done,
-      // timestamp_archived,
+      timestamp_progress,
+      timestamp_done,
+      timestamp_archived,
       minute_pause,
-      // minute_activity,
-      // pause_time,
+      minute_activity,
+      pause_time,
     } = data;
     set({ isLoading: true, error: null });
     try {

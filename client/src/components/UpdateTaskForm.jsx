@@ -49,6 +49,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
 
+// Aturan form
 const FormSchema = z.object({
   content: z.string('Activity harus dipilih.'),
   pic_id: z.number().optional(),
@@ -59,18 +60,18 @@ const FormSchema = z.object({
     .number()
     .min(0, 'Durasi pause harus 0 atau lebih.')
     .default(0),
-  pause_time: z.boolean(),
+  pause_time: z
+    .boolean()
+    .optional()
+    .transform((val) => val ?? false),
   detail: z.string().optional(),
-
-  // timestamp_todo: z.iso.datetime({
-  //   offset: true,
-  //   error: 'Tanggal tidak sesuai',
-  // }),
-
   timestamp_todo: z.date('Tanggal tidak sesuai.'),
-  timestamp_progress: z.date('Tanggal tidak sesuai.'),
-  timestamp_done: z.date('Tanggal tidak sesuai.'),
-  timestamp_archived: z.date('Tanggal tidak sesuai.'),
+  // .transform((val) => {
+  //   return new Date(val).toISOString();
+  // })
+  timestamp_progress: z.date('Tanggal tidak sesuai.').nullish(),
+  timestamp_done: z.date('Tanggal tidak sesuai.').nullish(),
+  timestamp_archived: z.date('Tanggal tidak sesuai.').nullish(),
 });
 
 export default function UpdateTaskForm() {
@@ -81,35 +82,68 @@ export default function UpdateTaskForm() {
   // Fetch selected task value
   const tasks = useTasks((state) => state.tasks);
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  const task = tasks.filter((task) => task.id === selectedTaskId);
+  const task = tasks.filter((task) => task.id === selectedTaskId)[0];
 
   // Update Tasks
   const updateTask = useTasks((state) => state.updateTask);
   const error = useTasks((state) => state.error);
+
   // Close Modal
   const setIsModalOpen = useModal((state) => state.setIsModalOpen);
 
+  // Set nilai awal
   const form = useForm({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      content: task.content ?? undefined,
+      pic_id: task.pic_id ?? undefined,
+      status: task.status ?? undefined,
+      minute_pause: task.minute_pause ?? undefined,
+      pause_time: task.pause_time ?? false,
+      detail: task.detail ?? undefined,
+      timestamp_todo: task.timestamp_todo
+        ? new Date(task.timestamp_todo)
+        : undefined,
+      timestamp_progress: task.timestamp_progress
+        ? new Date(task.timestamp_progress)
+        : undefined,
+      timestamp_done: task.timestamp_done
+        ? new Date(task.timestamp_done)
+        : undefined,
+      timestamp_archived: task.timestamp_archived
+        ? new Date(task.timestamp_archived)
+        : undefined,
+    },
   });
 
   const onSubmit = async (data) => {
-    const pause_time = data.pause_time ? new Date() : null;
+    // Hitung beberapa nilai
+    const minute_activity =
+      data.timestamp_progress && data.timestamp_done
+        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000)
+        : 0;
+    // Ubah timestamp ke ISOString
+    const now = new Date();
     const taskData = {
-      content: data.content,
-      pic_id: data.pic_id,
-      status: data.status,
-      minute_pause: data.minute_pause,
-      pause_time: pause_time !== null ? pause_time.toISOString() : null,
+      ...data,
+      minute_activity,
+      pause_time: data.pause_time ? now.toISOString() : null,
       timestamp_todo: data.timestamp_todo.toISOString(),
-      timestamp_progress: data.timestamp_progress.toISOString(),
-      timestamp_done: data.timestamp_done.toISOString(),
-      timestamp_archived: data.timestamp_archived.toISOString(),
-      detail: data.detail,
+      timestamp_progress: data.timestamp_progress
+        ? data.timestamp_progress.toISOString()
+        : null,
+      timestamp_done: data.timestamp_done
+        ? data.timestamp_done.toISOString()
+        : null,
+      timestamp_archived: data.timestamp_archived
+        ? data.timestamp_archived.toISOString()
+        : null,
     };
-    console.log(taskData);
 
+    console.log(data);
+    console.log(taskData);
     // toast({
+    //   title: 'You submitted the foll[0]lues:',
     //   title: 'You submitted the following values:',
     //   description: (
     //     <pre>
@@ -130,7 +164,6 @@ export default function UpdateTaskForm() {
   // Form
   return (
     <Form {...form}>
-      <h1>{selectedTaskId}</h1>
       <form
         id="updateTask"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -318,7 +351,12 @@ export default function UpdateTaskForm() {
                 <FormItem>
                   <FormLabel>Lama Pause</FormLabel>
                   <FormControl>
-                    <Input placeholder="" type="number" {...field} />
+                    <Input
+                      placeholder="0 Menit"
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -331,14 +369,18 @@ export default function UpdateTaskForm() {
               control={form.control}
               name="pause_time"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between">
+                <FormItem>
                   <FormLabel>Activity di Pause?</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
+                  <div className="flex justify-center items-center h-9 gap-3">
+                    <p>Tidak</p>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <p>Ya</p>
+                  </div>
                 </FormItem>
               )}
             />
@@ -366,7 +408,9 @@ export default function UpdateTaskForm() {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                            locale: id,
+                          })
                         ) : (
                           <span>Pilih tanggal dan waktu</span>
                         )}
@@ -383,7 +427,7 @@ export default function UpdateTaskForm() {
                       onSelect={field.onChange}
                       initialFocus
                     />
-                    <div className="p-3 border-t border-border">
+                    <div className="px-3 py-2 border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
@@ -417,7 +461,9 @@ export default function UpdateTaskForm() {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                            locale: id,
+                          })
                         ) : (
                           <span>Pilih tanggal dan waktu</span>
                         )}
@@ -434,7 +480,7 @@ export default function UpdateTaskForm() {
                       onSelect={field.onChange}
                       initialFocus
                     />
-                    <div className="p-3 border-t border-border">
+                    <div className="px-3 py-2 border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
@@ -466,7 +512,9 @@ export default function UpdateTaskForm() {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                            locale: id,
+                          })
                         ) : (
                           <span>Pilih tanggal dan waktu</span>
                         )}
@@ -483,7 +531,7 @@ export default function UpdateTaskForm() {
                       onSelect={field.onChange}
                       initialFocus
                     />
-                    <div className="p-3 border-t border-border">
+                    <div className="px-3 py-2 border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
@@ -515,7 +563,9 @@ export default function UpdateTaskForm() {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          format(field.value, 'PPP, HH:mm:ss', { locale: id })
+                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                            locale: id,
+                          })
                         ) : (
                           <span>Pilih tanggal dan waktu</span>
                         )}
@@ -532,7 +582,7 @@ export default function UpdateTaskForm() {
                       onSelect={field.onChange}
                       initialFocus
                     />
-                    <div className="p-3 border-t border-border">
+                    <div className="px-3 py-2 border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}

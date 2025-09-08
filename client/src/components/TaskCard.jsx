@@ -89,7 +89,7 @@ const TaskCard = ({ picName, task }) => {
         ${status === 'done' ? 'bg-green-600' : ''}
         ${status === 'archived' ? 'bg-gray-600' : ''}`}
       >
-        <GripVertical />
+        <GripVertical className="size-5" />
       </div>
       {/* Content */}
       <div className="flex-1 px-3 py-2">
@@ -117,42 +117,60 @@ const TaskCard = ({ picName, task }) => {
             {/* Control Button */}
             {/* <button className="rounded-full size-6 bg-black/15 text-white p-1">
             <ArrowLeftIcon />
-          </button>
-          {status === 'on progress' && (
-            <button className="rounded-full size-6 bg-black/15 text-white p-1">
-              <PauseIcon />
-            </button>
-          )}
-          <button className="rounded-full size-6 bg-black/15 text-white p-1">
+          </button> */}
+            {status === 'on progress' && (
+              <button
+                className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
+                  status === 'todo' ? 'bg-rose-600 hover:bg-rose-400' : ''
+                } ${
+                  status === 'on progress'
+                    ? 'bg-orange-600 hover:bg-orange-400'
+                    : ''
+                } ${
+                  status === 'done' ? 'bg-green-600 hover:bg-green-400' : ''
+                } ${
+                  status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
+                }`}
+              >
+                {pause_time ? <PauseIcon /> : <p>Play</p>}
+              </button>
+            )}
+            {/* <button className="rounded-full size-6 bg-black/15 text-white p-1">
             <ArrowRightIcon />
           </button> */}
             {/* Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className={`cursor-pointer rounded-full size-6 text-white p-1 ${
-                    status === 'todo' ? 'bg-rose-600' : ''
-                  } ${status === 'on progress' ? 'bg-orange-600' : ''} ${
-                    status === 'done' ? 'bg-green-600' : ''
-                  } ${status === 'archived' ? 'bg-gray-600' : ''}`}
+                  className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
+                    status === 'todo' ? 'bg-rose-600 hover:bg-rose-400' : ''
+                  } ${
+                    status === 'on progress'
+                      ? 'bg-orange-600 hover:bg-orange-400'
+                      : ''
+                  } ${
+                    status === 'done' ? 'bg-green-600 hover:bg-green-400' : ''
+                  } ${
+                    status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
+                  }`}
                 >
                   <EllipsisHorizontalIcon />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="m-0 p-0">
                   <button
                     onClick={() =>
                       handleOpenModal(id, 'Edit Task', 'updateTask')
                     }
-                    className="w-full flex flex-row text-center items-center gap-2"
+                    className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
                   >
                     <PencilSquareIcon />
                     <span>Edit</span>
                   </button>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <button className="flex flex-row text-center items-center gap-2">
+                <DropdownMenuItem className="m-0 p-0">
+                  <button className="cursor-pointer size-full p-2 flex text-center items-center gap-2">
                     <TrashIcon className="text-red-500" />
                     <span className="text-red-500">Hapus</span>
                   </button>
