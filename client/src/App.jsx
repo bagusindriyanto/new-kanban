@@ -5,11 +5,12 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Toaster } from '@/components/ui/sonner';
 import NavButton from './components/NavButton';
 import Column from './components/Column';
-import Modal from './components/Modal';
+import FormModal from './components/FormModal';
+import ConfirmModal from './components/ConfirmModal';
 import useActivities from './stores/activityStore';
 import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
-import useModal from './stores/modalStore';
+import useFormModal from './stores/formModalStore';
 
 const App = () => {
   // State untuk data
@@ -18,9 +19,9 @@ const App = () => {
   const moveTask = useTasks((state) => state.moveTask);
 
   // State untuk modal
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
-  const setModalTitle = useModal((state) => state.setModalTitle);
-  const setFormId = useModal((state) => state.setFormId);
+  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+  const setModalTitle = useFormModal((state) => state.setModalTitle);
+  const setFormId = useFormModal((state) => state.setFormId);
 
   // Fungsi panggil data
   const fetchActivities = useActivities((state) => state.fetchActivities);
@@ -126,8 +127,10 @@ const App = () => {
           &copy; {new Date().getFullYear()} Kanban App
         </p>
       </footer>
-      {/* <Modal /> */}
-      <Modal></Modal>
+      {/* Form Modal */}
+      <FormModal />
+      {/* Confirm Modal */}
+      <ConfirmModal />
       {/* Toast */}
       <Toaster position="top-center" richColors />
     </div>

@@ -22,6 +22,10 @@ switch ($method) {
     handlePatch($pdo, $input);
     break;
 
+  case 'DELETE':
+    handleDelete($pdo);
+    break;
+
   default:
     echo json_encode(["message" => "Invalid request method"]);
     break;
@@ -36,21 +40,6 @@ function handleGet($pdo)
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // konversi semua field datetime/timestamp dari GMT+7 ke UTC dengan format ISO 8601
-    // foreach ($result as $row) {
-    //   foreach ($row as $key => $value) {
-    //     // hanya proses kalau $value bukan null DAN bisa diparse sebagai datetime
-    //     if ($value !== null && strtotime($value) !== false) {
-    //       // cek apakah stringnya match format datetime/timestamp MySQL
-    //       if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
-    //         $dt = new DateTime($value, new DateTimeZone('Asia/Jakarta')); // GMT+7
-    //         $dt->setTimezone(new DateTimeZone('UTC')); // ubah ke UTC
-    //         $row[$key] = $dt->format('c'); // ISO 8601 dengan "Z"
-    //       }
-    //     }
-    //   }
-    // }
-    // unset($row); // hapus reference
     $data = array_map(function ($row) {
       $timestamp_fields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time'];
 
@@ -116,6 +105,9 @@ function handlePatch($pdo, $input)
 
   try {
     $id = intval($_GET['id']);
+    $content = $input['content'] ?? "";
+    $pic_id = $input['pic_id'] ?? null;
+    $detail = $input['detail'] ?? "";
     $status = $input['status'] ?? null;
     $timestamp_todo = $input['timestamp_todo'] ?? null;
     $timestamp_progress = $input['timestamp_progress'] ?? null;
@@ -125,20 +117,61 @@ function handlePatch($pdo, $input)
     $minute_activity = $input['minute_activity'] ?? 0;
     $pause_time = $input['pause_time'] ?? null;
 
-    $fields = ['status = ?', 'timestamp_todo = ?', 'timestamp_progress = ?', 'timestamp_done = ?', 'timestamp_archived = ?', 'minute_pause = ?', 'minute_activity = ?', 'pause_time = ?'];
-    $params = [$status, $timestamp_todo, $timestamp_progress, $timestamp_done, $timestamp_archived, $minute_pause, $minute_activity, $pause_time, $id];
+    $fields = ['content = ?', 'pic_id = ?', 'detail = ?', 'status = ?', 'timestamp_todo = ?', 'timestamp_progress = ?', 'timestamp_done = ?', 'timestamp_archived = ?', 'minute_pause = ?', 'minute_activity = ?', 'pause_time = ?'];
+    $params = [$content, $pic_id, $detail, $status, $timestamp_todo, $timestamp_progress, $timestamp_done, $timestamp_archived, $minute_pause, $minute_activity, $pause_time, $id];
     $sql = "UPDATE tasks SET " . implode(', ', $fields) . " WHERE id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
     if ($stmt->rowCount() > 0) {
-      echo json_encode(['message' => 'Task updated successfully', 'id' => $id], JSON_NUMERIC_CHECK);
+      // ambil data terbaru setelah update
+      $stmt = $pdo->prepare("SELECT * FROM tasks WHERE id = :id");
+      $stmt->execute([":id" => $id]);
+      $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      // daftar kolom datetime yang mau diubah
+      $timestampFields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time'];
+      foreach ($timestampFields as $field) {
+        if (!empty($data[$field])) {
+          $utcDate = new DateTime($data[$field], new DateTimeZone('UTC'));
+          $data[$field] = $utcDate->format('c');
+        }
+      }
+      echo json_encode($data, JSON_NUMERIC_CHECK);
     } else {
       echo json_encode(['error' => 'Task not found or no changes made']);
     }
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Failed to update Task: ' . $e->getMessage()]);
+  }
+  exit;
+}
+
+// fungsi untuk menangani request DELETE
+function handleDelete($pdo)
+{
+  // validasi input
+  if (!isset($_GET['id'])) {
+    http_response_code(400);
+    echo json_encode(["message" => "ID is required"]);
+    exit;
+  }
+
+  try {
+    $id = intval($_GET['id']);
+
+    // hapus data yang dipilih
+    $stmt = $pdo->prepare("DELETE FROM tasks WHERE id = :id");
+    $stmt->execute([":id" => $id]);
+    if ($stmt->rowCount() > 0) {
+      echo json_encode(["message" => "Task has been deleted", "id" => $id], JSON_NUMERIC_CHECK);
+    } else {
+      echo json_encode(['error' => 'Task not found or no changes made']);
+    }
+  } catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to delete Task: ' . $e->getMessage()]);
   }
   exit;
 }

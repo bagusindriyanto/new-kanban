@@ -30,7 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import useActivities from '@/stores/activityStore';
 import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
-import useModal from '@/stores/modalStore';
+import useFormModal from '@/stores/formModalStore';
 
 const FormSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
@@ -47,7 +47,7 @@ export default function TaskForm() {
   const addTask = useTasks((state) => state.addTask);
   const error = useTasks((state) => state.error);
   // Close Modal
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -56,7 +56,7 @@ export default function TaskForm() {
   const onSubmit = async (data) => {
     await toast.promise(addTask(data), {
       loading: 'Sedang mengirim...',
-      success: 'Task telah ditambahkan',
+      success: 'Task berhasil ditambahkan',
       error: `Error: ${error}`,
     });
     form.reset(); // reset form setelah submit

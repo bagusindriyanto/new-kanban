@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const useModal = create((set) => ({
+const useFormModal = create((set) => ({
   isModalOpen: false,
   modalTitle: null,
   formId: null,
@@ -9,4 +9,4 @@ const useModal = create((set) => ({
   setFormId: (id) => set({ formId: id }),
 }));
 
-export default useModal;
+export default useFormModal;

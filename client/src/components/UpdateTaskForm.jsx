@@ -41,7 +41,7 @@ import { Textarea } from '@/components/ui/textarea';
 import useActivities from '@/stores/activityStore';
 import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
-import useModal from '@/stores/modalStore';
+import useFormModal from '@/stores/formModalStore';
 
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
@@ -56,7 +56,7 @@ const FormSchema = z.object({
   status: z.enum(['todo', 'on progress', 'done', 'archived'], {
     error: 'Status harus dipilih.',
   }),
-  minute_pause: z
+  minute_pause: z.coerce
     .number()
     .min(0, 'Durasi pause harus 0 atau lebih.')
     .default(0),
@@ -65,13 +65,13 @@ const FormSchema = z.object({
     .optional()
     .transform((val) => val ?? false),
   detail: z.string().optional(),
-  timestamp_todo: z.date('Tanggal tidak sesuai.'),
+  timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
   // .transform((val) => {
   //   return new Date(val).toISOString();
   // })
-  timestamp_progress: z.date('Tanggal tidak sesuai.').nullish(),
-  timestamp_done: z.date('Tanggal tidak sesuai.').nullish(),
-  timestamp_archived: z.date('Tanggal tidak sesuai.').nullish(),
+  timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
+  timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
+  timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
 });
 
 export default function UpdateTaskForm() {
@@ -79,7 +79,7 @@ export default function UpdateTaskForm() {
   const contents = useActivities((state) => state.activities);
   // Fetch pics
   const pics = usePics((state) => state.pics);
-  // Fetch selected task value
+  // Fetch task yang dipilih
   const tasks = useTasks((state) => state.tasks);
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
   const task = tasks.filter((task) => task.id === selectedTaskId)[0];
@@ -89,9 +89,9 @@ export default function UpdateTaskForm() {
   const error = useTasks((state) => state.error);
 
   // Close Modal
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 
-  // Set nilai awal
+  // Set nilai awal form
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -99,7 +99,7 @@ export default function UpdateTaskForm() {
       pic_id: task.pic_id ?? undefined,
       status: task.status ?? undefined,
       minute_pause: task.minute_pause ?? undefined,
-      pause_time: task.pause_time ?? false,
+      pause_time: task.pause_time ? true : false,
       detail: task.detail ?? undefined,
       timestamp_todo: task.timestamp_todo
         ? new Date(task.timestamp_todo)
@@ -116,18 +116,18 @@ export default function UpdateTaskForm() {
     },
   });
 
+  // Submit form
   const onSubmit = async (data) => {
-    // Hitung beberapa nilai
+    // Hitung minute_activity
     const minute_activity =
       data.timestamp_progress && data.timestamp_done
         ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000)
         : 0;
     // Ubah timestamp ke ISOString
-    const now = new Date();
     const taskData = {
       ...data,
       minute_activity,
-      pause_time: data.pause_time ? now.toISOString() : null,
+      pause_time: data.pause_time ? new Date().toISOString() : null,
       timestamp_todo: data.timestamp_todo.toISOString(),
       timestamp_progress: data.timestamp_progress
         ? data.timestamp_progress.toISOString()
@@ -140,23 +140,11 @@ export default function UpdateTaskForm() {
         : null,
     };
 
-    console.log(data);
-    console.log(taskData);
-    // toast({
-    //   title: 'You submitted the foll[0]lues:',
-    //   title: 'You submitted the following values:',
-    //   description: (
-    //     <pre>
-    //       <code>{JSON.stringify(taskData, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
-
-    // await toast.promise(updateTask(data), {
-    //   loading: 'Sedang memperbarui task...',
-    //   success: 'Task telah diperbarui',
-    //   error: `Error: ${error}`,
-    // });
+    await toast.promise(updateTask(selectedTaskId, taskData), {
+      loading: 'Sedang memperbarui task...',
+      success: 'Task berhasil diperbarui',
+      error: `Error: ${error}`,
+    });
     form.reset(); // reset form setelah submit
     setIsModalOpen(false);
   };
@@ -317,7 +305,9 @@ export default function UpdateTaskForm() {
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel className="gap-1">
+                    Status<span className="text-red-500">*</span>
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -349,15 +339,13 @@ export default function UpdateTaskForm() {
               name="minute_pause"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Lama Pause</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="0 Menit"
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
+                  <FormLabel>Durasi Pause</FormLabel>
+                  <div className="flex items-center gap-3">
+                    <FormControl>
+                      <Input type="number" {...field} className="w-1/2" />
+                    </FormControl>
+                    <p>Menit</p>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -370,7 +358,9 @@ export default function UpdateTaskForm() {
               name="pause_time"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Activity di Pause?</FormLabel>
+                  <FormLabel className="gap-1">
+                    Activity di Pause?<span className="text-red-500">*</span>
+                  </FormLabel>
                   <div className="flex justify-center items-center h-9 gap-3">
                     <p>Tidak</p>
                     <FormControl>
@@ -395,7 +385,9 @@ export default function UpdateTaskForm() {
             name="timestamp_todo"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-left">Timestamp To Do</FormLabel>
+                <FormLabel className="text-left gap-1">
+                  Timestamp To Do<span className="text-red-500">*</span>
+                </FormLabel>
                 <Popover>
                   <FormControl>
                     <PopoverTrigger asChild>
@@ -446,8 +438,8 @@ export default function UpdateTaskForm() {
             name="timestamp_progress"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-left">
-                  Timestamp On Progress
+                <FormLabel className="text-left gap-1">
+                  Timestamp On Progress<span className="text-red-500">*</span>
                 </FormLabel>
                 <Popover>
                   <FormControl>
@@ -499,7 +491,9 @@ export default function UpdateTaskForm() {
             name="timestamp_done"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-left">Timestamp Done</FormLabel>
+                <FormLabel className="text-left gap-1">
+                  Timestamp Done<span className="text-red-500">*</span>
+                </FormLabel>
                 <Popover>
                   <FormControl>
                     <PopoverTrigger asChild>
@@ -550,7 +544,9 @@ export default function UpdateTaskForm() {
             name="timestamp_archived"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-left">Timestamp Archived</FormLabel>
+                <FormLabel className="text-left gap-1">
+                  Timestamp Archived<span className="text-red-500">*</span>
+                </FormLabel>
                 <Popover>
                   <FormControl>
                     <PopoverTrigger asChild>

@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import usePics from '@/stores/picStore';
-import useModal from '@/stores/modalStore';
+import useFormModal from '@/stores/formModalStore';
 
 const FormSchema = z.object({
   pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
@@ -23,7 +23,7 @@ export default function PICForm() {
   const addPic = usePics((state) => state.addPic);
   const error = usePics((state) => state.error);
   // Close Modal
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),

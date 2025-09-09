@@ -14,8 +14,9 @@ import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { PauseIcon } from '@heroicons/react/24/solid';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import useModal from '@/stores/modalStore';
+import useFormModal from '@/stores/formModalStore.js';
 import useTasks from '@/stores/taskStore';
+import useConfirmModal from '@/stores/confirmModalStore.js';
 // import { Trash2Icon } from 'lucide-react';
 
 const TaskCard = ({ picName, task }) => {
@@ -34,23 +35,35 @@ const TaskCard = ({ picName, task }) => {
     pause_time,
   } = task;
 
-  // State untuk modal
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
-  const setModalTitle = useModal((state) => state.setModalTitle);
-  const setFormId = useModal((state) => state.setFormId);
+  // State untuk form modal
+  const setIsFormModalOpen = useFormModal((state) => state.setIsModalOpen);
+  const setFormModalTitle = useFormModal((state) => state.setModalTitle);
+  const setFormId = useFormModal((state) => state.setFormId);
+
+  // State untuk confirm modal
+  const setIsConfirmModalOpen = useConfirmModal(
+    (state) => state.setIsModalOpen
+  );
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
 
-  const handleOpenModal = (taskId, title, formId) => {
+  const handleFormModal = (taskId, title, formId) => {
     // Buka modalnya
-    setIsModalOpen(true);
+    setIsFormModalOpen(true);
     // Set id task yang dipilih
     setSelectedTaskId(taskId);
     // Set tipe modalnya
-    setModalTitle(title);
+    setFormModalTitle(title);
     // Set id formnya
     setFormId(formId);
+  };
+
+  const handleConfirmModal = (taskId) => {
+    // Buka modalnya
+    setIsConfirmModalOpen(true);
+    // Set id task yang dipilih
+    setSelectedTaskId(taskId);
   };
 
   // Hooks untuk elemen draggable
@@ -161,7 +174,7 @@ const TaskCard = ({ picName, task }) => {
                 <DropdownMenuItem className="m-0 p-0">
                   <button
                     onClick={() =>
-                      handleOpenModal(id, 'Edit Task', 'updateTask')
+                      handleFormModal(id, 'Edit Task', 'updateTask')
                     }
                     className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
                   >
@@ -170,7 +183,10 @@ const TaskCard = ({ picName, task }) => {
                   </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="m-0 p-0">
-                  <button className="cursor-pointer size-full p-2 flex text-center items-center gap-2">
+                  <button
+                    onClick={() => handleConfirmModal(id)}
+                    className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
+                  >
                     <TrashIcon className="text-red-500" />
                     <span className="text-red-500">Hapus</span>
                   </button>

@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogFooter,
   DialogTitle,
@@ -12,20 +11,19 @@ import ActivityForm from './ActivityForm';
 import PICForm from './PICForm';
 import TaskForm from './TaskForm';
 import UpdateTaskForm from './UpdateTaskForm';
-import useModal from '@/stores/modalStore';
+import useFormModal from '@/stores/formModalStore';
 
-const Modal = () => {
-  const isModalOpen = useModal((state) => state.isModalOpen);
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
-  const title = useModal((state) => state.modalTitle);
-  const formId = useModal((state) => state.formId);
+const FormModal = () => {
+  const isModalOpen = useFormModal((state) => state.isModalOpen);
+  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+  const title = useFormModal((state) => state.modalTitle);
+  const formId = useFormModal((state) => state.formId);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription></DialogDescription>
         </DialogHeader>
         {formId === 'addActivity' && <ActivityForm />}
         {formId === 'addPic' && <PICForm />}
@@ -42,7 +40,7 @@ const Modal = () => {
             </Button>
           </DialogClose>
           <Button className="cursor-pointer" type="submit" form={formId}>
-            Kirim
+            {formId === 'updateTask' ? 'Edit' : 'Tambah'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -50,4 +48,4 @@ const Modal = () => {
   );
 };
 
-export default Modal;
+export default FormModal;

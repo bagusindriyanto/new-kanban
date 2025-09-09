@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import useActivities from '@/stores/activityStore';
-import useModal from '@/stores/modalStore';
+import useFormModal from '@/stores/formModalStore';
 
 const FormSchema = z.object({
   activity: z
@@ -26,7 +26,7 @@ export default function ActivityForm() {
   const addActivity = useActivities((state) => state.addActivity);
   const error = useActivities((state) => state.error);
   // Close Modal
-  const setIsModalOpen = useModal((state) => state.setIsModalOpen);
+  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
