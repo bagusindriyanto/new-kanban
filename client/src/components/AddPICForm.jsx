@@ -19,7 +19,7 @@ const FormSchema = z.object({
   pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
 });
 
-export default function PICForm() {
+export default function AddPICForm() {
   const addPic = usePics((state) => state.addPic);
   const error = usePics((state) => state.error);
   // Close Modal
@@ -32,8 +32,8 @@ export default function PICForm() {
     },
   });
 
-  const onSubmit = async (data) => {
-    await toast.promise(addPic(data.pic), {
+  const onSubmit = (data) => {
+    toast.promise(addPic(data.pic), {
       loading: 'Sedang mengirim...',
       success: `"${data.pic}" telah ditambahkan ke daftar PIC`,
       error: `Error: ${error}`,

@@ -25,7 +25,7 @@ export default function ConfirmModal() {
       success: 'Task berhasil dihapus',
       error: `Error: ${error}`,
     });
-    // setIsModalOpen(false);
+    setIsModalOpen(false);
   };
   return (
     <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>

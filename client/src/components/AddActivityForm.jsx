@@ -22,7 +22,7 @@ const FormSchema = z.object({
     .nonempty({ message: 'Mohon tuliskan nama activity.' }),
 });
 
-export default function ActivityForm() {
+export default function AddActivityForm() {
   const addActivity = useActivities((state) => state.addActivity);
   const error = useActivities((state) => state.error);
   // Close Modal
@@ -35,8 +35,8 @@ export default function ActivityForm() {
     },
   });
 
-  const onSubmit = async (data) => {
-    await toast.promise(addActivity(data.activity), {
+  const onSubmit = (data) => {
+    toast.promise(addActivity(data.activity), {
       loading: 'Sedang mengirim...',
       success: `"${data.activity}" telah ditambahkan ke daftar activity`,
       error: `Error: ${error}`,

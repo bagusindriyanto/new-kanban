@@ -38,7 +38,7 @@ const FormSchema = z.object({
   detail: z.string().optional(),
 });
 
-export default function TaskForm() {
+export default function AddTaskForm() {
   // Fetch activity
   const contents = useActivities((state) => state.activities);
   // Fetch pics
@@ -53,8 +53,8 @@ export default function TaskForm() {
     resolver: zodResolver(FormSchema),
   });
 
-  const onSubmit = async (data) => {
-    await toast.promise(addTask(data), {
+  const onSubmit = (data) => {
+    toast.promise(addTask(data), {
       loading: 'Sedang mengirim...',
       success: 'Task berhasil ditambahkan',
       error: `Error: ${error}`,

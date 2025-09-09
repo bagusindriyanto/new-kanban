@@ -4,7 +4,7 @@ import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Toaster } from '@/components/ui/sonner';
 import NavButton from './components/NavButton';
-import Column from './components/Column';
+import StatusColumn from './components/StatusColumn';
 import FormModal from './components/FormModal';
 import ConfirmModal from './components/ConfirmModal';
 import useActivities from './stores/activityStore';
@@ -111,7 +111,7 @@ const App = () => {
           modifiers={[restrictToWindowEdges]}
         >
           {columns.map((column) => (
-            <Column
+            <StatusColumn
               key={column.id}
               id={column.id}
               title={column.title}

@@ -7,9 +7,9 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import ActivityForm from './ActivityForm';
-import PICForm from './PICForm';
-import TaskForm from './TaskForm';
+import AddActivityForm from './AddActivityForm';
+import AddPICForm from './AddPICForm';
+import AddTaskForm from './AddTaskForm';
 import UpdateTaskForm from './UpdateTaskForm';
 import useFormModal from '@/stores/formModalStore';
 
@@ -25,9 +25,9 @@ const FormModal = () => {
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        {formId === 'addActivity' && <ActivityForm />}
-        {formId === 'addPic' && <PICForm />}
-        {formId === 'addTask' && <TaskForm />}
+        {formId === 'addActivity' && <AddActivityForm />}
+        {formId === 'addPic' && <AddPICForm />}
+        {formId === 'addTask' && <AddTaskForm />}
         {formId === 'updateTask' && <UpdateTaskForm />}
         <DialogFooter>
           <DialogClose asChild>

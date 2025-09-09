@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, Trash2Icon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -117,7 +117,7 @@ export default function UpdateTaskForm() {
   });
 
   // Submit form
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     // Hitung minute_activity
     const minute_activity =
       data.timestamp_progress && data.timestamp_done
@@ -141,7 +141,7 @@ export default function UpdateTaskForm() {
         : null,
     };
 
-    await toast.promise(updateTask(selectedTaskId, taskData), {
+    toast.promise(updateTask(selectedTaskId, taskData), {
       loading: 'Sedang memperbarui task...',
       success: 'Task berhasil diperbarui',
       error: `Error: ${error}`,
@@ -428,11 +428,14 @@ export default function UpdateTaskForm() {
                       }
                       initialFocus
                     />
-                    <div className="px-3 py-2 border-t border-border">
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
                       />
+                      <Button variant="ghost" disabled>
+                        <Trash2Icon />
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -484,11 +487,19 @@ export default function UpdateTaskForm() {
                       }
                       initialFocus
                     />
-                    <div className="px-3 py-2 border-t border-border">
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
                       />
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => field.onChange(undefined)}
+                      >
+                        <Trash2Icon />
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -540,11 +551,19 @@ export default function UpdateTaskForm() {
                       }
                       initialFocus
                     />
-                    <div className="px-3 py-2 border-t border-border">
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
                       />
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => field.onChange(undefined)}
+                      >
+                        <Trash2Icon />
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -596,11 +615,19 @@ export default function UpdateTaskForm() {
                       }
                       initialFocus
                     />
-                    <div className="px-3 py-2 border-t border-border">
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
                       <TimePickerDemo
                         setDate={field.onChange}
                         date={field.value}
                       />
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => field.onChange(undefined)}
+                      >
+                        <Trash2Icon />
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>

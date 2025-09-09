@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import TaskCard from './TaskCard';
 
-const Column = ({ id, title, pics, tasks }) => {
+const StatusColumn = ({ id, title, pics, tasks }) => {
   // Hooks untuk element droppable
   const { setNodeRef, over } = useDroppable({ id });
 
@@ -34,4 +34,4 @@ const Column = ({ id, title, pics, tasks }) => {
   );
 };
 
-export default Column;
+export default StatusColumn;
