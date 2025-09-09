@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import useConfirmModal from '@/stores/confirmModalStore';
 import useTasks from '@/stores/taskStore';
+import { toast } from 'sonner';
 
 export default function ConfirmModal() {
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
@@ -42,7 +43,7 @@ export default function ConfirmModal() {
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDeleteTask}
-            className="cursor-pointer bg-red-500"
+            className="cursor-pointer bg-red-500 hover:bg-red-600"
           >
             Hapus
           </AlertDialogAction>

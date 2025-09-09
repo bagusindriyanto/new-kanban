@@ -1,19 +1,20 @@
 import { create } from 'zustand';
+import axios from 'axios';
 
 const usePics = create((set) => ({
   pics: [],
   isLoading: false,
   error: null,
+
   fetchPics: async () => {
     // Set isLoading to true while fetching data
     set({ isLoading: true, error: null });
 
     try {
-      const res = await fetch('http://localhost/kanban/api/pics.php');
-      const data = await res.json();
-      set({ pics: data });
-    } catch (error) {
-      set({ error: error.message });
+      const res = await axios.get('http://localhost/kanban/api/pics.php');
+      set({ pics: res.data });
+    } catch (err) {
+      set({ error: err.message });
     } finally {
       set({ isLoading: false });
     }
@@ -22,16 +23,14 @@ const usePics = create((set) => ({
   addPic: async (name) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch('http://localhost/kanban/api/pics.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
+      const res = await axios.post('http://localhost/kanban/api/pics.php', {
+        name,
       });
-      if (!res.ok) throw new Error('Failed to add PIC');
-      const newPic = await res.json();
-      set((state) => ({ pics: [newPic, ...state.pics] }));
-    } catch (error) {
-      set({ error: error.message });
+      if (res.status === 201) {
+        set((state) => ({ pics: [res.data, ...state.pics] }));
+      }
+    } catch (err) {
+      set({ error: err.message });
     } finally {
       set({ isLoading: false });
     }

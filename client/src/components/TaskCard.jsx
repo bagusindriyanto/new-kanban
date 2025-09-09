@@ -1,6 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,16 +7,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatTimestamp } from '../services/formatTimestamp.js';
-import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { GripVertical } from 'lucide-react';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { PauseIcon } from '@heroicons/react/24/solid';
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import {
+  PauseIcon,
+  PlayIcon,
+  EllipsisHorizontalIcon,
+} from '@heroicons/react/24/solid';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import useFormModal from '@/stores/formModalStore.js';
-import useTasks from '@/stores/taskStore';
 import useConfirmModal from '@/stores/confirmModalStore.js';
-// import { Trash2Icon } from 'lucide-react';
+import useTasks from '@/stores/taskStore';
 
 const TaskCard = ({ picName, task }) => {
   // Destructure isi props
@@ -145,7 +144,7 @@ const TaskCard = ({ picName, task }) => {
                   status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
                 }`}
               >
-                {pause_time ? <PauseIcon /> : <p>Play</p>}
+                {pause_time ? <PlayIcon /> : <PauseIcon />}
               </button>
             )}
             {/* <button className="rounded-full size-6 bg-black/15 text-white p-1">

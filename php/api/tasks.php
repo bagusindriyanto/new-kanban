@@ -137,8 +137,10 @@ function handlePatch($pdo, $input)
           $data[$field] = $utcDate->format('c');
         }
       }
+      http_response_code(201);
       echo json_encode($data, JSON_NUMERIC_CHECK);
     } else {
+      http_response_code(404);
       echo json_encode(['error' => 'Task not found or no changes made']);
     }
   } catch (PDOException $e) {
@@ -167,6 +169,7 @@ function handleDelete($pdo)
     if ($stmt->rowCount() > 0) {
       echo json_encode(["message" => "Task has been deleted", "id" => $id], JSON_NUMERIC_CHECK);
     } else {
+      http_response_code(404);
       echo json_encode(['error' => 'Task not found or no changes made']);
     }
   } catch (PDOException $e) {

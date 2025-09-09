@@ -121,7 +121,8 @@ export default function UpdateTaskForm() {
     // Hitung minute_activity
     const minute_activity =
       data.timestamp_progress && data.timestamp_done
-        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000)
+        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
+          data.minute_pause
         : 0;
     // Ubah timestamp ke ISOString
     const taskData = {
@@ -342,7 +343,12 @@ export default function UpdateTaskForm() {
                   <FormLabel>Durasi Pause</FormLabel>
                   <div className="flex items-center gap-3">
                     <FormControl>
-                      <Input type="number" {...field} className="w-1/2" />
+                      <Input
+                        type="number"
+                        min="0"
+                        {...field}
+                        className="w-1/2"
+                      />
                     </FormControl>
                     <p>Menit</p>
                   </div>
@@ -417,6 +423,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       initialFocus
                     />
                     <div className="px-3 py-2 border-t border-border">
@@ -470,6 +479,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       initialFocus
                     />
                     <div className="px-3 py-2 border-t border-border">
@@ -523,6 +535,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       initialFocus
                     />
                     <div className="px-3 py-2 border-t border-border">
@@ -576,6 +591,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       initialFocus
                     />
                     <div className="px-3 py-2 border-t border-border">

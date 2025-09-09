@@ -45,7 +45,9 @@ const useTasks = create((set) => ({
         minute_activity: 0,
         pause_time: null,
       });
-      set((state) => ({ tasks: [res.data, ...state.tasks] }));
+      if (res.status === 201) {
+        set((state) => ({ tasks: [res.data, ...state.tasks] }));
+      }
     } catch (err) {
       set({ error: err.message });
     } finally {
@@ -60,7 +62,7 @@ const useTasks = create((set) => ({
         `http://localhost/kanban/api/tasks.php?id=${taskId}`,
         data
       );
-      if (res.data.status === 'success') {
+      if (res.status === 201) {
         set((state) => ({
           tasks: state.tasks.map((t) =>
             t.id === taskId ? { ...t, ...res.data } : t
@@ -80,9 +82,9 @@ const useTasks = create((set) => ({
       const res = await axios.delete(
         `http://localhost/kanban/api/tasks.php?id=${taskId}`
       );
-      if (res.data.status === 'success') {
+      if (res.status === 200) {
         set((state) => ({
-          tasks: state.tasks.filter((t) => t.id !== taskId),
+          tasks: state.tasks.filter((t) => t.id !== res.data.id),
         }));
       }
     } catch (err) {

@@ -1,36 +1,36 @@
 import { create } from 'zustand';
+import axios from 'axios';
 
 const useActivities = create((set) => ({
   activities: [],
   isLoading: false,
   error: null,
+
   fetchActivities: async () => {
     // Set isLoading to true while fetching data
     set({ isLoading: true, error: null });
-
     try {
-      const res = await fetch('http://localhost/kanban/api/activities.php');
-      const data = await res.json();
-      set({ activities: data });
-    } catch (error) {
-      set({ error: error.message });
+      const res = await axios.get('http://localhost/kanban/api/activities.php');
+      set({ activities: res.data });
+    } catch (err) {
+      set({ error: err.message });
     } finally {
       set({ isLoading: false });
     }
   },
+
   addActivity: async (name) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch('http://localhost/kanban/api/activities.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      });
-      if (!res.ok) throw new Error('Failed to add activity');
-      const newActivity = await res.json();
-      set((state) => ({ activities: [newActivity, ...state.activities] }));
-    } catch (error) {
-      set({ error: error.message });
+      const res = await axios.post(
+        'http://localhost/kanban/api/activities.php',
+        { name }
+      );
+      if (res.status === 201) {
+        set((state) => ({ activities: [res.data, ...state.activities] }));
+      }
+    } catch (err) {
+      set({ error: err.message });
     } finally {
       set({ isLoading: false });
     }
