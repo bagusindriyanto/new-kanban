@@ -17,11 +17,13 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import useFormModal from '@/stores/formModalStore.js';
 import useConfirmModal from '@/stores/confirmModalStore.js';
 import useTasks from '@/stores/taskStore';
+import usePics from '@/stores/picStore.js';
 
-const TaskCard = ({ picName, task }) => {
+const TaskCard = ({ task }) => {
   // Destructure isi props
   const {
     id,
+    pic_id,
     status,
     content,
     detail,
@@ -33,6 +35,10 @@ const TaskCard = ({ picName, task }) => {
     minute_activity,
     pause_time,
   } = task;
+
+  // State untuk PIC
+  const pics = usePics((state) => state.pics);
+  const picName = pics.find((p) => p.id === pic_id)?.name;
 
   // State untuk form modal
   const setIsFormModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -66,25 +72,15 @@ const TaskCard = ({ picName, task }) => {
   };
 
   // Hooks untuk elemen draggable
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    isDragging,
-    transform,
-  } = useDraggable({
-    id,
-  });
-
-  const style = { transform: CSS.Translate.toString(transform) };
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, isDragging } =
+    useDraggable({
+      id,
+    });
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
       className={`cursor-default flex flex-row rounded-lg overflow-hidden shadow-sm hover:shadow-lg
-        ${isDragging ? 'scale-105' : ''}
         ${status === 'todo' ? 'bg-rose-500' : ''} 
         ${status === 'on progress' ? 'bg-orange-500' : ''} 
         ${status === 'done' ? 'bg-green-500' : ''}

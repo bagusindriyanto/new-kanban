@@ -1,6 +1,6 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { DndContext } from '@dnd-kit/core';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Toaster } from '@/components/ui/sonner';
 import NavButton from './components/NavButton';
@@ -11,12 +11,18 @@ import useActivities from './stores/activityStore';
 import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
 import useFormModal from './stores/formModalStore';
+import TaskCard from './components/TaskCard';
 
 const App = () => {
   // State untuk data
   const pics = usePics((state) => state.pics);
   const tasks = useTasks((state) => state.tasks);
   const moveTask = useTasks((state) => state.moveTask);
+
+  // State untuk card yang sedang di drag
+  const [activeId, setActiveId] = useState(null);
+  const [activeTask, setActiveTask] = useState(null);
+  const [activePicName, setActivePicName] = useState(null);
 
   // State untuk modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -70,9 +76,23 @@ const App = () => {
   };
 
   // Fungsi untuk handle task yang di drag
+  // Ketika drag dimulai
+  const handleDragStart = (event) => {
+    const { active } = event;
+    setActiveId(active.id);
+    const task = tasks.find((task) => active.id === task.id);
+    setActiveTask(task);
+    const picName = pics.find((p) => p.id === task.pic_id)?.name;
+    setActivePicName(picName);
+  };
+
+  // Ketika drag berakhir
   const handleDragEnd = (event) => {
     // Ambil posisi drag element = active dan drop element = over
     const { active, over } = event;
+    setActiveId(null);
+    setActiveTask(null);
+    setActivePicName(null);
     // Jika element di drag ke daerah yang bukan droppable
     console.log('Active: ', active.id, '; Over: ', over);
 
@@ -107,6 +127,7 @@ const App = () => {
       {/* Main */}
       <main className="flex gap-4 p-4 flex-1">
         <DndContext
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           modifiers={[restrictToWindowEdges]}
         >
@@ -115,10 +136,12 @@ const App = () => {
               key={column.id}
               id={column.id}
               title={column.title}
-              pics={pics}
               tasks={tasks.filter((task) => task.status === column.id)}
             />
           ))}
+          <DragOverlay>
+            {activeId ? <TaskCard task={activeTask} /> : null}
+          </DragOverlay>
         </DndContext>
       </main>
       {/* Footer */}
