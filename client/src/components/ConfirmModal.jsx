@@ -1,16 +1,30 @@
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import useConfirmModal from '@/stores/confirmModalStore';
 import useTasks from '@/stores/taskStore';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+
+const FormSchema = z.object({
+  password: z.string().nonempty({ message: 'Mohon isi password.' }),
+});
 
 export default function ConfirmModal() {
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
@@ -19,14 +33,32 @@ export default function ConfirmModal() {
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
   const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
 
-  const handleDeleteTask = async () => {
-    await toast.promise(deleteTask(selectedTaskId), {
-      loading: 'Sedang menghapus task...',
-      success: 'Task berhasil dihapus',
-      error: `Error: ${error}`,
-    });
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      password: '',
+    },
+  });
+
+  const onSubmit = (data) => {
+    if (data.password === 'Semarang@2025') {
+      toast.promise(deleteTask(selectedTaskId), {
+        loading: 'Sedang menghapus task...',
+        success: 'Task berhasil dihapus',
+        error: `Error: ${error}`,
+      });
+      setIsModalOpen(false);
+    } else {
+      toast.error('Password salah!');
+    }
+    form.reset();
+  };
+
+  const onClose = () => {
+    form.setValue('password', '');
     setIsModalOpen(false);
   };
+
   return (
     <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <AlertDialogContent>
@@ -36,18 +68,44 @@ export default function ConfirmModal() {
             Tindakan ini tidak dapat dibatalkan. Tindakan ini akan menghapus
             task secara permanen.
           </AlertDialogDescription>
+          <Form {...form}>
+            <form
+              id="deleteTask"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="mt-1 space-y-6"
+            >
+              {/* Input Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex gap-1">
+                      Masukkan Password<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="password" autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Button Modal */}
+              <div className="w-full flex justify-end gap-2">
+                <Button
+                  variant="secondary"
+                  className="cursor-pointer"
+                  onClick={onClose}
+                >
+                  Batal
+                </Button>
+                <Button variant="destructive" className="cursor-pointer">
+                  Hapus
+                </Button>
+              </div>
+            </form>
+          </Form>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="cursor-pointer">
-            Batal
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleDeleteTask}
-            className="cursor-pointer bg-red-500 hover:bg-red-600"
-          >
-            Hapus
-          </AlertDialogAction>
-        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

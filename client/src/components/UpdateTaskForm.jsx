@@ -66,12 +66,10 @@ const FormSchema = z.object({
     .transform((val) => val ?? false),
   detail: z.string().optional(),
   timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
-  // .transform((val) => {
-  //   return new Date(val).toISOString();
-  // })
   timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
   timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
   timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
+  password: z.string().nonempty({ message: 'Mohon isi password.' }),
 });
 
 export default function UpdateTaskForm() {
@@ -113,41 +111,49 @@ export default function UpdateTaskForm() {
       timestamp_archived: task.timestamp_archived
         ? new Date(task.timestamp_archived)
         : undefined,
+      password: '',
     },
   });
 
   // Submit form
   const onSubmit = (data) => {
-    // Hitung minute_activity
-    const minute_activity =
-      data.timestamp_progress && data.timestamp_done
-        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
-          data.minute_pause
-        : 0;
-    // Ubah timestamp ke ISOString
-    const taskData = {
-      ...data,
-      minute_activity,
-      pause_time: data.pause_time ? new Date().toISOString() : null,
-      timestamp_todo: data.timestamp_todo.toISOString(),
-      timestamp_progress: data.timestamp_progress
-        ? data.timestamp_progress.toISOString()
-        : null,
-      timestamp_done: data.timestamp_done
-        ? data.timestamp_done.toISOString()
-        : null,
-      timestamp_archived: data.timestamp_archived
-        ? data.timestamp_archived.toISOString()
-        : null,
-    };
+    // Cek password
+    if (data.password === 'Semarang@2025') {
+      // Hitung minute_activity
+      const minute_activity =
+        data.timestamp_progress && data.timestamp_done
+          ? Math.floor(
+              (data.timestamp_done - data.timestamp_progress) / 60000
+            ) - data.minute_pause
+          : 0;
+      // Ubah timestamp ke ISOString
+      const taskData = {
+        ...data,
+        minute_activity,
+        pause_time: data.pause_time ? new Date().toISOString() : null,
+        timestamp_todo: data.timestamp_todo.toISOString(),
+        timestamp_progress: data.timestamp_progress
+          ? data.timestamp_progress.toISOString()
+          : null,
+        timestamp_done: data.timestamp_done
+          ? data.timestamp_done.toISOString()
+          : null,
+        timestamp_archived: data.timestamp_archived
+          ? data.timestamp_archived.toISOString()
+          : null,
+      };
 
-    toast.promise(updateTask(selectedTaskId, taskData), {
-      loading: 'Sedang memperbarui task...',
-      success: 'Task berhasil diperbarui',
-      error: `Error: ${error}`,
-    });
-    form.reset(); // reset form setelah submit
-    setIsModalOpen(false);
+      toast.promise(updateTask(selectedTaskId, taskData), {
+        loading: 'Sedang memperbarui task...',
+        success: 'Task berhasil diperbarui',
+        error: `Error: ${error}`,
+      });
+      form.reset(); // reset form setelah submit
+      setIsModalOpen(false);
+    } else {
+      toast.error('Password salah!');
+      form.setValue('password', '');
+    }
   };
 
   // Form
@@ -415,7 +421,7 @@ export default function UpdateTaskForm() {
                       </Button>
                     </PopoverTrigger>
                   </FormControl>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent side="left" className="w-auto p-0">
                     <Calendar
                       mode="single"
                       locale={id}
@@ -474,7 +480,7 @@ export default function UpdateTaskForm() {
                       </Button>
                     </PopoverTrigger>
                   </FormControl>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent side="right" className="w-auto p-0">
                     <Calendar
                       mode="single"
                       locale={id}
@@ -496,7 +502,9 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() => field.onChange(undefined)}
+                        onClick={() =>
+                          form.setValue('timestamp_progress', undefined)
+                        }
                       >
                         <Trash2Icon />
                       </Button>
@@ -538,7 +546,7 @@ export default function UpdateTaskForm() {
                       </Button>
                     </PopoverTrigger>
                   </FormControl>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent side="left" className="w-auto p-0">
                     <Calendar
                       mode="single"
                       locale={id}
@@ -560,7 +568,9 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() => field.onChange(undefined)}
+                        onClick={() =>
+                          form.setValue('timestamp_done', undefined)
+                        }
                       >
                         <Trash2Icon />
                       </Button>
@@ -602,7 +612,7 @@ export default function UpdateTaskForm() {
                       </Button>
                     </PopoverTrigger>
                   </FormControl>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent side="right" className="w-auto p-0">
                     <Calendar
                       mode="single"
                       locale={id}
@@ -624,7 +634,9 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() => field.onChange(undefined)}
+                        onClick={() =>
+                          form.setValue('timestamp_archived', undefined)
+                        }
                       >
                         <Trash2Icon />
                       </Button>
@@ -650,6 +662,23 @@ export default function UpdateTaskForm() {
                   className="resize-none"
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Input Password */}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex gap-1">
+                Masukkan Password<span className="text-red-500">*</span>
+              </FormLabel>
+              <FormControl>
+                <Input type="password" autoComplete="off" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

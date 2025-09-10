@@ -39,7 +39,15 @@ const FormModal = () => {
               Batal
             </Button>
           </DialogClose>
-          <Button className="cursor-pointer" type="submit" form={formId}>
+          <Button
+            className={`cursor-pointer ${
+              formId === 'updateTask'
+                ? 'bg-blue-600 hover:bg-blue-700'
+                : 'bg-green-600 hover:bg-green-700'
+            }`}
+            type="submit"
+            form={formId}
+          >
             {formId === 'updateTask' ? 'Edit' : 'Tambah'}
           </Button>
         </DialogFooter>
