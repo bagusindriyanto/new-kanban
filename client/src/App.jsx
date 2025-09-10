@@ -115,7 +115,6 @@ const App = () => {
               key={column.id}
               id={column.id}
               title={column.title}
-              pics={pics}
               tasks={tasks.filter((task) => task.status === column.id)}
             />
           ))}

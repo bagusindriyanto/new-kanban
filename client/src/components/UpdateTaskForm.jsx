@@ -502,9 +502,7 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() =>
-                          form.setValue('timestamp_progress', undefined)
-                        }
+                        onClick={() => field.onChange(undefined)}
                       >
                         <Trash2Icon />
                       </Button>
@@ -568,9 +566,7 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() =>
-                          form.setValue('timestamp_done', undefined)
-                        }
+                        onClick={() => field.onChange(undefined)}
                       >
                         <Trash2Icon />
                       </Button>
@@ -634,9 +630,7 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() =>
-                          form.setValue('timestamp_archived', undefined)
-                        }
+                        onClick={() => field.onChange(undefined)}
                       >
                         <Trash2Icon />
                       </Button>
