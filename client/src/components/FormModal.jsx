@@ -43,7 +43,7 @@ const FormModal = () => {
             className={`cursor-pointer ${
               formId === 'updateTask'
                 ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-green-600 hover:bg-green-700'
+                : 'bg-green-700 hover:bg-green-800'
             }`}
             type="submit"
             form={formId}

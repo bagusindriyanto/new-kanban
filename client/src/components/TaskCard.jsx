@@ -1,5 +1,3 @@
-import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,7 +5,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatTimestamp } from '../services/formatTimestamp.js';
-import { GripVertical } from 'lucide-react';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -246,164 +243,143 @@ const TaskCard = ({ task }) => {
     await updateTask(id, data);
   };
 
-  // Hooks untuk elemen draggable
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    isDragging,
-    transform,
-  } = useDraggable({
-    id,
-  });
-
-  const style = { transform: CSS.Translate.toString(transform) };
-
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      className={`cursor-default flex flex-row rounded-lg overflow-hidden shadow-sm hover:shadow-lg
-        ${isDragging ? 'scale-105' : ''}
-        ${status === 'todo' ? 'bg-rose-500' : ''} 
-        ${status === 'on progress' ? 'bg-orange-500' : ''} 
-        ${status === 'done' ? 'bg-green-500' : ''}
-        ${status === 'archived' ? 'bg-gray-500' : ''}`}
+      className={`grow px-3 py-2 rounded-lg overflow-hidden shadow-sm hover:shadow-lg
+        ${status === 'todo' ? 'bg-todo-500' : ''} 
+        ${status === 'on progress' ? 'bg-progress-500' : ''} 
+        ${status === 'done' ? 'bg-done-500' : ''}
+        ${status === 'archived' ? 'bg-archived-500' : ''}`}
     >
-      {/* Handle Drag */}
-      <div
-        ref={setActivatorNodeRef}
-        {...listeners}
-        {...attributes}
-        className={`cursor-grab flex justify-center items-center text-white/50
-        ${status === 'todo' ? 'bg-rose-600' : ''} 
-        ${status === 'on progress' ? 'bg-orange-600' : ''} 
-        ${status === 'done' ? 'bg-green-600' : ''}
-        ${status === 'archived' ? 'bg-gray-600' : ''}`}
-      >
-        <GripVertical className="size-5" />
-      </div>
       {/* Content */}
-      <div className="flex-1 px-3 py-2">
-        <div className="flex justify-between gap-2 items-start">
-          <h3 className="font-bold text-lg text-white">{content}</h3>
-          <h4 className="font-medium text-base text-white">{picName || '-'}</h4>
-        </div>
-        <p className="mt-1 font-medium text-sm text-white">{detail}</p>
-        <div className="my-2 grid grid-cols-2 font-extralight text-[10px] text-white">
-          <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
-          <p>
-            Progress:{' '}
-            {timestamp_progress ? formatTimestamp(timestamp_progress) : '-'}
-          </p>
-          <p>Done: {timestamp_done ? formatTimestamp(timestamp_done) : '-'}</p>
-          <p>
-            Archived:{' '}
-            {timestamp_archived ? formatTimestamp(timestamp_archived) : '-'}
-          </p>
-          <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
-          <p>Pause Minutes: {totalPause}</p>
-        </div>
-        <div className="flex flex-row-reverse justify-between items-center">
-          <div className="flex gap-1">
-            {/* Control Button */}
+      <div className="flex justify-between gap-2 items-start">
+        <h3 className="font-bold text-lg text-white">{content}</h3>
+        <h4 className="font-medium text-base text-white">{picName || '-'}</h4>
+      </div>
+      <p className="mt-1 font-medium text-sm text-white">{detail}</p>
+      <div className="my-2 grid grid-cols-2 font-light text-[11px] text-white">
+        <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
+        <p>
+          Progress:{' '}
+          {timestamp_progress ? formatTimestamp(timestamp_progress) : '-'}
+        </p>
+        <p>Done: {timestamp_done ? formatTimestamp(timestamp_done) : '-'}</p>
+        <p>
+          Archived:{' '}
+          {timestamp_archived ? formatTimestamp(timestamp_archived) : '-'}
+        </p>
+        <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
+        <p>Pause Minutes: {totalPause}</p>
+      </div>
+      <div className="flex flex-row-reverse justify-between items-center">
+        <div className="flex gap-1">
+          {/* Control Button */}
+          {/* Tombol Kiri */}
+          <button
+            onClick={() => onMove(false)}
+            className={`cursor-pointer rounded-full size-6 text-white p-1 disabled:opacity-25 disabled:cursor-not-allowed transition duration-300 ease-in-out ${
+              status === 'todo' ? 'bg-todo-600 enabled:hover:bg-todo-400' : ''
+            } ${
+              status === 'on progress'
+                ? 'bg-progress-600 enabled:hover:bg-progress-400'
+                : ''
+            } ${
+              status === 'done' ? 'bg-done-600 enabled:hover:bg-done-400' : ''
+            } ${
+              status === 'archived'
+                ? 'bg-archived-600 enabled:hover:bg-archived-400'
+                : ''
+            }`}
+            disabled={status === 'todo' || status === 'archived' || isPaused}
+          >
+            <ArrowLeftIcon />
+          </button>
+          {/* Tombol Pause */}
+          {status === 'on progress' && (
             <button
-              onClick={() => onMove(false)}
+              onClick={togglePause}
               className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                status === 'todo' ? 'bg-rose-600 hover:bg-rose-400' : ''
+                status === 'todo' ? 'bg-todo-600 hover:bg-todo-400' : ''
               } ${
                 status === 'on progress'
-                  ? 'bg-orange-600 hover:bg-orange-400'
+                  ? 'bg-progress-600 hover:bg-progress-400'
                   : ''
-              } ${status === 'done' ? 'bg-green-600 hover:bg-green-400' : ''} ${
-                status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
+              } ${status === 'done' ? 'bg-done-600 hover:bg-done-400' : ''} ${
+                status === 'archived'
+                  ? 'bg-archived-600 hover:bg-archived-400'
+                  : ''
               }`}
-              disabled={status === 'todo' || status === 'archived' || isPaused}
             >
-              <ArrowLeftIcon />
+              {isPaused ? <PlayIcon /> : <PauseIcon />}
             </button>
-            {status === 'on progress' && (
+          )}
+          {/* Tombol Kanan */}
+          <button
+            onClick={() => onMove(true)}
+            className={`cursor-pointer rounded-full size-6 text-white p-1 disabled:opacity-25 disabled:cursor-not-allowed transition duration-300 ease-in-out ${
+              status === 'todo' ? 'bg-todo-600 enabled:hover:bg-todo-400' : ''
+            } ${
+              status === 'on progress'
+                ? 'bg-progress-600 enabled:hover:bg-progress-400'
+                : ''
+            } ${
+              status === 'done' ? 'bg-done-600 enabled:hover:bg-done-400' : ''
+            } ${
+              status === 'archived'
+                ? 'bg-archived-600 enabled:hover:bg-archived-400'
+                : ''
+            }`}
+            disabled={status === 'archived' || isPaused}
+          >
+            <ArrowRightIcon />
+          </button>
+          {/* Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <button
-                onClick={togglePause}
                 className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                  status === 'todo' ? 'bg-rose-600 hover:bg-rose-400' : ''
+                  status === 'todo' ? 'bg-todo-600 hover:bg-todo-400' : ''
                 } ${
                   status === 'on progress'
-                    ? 'bg-orange-600 hover:bg-orange-400'
+                    ? 'bg-progress-600 hover:bg-progress-400'
                     : ''
-                } ${
-                  status === 'done' ? 'bg-green-600 hover:bg-green-400' : ''
-                } ${
-                  status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
+                } ${status === 'done' ? 'bg-done-600 hover:bg-done-400' : ''} ${
+                  status === 'archived'
+                    ? 'bg-archived-600 hover:bg-archived-400'
+                    : ''
                 }`}
               >
-                {isPaused ? <PlayIcon /> : <PauseIcon />}
+                <EllipsisHorizontalIcon />
               </button>
-            )}
-            <button
-              onClick={() => onMove(true)}
-              className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                status === 'todo' ? 'bg-rose-600 hover:bg-rose-400' : ''
-              } ${
-                status === 'on progress'
-                  ? 'bg-orange-600 hover:bg-orange-400'
-                  : ''
-              } ${status === 'done' ? 'bg-green-600 hover:bg-green-400' : ''} ${
-                status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
-              }`}
-              disabled={status === 'archived' || isPaused}
-            >
-              <ArrowRightIcon />
-            </button>
-            {/* Dropdown Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem className="m-0 p-0">
                 <button
-                  className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                    status === 'todo' ? 'bg-rose-600 hover:bg-rose-400' : ''
-                  } ${
-                    status === 'on progress'
-                      ? 'bg-orange-600 hover:bg-orange-400'
-                      : ''
-                  } ${
-                    status === 'done' ? 'bg-green-600 hover:bg-green-400' : ''
-                  } ${
-                    status === 'archived' ? 'bg-gray-600 hover:bg-gray-400' : ''
-                  }`}
+                  onClick={() => handleFormModal('Edit Task', 'updateTask')}
+                  className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
                 >
-                  <EllipsisHorizontalIcon />
+                  <PencilSquareIcon />
+                  <span>Edit</span>
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem className="m-0 p-0">
-                  <button
-                    onClick={() => handleFormModal('Edit Task', 'updateTask')}
-                    className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
-                  >
-                    <PencilSquareIcon />
-                    <span>Edit</span>
-                  </button>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="m-0 p-0">
-                  <button
-                    onClick={handleConfirmModal}
-                    className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
-                  >
-                    <TrashIcon className="text-red-500" />
-                    <span className="text-red-500">Hapus</span>
-                  </button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          {(status === 'done' || status === 'archived') && (
-            <p className="font-medium text-sm text-white">
-              Activity Minutes:{' '}
-              <span className="font-normal">{minute_activity || 0}</span>
-            </p>
-          )}
+              </DropdownMenuItem>
+              <DropdownMenuItem className="m-0 p-0">
+                <button
+                  onClick={handleConfirmModal}
+                  className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
+                >
+                  <TrashIcon className="text-red-500" />
+                  <span className="text-red-500">Hapus</span>
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+        {(status === 'done' || status === 'archived') && (
+          <p className="font-medium text-sm text-white">
+            Activity Minutes:{' '}
+            <span className="font-normal">{minute_activity || 0}</span>
+          </p>
+        )}
       </div>
     </div>
   );

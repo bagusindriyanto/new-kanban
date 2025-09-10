@@ -124,3 +124,23 @@
   width: var(--radix-popover-trigger-width);
   max-height: var(--radix-popover-content-available-height);
 }
+
+@theme {
+  --color-todo-400: #ff7073;
+  --color-todo-500: #ff4d4f;
+  --color-todo-600: #f43235;
+
+  --color-progress-400: #fb9c37;
+  --color-progress-500: #fa8c16;
+  --color-progress-600: #d6740b;
+
+  --color-done-400: #65e326;
+  --color-done-500: #52c41a;
+  --color-done-600: #44a215;
+
+  --color-archived-400: #a3a3a3;
+  --color-archived-500: #8c8c8c;
+  --color-archived-600: #7a7a7a;
+
+  --color-nav: #001529;
+}

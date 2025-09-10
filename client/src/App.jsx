@@ -1,7 +1,5 @@
 import './App.css';
-import { useEffect, useState } from 'react';
-import { DndContext } from '@dnd-kit/core';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import NavButton from './components/NavButton';
 import StatusColumn from './components/StatusColumn';
@@ -14,9 +12,7 @@ import useFormModal from './stores/formModalStore';
 
 const App = () => {
   // State untuk data
-  const pics = usePics((state) => state.pics);
   const tasks = useTasks((state) => state.tasks);
-  const moveTask = useTasks((state) => state.moveTask);
 
   // State untuk modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -69,26 +65,10 @@ const App = () => {
     setFormId(id);
   };
 
-  // Fungsi untuk handle task yang di drag
-  const handleDragEnd = (event) => {
-    // Ambil posisi drag element = active dan drop element = over
-    const { active, over } = event;
-    // Jika element di drag ke daerah yang bukan droppable
-    console.log('Active: ', active.id, '; Over: ', over);
-
-    if (over && active.id !== over.id) {
-      // Update task ketika di drag
-      const taskId = active.id;
-      const newStatus = over.id;
-      // Update state tasks
-      moveTask(taskId, newStatus);
-    }
-  };
-
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between bg-sky-950 px-5 py-3">
+      <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
         <h1 className="text-2xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2">
           <NavButton
@@ -106,23 +86,17 @@ const App = () => {
       </header>
       {/* Main */}
       <main className="flex gap-4 p-4 flex-1">
-        <DndContext
-          onDragEnd={handleDragEnd}
-          modifiers={[restrictToWindowEdges]}
-        >
-          {columns.map((column) => (
-            <StatusColumn
-              key={column.id}
-              id={column.id}
-              title={column.title}
-              tasks={tasks.filter((task) => task.status === column.id)}
-            />
-          ))}
-        </DndContext>
+        {columns.map((column) => (
+          <StatusColumn
+            key={column.id}
+            title={column.title}
+            tasks={tasks.filter((task) => task.status === column.id)}
+          />
+        ))}
       </main>
       {/* Footer */}
-      <footer className="flex items-center justify-center bg-sky-950 py-2">
-        <p className="text-white">
+      <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
+        <p className="text-white font-medium">
           &copy; {new Date().getFullYear()} Kanban App
         </p>
       </footer>

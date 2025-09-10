@@ -1,31 +1,25 @@
-import { useDroppable } from '@dnd-kit/core';
 import TaskCard from './TaskCard';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-const StatusColumn = ({ id, title, tasks }) => {
-  // Hooks untuk element droppable
-  const { setNodeRef, over } = useDroppable({ id });
-
+const StatusColumn = ({ title, tasks }) => {
   return (
-    <div
-      className={`flex flex-1 w-80 flex-col rounded-lg bg-neutral-100 p-4 ${
-        over?.id === id &&
-        'bg-neutral-200 outline-2 outline-blue-500 outline-dashed'
-      }`}
-    >
+    <div className={`flex flex-1 flex-col rounded-lg bg-neutral-100`}>
       <h2
-        className={`text-xl mb-4 font-semibold
-        ${title === 'TO DO' ? 'text-rose-600' : ''} 
-        ${title === 'ON PROGRESS' ? 'text-orange-600' : ''} 
-        ${title === 'DONE' ? 'text-green-600' : ''}
-        ${title === 'ARCHIVED' ? 'text-slate-600' : ''}`}
+        className={`text-xl mb-4 font-semibold pt-4 px-4
+        ${title === 'TO DO' ? 'text-todo-600' : ''} 
+        ${title === 'ON PROGRESS' ? 'text-progress-600' : ''} 
+        ${title === 'DONE' ? 'text-done-600' : ''}
+        ${title === 'ARCHIVED' ? 'text-archived-600' : ''}`}
       >
         {title}
       </h2>
-      <div ref={setNodeRef} className="flex flex-col flex-1 gap-4">
-        {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
-        ))}
-      </div>
+      <ScrollArea className="flex-1 max-h-[calc(85.5dvh-56px-39px)] px-4">
+        <div className="flex flex-col flex-1 gap-4">
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 };
