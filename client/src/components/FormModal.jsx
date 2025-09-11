@@ -40,7 +40,11 @@ const FormModal = () => {
             </Button>
           </DialogClose>
           <Button
-            className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+            className={`cursor-pointer ${
+              formId === 'updateTask'
+                ? 'bg-blue-700 hover:bg-blue-800'
+                : 'bg-emerald-600 hover:bg-emerald-700'
+            }`}
             type="submit"
             form={formId}
           >

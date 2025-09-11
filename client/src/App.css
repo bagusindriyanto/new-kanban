@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -126,6 +127,8 @@
 }
 
 @theme {
+  --font-sans: 'Inter', 'Arial', system-ui, sans-serif;
+
   --color-todo-400: #ff7073;
   --color-todo-500: #ff4d4f;
   --color-todo-600: #f43235;

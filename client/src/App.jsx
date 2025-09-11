@@ -69,7 +69,7 @@ const App = () => {
     <div className="h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
-        <h1 className="text-2xl font-semibold text-white">Kanban App</h1>
+        <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2">
           <NavButton
             onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
@@ -96,7 +96,7 @@ const App = () => {
       </main>
       {/* Footer */}
       <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
-        <p className="text-white font-medium">
+        <p className="text-white font-normal">
           &copy; {new Date().getFullYear()} Kanban App
         </p>
       </footer>
