@@ -8,10 +8,10 @@ const StatusColumn = ({ title, tasks }) => {
     >
       <h2
         className={`text-xl font-semibold py-4 px-3 border-b border-border bg-neutral-50
-        ${title === 'TO DO' ? 'text-todo-600' : ''} 
-        ${title === 'ON PROGRESS' ? 'text-progress-600' : ''} 
-        ${title === 'DONE' ? 'text-done-600' : ''}
-        ${title === 'ARCHIVED' ? 'text-archived-600' : ''}`}
+        ${title === 'TO DO' ? 'text-todo-500' : ''} 
+        ${title === 'ON PROGRESS' ? 'text-progress-500' : ''} 
+        ${title === 'DONE' ? 'text-done-500' : ''}
+        ${title === 'ARCHIVED' ? 'text-archived-500' : ''}`}
       >
         {title}
       </h2>

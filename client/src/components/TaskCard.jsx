@@ -264,9 +264,9 @@ const TaskCard = ({ task }) => {
         ${status === 'archived' ? 'bg-archived-500' : ''}`}
     >
       {/* Content */}
-      <div className="flex justify-between gap-2 items-start">
+      <div className="flex justify-between gap-3 items-start">
         <h3 className="font-bold text-lg text-white">{content}</h3>
-        <h4 className="font-medium text-base text-white">{picName || '-'}</h4>
+        <h4 className="font-semibold text-base text-white">{picName || '-'}</h4>
       </div>
       <p className="mt-1 font-medium text-sm text-white">{detail}</p>
       <div className="my-2 grid grid-cols-2 font-light text-[11px] text-white">
