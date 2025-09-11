@@ -4,6 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 import { formatTimestamp } from '../services/formatTimestamp.js';
 import {
   ArrowLeftIcon,
@@ -158,7 +159,13 @@ const TaskCard = ({ task }) => {
       minute_pause: mnt_pause,
       pause_time: pause,
     };
-    await updateTask(id, data);
+    try {
+      await updateTask(id, data);
+    } catch (err) {
+      toast.error('Gagal memperbarui task', {
+        description: err.message,
+      });
+    }
   };
 
   // State untuk hitung durasi pause
@@ -199,12 +206,10 @@ const TaskCard = ({ task }) => {
         (pauseEnd - pauseStartRef.current) / 60000
       );
       await onPauseToggle(pauseDuration, true);
-      setIsPaused(false);
     } else {
       // Pause: set pause_time ke sekarang di DB
       const nowISO = new Date().toISOString();
       await onPauseToggle(0, false, nowISO);
-      setIsPaused(true);
     }
   };
 
@@ -240,7 +245,14 @@ const TaskCard = ({ task }) => {
       minute_pause: updatedMinutePause,
       pause_time: updatedPauseTime,
     };
-    await updateTask(id, data);
+    try {
+      await updateTask(id, data);
+      setIsPaused(!resetPauseTime);
+    } catch (err) {
+      toast.error('Gagal memperbarui task', {
+        description: err.message,
+      });
+    }
   };
 
   return (
