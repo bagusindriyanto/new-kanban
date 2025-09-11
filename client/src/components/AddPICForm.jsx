@@ -34,12 +34,17 @@ export default function AddPICForm() {
 
   const onSubmit = (data) => {
     toast.promise(addPic(data.pic), {
-      loading: 'Sedang mengirim...',
-      success: `"${data.pic}" telah ditambahkan ke daftar PIC`,
-      error: `Error: ${error}`,
+      loading: 'Sedang menambahkan PIC...',
+      success: () => {
+        form.reset(); // reset form setelah submit
+        setIsModalOpen(false);
+        return `"${data.pic}" telah ditambahkan ke daftar PIC`;
+      },
+      error: (err) => {
+        // err adalah error yang dilempar dari store
+        return err.message || 'Gagal menambahkan PIC';
+      },
     });
-    form.reset(); // reset form setelah submit
-    setIsModalOpen(false);
   };
 
   return (

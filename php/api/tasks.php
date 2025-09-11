@@ -55,7 +55,7 @@ function handleGet($pdo)
     echo json_encode($data, JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to fetch Tasks: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Failed to fetch tasks: ' . $e->getMessage()]);
   }
   exit;
 }
@@ -89,7 +89,7 @@ function handlePost($pdo, $input)
     echo json_encode(["id" => $pdo->lastInsertId(), "content" => $content, "pic_id" => $pic_id, "detail" => $detail, "status" => $status, 'timestamp_todo' => $timestamp_todo, 'timestamp_progress' => $timestamp_progress, 'timestamp_done' => $timestamp_done, 'timestamp_archived' => $timestamp_archived, 'minute_pause' => $minute_pause, 'minute_activity' => $minute_activity, 'pause_time' => $pause_time], JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to add Task: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Failed to add task: ' . $e->getMessage()]);
   }
 }
 
@@ -145,7 +145,7 @@ function handlePatch($pdo, $input)
     }
   } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to update Task: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Failed to update task: ' . $e->getMessage()]);
   }
   exit;
 }
@@ -165,7 +165,14 @@ function handleDelete($pdo)
 
     // hapus data yang dipilih
     $stmt = $pdo->prepare("DELETE FROM tasks WHERE id = :id");
-    $stmt->execute([":id" => $id]);
+    if (!$stmt->execute([":id" => $id])) {
+      // Query gagal, kembalikan error
+      http_response_code(500);
+      echo json_encode(["error" => "Failed to delete task"]);
+      exit;
+    }
+
+    // $stmt->execute([":id" => $id]);
     if ($stmt->rowCount() > 0) {
       echo json_encode(["message" => "Task has been deleted", "id" => $id], JSON_NUMERIC_CHECK);
     } else {
@@ -174,7 +181,7 @@ function handleDelete($pdo)
     }
   } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to delete Task: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Failed to delete task: ' . $e->getMessage()]);
   }
   exit;
 }

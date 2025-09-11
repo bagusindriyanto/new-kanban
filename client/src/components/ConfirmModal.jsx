@@ -44,14 +44,20 @@ export default function ConfirmModal() {
     if (data.password === 'Semarang@2025') {
       toast.promise(deleteTask(selectedTaskId), {
         loading: 'Sedang menghapus task...',
-        success: 'Task berhasil dihapus',
-        error: `Error: ${error}`,
+        success: () => {
+          form.reset();
+          setIsModalOpen(false);
+          return 'Task berhasil dihapus';
+        },
+        error: (err) => {
+          // err adalah error yang dilempar dari store
+          return err.message || 'Gagal menghapus task';
+        },
       });
-      setIsModalOpen(false);
     } else {
       toast.error('Password salah!');
+      form.setValue('password', '');
     }
-    form.reset();
   };
 
   const onClose = () => {
@@ -99,7 +105,11 @@ export default function ConfirmModal() {
                 >
                   Batal
                 </Button>
-                <Button variant="destructive" className="cursor-pointer">
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  className="cursor-pointer"
+                >
                   Hapus
                 </Button>
               </div>

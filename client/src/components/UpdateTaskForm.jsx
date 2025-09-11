@@ -145,11 +145,16 @@ export default function UpdateTaskForm() {
 
       toast.promise(updateTask(selectedTaskId, taskData), {
         loading: 'Sedang memperbarui task...',
-        success: 'Task berhasil diperbarui',
-        error: `Error: ${error}`,
+        success: () => {
+          form.reset();
+          setIsModalOpen(false);
+          return 'Task berhasil diperbarui';
+        },
+        error: (err) => {
+          // err adalah error yang dilempar dari store
+          return err.message || 'Gagal memperbarui task';
+        },
       });
-      form.reset(); // reset form setelah submit
-      setIsModalOpen(false);
     } else {
       toast.error('Password salah!');
       form.setValue('password', '');
@@ -502,7 +507,9 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() => field.onChange(undefined)}
+                        onClick={() =>
+                          form.setValue('timestamp_progress', undefined)
+                        }
                       >
                         <Trash2Icon />
                       </Button>
@@ -566,7 +573,9 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() => field.onChange(undefined)}
+                        onClick={() =>
+                          form.setValue('timestamp_done', undefined)
+                        }
                       >
                         <Trash2Icon />
                       </Button>
@@ -630,7 +639,9 @@ export default function UpdateTaskForm() {
                         variant="ghost"
                         type="button"
                         className="text-red-500 hover:text-red-600"
-                        onClick={() => field.onChange(undefined)}
+                        onClick={() =>
+                          form.setValue('timestamp_archived', undefined)
+                        }
                       >
                         <Trash2Icon />
                       </Button>

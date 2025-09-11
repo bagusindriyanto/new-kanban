@@ -55,12 +55,17 @@ export default function AddTaskForm() {
 
   const onSubmit = (data) => {
     toast.promise(addTask(data), {
-      loading: 'Sedang mengirim...',
-      success: 'Task berhasil ditambahkan',
-      error: `Error: ${error}`,
+      loading: 'Sedang menambahkan task...',
+      success: () => {
+        form.reset(); // reset form setelah submit
+        setIsModalOpen(false);
+        return 'Task berhasil ditambahkan';
+      },
+      error: (err) => {
+        // err adalah error yang dilempar dari store
+        return err.message || 'Gagal menambahkan task';
+      },
     });
-    form.reset(); // reset form setelah submit
-    setIsModalOpen(false);
   };
 
   return (

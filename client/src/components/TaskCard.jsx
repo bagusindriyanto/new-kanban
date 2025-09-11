@@ -245,7 +245,7 @@ const TaskCard = ({ task }) => {
 
   return (
     <div
-      className={`grow px-3 py-2 rounded-lg overflow-hidden shadow-sm hover:shadow-lg
+      className={`grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg
         ${status === 'todo' ? 'bg-todo-500' : ''} 
         ${status === 'on progress' ? 'bg-progress-500' : ''} 
         ${status === 'done' ? 'bg-done-500' : ''}

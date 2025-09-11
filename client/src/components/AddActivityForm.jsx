@@ -37,12 +37,17 @@ export default function AddActivityForm() {
 
   const onSubmit = (data) => {
     toast.promise(addActivity(data.activity), {
-      loading: 'Sedang mengirim...',
-      success: `"${data.activity}" telah ditambahkan ke daftar activity`,
-      error: `Error: ${error}`,
+      loading: 'Sedang menambahkan activity...',
+      success: () => {
+        form.reset(); // reset form setelah submit
+        setIsModalOpen(false);
+        return `"${data.activity}" telah ditambahkan ke daftar activity`;
+      },
+      error: (err) => {
+        // err adalah error yang dilempar dari store
+        return err.message || 'Gagal menambahkan activity';
+      },
     });
-    form.reset(); // reset form setelah submit
-    setIsModalOpen(false);
   };
 
   return (
