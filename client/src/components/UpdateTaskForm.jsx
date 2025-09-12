@@ -52,7 +52,7 @@ import { TimePickerDemo } from './ui/time-picker-demo';
 // Aturan form
 const FormSchema = z.object({
   content: z.string('Activity harus dipilih.'),
-  pic_id: z.number().optional(),
+  pic_id: z.number().nullish(),
   status: z.enum(['todo', 'on progress', 'done', 'archived'], {
     error: 'Status harus dipilih.',
   }),
@@ -281,6 +281,22 @@ export default function UpdateTaskForm() {
                         >
                           <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
+                            <CommandItem
+                              value="null"
+                              onSelect={() => {
+                                form.setValue('pic_id', null);
+                              }}
+                            >
+                              -
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  field.value === null
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                            </CommandItem>
                             {pics.map((pic) => (
                               <CommandItem
                                 value={pic.name}

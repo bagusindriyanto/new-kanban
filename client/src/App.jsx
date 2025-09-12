@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import NavButton from './components/NavButton';
 import StatusColumn from './components/StatusColumn';
@@ -10,9 +10,26 @@ import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
 import useFormModal from './stores/formModalStore';
 
+// Komponent Filter
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
 const App = () => {
   // State untuk data
+  const pics = usePics((state) => state.pics);
+  const [selectedPicId, setSelectedPicId] = useState('all');
   const tasks = useTasks((state) => state.tasks);
+  const filteredTasks =
+    selectedPicId === 'all'
+      ? tasks
+      : tasks.filter((task) => task.pic_id === selectedPicId);
 
   // State untuk modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -71,6 +88,25 @@ const App = () => {
       <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2">
+          {/* Filter PIC */}
+          <Select value={selectedPicId} onValueChange={setSelectedPicId}>
+            <SelectTrigger className="w-[160px] bg-neutral-100">
+              <SelectValue placeholder="Pilih PIC" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>PIC</SelectLabel>
+                <SelectItem value="all">Semua</SelectItem>
+                <SelectItem value={null}>-</SelectItem>
+                {pics.map((pic) => (
+                  <SelectItem value={pic.id} key={pic.id}>
+                    {pic.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {/* Akhir Filter PIC */}
           <NavButton
             onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
           >
@@ -90,7 +126,7 @@ const App = () => {
           <StatusColumn
             key={column.id}
             title={column.title}
-            tasks={tasks.filter((task) => task.status === column.id)}
+            tasks={filteredTasks.filter((task) => task.status === column.id)}
           />
         ))}
       </main>

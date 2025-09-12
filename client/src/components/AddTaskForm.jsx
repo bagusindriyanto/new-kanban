@@ -34,7 +34,7 @@ import useFormModal from '@/stores/formModalStore';
 
 const FormSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
-  pic_id: z.number().optional(),
+  pic_id: z.number().nullish(),
   detail: z.string().optional(),
 });
 
@@ -187,6 +187,22 @@ export default function AddTaskForm() {
                         >
                           <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
+                            <CommandItem
+                              value="null"
+                              onSelect={() => {
+                                form.setValue('pic_id', null);
+                              }}
+                            >
+                              -
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  field.value === null
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                            </CommandItem>
                             {pics.map((pic) => (
                               <CommandItem
                                 value={pic.name}
