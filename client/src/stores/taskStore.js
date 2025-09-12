@@ -18,9 +18,7 @@ const useTasks = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true });
     try {
-      const res = await axios.get(
-        'http://192.168.1.14:8080/kanban/api/tasks.php'
-      );
+      const res = await axios.get('http://localhost/kanban/api/tasks.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data task');
       set({ tasks: res.data });
       return res.data;
@@ -33,22 +31,19 @@ const useTasks = create((set) => ({
     set({ isLoading: true });
     try {
       const now = new Date().toISOString();
-      const res = await axios.post(
-        'http://192.168.1.14:8080/kanban/api/tasks.php',
-        {
-          content,
-          pic_id,
-          detail,
-          status: 'todo',
-          timestamp_todo: now,
-          timestamp_progress: null,
-          timestamp_done: null,
-          timestamp_archived: null,
-          minute_pause: 0,
-          minute_activity: 0,
-          pause_time: null,
-        }
-      );
+      const res = await axios.post('http://localhost/kanban/api/tasks.php', {
+        content,
+        pic_id,
+        detail,
+        status: 'todo',
+        timestamp_todo: now,
+        timestamp_progress: null,
+        timestamp_done: null,
+        timestamp_archived: null,
+        minute_pause: 0,
+        minute_activity: 0,
+        pause_time: null,
+      });
       if (res.status !== 201) throw new Error('Gagal menambahkan task');
       set((state) => ({ tasks: [res.data, ...state.tasks] }));
       return res.data;
@@ -61,7 +56,7 @@ const useTasks = create((set) => ({
     set({ isLoading: true });
     try {
       const res = await axios.patch(
-        `http://192.168.1.14:8080/kanban/api/tasks.php?id=${taskId}`,
+        `http://localhost/kanban/api/tasks.php?id=${taskId}`,
         data
       );
       if (res.status !== 201) throw new Error('Gagal memperbarui task');
@@ -80,7 +75,7 @@ const useTasks = create((set) => ({
     set({ isLoading: true });
     try {
       const res = await axios.delete(
-        `http://192.168.1.14:8080/kanban/api/tasks.php?id=${taskId}`
+        `http://localhost/kanban/api/tasks.php?id=${taskId}`
       );
       if (res.status !== 200) throw new Error('Gagal menghapus task');
       set((state) => ({

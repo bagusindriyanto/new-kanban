@@ -48,6 +48,7 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
+import { useState } from 'react';
 
 // Aturan form
 const FormSchema = z.object({
@@ -73,6 +74,9 @@ const FormSchema = z.object({
 });
 
 export default function UpdateTaskForm() {
+  // State Buka/Tutup Popover
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [picOpen, setPicOpen] = useState(false);
   // Fetch activity
   const contents = useActivities((state) => state.activities);
   // Fetch pics
@@ -180,7 +184,7 @@ export default function UpdateTaskForm() {
                   <FormLabel className="gap-1">
                     Activity<span className="text-red-500">*</span>
                   </FormLabel>
-                  <Popover>
+                  <Popover open={activityOpen} onOpenChange={setActivityOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -219,6 +223,7 @@ export default function UpdateTaskForm() {
                                 key={content.id}
                                 onSelect={() => {
                                   form.setValue('content', content.name);
+                                  setActivityOpen(false);
                                 }}
                               >
                                 {content.name}

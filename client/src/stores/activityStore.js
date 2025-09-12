@@ -9,9 +9,7 @@ const useActivities = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true, error: null });
     try {
-      const res = await axios.get(
-        'http://192.168.1.14:8080/kanban/api/activities.php'
-      );
+      const res = await axios.get('http://localhost/kanban/api/activities.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data activity');
       set({ activities: res.data });
     } finally {
@@ -23,7 +21,7 @@ const useActivities = create((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await axios.post(
-        'http://192.168.1.14:8080/kanban/api/activities.php',
+        'http://localhost/kanban/api/activities.php',
         { name }
       );
       if (res.status !== 201) throw new Error('Gagal menambahkan activity');

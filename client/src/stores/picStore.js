@@ -9,9 +9,7 @@ const usePics = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true });
     try {
-      const res = await axios.get(
-        'http://192.168.1.14:8080/kanban/api/pics.php'
-      );
+      const res = await axios.get('http://localhost/kanban/api/pics.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data PIC');
       set({ pics: res.data });
       return res.data;
@@ -23,12 +21,9 @@ const usePics = create((set) => ({
   addPic: async (name) => {
     set({ isLoading: true });
     try {
-      const res = await axios.post(
-        'http://192.168.1.14:8080/kanban/api/pics.php',
-        {
-          name,
-        }
-      );
+      const res = await axios.post('http://localhost/kanban/api/pics.php', {
+        name,
+      });
       if (res.status !== 201) throw new Error('Gagal menambahkan PIC');
       set((state) => ({ pics: [res.data, ...state.pics] }));
       return res.data;

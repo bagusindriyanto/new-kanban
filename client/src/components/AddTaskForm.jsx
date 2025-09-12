@@ -31,6 +31,7 @@ import useActivities from '@/stores/activityStore';
 import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
+import { useState } from 'react';
 
 const FormSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
@@ -39,6 +40,9 @@ const FormSchema = z.object({
 });
 
 export default function AddTaskForm() {
+  // State Buka/Tutup Popover
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [picOpen, setPicOpen] = useState(false);
   // Fetch activity
   const contents = useActivities((state) => state.activities);
   // Fetch pics
@@ -86,7 +90,7 @@ export default function AddTaskForm() {
                   <FormLabel className="gap-1">
                     Activity<span className="text-red-500">*</span>
                   </FormLabel>
-                  <Popover>
+                  <Popover open={activityOpen} onOpenChange={setActivityOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -97,11 +101,13 @@ export default function AddTaskForm() {
                             !field.value && 'text-muted-foreground'
                           )}
                         >
-                          {field.value
-                            ? contents.find(
-                                (content) => content.name === field.value
-                              )?.name
-                            : 'Pilih activity'}
+                          <span className="truncate">
+                            {field.value
+                              ? contents.find(
+                                  (content) => content.name === field.value
+                                )?.name
+                              : 'Pilih activity'}
+                          </span>
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </FormControl>
@@ -125,6 +131,7 @@ export default function AddTaskForm() {
                                 key={content.id}
                                 onSelect={() => {
                                   form.setValue('content', content.name);
+                                  setActivityOpen(false);
                                 }}
                               >
                                 {content.name}
@@ -156,7 +163,7 @@ export default function AddTaskForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>PIC</FormLabel>
-                  <Popover>
+                  <Popover open={picOpen} onOpenChange={setPicOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -191,6 +198,7 @@ export default function AddTaskForm() {
                               value="null"
                               onSelect={() => {
                                 form.setValue('pic_id', null);
+                                setPicOpen(false);
                               }}
                             >
                               -
@@ -209,6 +217,7 @@ export default function AddTaskForm() {
                                 key={pic.id}
                                 onSelect={() => {
                                   form.setValue('pic_id', pic.id);
+                                  setPicOpen(false);
                                 }}
                               >
                                 {pic.name}
