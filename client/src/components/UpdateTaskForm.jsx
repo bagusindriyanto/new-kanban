@@ -195,11 +195,13 @@ export default function UpdateTaskForm() {
                             !field.value && 'text-muted-foreground'
                           )}
                         >
-                          {field.value
-                            ? contents.find(
-                                (content) => content.name === field.value
-                              )?.name
-                            : 'Pilih activity'}
+                          <span className="truncate">
+                            {field.value
+                              ? contents.find(
+                                  (content) => content.name === field.value
+                                )?.name
+                              : 'Pilih activity'}
+                          </span>
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </FormControl>
@@ -255,7 +257,7 @@ export default function UpdateTaskForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>PIC</FormLabel>
-                  <Popover>
+                  <Popover open={picOpen} onOpenChange={setPicOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -290,6 +292,7 @@ export default function UpdateTaskForm() {
                               value="null"
                               onSelect={() => {
                                 form.setValue('pic_id', null);
+                                setPicOpen(false);
                               }}
                             >
                               -
@@ -308,6 +311,7 @@ export default function UpdateTaskForm() {
                                 key={pic.id}
                                 onSelect={() => {
                                   form.setValue('pic_id', pic.id);
+                                  setPicOpen(false);
                                 }}
                               >
                                 {pic.name}
