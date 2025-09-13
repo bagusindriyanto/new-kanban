@@ -24,7 +24,6 @@ const FormSchema = z.object({
 
 export default function AddActivityForm() {
   const addActivity = useActivities((state) => state.addActivity);
-  const error = useActivities((state) => state.error);
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 

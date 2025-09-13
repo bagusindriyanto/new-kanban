@@ -49,7 +49,6 @@ export default function AddTaskForm() {
   const pics = usePics((state) => state.pics);
   // Add Tasks
   const addTask = useTasks((state) => state.addTask);
-  const error = useTasks((state) => state.error);
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 

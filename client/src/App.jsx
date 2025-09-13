@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import NavButton from './components/NavButton';
 import StatusColumn from './components/StatusColumn';
@@ -10,7 +10,7 @@ import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
 import useFormModal from './stores/formModalStore';
 
-// Komponent Filter
+// Komponen Filter
 import {
   Select,
   SelectContent,
@@ -26,10 +26,17 @@ const App = () => {
   const pics = usePics((state) => state.pics);
   const [selectedPicId, setSelectedPicId] = useState('all');
   const tasks = useTasks((state) => state.tasks);
-  const filteredTasks =
-    selectedPicId === 'all'
-      ? tasks
-      : tasks.filter((task) => task.pic_id === selectedPicId);
+  const sortedTasks = useMemo(() => {
+    // Sorting
+    let result = [...tasks].sort(
+      (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+    );
+    // Filtering
+    if (selectedPicId !== 'all') {
+      result = result.filter((task) => task.pic_id === selectedPicId);
+    }
+    return result;
+  }, [tasks, selectedPicId]);
 
   // State untuk modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -126,7 +133,7 @@ const App = () => {
           <StatusColumn
             key={column.id}
             title={column.title}
-            tasks={filteredTasks.filter((task) => task.status === column.id)}
+            tasks={sortedTasks.filter((task) => task.status === column.id)}
           />
         ))}
       </main>

@@ -88,7 +88,6 @@ export default function UpdateTaskForm() {
 
   // Update Tasks
   const updateTask = useTasks((state) => state.updateTask);
-  const error = useTasks((state) => state.error);
 
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -118,6 +117,25 @@ export default function UpdateTaskForm() {
       password: '',
     },
   });
+
+  // Cek input status untuk disable timestamp
+  const statusInput = form.watch('status');
+
+  // Reset value timestamp
+  switch (statusInput) {
+    case 'todo':
+      form.setValue('timestamp_progress', undefined);
+      form.setValue('timestamp_done', undefined);
+      form.setValue('timestamp_archived', undefined);
+      break;
+    case 'on progress':
+      form.setValue('timestamp_done', undefined);
+      form.setValue('timestamp_archived', undefined);
+      break;
+    case 'done':
+      form.setValue('timestamp_archived', undefined);
+      break;
+  }
 
   // Submit form
   const onSubmit = (data) => {
@@ -487,7 +505,15 @@ export default function UpdateTaskForm() {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-left gap-1">
-                  Timestamp On Progress<span className="text-red-500">*</span>
+                  Timestamp On Progress
+                  <span
+                    className={cn(
+                      'text-red-500',
+                      statusInput === 'todo' && 'hidden'
+                    )}
+                  >
+                    *
+                  </span>
                 </FormLabel>
                 <Popover>
                   <FormControl>
@@ -498,6 +524,7 @@ export default function UpdateTaskForm() {
                           'w-full justify-start text-left font-normal',
                           !field.value && 'text-muted-foreground'
                         )}
+                        disabled={statusInput === 'todo'}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
@@ -553,7 +580,17 @@ export default function UpdateTaskForm() {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-left gap-1">
-                  Timestamp Done<span className="text-red-500">*</span>
+                  Timestamp Done
+                  <span
+                    className={cn(
+                      'text-red-500',
+                      (statusInput === 'todo' ||
+                        statusInput === 'on progress') &&
+                        'hidden'
+                    )}
+                  >
+                    *
+                  </span>
                 </FormLabel>
                 <Popover>
                   <FormControl>
@@ -564,6 +601,10 @@ export default function UpdateTaskForm() {
                           'w-full justify-start text-left font-normal',
                           !field.value && 'text-muted-foreground'
                         )}
+                        disabled={
+                          statusInput === 'todo' ||
+                          statusInput === 'on progress'
+                        }
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
@@ -619,7 +660,15 @@ export default function UpdateTaskForm() {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-left gap-1">
-                  Timestamp Archived<span className="text-red-500">*</span>
+                  Timestamp Archived
+                  <span
+                    className={cn(
+                      'text-red-500',
+                      statusInput !== 'archived' && 'hidden'
+                    )}
+                  >
+                    *
+                  </span>
                 </FormLabel>
                 <Popover>
                   <FormControl>
@@ -630,6 +679,7 @@ export default function UpdateTaskForm() {
                           'w-full justify-start text-left font-normal',
                           !field.value && 'text-muted-foreground'
                         )}
+                        disabled={statusInput !== 'archived'}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (

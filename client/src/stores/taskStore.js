@@ -55,9 +55,10 @@ const useTasks = create((set) => ({
   updateTask: async (taskId, data) => {
     set({ isLoading: true });
     try {
+      const now = new Date().toISOString();
       const res = await axios.patch(
         `http://localhost/kanban/api/tasks.php?id=${taskId}`,
-        data
+        { ...data, updated_at: now }
       );
       if (res.status !== 201) throw new Error('Gagal memperbarui task');
       set((state) => ({

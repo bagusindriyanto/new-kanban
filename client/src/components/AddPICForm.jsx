@@ -21,7 +21,6 @@ const FormSchema = z.object({
 
 export default function AddPICForm() {
   const addPic = usePics((state) => state.addPic);
-  const error = usePics((state) => state.error);
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 

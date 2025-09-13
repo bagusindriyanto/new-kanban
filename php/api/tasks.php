@@ -35,18 +35,22 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT * FROM tasks ORDER BY created_at DESC";
+    $sql = "SELECT * FROM tasks ORDER BY updated_at DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $data = array_map(function ($row) {
-      $timestamp_fields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time'];
+      $timestamp_fields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time', 'updated_at'];
 
       foreach ($timestamp_fields as $field) {
         if (!empty($row[$field])) {
-          $utcDate = new DateTime($row[$field], new DateTimeZone('UTC'));
-          $row[$field] = $utcDate->format('c');
+          // $utcDate = new DateTime($row[$field], new DateTimeZone('UTC'));
+          // $row[$field] = $utcDate->format('c');
+          // Format WIB agar MySQL bisa menampilkan sesuai jam WIB
+          $localeDate = new DateTime($row[$field], new DateTimeZone('Asia/Jakarta'));
+          $localeDate->setTimezone(new DateTimeZone('UTC'));
+          $row[$field] = $localeDate->format('c');
         }
       }
       return $row;
@@ -116,9 +120,10 @@ function handlePatch($pdo, $input)
     $minute_pause = $input['minute_pause'] ?? 0;
     $minute_activity = $input['minute_activity'] ?? 0;
     $pause_time = $input['pause_time'] ?? null;
+    $updated_at = $input['updated_at'];
 
-    $fields = ['content = ?', 'pic_id = ?', 'detail = ?', 'status = ?', 'timestamp_todo = ?', 'timestamp_progress = ?', 'timestamp_done = ?', 'timestamp_archived = ?', 'minute_pause = ?', 'minute_activity = ?', 'pause_time = ?'];
-    $params = [$content, $pic_id, $detail, $status, $timestamp_todo, $timestamp_progress, $timestamp_done, $timestamp_archived, $minute_pause, $minute_activity, $pause_time, $id];
+    $fields = ['content = ?', 'pic_id = ?', 'detail = ?', 'status = ?', 'timestamp_todo = ?', 'timestamp_progress = ?', 'timestamp_done = ?', 'timestamp_archived = ?', 'minute_pause = ?', 'minute_activity = ?', 'pause_time = ?', 'updated_at = ?'];
+    $params = [$content, $pic_id, $detail, $status, $timestamp_todo, $timestamp_progress, $timestamp_done, $timestamp_archived, $minute_pause, $minute_activity, $pause_time, $updated_at, $id];
     $sql = "UPDATE tasks SET " . implode(', ', $fields) . " WHERE id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
@@ -130,11 +135,15 @@ function handlePatch($pdo, $input)
       $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
       // daftar kolom datetime yang mau diubah
-      $timestampFields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time'];
+      $timestampFields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time', 'updated_at'];
       foreach ($timestampFields as $field) {
         if (!empty($data[$field])) {
-          $utcDate = new DateTime($data[$field], new DateTimeZone('UTC'));
-          $data[$field] = $utcDate->format('c');
+          // $utcDate = new DateTime($data[$field], new DateTimeZone('UTC'));
+          // $data[$field] = $utcDate->format('c');
+          // Format WIB agar MySQL bisa menampilkan sesuai jam WIB
+          $localeDate = new DateTime($data[$field], new DateTimeZone('Asia/Jakarta'));
+          $localeDate->setTimezone(new DateTimeZone('UTC'));
+          $data[$field] = $localeDate->format('c');
         }
       }
       http_response_code(201);
