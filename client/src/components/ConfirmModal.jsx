@@ -107,8 +107,7 @@ export default function ConfirmModal() {
                 </Button>
                 <Button
                   type="submit"
-                  variant="destructive"
-                  className="cursor-pointer"
+                  className="cursor-pointer text-white bg-red-600 hover:bg-red-700"
                 >
                   Hapus
                 </Button>

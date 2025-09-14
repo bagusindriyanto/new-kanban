@@ -5,6 +5,7 @@ import NavButton from './components/NavButton';
 import StatusColumn from './components/StatusColumn';
 import FormModal from './components/FormModal';
 import ConfirmModal from './components/ConfirmModal';
+import { ModeToggle } from './components/ModeToggle';
 import useActivities from './stores/activityStore';
 import usePics from './stores/picStore';
 import useTasks from './stores/taskStore';
@@ -125,6 +126,7 @@ const App = () => {
           <NavButton onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
             Tambah Task
           </NavButton>
+          <ModeToggle />
         </div>
       </header>
       {/* Main */}

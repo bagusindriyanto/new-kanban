@@ -473,12 +473,13 @@ export default function UpdateTaskForm() {
                     <Calendar
                       mode="single"
                       locale={id}
-                      // captionLayout="dropdown"
+                      captionLayout="dropdown"
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      startMonth={new Date(1969, 12)}
                       disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
+                        date > new Date() || date <= new Date('1969-12-31')
                       }
                       initialFocus
                     />
@@ -541,12 +542,13 @@ export default function UpdateTaskForm() {
                     <Calendar
                       mode="single"
                       locale={id}
-                      // captionLayout="dropdown"
+                      captionLayout="dropdown"
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      startMonth={new Date(1969, 12)}
                       disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
+                        date > new Date() || date <= new Date('1969-12-31')
                       }
                       initialFocus
                     />
@@ -621,12 +623,13 @@ export default function UpdateTaskForm() {
                     <Calendar
                       mode="single"
                       locale={id}
-                      // captionLayout="dropdown"
+                      captionLayout="dropdown"
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      startMonth={new Date(1969, 12)}
                       disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
+                        date > new Date() || date <= new Date('1969-12-31')
                       }
                       initialFocus
                     />
@@ -696,12 +699,13 @@ export default function UpdateTaskForm() {
                     <Calendar
                       mode="single"
                       locale={id}
-                      // captionLayout="dropdown"
+                      captionLayout="dropdown"
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
+                      startMonth={new Date(1969, 12)}
                       disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
+                        date > new Date() || date <= new Date('1969-12-31')
                       }
                       initialFocus
                     />
