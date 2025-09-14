@@ -477,9 +477,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
-                      startMonth={new Date(1969, 12)}
+                      startMonth={new Date(2011, 12)}
                       disabled={(date) =>
-                        date > new Date() || date <= new Date('1969-12-31')
+                        date > new Date() || date <= new Date('2011-12-31')
                       }
                       initialFocus
                     />
@@ -546,9 +546,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
-                      startMonth={new Date(1969, 12)}
+                      startMonth={new Date(2011, 12)}
                       disabled={(date) =>
-                        date > new Date() || date <= new Date('1969-12-31')
+                        date > new Date() || date <= new Date('2011-12-31')
                       }
                       initialFocus
                     />
@@ -627,9 +627,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
-                      startMonth={new Date(1969, 12)}
+                      startMonth={new Date(2011, 12)}
                       disabled={(date) =>
-                        date > new Date() || date <= new Date('1969-12-31')
+                        date > new Date() || date <= new Date('2011-12-31')
                       }
                       initialFocus
                     />
@@ -703,9 +703,9 @@ export default function UpdateTaskForm() {
                       weekStartsOn={1}
                       selected={field.value}
                       onSelect={field.onChange}
-                      startMonth={new Date(1969, 12)}
+                      startMonth={new Date(2011, 12)}
                       disabled={(date) =>
-                        date > new Date() || date <= new Date('1969-12-31')
+                        date > new Date() || date <= new Date('2011-12-31')
                       }
                       initialFocus
                     />
