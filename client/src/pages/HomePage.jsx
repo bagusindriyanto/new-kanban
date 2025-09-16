@@ -11,6 +11,9 @@ import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
 import { Link } from 'react-router';
 
+// Setting Kolom
+import { columns } from '@/config/column';
+
 // Komponen Filter
 import {
   Select,
@@ -21,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 const HomePage = () => {
   // State untuk data
@@ -48,26 +52,6 @@ const HomePage = () => {
   const fetchActivities = useActivities((state) => state.fetchActivities);
   const fetchPics = usePics((state) => state.fetchPics);
   const fetchTasks = useTasks((state) => state.fetchTasks);
-
-  // Kolom status
-  const columns = [
-    {
-      id: 'todo',
-      title: 'TO DO',
-    },
-    {
-      id: 'on progress',
-      title: 'ON PROGRESS',
-    },
-    {
-      id: 'done',
-      title: 'DONE',
-    },
-    {
-      id: 'archived',
-      title: 'ARCHIVED',
-    },
-  ];
 
   // Ambil tasks ketika halaman dimuat
   useEffect(() => {
@@ -97,7 +81,9 @@ const HomePage = () => {
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
           {/* Pindah ke Halaman Summary */}
-          <Link to="/summary">Summary</Link>
+          <Button>
+            <Link to="/summary">Summary</Link>
+          </Button>
           {/* Filter PIC */}
           <Select value={selectedPicId} onValueChange={setSelectedPicId}>
             <SelectTrigger className="w-[160px] bg-neutral-100">

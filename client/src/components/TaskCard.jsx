@@ -19,29 +19,11 @@ import useConfirmModal from '@/stores/confirmModalStore.js';
 import useTasks from '@/stores/taskStore';
 import usePics from '@/stores/picStore.js';
 import { useEffect, useRef, useState } from 'react';
+import { columns } from '@/config/column.js';
 
 const TaskCard = ({ task }) => {
-  // Kolom status
-  const columns = [
-    {
-      id: 'todo',
-      title: 'TO DO',
-    },
-    {
-      id: 'on progress',
-      title: 'ON PROGRESS',
-    },
-    {
-      id: 'done',
-      title: 'DONE',
-    },
-    {
-      id: 'archived',
-      title: 'ARCHIVED',
-    },
-  ];
+  // Urutan Status
   const statusOrder = columns.map((column) => column.id);
-
   // Destructure isi props
   const {
     id,
