@@ -35,10 +35,36 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT * FROM tasks ORDER BY updated_at DESC";
-    $stmt = $pdo->prepare($sql);
+    $status = $_GET['status'] ?? '';
+    $page = (int)($_GET['page'] ?? 1);
+    $limit = (int)($_GET['limit'] ?? 10);
+
+    if (empty($status)) {
+      http_response_code(400);
+      echo json_encode(['error' => 'Status is required']);
+      exit;
+    }
+
+    // Hitung offset untuk pagination
+    $offset = ($page - 1) * $limit;
+
+    // Query untuk menghitung total tasks
+    $totalStmt = $pdo->prepare("SELECT COUNT(*) FROM tasks WHERE status = ?");
+    $totalStmt->execute([$status]);
+    $totalTasks = $totalStmt->fetchColumn();
+
+    // Query untuk mengambil tasks dengan limit dan offset
+    $stmt = $pdo->prepare("SELECT * FROM tasks WHERE status = ? LIMIT ? OFFSET ? ORDER BY updated_at DESC");
+    $stmt->bindValue(1, $status, PDO::PARAM_STR);
+    $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+    $stmt->bindValue(3, $offset, PDO::PARAM_INT);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // $sql = "SELECT * FROM tasks ORDER BY updated_at DESC";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $data = array_map(function ($row) {
       $timestamp_fields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time', 'updated_at'];
@@ -56,7 +82,11 @@ function handleGet($pdo)
       return $row;
     }, $rows);
 
-    echo json_encode($data, JSON_NUMERIC_CHECK);
+    // Tentukan apakah ada halaman berikutnya
+    $hasMore = ($offset + $limit) < $totalTasks;
+    $nextPage = $hasMore ? $page + 1 : null;
+
+    echo json_encode(['data' => $data, 'hasMore' => $hasMore, 'nextPage' => $nextPage], JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Failed to fetch tasks: ' . $e->getMessage()]);
