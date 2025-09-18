@@ -29,7 +29,10 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import useActivities from '@/stores/activityStore';
 import usePics from '@/stores/picStore';
-import useTasks from '@/stores/taskStore';
+// ##############################################
+// import useTasks from '@/stores/taskStore';
+import { useAddTask } from '@/hooks/useAddTask';
+// ##############################################
 import useFormModal from '@/stores/formModalStore';
 import { useState } from 'react';
 
@@ -48,7 +51,8 @@ export default function AddTaskForm() {
   // Fetch pics
   const pics = usePics((state) => state.pics);
   // Add Tasks
-  const addTask = useTasks((state) => state.addTask);
+  const { mutate } = useAddTask();
+  // const addTask = useTasks((state) => state.addTask);
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 
@@ -57,16 +61,16 @@ export default function AddTaskForm() {
   });
 
   const onSubmit = (data) => {
-    toast.promise(addTask(data), {
-      loading: 'Sedang menambahkan task...',
-      success: () => {
-        form.reset(); // reset form setelah submit
+    // tampilkan loading toast dulu
+    const toastId = toast.loading('Sedang menambahkan task...');
+    mutate(data, {
+      onSuccess: () => {
+        form.reset();
         setIsModalOpen(false);
-        return 'Task berhasil ditambahkan';
+        toast.success('Task berhasil ditambahkan!', { id: toastId });
       },
-      error: (err) => {
-        // err adalah error yang dilempar dari store
-        return err.message || 'Gagal menambahkan task';
+      onError: (err) => {
+        toast.error(err.message || 'Gagal menambahkan task', { id: toastId });
       },
     });
   };

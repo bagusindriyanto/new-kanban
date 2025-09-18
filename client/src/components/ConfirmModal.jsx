@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import useConfirmModal from '@/stores/confirmModalStore';
 import useTasks from '@/stores/taskStore';
+import { useDeleteTask } from '@/hooks/useDeleteTask';
+// ##############################################
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,8 +30,9 @@ const FormSchema = z.object({
 
 export default function ConfirmModal() {
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  const deleteTask = useTasks((state) => state.deleteTask);
-  const error = useTasks((state) => state.error);
+  const { mutate } = useDeleteTask();
+  // const deleteTask = useTasks((state) => state.deleteTask);
+  // const error = useTasks((state) => state.error);
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
   const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
 
@@ -42,16 +45,16 @@ export default function ConfirmModal() {
 
   const onSubmit = (data) => {
     if (data.password === 'Semarang@2025') {
-      toast.promise(deleteTask(selectedTaskId), {
-        loading: 'Sedang menghapus task...',
-        success: () => {
+      // tampilkan loading toast dulu
+      const toastId = toast.loading('Sedang menghapus task...');
+      mutate(selectedTaskId, {
+        onSuccess: () => {
           form.reset();
           setIsModalOpen(false);
-          return 'Task berhasil dihapus';
+          toast.success('Task berhasil dihapus!', { id: toastId });
         },
-        error: (err) => {
-          // err adalah error yang dilempar dari store
-          return err.message || 'Gagal menghapus task';
+        onError: (err) => {
+          toast.error(err.message || 'Gagal menghapus task', { id: toastId });
         },
       });
     } else {
@@ -61,7 +64,7 @@ export default function ConfirmModal() {
   };
 
   const onClose = () => {
-    form.setValue('password', '');
+    form.reset();
     setIsModalOpen(false);
   };
 
@@ -99,6 +102,7 @@ export default function ConfirmModal() {
               {/* Button Modal */}
               <div className="w-full flex justify-end gap-2">
                 <Button
+                  type="button"
                   variant="secondary"
                   className="cursor-pointer"
                   onClick={onClose}

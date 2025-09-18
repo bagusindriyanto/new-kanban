@@ -84,7 +84,8 @@ export default function UpdateTaskForm() {
   // Fetch task yang dipilih
   const tasks = useTasks((state) => state.tasks);
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  const task = tasks.filter((task) => task.id === selectedTaskId)[0];
+  const task = tasks.data.filter((task) => task.id === selectedTaskId)[0];
+  console.log(task);
 
   // Update Tasks
   const updateTask = useTasks((state) => state.updateTask);

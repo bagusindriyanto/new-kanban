@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import useFilter from '@/stores/filterStore';
 
 const HomePage = () => {
   // State untuk data
@@ -33,7 +34,9 @@ const HomePage = () => {
   //   queryFn: fetchTasks,
   // });
   // console.log(query.data);
-  // const pics = usePics((state) => state.pics);
+  const pics = usePics((state) => state.pics);
+  const picId = useFilter((state) => state.picId);
+  const setPicId = useFilter((state) => state.setPicId);
   // const [selectedPicId, setSelectedPicId] = useState('all');
   // const tasks = useTasks((state) => state.tasks);
   // const sortedTasks = useMemo(() => {
@@ -54,21 +57,21 @@ const HomePage = () => {
   const setFormId = useFormModal((state) => state.setFormId);
 
   // Fungsi panggil data
-  // const fetchActivities = useActivities((state) => state.fetchActivities);
-  // const fetchPics = usePics((state) => state.fetchPics);
-  // const fetchTasks = useTasks((state) => state.fetchTasks);
+  const fetchActivities = useActivities((state) => state.fetchActivities);
+  const fetchPics = usePics((state) => state.fetchPics);
+  const fetchTasks = useTasks((state) => state.fetchTasks);
 
   // Ambil tasks ketika halaman dimuat
-  // useEffect(() => {
-  //   const fetchAll = () => {
-  //     fetchActivities();
-  //     fetchPics();
-  //     fetchTasks();
-  //   };
-  //   fetchAll();
-  //   const interval = setInterval(fetchAll, 10000);
-  //   return () => clearInterval(interval);
-  // }, []);
+  useEffect(() => {
+    const fetchAll = () => {
+      fetchActivities();
+      fetchPics();
+      fetchTasks();
+    };
+    fetchAll();
+    const interval = setInterval(fetchAll, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleOpenModal = (title, id) => {
     // Buka modalnya
@@ -90,7 +93,7 @@ const HomePage = () => {
             <Link to="/summary">Summary</Link>
           </Button>
           {/* Filter PIC */}
-          {/* <Select value={selectedPicId} onValueChange={setSelectedPicId}>
+          <Select value={picId} onValueChange={setPicId}>
             <SelectTrigger className="w-[160px] bg-neutral-100">
               <SelectValue placeholder="Pilih PIC" />
             </SelectTrigger>
@@ -98,7 +101,13 @@ const HomePage = () => {
               <SelectGroup>
                 <SelectLabel>PIC</SelectLabel>
                 <SelectItem value="all">Semua</SelectItem>
-                <SelectItem value={null}>-</SelectItem>
+                <SelectItem value="null">-</SelectItem>
+                {/* <SelectItem value={21}>Indah</SelectItem>
+                <SelectItem value={22}>Annisa</SelectItem>
+                <SelectItem value={23}>Dani</SelectItem>
+                <SelectItem value={24}>Bagus</SelectItem>
+                <SelectItem value={25}>Ahmudi</SelectItem> */}
+
                 {pics.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>
                     {pic.name}
@@ -106,7 +115,7 @@ const HomePage = () => {
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select> */}
+          </Select>
           {/* Akhir Filter PIC */}
           <NavButton
             onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}

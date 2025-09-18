@@ -35,45 +35,73 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $status = $_GET['status'] ?? '';
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 10);
+    // Cek parameter GET
+    // ambil parameter dari request
+    $status = isset($_GET['status']) ? $_GET['status'] : null;
+    $pic_id = isset($_GET['pic_id']) ? $_GET['pic_id'] : null;
+    $page = isset($_GET['page']) ? (int) $_GET['page'] : null;
+    $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : null;
 
-    if (empty($status)) {
-      http_response_code(400);
-      echo json_encode(['error' => 'Status is required']);
-      exit;
+    // base query
+    $sql = "SELECT * FROM tasks";
+    $countSql = "SELECT COUNT(*) FROM tasks";
+    $conditions = [];
+
+    // filter berdasarkan status
+    if ($status !== null) {
+      $conditions[] = "status = :status";
+    }
+    if ($pic_id !== null) {
+      if ($pic_id === 'null') {
+        $conditions[] = "pic_id IS NULL";
+      } else {
+        $conditions[] = "pic_id = :pic_id";
+      }
     }
 
-    // Hitung offset untuk pagination
-    $offset = ($page - 1) * $limit;
+    if (count($conditions) > 0) {
+      $where = " WHERE " . implode(" AND ", $conditions);
+      $sql .= $where;
+      $countSql .= $where;
+    }
 
-    // Query untuk menghitung total tasks
-    $totalStmt = $pdo->prepare("SELECT COUNT(*) FROM tasks WHERE status = ?");
-    $totalStmt->execute([$status]);
-    $totalTasks = $totalStmt->fetchColumn();
+    // urutkan berdasarkan data terbaru
+    $sql .= " ORDER BY updated_at DESC";
 
-    // Query untuk mengambil tasks dengan limit dan offset
-    $stmt = $pdo->prepare("SELECT * FROM tasks WHERE status = ? LIMIT ? OFFSET ? ORDER BY updated_at DESC");
-    $stmt->bindValue(1, $status, PDO::PARAM_STR);
-    $stmt->bindValue(2, $limit, PDO::PARAM_INT);
-    $stmt->bindValue(3, $offset, PDO::PARAM_INT);
+    // jika ada pagination
+    // pagination
+    if ($page !== null) {
+      if ($limit === null) {
+        $limit = 5; // default limit
+      }
+      $offset = ($page - 1) * $limit;
+      $sql .= " LIMIT :limit OFFSET :offset";
+    }
+
+    $stmt = $pdo->prepare($sql);
+
+    // binding condition kalau ada
+    if ($status !== null) {
+      $stmt->bindValue(':status', $status, PDO::PARAM_STR);
+    }
+    if ($pic_id !== null) {
+      $stmt->bindValue(':pic_id', $pic_id, PDO::PARAM_STR);
+    }
+
+    // binding pagination kalau ada
+    if ($page !== null && $limit !== null) {
+      $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+      $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    }
+
+
+    // Ambil tasks
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // $sql = "SELECT * FROM tasks ORDER BY updated_at DESC";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-    // $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     $data = array_map(function ($row) {
       $timestamp_fields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time', 'updated_at'];
-
       foreach ($timestamp_fields as $field) {
         if (!empty($row[$field])) {
-          // $utcDate = new DateTime($row[$field], new DateTimeZone('UTC'));
-          // $row[$field] = $utcDate->format('c');
-          // Format WIB agar MySQL bisa menampilkan sesuai jam WIB
           $localeDate = new DateTime($row[$field], new DateTimeZone('Asia/Jakarta'));
           $localeDate->setTimezone(new DateTimeZone('UTC'));
           $row[$field] = $localeDate->format('c');
@@ -82,11 +110,31 @@ function handleGet($pdo)
       return $row;
     }, $rows);
 
-    // Tentukan apakah ada halaman berikutnya
-    $hasMore = ($offset + $limit) < $totalTasks;
-    $nextPage = $hasMore ? $page + 1 : null;
+    // Hitung total untuk pagination
+    if ($page !== null && $limit !== null) {
+      $countStmt = $pdo->prepare($countSql);
+      if ($status !== null) {
+        $countStmt->bindValue(':status', $status, PDO::PARAM_STR);
+      }
+      if ($pic_id !== null) {
+        $countStmt->bindValue(':pic_id', $pic_id, PDO::PARAM_STR);
+      }
+      $countStmt->execute();
+      $totalRows = $countStmt->fetchColumn();
+      // Tentukan apakah ada halaman berikutnya
+      $hasMore = ($offset + $limit) < $totalRows;
+      $nextPage = $hasMore ? $page + 1 : null;
+    }
 
-    echo json_encode(['data' => $data, 'hasMore' => $hasMore, 'nextPage' => $nextPage], JSON_NUMERIC_CHECK);
+    // Response dalam JSON
+    $response = ["data" => $data];
+
+    if ($page !== null && $limit !== null) {
+      $response["hasMore"] = $hasMore;
+      $response["nextPage"] = $nextPage;
+    }
+
+    echo json_encode($response, JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Failed to fetch tasks: ' . $e->getMessage()]);

@@ -6,34 +6,36 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import { fetchTasksByStatus } from '@/api/tasks';
+import useFilter from '@/stores/filterStore';
 
 const StatusColumn = ({ status, title }) => {
+  const picId = useFilter((state) => state.picId);
   const {
     data,
     error,
-    isLoading,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    status: condition,
   } = useInfiniteQuery({
-    queryKey: ['tasks', status],
+    queryKey: ['tasks', { status, picId }],
     queryFn: fetchTasksByStatus,
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.hasMore ? lastPage.nextPage : undefined,
-    staleTime: 5 * 60 * 1000,
   });
   const { ref, inView } = useInView();
 
+  // Ambil halaman berikutnya ketika di scroll
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const tasks = data?.pages.flatMap((page) => page.tasks) || [];
-  // console.log(data);
-  console.log(tasks);
+  // Ambil tasks dari hasil query
+  const tasks = data?.pages.flatMap((page) => page.data) || [];
+
   return (
     <div className="flex flex-1 flex-col rounded-lg overflow-clip">
       <h2
@@ -48,23 +50,31 @@ const StatusColumn = ({ status, title }) => {
         {title}
       </h2>
       <ScrollArea className="flex-1 max-h-[calc(100dvh-56px-39px-32px-60.8px)] px-3 bg-neutral-100 dark:bg-neutral-900/80">
-        {isLoading && <SkeletonCard />}
-        {error && <div>Error: {error.message}</div>}
-        <div className="flex flex-col flex-1 gap-3 py-3">
-          {tasks?.map((task) => (
-            <TaskCard key={task.id} task={task} />
-            // <div className="w-full h-[150px] border-2 border-white">
-            // {task?.content}
-            // </div>
-          ))}
-        </div>
-        <div ref={ref} className="mb-">
-          {isFetchingNextPage ? (
-            <div className="h-[20px] text-center">Loading more...</div>
-          ) : hasNextPage ? (
-            <div className="h-[20px] text-center">Scroll to load more</div>
-          ) : null}
-        </div>
+        {condition === 'pending' ? (
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+        ) : condition === 'error' ? (
+          <div>Error: {error.message}</div>
+        ) : (
+          <>
+            <div className="flex flex-col flex-1 gap-3 py-3">
+              {tasks?.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+            <div ref={ref}>
+              {isFetchingNextPage ? (
+                <p className="text-center text-sm mb-3">Memuat lainnya...</p>
+              ) : hasNextPage ? (
+                <p className="text-center text-sm mb-3">
+                  Scroll untuk memuat lainnya
+                </p>
+              ) : null}
+            </div>
+          </>
+        )}
       </ScrollArea>
     </div>
   );
