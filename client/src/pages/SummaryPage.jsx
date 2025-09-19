@@ -1,5 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import { TrendingUp, TrendingDown, CalendarIcon } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  CalendarIcon,
+  SquareKanban,
+} from 'lucide-react';
 import { id } from 'date-fns/locale';
 import { startOfDay } from 'date-fns';
 import {
@@ -44,6 +49,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Link } from 'react-router';
 import usePics from '@/stores/picStore';
 import { chartConfig } from '@/config/chartConfig';
@@ -176,9 +186,6 @@ const SummaryPage = () => {
       <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
-          <Button>
-            <Link to="/">Home</Link>
-          </Button>
           {/* Filter PIC */}
           <Select value={selectedPicId} onValueChange={setSelectedPicId}>
             <SelectTrigger className="w-[160px] bg-neutral-100">
@@ -251,6 +258,23 @@ const SummaryPage = () => {
             </PopoverContent>
           </Popover>
           {/* Akhir Tanggal */}
+          {/* Pindah ke Halaman Kanban */}
+          <Tooltip delayDuration={500}>
+            <TooltipTrigger asChild>
+              <Link to="/">
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  size="icon"
+                >
+                  <SquareKanban />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Kanban Board</p>
+            </TooltipContent>
+          </Tooltip>
           <ModeToggle />
         </div>
       </header>

@@ -59,7 +59,9 @@ export default function AddPICForm() {
           name="pic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama PIC</FormLabel>
+              <FormLabel className="gap-1">
+                Nama PIC<span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="contoh: Bagus"

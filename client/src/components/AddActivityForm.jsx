@@ -62,7 +62,9 @@ export default function AddActivityForm() {
           name="activity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama Activity</FormLabel>
+              <FormLabel className="gap-1">
+                Nama Activity<span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="contoh: Meeting, Review, dan sebagainya"

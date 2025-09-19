@@ -9,6 +9,12 @@ import useActivities from '@/stores/activityStore';
 import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
+import { ChartNoAxesCombined } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Link } from 'react-router';
 
 // Setting Kolom
@@ -82,10 +88,6 @@ const HomePage = () => {
       <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
-          {/* Pindah ke Halaman Summary */}
-          <Button>
-            <Link to="/summary">Summary</Link>
-          </Button>
           {/* Filter PIC */}
           <Select value={selectedPicId} onValueChange={setSelectedPicId}>
             <SelectTrigger className="w-[160px] bg-neutral-100">
@@ -116,6 +118,24 @@ const HomePage = () => {
           <NavButton onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
             Tambah Task
           </NavButton>
+          {/* Pindah ke Halaman Summary */}
+          <Tooltip delayDuration={500}>
+            <TooltipTrigger asChild>
+              <Link to="/summary">
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  size="icon"
+                >
+                  <ChartNoAxesCombined />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Ringkasan</p>
+            </TooltipContent>
+          </Tooltip>
+          {/* Toggle Dark Mode */}
           <ModeToggle />
         </div>
       </header>

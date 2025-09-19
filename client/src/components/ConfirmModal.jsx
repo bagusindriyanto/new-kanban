@@ -61,7 +61,7 @@ export default function ConfirmModal() {
   };
 
   const onClose = () => {
-    form.setValue('password', '');
+    form.reset();
     setIsModalOpen(false);
   };
 
@@ -99,6 +99,7 @@ export default function ConfirmModal() {
               {/* Button Modal */}
               <div className="w-full flex justify-end gap-2">
                 <Button
+                  type="button"
                   variant="secondary"
                   className="cursor-pointer"
                   onClick={onClose}
