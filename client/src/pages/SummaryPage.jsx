@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { TrendingUp, TrendingDown, CalendarIcon } from 'lucide-react';
-import { format, parseISO, startOfDay } from 'date-fns';
 import { id } from 'date-fns/locale';
 import {
   Bar,
@@ -46,107 +45,89 @@ import {
 } from '@/components/ui/popover';
 import { Link } from 'react-router';
 import usePics from '@/stores/picStore';
-import useTasks from '@/stores/taskStore';
 import { chartConfig } from '@/config/chartConfig';
+import useSummary from '@/stores/summaryStore';
+import useFilter from '@/stores/filterStore';
+import { ModeToggle } from '@/components/ModeToggle';
 
 const SummaryPage = () => {
   // State
   const pics = usePics((state) => state.pics);
-  const tasks = useTasks((state) => state.tasks);
-  const [selectedPicId, setSelectedPicId] = useState('all');
-  const [range, setRange] = useState({
-    from: null,
-    to: null,
-  });
+  const summary = useSummary((state) => state.summary);
+  const selectedPicId = useFilter((state) => state.selectedPicId);
+  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+  const range = useFilter((state) => state.range);
+  const setRange = useFilter((state) => state.setRange);
 
   // Urutkan dan filter task berdasarkan PIC
-  const sortedTasks = useMemo(() => {
-    // Sorting
-    let result = [...tasks].sort(
-      (a, b) => new Date(a.timestamp_done) - new Date(b.timestamp_done)
-    );
+  const filteredSummary = useMemo(() => {
     // Filtering PIC
+    let result = [...summary];
     if (selectedPicId !== 'all') {
-      result = result.filter((task) => task.pic_id === selectedPicId);
+      result = result.filter((res) => res.pic_id === selectedPicId);
     }
     // Filtering Tanggal
     if (!range?.from && !range?.to) {
       return result;
     }
-    result = result.filter((task) => {
-      if (!task.timestamp_done) return false;
-      const date = startOfDay(parseISO(task.timestamp_done));
+    result = result.filter((res) => {
+      if (!res.date) return false;
+      const date = new Date(res.date);
       return date >= range.from && date <= range.to;
     });
-
     return result;
-  }, [tasks, selectedPicId, range]);
+  }, [summary, selectedPicId, range]);
 
   // Data pada Card
-  const totalActivity = sortedTasks.length;
-  const totalActivityMinutes = sortedTasks.reduce(
-    (sum, task) => sum + task.minute_activity,
+  const totalTodoActivity = filteredSummary.reduce(
+    (sum, res) => sum + res.todo_count,
     0
   );
-  const totalTodoActivity = sortedTasks.filter(
-    (task) => task.status === 'todo'
-  ).length;
-  const totalProgressActivity = sortedTasks.filter(
-    (task) => task.status === 'on progress'
-  ).length;
-  const totalDoneActivity = sortedTasks.filter(
-    (task) => task.status === 'done'
-  ).length;
-
-  // Data pada Chart
-  const chartData = Object.values(
-    sortedTasks.reduce((acc, task) => {
-      if (!task.timestamp_done) return acc;
-      // Ambil tanggal saja (YYYY-MM-DD)
-      const date = format(task.timestamp_done, 'yyyy-MM-dd');
-      // Kalau belum ada, buat object baru
-      if (!acc[date]) {
-        acc[date] = { date, minute_activity: 0, minute_pause: 0 };
-      }
-      // Tambahkan minute_activity dan minute_pause
-      acc[date].minute_activity += task.minute_activity;
-      acc[date].minute_pause += task.minute_pause;
-      return acc;
-    }, {})
+  const totalProgressActivity = filteredSummary.reduce(
+    (sum, res) => sum + res.on_progress_count,
+    0
   );
-
-  // const filteredChartData = useMemo(() => {
-  //   if (!range?.from && !range?.to) {
-  //     return chartData;
-  //   }
-  //   return chartData.filter((task) => {
-  //     const date = new Date(task.date);
-  //     return date >= range.from && date <= range.to;
-  //   });
-  // }, [range]);
+  const totalDoneActivity = filteredSummary.reduce(
+    (sum, res) => sum + res.done_count,
+    0
+  );
+  const totalArchivedActivity = filteredSummary.reduce(
+    (sum, res) => sum + res.archived_count,
+    0
+  );
+  // const totalActivityMinutes = filteredSummary.reduce(
+  //   (sum, res) => sum + res.activity_duration,
+  //   0
+  // );
+  // const totalActivity =
+  //   totalTodoActivity +
+  //   totalProgressActivity +
+  //   totalDoneActivity +
+  //   totalArchivedActivity;
 
   // Fungsi panggil data
   const fetchPics = usePics((state) => state.fetchPics);
-  const fetchTasks = useTasks((state) => state.fetchTasks);
+  const fetchSummary = useSummary((state) => state.fetchSummary);
 
   // Ambil tasks ketika halaman dimuat
   useEffect(() => {
     const fetchAll = () => {
       fetchPics();
-      fetchTasks();
+      fetchSummary();
     };
     fetchAll();
-    const interval = setInterval(fetchAll, 10000);
+    const interval = setInterval(fetchAll, 20000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <>
-      <div className="flex justify-between">
-        <Button>
-          <Link to="/">Kembali ke halaman utama</Link>
-        </Button>
-        <div className="flex gap-2">
+    <div className="h-screen flex flex-col">
+      <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
+        <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
+        <div className="flex gap-2 items-center">
+          <Button>
+            <Link to="/">Home</Link>
+          </Button>
           {/* Filter PIC */}
           <Select value={selectedPicId} onValueChange={setSelectedPicId}>
             <SelectTrigger className="w-[160px] bg-neutral-100">
@@ -196,10 +177,11 @@ const SummaryPage = () => {
             </PopoverContent>
           </Popover>
           {/* Akhir Tanggal */}
+          <ModeToggle />
         </div>
-      </div>
-      {/* Card */}
-      <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 md:grid-cols-2 xl:grid-cols-4">
+      </header>
+      {/* Main */}
+      <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         <Card className="bg-linear-to-t from-todo-500/40 to-card border-none">
           <CardHeader>
             <CardDescription>Total To Do Activity</CardDescription>
@@ -234,7 +216,6 @@ const SummaryPage = () => {
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium"></div>
             <div className="text-muted-foreground"></div>
-            {/* <pre>{JSON.stringify(range)}</pre> */}
           </CardFooter>
         </Card>
         <Card className="bg-linear-to-t from-done-500/40 to-card border-none">
@@ -255,11 +236,11 @@ const SummaryPage = () => {
             <div className="text-muted-foreground"></div>
           </CardFooter>
         </Card>
-        <Card className="@container/card">
+        <Card className="bg-linear-to-t from-archived-500/40 to-card border-none">
           <CardHeader>
-            <CardDescription>Rata-Rata Lama Activity</CardDescription>
+            <CardDescription>Total Archived Activty</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {Math.round(totalActivityMinutes / totalActivity) || 0} Menit
+              {totalArchivedActivity} Aktivitas
             </CardTitle>
             <CardAction>
               <Badge variant="outline">
@@ -269,25 +250,24 @@ const SummaryPage = () => {
             </CardAction>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
-              Total Activity: {totalActivity} Aktivitas
-            </div>
-            <div className="text-muted-foreground">
-              Total Activity Minutes: {totalActivityMinutes} Menit
-            </div>
+            <div className="line-clamp-1 flex gap-2 font-medium"></div>
+            <div className="text-muted-foreground"></div>
           </CardFooter>
         </Card>
         {/* Chart */}
-        <Card className="w-full md:col-span-2">
+        <Card className="w-full max-h-[400px] md:col-span-2">
           <CardHeader>
-            <CardTitle>Activity Minutes</CardTitle>
+            <CardTitle>Activity vs Work Time</CardTitle>
             <CardDescription>
-              Menampilkan lama activity per hari
+              Perbandingan lama aktivitas dengan lama bekerja.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="w-full">
-              <BarChart accessibilityLayer data={chartData}>
+            <ChartContainer
+              config={chartConfig}
+              className="max-h-[300px] w-full"
+            >
+              <BarChart accessibilityLayer data={filteredSummary}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="date"
@@ -303,7 +283,7 @@ const SummaryPage = () => {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickCount={5}
+                  tickCount={4}
                 />
                 <ChartTooltip
                   content={
@@ -317,8 +297,20 @@ const SummaryPage = () => {
                 />
                 <ChartLegend content={<ChartLegendContent />} />
                 <Bar
-                  dataKey="minute_activity"
-                  fill="var(--color-minute_activity)"
+                  dataKey="activity_duration"
+                  fill="var(--color-activity_duration)"
+                  radius={4}
+                >
+                  <LabelList
+                    position="top"
+                    offset={12}
+                    className="fill-foreground"
+                    fontSize={12}
+                  />
+                </Bar>
+                <Bar
+                  dataKey="working_minute"
+                  fill="var(--color-working_minute)"
                   radius={4}
                 >
                   <LabelList
@@ -331,17 +323,16 @@ const SummaryPage = () => {
               </BarChart>
             </ChartContainer>
           </CardContent>
-          {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-            <div className="flex gap-2 leading-none font-medium">
-              Trending up by 5.2% this month
-            </div>
-            <div className="text-muted-foreground leading-none">
-              Showing total visitors for the last 6 months
-            </div>
-          </CardFooter> */}
         </Card>
-      </div>
-    </>
+      </main>
+      {/* Footer */}
+      <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
+        <p className="text-white font-normal">
+          &copy; {new Date().getFullYear()} Kanban App
+        </p>
+      </footer>
+      {/* Card */}
+    </div>
   );
 };
 

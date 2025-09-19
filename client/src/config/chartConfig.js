@@ -1,11 +1,11 @@
 // Chart Activity Minute
 export const chartConfig = {
-  minute_activity: {
+  activity_duration: {
     label: 'Activity',
     color: 'var(--chart-1)',
   },
-  minute_pause: {
-    label: 'Lama Pause',
+  working_minute: {
+    label: 'Work',
     color: 'var(--chart-2)',
   },
 };

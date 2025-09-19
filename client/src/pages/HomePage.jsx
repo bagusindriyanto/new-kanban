@@ -25,12 +25,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import useFilter from '@/stores/filterStore';
 
 const HomePage = () => {
   // State untuk data
   const pics = usePics((state) => state.pics);
-  const [selectedPicId, setSelectedPicId] = useState('all');
   const tasks = useTasks((state) => state.tasks);
+  const selectedPicId = useFilter((state) => state.selectedPicId);
+  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const sortedTasks = useMemo(() => {
     // Sorting
     let result = [...tasks].sort(
@@ -61,7 +63,7 @@ const HomePage = () => {
       fetchTasks();
     };
     fetchAll();
-    const interval = setInterval(fetchAll, 10000);
+    const interval = setInterval(fetchAll, 20000);
     return () => clearInterval(interval);
   }, []);
 

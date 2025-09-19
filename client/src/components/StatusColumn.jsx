@@ -1,5 +1,5 @@
 import TaskCard from './TaskCard';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Virtuoso } from 'react-virtuoso';
 
 const StatusColumn = ({ title, tasks }) => {
   return (
@@ -15,13 +15,18 @@ const StatusColumn = ({ title, tasks }) => {
       >
         {title}
       </h2>
-      <ScrollArea className="flex-1 max-h-[calc(100dvh-56px-39px-32px-60.8px)] px-3 bg-neutral-100 dark:bg-neutral-900/80">
-        <div className="flex flex-col flex-1 gap-3 py-3">
-          {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-      </ScrollArea>
+      <Virtuoso
+        className="!max-h-[calc(100dvh-56px-39px-32px-60.8px)] bg-neutral-100 dark:bg-neutral-900/80 
+        [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-none [&::-webkit-scrollbar-thumb]:relative 
+        [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 
+        dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+        data={tasks}
+        itemContent={(_, task) => (
+          <div className="px-3 pt-3">
+            <TaskCard task={task} />
+          </div>
+        )}
+      />
     </div>
   );
 };
