@@ -94,7 +94,7 @@ const HomePage = () => {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>PIC</SelectLabel>
-                <SelectItem value="all">Semua</SelectItem>
+                <SelectItem value="all">Semua PIC</SelectItem>
                 <SelectItem value={null}>-</SelectItem>
                 {pics.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>

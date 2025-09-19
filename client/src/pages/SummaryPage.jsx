@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { TrendingUp, TrendingDown, CalendarIcon } from 'lucide-react';
 import { id } from 'date-fns/locale';
+import { startOfDay } from 'date-fns';
 import {
   Bar,
   BarChart,
@@ -49,8 +50,45 @@ import { chartConfig } from '@/config/chartConfig';
 import useSummary from '@/stores/summaryStore';
 import useFilter from '@/stores/filterStore';
 import { ModeToggle } from '@/components/ModeToggle';
+// Data Table
+import { DataTable } from '@/components/table/data-table';
+import { columns } from '@/components/table/columns';
 
 const SummaryPage = () => {
+  // Placeholder Table
+  const placeholder = [
+    { status: 'completed', email: 'alice01@example.com', amount: 250 },
+    { status: 'pending', email: 'bob02@example.com', amount: 120 },
+    { status: 'failed', email: 'charlie03@example.com', amount: 340 },
+    { status: 'completed', email: 'diana04@example.com', amount: 560 },
+    { status: 'pending', email: 'edward05@example.com', amount: 90 },
+    { status: 'completed', email: 'frank06@example.com', amount: 720 },
+    { status: 'failed', email: 'grace07@example.com', amount: 180 },
+    { status: 'pending', email: 'henry08@example.com', amount: 430 },
+    { status: 'completed', email: 'irene09@example.com', amount: 220 },
+    { status: 'failed', email: 'jack10@example.com', amount: 800 },
+    { status: 'pending', email: 'kate11@example.com', amount: 310 },
+    { status: 'completed', email: 'leo12@example.com', amount: 640 },
+    { status: 'failed', email: 'mia13@example.com', amount: 400 },
+    { status: 'completed', email: 'nathan14@example.com', amount: 150 },
+    { status: 'pending', email: 'olivia15@example.com', amount: 270 },
+    { status: 'failed', email: 'peter16@example.com', amount: 960 },
+    { status: 'completed', email: 'queen17@example.com', amount: 510 },
+    { status: 'pending', email: 'robert18@example.com', amount: 180 },
+    { status: 'completed', email: 'susan19@example.com', amount: 770 },
+    { status: 'failed', email: 'tom20@example.com', amount: 640 },
+    { status: 'completed', email: 'ursula21@example.com', amount: 300 },
+    { status: 'pending', email: 'victor22@example.com', amount: 560 },
+    { status: 'failed', email: 'wendy23@example.com', amount: 430 },
+    { status: 'completed', email: 'xavier24@example.com', amount: 210 },
+    { status: 'pending', email: 'yasmine25@example.com', amount: 390 },
+    { status: 'failed', email: 'zack26@example.com', amount: 120 },
+    { status: 'completed', email: 'anna27@example.com', amount: 850 },
+    { status: 'pending', email: 'brian28@example.com', amount: 470 },
+    { status: 'failed', email: 'carol29@example.com', amount: 620 },
+    { status: 'completed', email: 'derek30@example.com', amount: 700 },
+  ];
+
   // State
   const pics = usePics((state) => state.pics);
   const summary = useSummary((state) => state.summary);
@@ -65,6 +103,18 @@ const SummaryPage = () => {
     let result = [...summary];
     if (selectedPicId !== 'all') {
       result = result.filter((res) => res.pic_id === selectedPicId);
+    } else {
+      result = Object.values(
+        result.reduce((acc, { date, activity_duration, working_minute }) => {
+          // const num = Number(value); // pastikan angka meskipun string
+          if (!acc[date]) {
+            acc[date] = { date, activity_duration: 0, working_minute: 0 };
+          }
+          acc[date].activity_duration += activity_duration;
+          acc[date].working_minute += working_minute;
+          return acc;
+        }, {})
+      );
     }
     // Filtering Tanggal
     if (!range?.from && !range?.to) {
@@ -72,7 +122,8 @@ const SummaryPage = () => {
     }
     result = result.filter((res) => {
       if (!res.date) return false;
-      const date = new Date(res.date);
+      const [year, month, day] = res.date.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
       return date >= range.from && date <= range.to;
     });
     return result;
@@ -136,7 +187,7 @@ const SummaryPage = () => {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>PIC</SelectLabel>
-                <SelectItem value="all">Semua</SelectItem>
+                <SelectItem value="all">Semua PIC</SelectItem>
                 <SelectItem value={null}>-</SelectItem>
                 {pics.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>
@@ -156,7 +207,7 @@ const SummaryPage = () => {
                   ? `${range.from.toLocaleDateString(
                       'id'
                     )} - ${range.to.toLocaleDateString('id')}`
-                  : 'Pilih Tanggal'}
+                  : 'Semua Hari'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto overflow-hidden p-0" align="end">
@@ -164,9 +215,11 @@ const SummaryPage = () => {
                 className="w-full"
                 mode="range"
                 locale={id}
+                showWeekNumber
                 captionLayout="dropdown"
                 defaultMonth={range?.from}
                 weekStartsOn={1}
+                max={6}
                 selected={range}
                 onSelect={setRange}
                 startMonth={new Date(2011, 12)}
@@ -174,6 +227,27 @@ const SummaryPage = () => {
                   date > new Date() || date <= new Date('2011-12-31')
                 }
               />
+              <div className="p-3 flex gap-3 justify-between items-end border-t border-border">
+                <Button
+                  className="flex-1"
+                  variant="outline"
+                  onClick={() =>
+                    setRange({
+                      from: startOfDay(new Date()),
+                      to: startOfDay(new Date()),
+                    })
+                  }
+                >
+                  Hari Ini
+                </Button>
+                <Button
+                  className="flex-1"
+                  variant="outline"
+                  onClick={() => setRange({ from: null, to: null })}
+                >
+                  Semua Hari
+                </Button>
+              </div>
             </PopoverContent>
           </Popover>
           {/* Akhir Tanggal */}
@@ -182,7 +256,7 @@ const SummaryPage = () => {
       </header>
       {/* Main */}
       <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-        <Card className="bg-linear-to-t from-todo-500/40 to-card border-none">
+        <Card className="bg-linear-to-t from-todo-500/60 to-card border-none">
           <CardHeader>
             <CardDescription>Total To Do Activity</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
@@ -200,7 +274,7 @@ const SummaryPage = () => {
             <div className="text-muted-foreground"></div>
           </CardFooter>
         </Card>
-        <Card className="bg-linear-to-t from-progress-500/40 to-card border-none">
+        <Card className="bg-linear-to-t from-progress-500/60 to-card border-none">
           <CardHeader>
             <CardDescription>Total On Progress Activity</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
@@ -218,7 +292,7 @@ const SummaryPage = () => {
             <div className="text-muted-foreground"></div>
           </CardFooter>
         </Card>
-        <Card className="bg-linear-to-t from-done-500/40 to-card border-none">
+        <Card className="bg-linear-to-t from-done-500/60 to-card border-none">
           <CardHeader>
             <CardDescription>Total Done Activty</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
@@ -236,7 +310,7 @@ const SummaryPage = () => {
             <div className="text-muted-foreground"></div>
           </CardFooter>
         </Card>
-        <Card className="bg-linear-to-t from-archived-500/40 to-card border-none">
+        <Card className="bg-linear-to-t from-archived-500/60 to-card border-none">
           <CardHeader>
             <CardDescription>Total Archived Activty</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
@@ -283,7 +357,7 @@ const SummaryPage = () => {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickCount={4}
+                  tickCount={5}
                 />
                 <ChartTooltip
                   content={
@@ -303,7 +377,7 @@ const SummaryPage = () => {
                 >
                   <LabelList
                     position="top"
-                    offset={12}
+                    offset={8}
                     className="fill-foreground"
                     fontSize={12}
                   />
@@ -315,7 +389,7 @@ const SummaryPage = () => {
                 >
                   <LabelList
                     position="top"
-                    offset={12}
+                    offset={8}
                     className="fill-foreground"
                     fontSize={12}
                   />
@@ -324,6 +398,11 @@ const SummaryPage = () => {
             </ChartContainer>
           </CardContent>
         </Card>
+        {/* Card */}
+        {/* Table */}
+        <div className="md:col-span-2">
+          <DataTable columns={columns} data={placeholder}></DataTable>
+        </div>
       </main>
       {/* Footer */}
       <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
@@ -331,7 +410,6 @@ const SummaryPage = () => {
           &copy; {new Date().getFullYear()} Kanban App
         </p>
       </footer>
-      {/* Card */}
     </div>
   );
 };
