@@ -84,7 +84,7 @@ function handleGet($pdo)
     if ($status !== null) {
       $stmt->bindValue(':status', $status, PDO::PARAM_STR);
     }
-    if ($pic_id !== null) {
+    if ($pic_id !== null && $pic_id !== 'null') {
       $stmt->bindValue(':pic_id', $pic_id, PDO::PARAM_STR);
     }
 
@@ -116,7 +116,7 @@ function handleGet($pdo)
       if ($status !== null) {
         $countStmt->bindValue(':status', $status, PDO::PARAM_STR);
       }
-      if ($pic_id !== null) {
+      if ($pic_id !== null && $pic_id !== 'null') {
         $countStmt->bindValue(':pic_id', $pic_id, PDO::PARAM_STR);
       }
       $countStmt->execute();
