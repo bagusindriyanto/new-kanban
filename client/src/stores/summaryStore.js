@@ -10,9 +10,7 @@ const useSummary = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true });
     try {
-      const res = await axios.get(
-        'http://192.168.1.14:8080/kanban/api/summary.php'
-      );
+      const res = await axios.get('http://localhost/kanban/api/summary.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data Summary');
       set({ summary: res.data });
       return res.data;
@@ -25,7 +23,7 @@ const useSummary = create((set) => ({
     set({ isLoading: true });
     try {
       const res = await axios.get(
-        'http://192.168.1.14:8080/kanban/api/table_summary.php'
+        'http://localhost/kanban/api/table_summary.php'
       );
       if (res.status !== 200)
         throw new Error('Gagal mengambil data Table Summary');

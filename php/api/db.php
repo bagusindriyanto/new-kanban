@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
-$user = "dani";
-$password = "semarang";
+$user = "root";
+$password = "";
 $dbname = "kanban_app";
 
 try {

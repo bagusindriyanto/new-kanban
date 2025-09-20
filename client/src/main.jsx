@@ -8,7 +8,7 @@ import { ThemeProvider } from 'next-themes';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider attribute="class">
-      <BrowserRouter basename="/kanban">
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </ThemeProvider>
