@@ -151,8 +151,8 @@ const HomePage = () => {
       </main>
       {/* Footer */}
       <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
-        <p className="text-white font-normal">
-          &copy; {new Date().getFullYear()} Kanban App
+        <p className="text-white text-sm font-normal">
+          Made with &#10084; by Data Analyst &copy; {new Date().getFullYear()}
         </p>
       </footer>
       {/* Form Modal */}
