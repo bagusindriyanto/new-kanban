@@ -21,7 +21,7 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT t.date, t.pic_id, p.name, t.content, t.total_minutes, t.activity_count, t.avg_minutes FROM (SELECT DATE(timestamp_done) AS date, pic_id, content,  SUM(minute_activity) as total_minutes, COUNT(content) as activity_count, AVG(minute_activity) as avg_minutes from tasks GROUP BY date, content, pic_id) t LEFT JOIN pics p ON t.pic_id = p.id ORDER BY t.date, t.pic_id t.content";
+    $sql = "SELECT t.date, t.pic_id, p.name, t.content, t.total_minutes, t.activity_count, t.avg_minutes FROM (SELECT DATE(timestamp_done) AS date, pic_id, content,  SUM(minute_activity) as total_minutes, COUNT(content) as activity_count, AVG(minute_activity) as avg_minutes from tasks GROUP BY date, content, pic_id) t LEFT JOIN pics p ON t.pic_id = p.id ORDER BY t.date, t.pic_id, t.content";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
