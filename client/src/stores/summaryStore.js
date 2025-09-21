@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { api } from '@/api/api';
 
 const useSummary = create((set) => ({
   summary: [],
@@ -10,7 +10,7 @@ const useSummary = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true });
     try {
-      const res = await axios.get('http://localhost/kanban/api/summary.php');
+      const res = await api.get('/summary.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data Summary');
       set({ summary: res.data });
       return res.data;
@@ -22,9 +22,7 @@ const useSummary = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true });
     try {
-      const res = await axios.get(
-        'http://localhost/kanban/api/table_summary.php'
-      );
+      const res = await api.get('/table_summary.php');
       if (res.status !== 200)
         throw new Error('Gagal mengambil data Table Summary');
       set({ tableSummary: res.data });

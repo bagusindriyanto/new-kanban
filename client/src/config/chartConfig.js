@@ -5,7 +5,7 @@ export const chartConfig = {
     color: 'var(--chart-1)',
   },
   working_minute: {
-    label: 'Jam Kerja',
+    label: 'Waktu Kerja',
     color: 'var(--chart-2)',
   },
 };

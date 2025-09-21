@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { api } from '@/api/api';
 
 const useTasks = create((set) => ({
   tasks: [],
@@ -18,7 +18,7 @@ const useTasks = create((set) => ({
     // Set isLoading to true while fetching data
     set({ isLoading: true });
     try {
-      const res = await axios.get('http://localhost/kanban/api/tasks.php');
+      const res = await api.get('/tasks.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data task');
       set({ tasks: res.data });
       return res.data;
@@ -31,7 +31,7 @@ const useTasks = create((set) => ({
     set({ isLoading: true });
     try {
       const now = new Date().toISOString();
-      const res = await axios.post('http://localhost/kanban/api/tasks.php', {
+      const res = await api.post('/tasks.php', {
         content,
         pic_id,
         detail,
@@ -56,10 +56,10 @@ const useTasks = create((set) => ({
     set({ isLoading: true });
     try {
       const now = new Date().toISOString();
-      const res = await axios.patch(
-        `http://localhost/kanban/api/tasks.php?id=${taskId}`,
-        { ...data, updated_at: now }
-      );
+      const res = await api.patch(`/tasks.php?id=${taskId}`, {
+        ...data,
+        updated_at: now,
+      });
       if (res.status !== 201) throw new Error('Gagal memperbarui task');
       set((state) => ({
         tasks: state.tasks.map((t) =>
@@ -75,9 +75,7 @@ const useTasks = create((set) => ({
   deleteTask: async (taskId) => {
     set({ isLoading: true });
     try {
-      const res = await axios.delete(
-        `http://localhost/kanban/api/tasks.php?id=${taskId}`
-      );
+      const res = await api.delete(`/tasks.php?id=${taskId}`);
       if (res.status !== 200) throw new Error('Gagal menghapus task');
       set((state) => ({
         tasks: state.tasks.filter((t) => t.id !== res.data.id),

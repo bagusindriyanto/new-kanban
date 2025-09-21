@@ -30,6 +30,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  ChevronLeft,
+  ChevronsLeft,
+  ChevronRight,
+  ChevronsRight,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -60,14 +66,14 @@ export function DataTable({ columns, data }) {
       <CardHeader>
         <CardTitle>Tabel Aktivitas</CardTitle>
         <CardDescription>
-          Menampilkan jenis aktivitas, durasi, jumlah aktivitas, serta rata-rata
-          durasi setiap aktivitas.
+          Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
+          rata-rata durasi setiap aktivitas.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center mb-4">
           <Input
-            placeholder="Filter Aktivitas..."
+            placeholder="Cari aktivitas..."
             value={table.getColumn('content')?.getFilterValue() ?? ''}
             onChange={(event) =>
               table.getColumn('content')?.setFilterValue(event.target.value)
@@ -125,23 +131,55 @@ export function DataTable({ columns, data }) {
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end gap-x-2 mt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Sebelumnya
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Selanjutnya
-          </Button>
+        <div className="flex items-center justify-end gap-x-6 mt-4">
+          <div className="flex w-fit items-center justify-center text-sm font-medium">
+            Halaman{' '}
+            {table.getPageCount() === 0
+              ? 0
+              : table.getState().pagination.pageIndex + 1}{' '}
+            dari {table.getPageCount()}
+          </div>
+          <div className="ml-auto flex items-center gap-2 lg:ml-0">
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Halaman Awal</span>
+              <ChevronsLeft />
+            </Button>
+            <Button
+              variant="outline"
+              className="size-8"
+              size="icon"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Halaman Sebelumnya</span>
+              <ChevronLeft />
+            </Button>
+            <Button
+              variant="outline"
+              className="size-8"
+              size="icon"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Halaman Berikutnya</span>
+              <ChevronRight />
+            </Button>
+            <Button
+              variant="outline"
+              className="hidden size-8 lg:flex"
+              size="icon"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Halaman Terakhir</span>
+              <ChevronsRight />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

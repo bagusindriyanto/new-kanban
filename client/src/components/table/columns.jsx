@@ -17,6 +17,11 @@ export const columns = [
   {
     accessorKey: 'date',
     header: 'Tanggal',
+    cell: ({ row }) => {
+      const date = new Date(row.getValue('date'));
+      const formatted = date.toLocaleDateString('id');
+      return <div className="font-medium">{formatted}</div>;
+    },
   },
   {
     accessorKey: 'name',
@@ -31,7 +36,7 @@ export const columns = [
     header: () => <div className="text-right">Total Durasi</div>,
     cell: ({ row }) => {
       const total_minutes = row.getValue('total_minutes');
-      const formatted = total_minutes + ' mnt';
+      const formatted = total_minutes + ' menit';
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
@@ -48,7 +53,7 @@ export const columns = [
     header: () => <div className="text-right">Rata-Rata Durasi</div>,
     cell: ({ row }) => {
       const avg_minutes = parseFloat(row.getValue('avg_minutes')).toFixed(1);
-      const formatted = avg_minutes + ' mnt';
+      const formatted = avg_minutes + ' menit';
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },

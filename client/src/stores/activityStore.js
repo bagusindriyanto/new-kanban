@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { api } from '@/api/api';
 
 const useActivities = create((set) => ({
   activities: [],
@@ -7,9 +7,9 @@ const useActivities = create((set) => ({
 
   fetchActivities: async () => {
     // Set isLoading to true while fetching data
-    set({ isLoading: true, error: null });
+    set({ isLoading: true });
     try {
-      const res = await axios.get('http://localhost/kanban/api/activities.php');
+      const res = await api.get('/activities.php');
       if (res.status !== 200) throw new Error('Gagal mengambil data activity');
       set({ activities: res.data });
     } finally {
@@ -18,12 +18,9 @@ const useActivities = create((set) => ({
   },
 
   addActivity: async (name) => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true });
     try {
-      const res = await axios.post(
-        'http://localhost/kanban/api/activities.php',
-        { name }
-      );
+      const res = await api.post('/activities.php', { name });
       if (res.status !== 201) throw new Error('Gagal menambahkan activity');
       set((state) => ({ activities: [res.data, ...state.activities] }));
       return res.data;

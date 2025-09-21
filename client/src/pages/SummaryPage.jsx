@@ -309,7 +309,7 @@ const SummaryPage = () => {
         <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
           <CardHeader>
             <CardDescription>Total Activities</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalActivity} Aktivitas
             </CardTitle>
             {/* <CardAction>
@@ -319,17 +319,29 @@ const SummaryPage = () => {
               </Badge>
             </CardAction> */}
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium"></div>
-            <div className="text-muted-foreground"></div>
-          </CardFooter>
         </Card>
         <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
           <CardHeader>
             <CardDescription>Operational Time</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {operationalTimePercentage.toFixed(2)} %
-            </CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {operationalTimePercentage.toFixed(2)} %
+              </CardTitle>
+              <div className="flex flex-col items-end gap-1.5 text-sm">
+                <div className="font-medium">
+                  Lama Aktivitas:{' '}
+                  <span className="text-muted-foreground">
+                    {totalActivityMinutes} menit
+                  </span>
+                </div>
+                <div className="font-medium">
+                  Lama Bekerja:{' '}
+                  <span className="text-muted-foreground">
+                    {totalWorkingMinutes} menit
+                  </span>
+                </div>
+              </div>
+            </div>
             {/* <CardAction>
               <Badge variant="outline">
                 <TrendingDown />
@@ -337,20 +349,6 @@ const SummaryPage = () => {
               </Badge>
             </CardAction> */}
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="font-medium">
-              Lama Aktivitas:{' '}
-              <span className="text-muted-foreground">
-                {totalActivityMinutes} Menit
-              </span>
-            </div>
-            <div className="font-medium">
-              Lama Bekerja:{' '}
-              <span className="text-muted-foreground">
-                {totalWorkingMinutes} Menit
-              </span>
-            </div>
-          </CardFooter>
         </Card>
         <Card className="bg-linear-to-t from-todo-500/60 to-card border-none">
           <CardHeader>
@@ -411,7 +409,7 @@ const SummaryPage = () => {
         {/* Chart */}
         <Card className="w-full  md:col-span-2">
           <CardHeader>
-            <CardTitle>Lama Aktivitas vs Jam Kerja</CardTitle>
+            <CardTitle>Lama Aktivitas vs Lama Bekerja</CardTitle>
             <CardDescription>
               Perbandingan lama aktivitas dengan lama bekerja.
             </CardDescription>
@@ -443,6 +441,24 @@ const SummaryPage = () => {
                         const date = new Date(value);
                         return date.toLocaleDateString('id');
                       }}
+                      className="w-[180px]"
+                      formatter={(value, name) => (
+                        <>
+                          <div
+                            className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
+                            style={{
+                              '--color-bg': `var(--color-${name})`,
+                            }}
+                          />
+                          {chartConfig[name]?.label || name}
+                          <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-medium">
+                            {value}
+                            <span className="ml-0.5 text-muted-foreground font-normal">
+                              menit
+                            </span>
+                          </div>
+                        </>
+                      )}
                     />
                   }
                 />
