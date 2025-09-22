@@ -162,11 +162,11 @@ const SummaryPage = () => {
     (sum, res) => sum + res.working_minute,
     0
   );
-  const operationalTimePercentage = Number.isNaN(
+  const operationalTimePercentage = Number.isFinite(
     totalActivityMinutes / totalWorkingMinutes
   )
-    ? 0
-    : (totalActivityMinutes / totalWorkingMinutes) * 100;
+    ? (totalActivityMinutes / totalWorkingMinutes) * 100
+    : 0;
 
   const totalTodoActivity = filteredSummary.reduce(
     (sum, res) => sum + res.todo_count,

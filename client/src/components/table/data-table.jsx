@@ -32,9 +32,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   ChevronLeft,
-  ChevronsLeft,
+  ChevronFirst,
   ChevronRight,
-  ChevronsRight,
+  ChevronLast,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -147,7 +147,7 @@ export function DataTable({ columns, data }) {
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Halaman Awal</span>
-              <ChevronsLeft />
+              <ChevronFirst />
             </Button>
             <Button
               variant="outline"
@@ -177,7 +177,7 @@ export function DataTable({ columns, data }) {
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Halaman Terakhir</span>
-              <ChevronsRight />
+              <ChevronLast />
             </Button>
           </div>
         </div>
