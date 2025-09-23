@@ -2,6 +2,10 @@ import { useEffect, useMemo } from 'react';
 import {
   TrendingUp,
   TrendingDown,
+  ListTodo,
+  Clock4,
+  Check,
+  Archive,
   CalendarIcon,
   SquareKanban,
 } from 'lucide-react';
@@ -356,12 +360,9 @@ const SummaryPage = () => {
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalTodoActivity} Aktivitas
             </CardTitle>
-            {/* <CardAction>
-              <Badge variant="outline">
-                <TrendingDown />
-                -20%
-              </Badge>
-            </CardAction> */}
+            <CardAction>
+              <ListTodo className="text-muted-foreground size-5" />
+            </CardAction>
           </CardHeader>
         </Card>
         <Card className="bg-linear-to-t from-progress-500/60 to-card border-none">
@@ -370,12 +371,9 @@ const SummaryPage = () => {
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalProgressActivity} Aktivitas
             </CardTitle>
-            {/* <CardAction>
-              <Badge variant="outline">
-                <TrendingUp />
-                +12.5%
-              </Badge>
-            </CardAction> */}
+            <CardAction>
+              <Clock4 className="text-muted-foreground size-5" />
+            </CardAction>
           </CardHeader>
         </Card>
         <Card className="bg-linear-to-t from-done-500/60 to-card border-none">
@@ -384,12 +382,9 @@ const SummaryPage = () => {
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalDoneActivity} Aktivitas
             </CardTitle>
-            {/* <CardAction>
-              <Badge variant="outline">
-                <TrendingUp />
-                +12.5%
-              </Badge>
-            </CardAction> */}
+            <CardAction>
+              <Check className="text-muted-foreground size-5" />
+            </CardAction>
           </CardHeader>
         </Card>
         <Card className="bg-linear-to-t from-archived-500/60 to-card border-none">
@@ -398,12 +393,9 @@ const SummaryPage = () => {
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalArchivedActivity} Aktivitas
             </CardTitle>
-            {/* <CardAction>
-              <Badge variant="outline">
-                <TrendingUp />
-                +12.5%
-              </Badge>
-            </CardAction> */}
+            <CardAction>
+              <Archive className="text-muted-foreground size-5" />
+            </CardAction>
           </CardHeader>
         </Card>
         {/* Chart */}
