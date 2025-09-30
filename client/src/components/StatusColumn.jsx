@@ -22,7 +22,7 @@ const StatusColumn = ({ title, tasks }) => {
         dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
         data={tasks}
         itemContent={(_, task) => (
-          <div className="px-3 pt-3">
+          <div className="px-3 pt-3 last:pb-3">
             <TaskCard task={task} />
           </div>
         )}
