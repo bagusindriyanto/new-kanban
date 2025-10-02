@@ -408,7 +408,11 @@ const SummaryPage = () => {
           </CardHeader>
           <CardContent className="my-auto">
             <ChartContainer config={chartConfig} className="w-full max-h-96">
-              <BarChart accessibilityLayer data={filteredSummary}>
+              <BarChart
+                accessibilityLayer
+                data={filteredSummary}
+                margin={{ top: 18 }}
+              >
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="date"
@@ -417,7 +421,10 @@ const SummaryPage = () => {
                   axisLine={false}
                   tickFormatter={(value) => {
                     const date = new Date(value);
-                    return date.toLocaleDateString('id', { weekday: 'long' });
+                    return date.toLocaleDateString('id', {
+                      month: 'short',
+                      day: 'numeric',
+                    });
                   }}
                 />
                 <YAxis
