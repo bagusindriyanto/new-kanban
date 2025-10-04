@@ -51,6 +51,8 @@ export default function AddTaskForm() {
   const addTask = useTasks((state) => state.addTask);
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+  // Proses Kirim Data
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -58,13 +60,18 @@ export default function AddTaskForm() {
 
   const onSubmit = (data) => {
     toast.promise(addTask(data), {
-      loading: 'Sedang menambahkan task...',
+      loading: () => {
+        setIsLoading(true);
+        return 'Sedang menambahkan task...';
+      },
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
+        setIsLoading(false);
         return 'Task berhasil ditambahkan';
       },
       error: (err) => {
+        setIsLoading(false);
         // err adalah error yang dilempar dari store
         return err.message || 'Gagal menambahkan task';
       },

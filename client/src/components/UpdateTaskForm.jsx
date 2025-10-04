@@ -92,6 +92,9 @@ export default function UpdateTaskForm() {
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
 
+  // Proses Kirim Data
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
+
   // Set nilai awal form
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -166,13 +169,18 @@ export default function UpdateTaskForm() {
       };
 
       toast.promise(updateTask(selectedTaskId, taskData), {
-        loading: 'Sedang memperbarui task...',
+        loading: () => {
+          setIsLoading(true);
+          return 'Sedang memperbarui task...';
+        },
         success: () => {
           form.reset();
           setIsModalOpen(false);
+          setIsLoading(false);
           return 'Task berhasil diperbarui';
         },
         error: (err) => {
+          setIsLoading(false);
           // err adalah error yang dilempar dari store
           return err.message || 'Gagal memperbarui task';
         },

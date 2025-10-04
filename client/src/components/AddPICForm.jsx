@@ -23,6 +23,8 @@ export default function AddPICForm() {
   const addPic = usePics((state) => state.addPic);
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+  // Proses Kirim Data
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -33,13 +35,18 @@ export default function AddPICForm() {
 
   const onSubmit = (data) => {
     toast.promise(addPic(data.pic), {
-      loading: 'Sedang menambahkan PIC...',
+      loading: () => {
+        setIsLoading(true);
+        return 'Sedang menambahkan PIC...';
+      },
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
+        setIsLoading(false);
         return `"${data.pic}" telah ditambahkan ke daftar PIC`;
       },
       error: (err) => {
+        setIsLoading(false);
         // err adalah error yang dilempar dari store
         return err.message || 'Gagal menambahkan PIC';
       },

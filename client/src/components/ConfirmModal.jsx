@@ -8,6 +8,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import useFormModal from '@/stores/formModalStore';
 import useConfirmModal from '@/stores/confirmModalStore';
 import useTasks from '@/stores/taskStore';
 import { toast } from 'sonner';
@@ -21,6 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Loader } from 'lucide-react';
 
 const FormSchema = z.object({
   password: z.string().nonempty({ message: 'Mohon isi password.' }),
@@ -29,9 +31,11 @@ const FormSchema = z.object({
 export default function ConfirmModal() {
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
   const deleteTask = useTasks((state) => state.deleteTask);
-  const error = useTasks((state) => state.error);
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
   const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
+  // Proses Kirim Data
+  const isLoading = useFormModal((state) => state.isLoading);
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -43,13 +47,18 @@ export default function ConfirmModal() {
   const onSubmit = (data) => {
     if (data.password === 'Semarang@2025') {
       toast.promise(deleteTask(selectedTaskId), {
-        loading: 'Sedang menghapus task...',
+        loading: () => {
+          setIsLoading(true);
+          return 'Sedang menghapus task...';
+        },
         success: () => {
           form.reset();
           setIsModalOpen(false);
+          setIsLoading(false);
           return 'Task berhasil dihapus';
         },
         error: (err) => {
+          setIsLoading(false);
           // err adalah error yang dilempar dari store
           return err.message || 'Gagal menghapus task';
         },
@@ -103,14 +112,17 @@ export default function ConfirmModal() {
                   variant="secondary"
                   className="cursor-pointer"
                   onClick={onClose}
+                  disabled={isLoading}
                 >
                   Batal
                 </Button>
                 <Button
                   type="submit"
                   className="cursor-pointer text-white bg-red-600 hover:bg-red-700"
+                  disabled={isLoading}
                 >
-                  Hapus
+                  {isLoading && <Loader className="animate-spin" />}
+                  {isLoading ? 'Menghapus...' : 'Hapus'}
                 </Button>
               </div>
             </form>

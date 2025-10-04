@@ -12,12 +12,14 @@ import AddPICForm from './AddPICForm';
 import AddTaskForm from './AddTaskForm';
 import UpdateTaskForm from './UpdateTaskForm';
 import useFormModal from '@/stores/formModalStore';
+import { Loader } from 'lucide-react';
 
 const FormModal = () => {
   const isModalOpen = useFormModal((state) => state.isModalOpen);
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
   const title = useFormModal((state) => state.modalTitle);
   const formId = useFormModal((state) => state.formId);
+  const isLoading = useFormModal((state) => state.isLoading);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -35,6 +37,7 @@ const FormModal = () => {
               className="cursor-pointer"
               type="button"
               variant="secondary"
+              disabled={isLoading}
             >
               Batal
             </Button>
@@ -47,8 +50,14 @@ const FormModal = () => {
             }`}
             type="submit"
             form={formId}
+            disabled={isLoading}
           >
-            {formId === 'updateTask' ? 'Edit' : 'Tambah'}
+            {isLoading && <Loader className="animate-spin" />}
+            {isLoading
+              ? 'Mengirim...'
+              : formId === 'updateTask'
+              ? 'Edit'
+              : 'Tambah'}
           </Button>
         </DialogFooter>
       </DialogContent>
