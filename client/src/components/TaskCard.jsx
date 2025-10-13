@@ -347,23 +347,20 @@ const TaskCard = ({ task }) => {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem className="m-0 p-0">
-                <button
-                  onClick={() => handleFormModal('Edit Task', 'updateTask')}
-                  className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
-                >
-                  <PencilSquareIcon />
-                  <span>Edit</span>
-                </button>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => handleFormModal('Edit Task', 'updateTask')}
+              >
+                <PencilSquareIcon />
+                Edit
               </DropdownMenuItem>
-              <DropdownMenuItem className="m-0 p-0">
-                <button
-                  onClick={handleConfirmModal}
-                  className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
-                >
-                  <TrashIcon className="text-red-500" />
-                  <span className="text-red-500">Hapus</span>
-                </button>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={handleConfirmModal}
+                variant="destructive"
+              >
+                <TrashIcon />
+                Hapus
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown, Trash2Icon } from 'lucide-react';
+import { Check, ChevronsUpDown, Trash2Icon, CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -25,6 +25,12 @@ import {
 } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from './ui/input-group';
+import {
   Form,
   FormControl,
   FormField,
@@ -44,7 +50,6 @@ import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
 
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
@@ -770,7 +775,19 @@ export default function UpdateTaskForm() {
                 Masukkan Password<span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input type="password" autoComplete="off" {...field} />
+                {/* <Input type="password" autoComplete="off" {...field} /> */}
+                <InputGroup>
+                  <InputGroupInput
+                    type="password"
+                    autoComplete="off"
+                    {...field}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton variant="secondary">
+                      Show
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </FormControl>
               <FormMessage />
             </FormItem>
