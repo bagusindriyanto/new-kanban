@@ -44,8 +44,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import useActivities from '@/stores/activityStore';
-import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
 
@@ -54,6 +52,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
 import { useState } from 'react';
+import { useFetchActivities } from '@/api/fetchActivities';
+import { useFetchPics } from '@/api/fetchPics';
 
 // Aturan form
 const FormSchema = z.object({
@@ -83,9 +83,9 @@ export default function UpdateTaskForm() {
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
   // Fetch activity
-  const contents = useActivities((state) => state.activities);
+  const { data: contents } = useFetchActivities();
   // Fetch pics
-  const pics = usePics((state) => state.pics);
+  const { data: pics } = useFetchPics();
   // Fetch task yang dipilih
   const tasks = useTasks((state) => state.tasks);
   const selectedTaskId = useTasks((state) => state.selectedTaskId);

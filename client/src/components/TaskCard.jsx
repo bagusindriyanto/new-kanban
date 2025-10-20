@@ -17,9 +17,9 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import useFormModal from '@/stores/formModalStore.js';
 import useConfirmModal from '@/stores/confirmModalStore.js';
 import useTasks from '@/stores/taskStore';
-import usePics from '@/stores/picStore.js';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column.js';
+import { useFetchPics } from '@/api/fetchPics.js';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -41,8 +41,9 @@ const TaskCard = ({ task }) => {
   } = task;
 
   // State untuk PIC
-  const pics = usePics((state) => state.pics);
-  const picName = pics.find((p) => p.id === pic_id)?.name;
+  const { data: pics } = useFetchPics();
+  // const pics = usePics((state) => state.pics);
+  const picName = pics?.find((p) => p.id === pic_id)?.name;
 
   // State untuk form modal
   const setIsFormModalOpen = useFormModal((state) => state.setIsModalOpen);

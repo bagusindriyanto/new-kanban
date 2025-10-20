@@ -12,8 +12,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import useActivities from '@/stores/activityStore';
 import useFormModal from '@/stores/formModalStore';
+import { useAddActivity } from '@/api/addActivity';
 
 const FormSchema = z.object({
   activity: z
@@ -23,7 +23,8 @@ const FormSchema = z.object({
 });
 
 export default function AddActivityForm() {
-  const addActivity = useActivities((state) => state.addActivity);
+  const { mutateAsync: addActivityMutation, isPending: addActivityPending } =
+    useAddActivity();
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
   // Proses Kirim Data
@@ -37,7 +38,7 @@ export default function AddActivityForm() {
   });
 
   const onSubmit = (data) => {
-    toast.promise(addActivity(data.activity), {
+    toast.promise(addActivityMutation(data.activity), {
       loading: () => {
         setIsLoading(true);
         return 'Sedang menambahkan activity...';

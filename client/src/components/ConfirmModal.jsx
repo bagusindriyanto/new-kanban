@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Loader } from 'lucide-react';
+import { useDeleteTask } from '@/api/deleteTask';
 
 const FormSchema = z.object({
   password: z.string().nonempty({ message: 'Mohon isi password.' }),
@@ -30,7 +31,8 @@ const FormSchema = z.object({
 
 export default function ConfirmModal() {
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  const deleteTask = useTasks((state) => state.deleteTask);
+  // const deleteTask = useTasks((state) => state.deleteTask);
+  const { mutateAsync: deleteTaskMutation } = useDeleteTask();
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
   const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
   // Proses Kirim Data
@@ -46,7 +48,7 @@ export default function ConfirmModal() {
 
   const onSubmit = (data) => {
     if (data.password === 'Semarang@2025') {
-      toast.promise(deleteTask(selectedTaskId), {
+      toast.promise(deleteTaskMutation(selectedTaskId), {
         loading: () => {
           setIsLoading(true);
           return 'Sedang menghapus task...';

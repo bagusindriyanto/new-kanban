@@ -59,7 +59,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Link } from 'react-router';
-import usePics from '@/stores/picStore';
 import { chartConfig } from '@/config/chartConfig';
 import useSummary from '@/stores/summaryStore';
 import useFilter from '@/stores/filterStore';
@@ -67,10 +66,11 @@ import { ModeToggle } from '@/components/ModeToggle';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
+import { useFetchPics } from '@/api/fetchPics';
 
 const SummaryPage = () => {
   // State
-  const pics = usePics((state) => state.pics);
+  const { data: pics } = useFetchPics();
   const summary = useSummary((state) => state.summary);
   const tableSummary = useSummary((state) => state.tableSummary);
   const selectedPicId = useFilter((state) => state.selectedPicId);
@@ -195,14 +195,12 @@ const SummaryPage = () => {
     totalArchivedActivity;
 
   // Fungsi panggil data
-  const fetchPics = usePics((state) => state.fetchPics);
   const fetchSummary = useSummary((state) => state.fetchSummary);
   const fetchTableSummary = useSummary((state) => state.fetchTableSummary);
 
   // Ambil tasks ketika halaman dimuat
   useEffect(() => {
     const fetchAll = () => {
-      fetchPics();
       fetchSummary();
       fetchTableSummary();
     };
@@ -226,7 +224,7 @@ const SummaryPage = () => {
                 <SelectLabel>PIC</SelectLabel>
                 <SelectItem value="all">Semua PIC</SelectItem>
                 <SelectItem value={null}>-</SelectItem>
-                {pics.map((pic) => (
+                {pics?.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>
                     {pic.name}
                   </SelectItem>

@@ -12,15 +12,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import usePics from '@/stores/picStore';
 import useFormModal from '@/stores/formModalStore';
+import { useAddPic } from '@/api/addPic';
 
 const FormSchema = z.object({
   pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
 });
 
 export default function AddPICForm() {
-  const addPic = usePics((state) => state.addPic);
+  const { mutateAsync: addPicMutation } = useAddPic();
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
   // Proses Kirim Data
@@ -34,7 +34,7 @@ export default function AddPICForm() {
   });
 
   const onSubmit = (data) => {
-    toast.promise(addPic(data.pic), {
+    toast.promise(addPicMutation(data.pic), {
       loading: () => {
         setIsLoading(true);
         return 'Sedang menambahkan PIC...';

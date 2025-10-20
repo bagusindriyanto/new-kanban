@@ -5,9 +5,6 @@ import StatusColumn from '@/components/StatusColumn';
 import FormModal from '@/components/FormModal';
 import ConfirmModal from '@/components/ConfirmModal';
 import { ModeToggle } from '@/components/ModeToggle';
-import useActivities from '@/stores/activityStore';
-import usePics from '@/stores/picStore';
-import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
 import { ChartNoAxesCombined } from 'lucide-react';
 import {
@@ -42,35 +39,45 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { startOfDay, parseISO } from 'date-fns';
+import { useFetchTasks } from '@/api/fetchTasks';
+import { useFetchPics } from '@/api/fetchPics';
 
 const HomePage = () => {
   // State untuk filter tanggal
   const range = useFilter((state) => state.range);
   const setRange = useFilter((state) => state.setRange);
 
+  // Tanstack query untuk tasks
+  const {
+    data: tasks,
+    isLoading: fetchTasksLoading,
+    error: fetchTasksError,
+  } = useFetchTasks();
+  // Tanstack query untuk pics
+  const { data: pics } = useFetchPics();
   // State untuk data
-  const pics = usePics((state) => state.pics);
-  const tasks = useTasks((state) => state.tasks);
+  // const pics = usePics((state) => state.pics);
+  // const tasks = useTasks((state) => state.tasks);
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
-  const sortedTasks = useMemo(() => {
-    // Sorting
-    let result = [...tasks].sort(
-      (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-    );
-    // Filtering
-    if (selectedPicId !== 'all') {
-      result = result.filter((task) => task.pic_id === selectedPicId);
-    }
-    // Filtering Tanggal
-    if (range?.from && range?.to) {
-      result = result.filter((res) => {
-        const date = startOfDay(parseISO(res.timestamp_todo));
-        return date >= range.from && date <= range.to;
-      });
-    }
-    return result;
-  }, [tasks, selectedPicId, range]);
+  // const sortedTasks = useMemo(() => {
+  //   // Sorting
+  //   let result = [...tasks].sort(
+  //     (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+  //   );
+  //   // Filtering
+  //   if (selectedPicId !== 'all') {
+  //     result = result.filter((task) => task.pic_id === selectedPicId);
+  //   }
+  //   // Filtering Tanggal
+  //   if (range?.from && range?.to) {
+  //     result = result.filter((res) => {
+  //       const date = startOfDay(parseISO(res.timestamp_todo));
+  //       return date >= range.from && date <= range.to;
+  //     });
+  //   }
+  //   return result;
+  // }, [tasks, selectedPicId, range]);
 
   // State untuk modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -78,21 +85,21 @@ const HomePage = () => {
   const setFormId = useFormModal((state) => state.setFormId);
 
   // Fungsi panggil data
-  const fetchActivities = useActivities((state) => state.fetchActivities);
-  const fetchPics = usePics((state) => state.fetchPics);
-  const fetchTasks = useTasks((state) => state.fetchTasks);
+  // const fetchActivities = useActivities((state) => state.fetchActivities);
+  // const fetchPics = usePics((state) => state.fetchPics);
+  // const fetchTasks = useTasks((state) => state.fetchTasks);
 
   // Ambil tasks ketika halaman dimuat
-  useEffect(() => {
-    const fetchAll = () => {
-      fetchActivities();
-      fetchPics();
-      fetchTasks();
-    };
-    fetchAll();
-    const interval = setInterval(fetchAll, 20000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const fetchAll = () => {
+  //     fetchActivities();
+  //     fetchPics();
+  //     fetchTasks();
+  //   };
+  //   fetchAll();
+  //   const interval = setInterval(fetchAll, 20000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleOpenModal = (title, id) => {
     // Buka modalnya
@@ -119,7 +126,7 @@ const HomePage = () => {
                 <SelectLabel>PIC</SelectLabel>
                 <SelectItem value="all">Semua PIC</SelectItem>
                 <SelectItem value={null}>-</SelectItem>
-                {pics.map((pic) => (
+                {pics?.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>
                     {pic.name}
                   </SelectItem>
@@ -219,7 +226,7 @@ const HomePage = () => {
           <StatusColumn
             key={column.id}
             title={column.title}
-            tasks={sortedTasks.filter((task) => task.status === column.id)}
+            tasks={tasks?.filter((task) => task.status === column.id)}
           />
         ))}
       </main>
