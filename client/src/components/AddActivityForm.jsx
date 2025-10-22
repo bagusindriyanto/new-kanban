@@ -1,25 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import useFormModal from '@/stores/formModalStore';
 import { useAddActivity } from '@/api/addActivity';
 
-const FormSchema = z.object({
-  activity: z
-    .string()
-    .trim()
-    .nonempty({ message: 'Mohon tuliskan nama activity.' }),
+const formSchema = z.object({
+  activity: z.string().trim().min(1, 'Mohon tuliskan nama activity.'),
 });
 
 export default function AddActivityForm() {
@@ -31,7 +26,7 @@ export default function AddActivityForm() {
   const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       activity: '',
     },
@@ -58,33 +53,24 @@ export default function AddActivityForm() {
   };
 
   return (
-    <Form {...form}>
-      <form
-        id="addActivity"
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-      >
-        {/* Input Activity */}
-        <FormField
-          control={form.control}
-          name="activity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="gap-1">
-                Nama Activity<span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="contoh: Meeting, Review, dan sebagainya"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
+    <form id="addActivity" onSubmit={form.handleSubmit(onSubmit)}>
+      <Controller
+        name="activity"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="form-activity">Nama Activity</FieldLabel>
+            <Input
+              {...field}
+              id="form-activity"
+              aria-invalid={fieldState.invalid}
+              placeholder="contoh: Meeting, Review, dan sebagainya"
+              autoComplete="off"
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+    </form>
   );
 }

@@ -20,6 +20,7 @@ import useTasks from '@/stores/taskStore';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column.js';
 import { useFetchPics } from '@/api/fetchPics.js';
+import { useUpdateTask } from '@/api/updateTask.js';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -57,7 +58,7 @@ const TaskCard = ({ task }) => {
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
-  const updateTask = useTasks((state) => state.updateTask);
+  const { mutateAsync: updateTaskMutate } = useUpdateTask();
 
   // Fungsi buka form modal
   const handleFormModal = (title, formId) => {
@@ -143,7 +144,7 @@ const TaskCard = ({ task }) => {
       pause_time: pause,
     };
     try {
-      await updateTask(id, data);
+      await updateTaskMutate({ taskId: id, data });
     } catch (err) {
       toast.error('Gagal memperbarui task', {
         description: err.message,
@@ -229,7 +230,7 @@ const TaskCard = ({ task }) => {
       pause_time: updatedPauseTime,
     };
     try {
-      await updateTask(id, data);
+      await updateTaskMutate({ taskId: id, data });
       setIsPaused(!resetPauseTime);
     } catch (err) {
       toast.error('Gagal memperbarui task', {

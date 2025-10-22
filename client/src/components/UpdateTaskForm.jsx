@@ -54,6 +54,8 @@ import { TimePickerDemo } from './ui/time-picker-demo';
 import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPics } from '@/api/fetchPics';
+import { useUpdateTask } from '@/api/updateTask';
+import { useFetchTasks } from '@/api/fetchTasks';
 
 // Aturan form
 const FormSchema = z.object({
@@ -87,12 +89,13 @@ export default function UpdateTaskForm() {
   // Fetch pics
   const { data: pics } = useFetchPics();
   // Fetch task yang dipilih
-  const tasks = useTasks((state) => state.tasks);
+  const { data: tasks } = useFetchTasks();
+  // const tasks = useTasks((state) => state.tasks);
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  const task = tasks.filter((task) => task.id === selectedTaskId)[0];
+  const task = tasks?.filter((task) => task.id === selectedTaskId)[0];
 
   // Update Tasks
-  const updateTask = useTasks((state) => state.updateTask);
+  const { mutateAsync: updateTaskMutate } = useUpdateTask();
 
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -173,23 +176,26 @@ export default function UpdateTaskForm() {
           : null,
       };
 
-      toast.promise(updateTask(selectedTaskId, taskData), {
-        loading: () => {
-          setIsLoading(true);
-          return 'Sedang memperbarui task...';
-        },
-        success: () => {
-          form.reset();
-          setIsModalOpen(false);
-          setIsLoading(false);
-          return 'Task berhasil diperbarui';
-        },
-        error: (err) => {
-          setIsLoading(false);
-          // err adalah error yang dilempar dari store
-          return err.message || 'Gagal memperbarui task';
-        },
-      });
+      toast.promise(
+        updateTaskMutate({ taskId: selectedTaskId, data: taskData }),
+        {
+          loading: () => {
+            setIsLoading(true);
+            return 'Sedang memperbarui task...';
+          },
+          success: () => {
+            form.reset();
+            setIsModalOpen(false);
+            setIsLoading(false);
+            return 'Task berhasil diperbarui';
+          },
+          error: (err) => {
+            setIsLoading(false);
+            // err adalah error yang dilempar dari store
+            return err.message || 'Gagal memperbarui task';
+          },
+        }
+      );
     } else {
       toast.error('Password salah!');
       form.setValue('password', '');
@@ -228,7 +234,7 @@ export default function UpdateTaskForm() {
                         >
                           <span className="truncate">
                             {field.value
-                              ? contents.find(
+                              ? contents?.find(
                                   (content) => content.name === field.value
                                 )?.name
                               : 'Pilih activity'}
@@ -250,7 +256,7 @@ export default function UpdateTaskForm() {
                         >
                           <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
-                            {contents.map((content) => (
+                            {contents?.map((content) => (
                               <CommandItem
                                 value={content.name}
                                 key={content.id}
@@ -300,7 +306,7 @@ export default function UpdateTaskForm() {
                           )}
                         >
                           {field.value
-                            ? pics.find((pic) => pic.id === field.value)?.name
+                            ? pics?.find((pic) => pic.id === field.value)?.name
                             : 'Pilih PIC'}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -336,7 +342,7 @@ export default function UpdateTaskForm() {
                                 )}
                               />
                             </CommandItem>
-                            {pics.map((pic) => (
+                            {pics?.map((pic) => (
                               <CommandItem
                                 value={pic.name}
                                 key={pic.id}
