@@ -4,6 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { formatTimestamp } from '../services/formatTimestamp.js';
 import {
@@ -21,6 +22,7 @@ import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column.js';
 import { useFetchPics } from '@/api/fetchPics.js';
 import { useUpdateTask } from '@/api/updateTask.js';
+import { cn } from '@/lib/utils';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -241,11 +243,12 @@ const TaskCard = ({ task }) => {
 
   return (
     <div
-      className={`grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg
-        ${status === 'todo' ? 'bg-todo-500' : ''} 
-        ${status === 'on progress' ? 'bg-progress-500' : ''} 
-        ${status === 'done' ? 'bg-done-500' : ''}
-        ${status === 'archived' ? 'bg-archived-500' : ''}`}
+      className={cn('grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg', {
+        'bg-todo-500': status === 'todo',
+        'bg-progress-500': status === 'on progress',
+        'bg-done-500': status === 'done',
+        'bg-archived-500': status === 'archived',
+      })}
     >
       {/* Content */}
       <div className="flex justify-between gap-3 items-start">
@@ -271,82 +274,39 @@ const TaskCard = ({ task }) => {
         <div className="flex gap-1">
           {/* Control Button */}
           {/* Tombol Kiri */}
-          <button
+          <Button
             onClick={() => onMove(false)}
-            className={`cursor-pointer rounded-full size-6 text-white p-1 disabled:opacity-25 disabled:cursor-not-allowed transition duration-300 ease-in-out ${
-              status === 'todo' ? 'bg-todo-600 enabled:hover:bg-todo-400' : ''
-            } ${
-              status === 'on progress'
-                ? 'bg-progress-600 enabled:hover:bg-progress-400'
-                : ''
-            } ${
-              status === 'done' ? 'bg-done-600 enabled:hover:bg-done-400' : ''
-            } ${
-              status === 'archived'
-                ? 'bg-archived-600 enabled:hover:bg-archived-400'
-                : ''
-            }`}
+            variant={status}
+            size="icon-xs-rounded"
             disabled={status === 'todo' || status === 'archived' || isPaused}
           >
             <ArrowLeftIcon />
-          </button>
+          </Button>
           {/* Tombol Pause */}
           {status === 'on progress' && (
-            <button
+            <Button
               onClick={togglePause}
-              className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                status === 'todo' ? 'bg-todo-600 hover:bg-todo-400' : ''
-              } ${
-                status === 'on progress'
-                  ? 'bg-progress-600 hover:bg-progress-400'
-                  : ''
-              } ${status === 'done' ? 'bg-done-600 hover:bg-done-400' : ''} ${
-                status === 'archived'
-                  ? 'bg-archived-600 hover:bg-archived-400'
-                  : ''
-              }`}
+              variant={status}
+              size="icon-xs-rounded"
             >
               {isPaused ? <PlayIcon /> : <PauseIcon />}
-            </button>
+            </Button>
           )}
           {/* Tombol Kanan */}
-          <button
+          <Button
             onClick={() => onMove(true)}
-            className={`cursor-pointer rounded-full size-6 text-white p-1 disabled:opacity-25 disabled:cursor-not-allowed transition duration-300 ease-in-out ${
-              status === 'todo' ? 'bg-todo-600 enabled:hover:bg-todo-400' : ''
-            } ${
-              status === 'on progress'
-                ? 'bg-progress-600 enabled:hover:bg-progress-400'
-                : ''
-            } ${
-              status === 'done' ? 'bg-done-600 enabled:hover:bg-done-400' : ''
-            } ${
-              status === 'archived'
-                ? 'bg-archived-600 enabled:hover:bg-archived-400'
-                : ''
-            }`}
+            variant={status}
+            size="icon-xs-rounded"
             disabled={status === 'archived' || isPaused}
           >
             <ArrowRightIcon />
-          </button>
+          </Button>
           {/* Dropdown Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                  status === 'todo' ? 'bg-todo-600 hover:bg-todo-400' : ''
-                } ${
-                  status === 'on progress'
-                    ? 'bg-progress-600 hover:bg-progress-400'
-                    : ''
-                } ${status === 'done' ? 'bg-done-600 hover:bg-done-400' : ''} ${
-                  status === 'archived'
-                    ? 'bg-archived-600 hover:bg-archived-400'
-                    : ''
-                }`}
-              >
+              <Button variant={status} size="icon-xs-rounded">
                 <EllipsisHorizontalIcon />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem

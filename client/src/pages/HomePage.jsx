@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Toaster } from '@/components/ui/sonner';
-import NavButton from '@/components/NavButton';
 import StatusColumn from '@/components/StatusColumn';
 import FormModal from '@/components/FormModal';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -60,24 +59,22 @@ const HomePage = () => {
   // const tasks = useTasks((state) => state.tasks);
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
-  // const sortedTasks = useMemo(() => {
-  //   // Sorting
-  //   let result = [...tasks].sort(
-  //     (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-  //   );
-  //   // Filtering
-  //   if (selectedPicId !== 'all') {
-  //     result = result.filter((task) => task.pic_id === selectedPicId);
-  //   }
-  //   // Filtering Tanggal
-  //   if (range?.from && range?.to) {
-  //     result = result.filter((res) => {
-  //       const date = startOfDay(parseISO(res.timestamp_todo));
-  //       return date >= range.from && date <= range.to;
-  //     });
-  //   }
-  //   return result;
-  // }, [tasks, selectedPicId, range]);
+  const sortedTasks = useMemo(() => {
+    // Check data tasks ada atau tidak
+    if (!tasks) return [];
+    return tasks.filter((task) => {
+      // 1. Filter berdasarkan PIC
+      const matchedPic =
+        selectedPicId === 'all' || task.pic_id === selectedPicId;
+      // 2. Filter berdasarkan tanggal
+      const taskDate = startOfDay(parseISO(task.timestamp_todo));
+      const fromDate = range?.from;
+      const toDate = range?.to;
+      const matchedDate =
+        (!fromDate || taskDate >= fromDate) && (!toDate || taskDate <= toDate);
+      return matchedPic && matchedDate;
+    });
+  }, [tasks, selectedPicId, range]);
 
   // State untuk modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -188,29 +185,35 @@ const HomePage = () => {
             </PopoverContent>
           </Popover>
           {/* Akhir Tanggal */}
-          <NavButton
+          <Button
             onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
+            variant="nav"
+            className="px-3 py-2 font-semibold"
           >
             Tambah Activity
-          </NavButton>
-          <NavButton onClick={() => handleOpenModal('Tambah PIC', 'addPic')}>
+          </Button>
+          <Button
+            onClick={() => handleOpenModal('Tambah PIC', 'addPic')}
+            variant="nav"
+            className="px-3 py-2 font-semibold"
+          >
             Tambah PIC
-          </NavButton>
-          <NavButton onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
+          </Button>
+          <Button
+            onClick={() => handleOpenModal('Tambah Task', 'addTask')}
+            variant="nav"
+            className="px-3 py-2 font-semibold"
+          >
             Tambah Task
-          </NavButton>
+          </Button>
           {/* Pindah ke Halaman Summary */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Link to="/summary">
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  size="icon"
-                >
+              <Button asChild variant="outline" size="icon">
+                <Link to="/summary">
                   <ChartNoAxesCombined />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Ringkasan</p>
@@ -226,7 +229,7 @@ const HomePage = () => {
           <StatusColumn
             key={column.id}
             title={column.title}
-            tasks={tasks?.filter((task) => task.status === column.id)}
+            tasks={sortedTasks.filter((task) => task.status === column.id)}
           />
         ))}
       </main>

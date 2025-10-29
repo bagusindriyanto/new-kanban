@@ -289,15 +289,11 @@ const SummaryPage = () => {
           {/* Pindah ke Halaman Kanban */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Link to="/">
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  size="icon"
-                >
+              <Button asChild variant="outline" size="icon">
+                <Link to="/">
                   <SquareKanban />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Kanban Board</p>

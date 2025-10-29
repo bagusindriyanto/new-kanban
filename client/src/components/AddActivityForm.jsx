@@ -18,12 +18,11 @@ const formSchema = z.object({
 });
 
 export default function AddActivityForm() {
-  const { mutateAsync: addActivityMutation, isPending: addActivityPending } =
-    useAddActivity();
+  const { mutateAsync: addActivityMutation } = useAddActivity();
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
   // Proses Kirim Data
-  const setIsLoading = useFormModal((state) => state.setIsLoading);
+  // const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -35,17 +34,17 @@ export default function AddActivityForm() {
   const onSubmit = (data) => {
     toast.promise(addActivityMutation(data.activity), {
       loading: () => {
-        setIsLoading(true);
+        // setIsLoading(true);
         return 'Sedang menambahkan activity...';
       },
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
-        setIsLoading(false);
+        // setIsLoading(false);
         return `"${data.activity}" telah ditambahkan ke daftar activity`;
       },
       error: (err) => {
-        setIsLoading(false);
+        // setIsLoading(false);
         // err adalah error yang dilempar dari store
         return err.message || 'Gagal menambahkan activity';
       },
