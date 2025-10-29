@@ -5,7 +5,7 @@ import FormModal from '@/components/FormModal';
 import ConfirmModal from '@/components/ConfirmModal';
 import { ModeToggle } from '@/components/ModeToggle';
 import useFormModal from '@/stores/formModalStore';
-import { ChartNoAxesCombined } from 'lucide-react';
+import { ChartNoAxesCombined, ClipboardCheck, WifiOff } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import useFilter from '@/stores/filterStore';
 // Format Tanggal
@@ -40,6 +41,14 @@ import { id } from 'date-fns/locale';
 import { startOfDay, parseISO } from 'date-fns';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { useFetchPics } from '@/api/fetchPics';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 
 const HomePage = () => {
   // State untuk filter tanggal
@@ -67,9 +76,10 @@ const HomePage = () => {
       const matchedPic =
         selectedPicId === 'all' || task.pic_id === selectedPicId;
       // 2. Filter berdasarkan tanggal
-      const taskDate = startOfDay(parseISO(task.timestamp_todo));
-      const fromDate = range?.from;
-      const toDate = range?.to;
+      const taskDate =
+        startOfDay(parseISO(task.timestamp_todo)) ?? startOfDay(new Date(null));
+      const fromDate = range.from;
+      const toDate = range.to;
       const matchedDate =
         (!fromDate || taskDate >= fromDate) && (!toDate || taskDate <= toDate);
       return matchedPic && matchedDate;
@@ -137,7 +147,7 @@ const HomePage = () => {
             <PopoverTrigger asChild>
               <Button variant="outline">
                 <CalendarIcon />
-                {range?.from && range?.to
+                {range.from && range.to
                   ? `${range.from.toLocaleDateString(
                       'id'
                     )} - ${range.to.toLocaleDateString('id')}`
@@ -151,9 +161,9 @@ const HomePage = () => {
                 locale={id}
                 showWeekNumber
                 captionLayout="dropdown"
-                defaultMonth={range?.from}
+                defaultMonth={range.from}
                 weekStartsOn={1}
-                max={6}
+                // max={6}
                 selected={range}
                 onSelect={setRange}
                 startMonth={new Date(2011, 12)}
@@ -224,15 +234,57 @@ const HomePage = () => {
         </div>
       </header>
       {/* Main */}
-      <main className="flex gap-4 p-4 flex-1">
-        {columns.map((column) => (
-          <StatusColumn
-            key={column.id}
-            title={column.title}
-            tasks={sortedTasks.filter((task) => task.status === column.id)}
-          />
-        ))}
-      </main>
+      {fetchTasksLoading && (
+        <div className="flex h-screen w-screen items-center gap-4">
+          <Spinner />
+        </div>
+      )}
+      {fetchTasksError && (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <WifiOff />
+            </EmptyMedia>
+            <EmptyTitle>Tidak Ada Koneksi</EmptyTitle>
+            <EmptyDescription>
+              Silahkan periksa koneksi internetmu dan coba lagi.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button>Refresh Halaman</Button>
+          </EmptyContent>
+        </Empty>
+      )}
+      {sortedTasks.length === 0 && !fetchTasksLoading && !fetchTasksError && (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <ClipboardCheck />
+            </EmptyMedia>
+            <EmptyTitle>Tidak Ada Task</EmptyTitle>
+            <EmptyDescription>
+              Kamu belum menambahkan task. Klik tombol Tambah Task untuk mulai
+              membuat daftar kegiatanmu.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
+              Tambah Task
+            </Button>
+          </EmptyContent>
+        </Empty>
+      )}
+      {sortedTasks.length > 0 && (
+        <main className="flex gap-4 p-4 flex-1">
+          {columns.map((column) => (
+            <StatusColumn
+              key={column.id}
+              title={column.title}
+              tasks={sortedTasks.filter((task) => task.status === column.id)}
+            />
+          ))}
+        </main>
+      )}
       {/* Footer */}
       <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
         <p className="text-white text-sm font-normal">

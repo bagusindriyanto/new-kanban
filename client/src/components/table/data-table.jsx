@@ -124,7 +124,7 @@ export function DataTable({ columns, data }) {
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    Tidak ada hasil.
+                    Tidak ada aktivitas.
                   </TableCell>
                 </TableRow>
               )}

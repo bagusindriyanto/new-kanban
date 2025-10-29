@@ -88,7 +88,7 @@ const SummaryPage = () => {
       result = result.filter((res) => res.pic_id === selectedPicId);
     }
     // Filtering Tanggal
-    if (range?.from && range?.to) {
+    if (range.from && range.to) {
       result = result.filter((res) => {
         if (!res.date) return false;
         const [year, month, day] = res.date.split('-').map(Number);
@@ -97,7 +97,7 @@ const SummaryPage = () => {
       });
     }
     // Total Activity, Activity Duration, Working Minute
-    if (!range?.from && !range?.to) {
+    if (!range.from && !range.to) {
       result = Object.values(
         result.reduce(
           (
@@ -146,7 +146,7 @@ const SummaryPage = () => {
       result = result.filter((res) => res.pic_id === selectedPicId);
     }
     // Filtering Tanggal
-    if (range?.from && range?.to) {
+    if (range.from && range.to) {
       result = result.filter((res) => {
         if (!res.date) return false;
         const [year, month, day] = res.date.split('-').map(Number);
@@ -238,7 +238,7 @@ const SummaryPage = () => {
             <PopoverTrigger asChild>
               <Button variant="outline">
                 <CalendarIcon />
-                {range?.from && range?.to
+                {range.from && range.to
                   ? `${range.from.toLocaleDateString(
                       'id'
                     )} - ${range.to.toLocaleDateString('id')}`
@@ -252,9 +252,9 @@ const SummaryPage = () => {
                 locale={id}
                 showWeekNumber
                 captionLayout="dropdown"
-                defaultMonth={range?.from}
+                defaultMonth={range.from}
                 weekStartsOn={1}
-                max={6}
+                // max={6}
                 selected={range}
                 onSelect={setRange}
                 startMonth={new Date(2011, 12)}
