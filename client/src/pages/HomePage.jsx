@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import StatusColumn from '@/components/StatusColumn';
 import FormModal from '@/components/FormModal';
@@ -11,6 +11,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item';
 import { Link } from 'react-router';
 
 // Setting Kolom
@@ -63,9 +71,6 @@ const HomePage = () => {
   } = useFetchTasks();
   // Tanstack query untuk pics
   const { data: pics } = useFetchPics();
-  // State untuk data
-  // const pics = usePics((state) => state.pics);
-  // const tasks = useTasks((state) => state.tasks);
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const sortedTasks = useMemo(() => {
@@ -90,23 +95,6 @@ const HomePage = () => {
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
   const setModalTitle = useFormModal((state) => state.setModalTitle);
   const setFormId = useFormModal((state) => state.setFormId);
-
-  // Fungsi panggil data
-  // const fetchActivities = useActivities((state) => state.fetchActivities);
-  // const fetchPics = usePics((state) => state.fetchPics);
-  // const fetchTasks = useTasks((state) => state.fetchTasks);
-
-  // Ambil tasks ketika halaman dimuat
-  // useEffect(() => {
-  //   const fetchAll = () => {
-  //     fetchActivities();
-  //     fetchPics();
-  //     fetchTasks();
-  //   };
-  //   fetchAll();
-  //   const interval = setInterval(fetchAll, 20000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   const handleOpenModal = (title, id) => {
     // Buka modalnya
@@ -198,28 +186,28 @@ const HomePage = () => {
           <Button
             onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
             variant="nav"
-            className="px-3 py-2 font-semibold"
+            size="sm"
           >
             Tambah Activity
           </Button>
           <Button
             onClick={() => handleOpenModal('Tambah PIC', 'addPic')}
             variant="nav"
-            className="px-3 py-2 font-semibold"
+            size="sm"
           >
             Tambah PIC
           </Button>
           <Button
             onClick={() => handleOpenModal('Tambah Task', 'addTask')}
             variant="nav"
-            className="px-3 py-2 font-semibold"
+            size="sm"
           >
             Tambah Task
           </Button>
           {/* Pindah ke Halaman Summary */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Button asChild variant="outline" size="icon">
+              <Button asChild variant="outline" size="icon-sm">
                 <Link to="/summary">
                   <ChartNoAxesCombined />
                 </Link>
@@ -234,57 +222,81 @@ const HomePage = () => {
         </div>
       </header>
       {/* Main */}
-      {fetchTasksLoading && (
-        <div className="flex h-screen w-screen items-center gap-4">
-          <Spinner />
-        </div>
-      )}
-      {fetchTasksError && (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <WifiOff />
-            </EmptyMedia>
-            <EmptyTitle>Tidak Ada Koneksi</EmptyTitle>
-            <EmptyDescription>
-              Silahkan periksa koneksi internetmu dan coba lagi.
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button>Refresh Halaman</Button>
-          </EmptyContent>
-        </Empty>
-      )}
-      {sortedTasks.length === 0 && !fetchTasksLoading && !fetchTasksError && (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <ClipboardCheck />
-            </EmptyMedia>
-            <EmptyTitle>Tidak Ada Task</EmptyTitle>
-            <EmptyDescription>
-              Kamu belum menambahkan task. Klik tombol Tambah Task untuk mulai
-              membuat daftar kegiatanmu.
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
-              Tambah Task
-            </Button>
-          </EmptyContent>
-        </Empty>
-      )}
-      {sortedTasks.length > 0 && (
-        <main className="flex gap-4 p-4 flex-1">
-          {columns.map((column) => (
-            <StatusColumn
-              key={column.id}
-              title={column.title}
-              tasks={sortedTasks.filter((task) => task.status === column.id)}
-            />
-          ))}
-        </main>
-      )}
+      <main className="flex flex-1 flex-col p-4 gap-4">
+        {fetchTasksLoading && (
+          <div className="flex flex-1 justify-center items-center">
+            <Spinner className="size-10" />
+          </div>
+        )}
+        {sortedTasks.length > 0 && fetchTasksError && (
+          <Item variant="outline">
+            <ItemMedia variant="icon">
+              <WifiOff className="text-destructive" />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle className="text-destructive">
+                Tidak Ada Koneksi
+              </ItemTitle>
+              <ItemDescription className="text-destructive/90">
+                Error: {fetchTasksError.message}
+              </ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <Button size="sm" variant="outline">
+                Refresh Halaman
+              </Button>
+            </ItemActions>
+          </Item>
+        )}
+        {sortedTasks.length === 0 && fetchTasksError && (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <WifiOff className="text-destructive" />
+              </EmptyMedia>
+              <EmptyTitle className="text-destructive">
+                Tidak Ada Koneksi
+              </EmptyTitle>
+              <EmptyDescription className="text-destructive/90">
+                Error: {fetchTasksError.message}
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button variant="outline">Refresh Halaman</Button>
+            </EmptyContent>
+          </Empty>
+        )}
+        {sortedTasks.length === 0 && !fetchTasksLoading && !fetchTasksError && (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <ClipboardCheck />
+              </EmptyMedia>
+              <EmptyTitle>Tidak Ada Task</EmptyTitle>
+              <EmptyDescription>
+                Kamu belum menambahkan task. Klik tombol di bawah ini untuk
+                mulai membuat daftar kegiatanmu.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
+                Tambah Task
+              </Button>
+            </EmptyContent>
+          </Empty>
+        )}
+        {sortedTasks.length > 0 && (
+          <div className="flex gap-4 flex-1">
+            {columns.map((column) => (
+              <StatusColumn
+                key={column.id}
+                title={column.title}
+                tasks={sortedTasks.filter((task) => task.status === column.id)}
+              />
+            ))}
+          </div>
+        )}
+      </main>
       {/* Footer */}
       <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
         <p className="text-white text-sm font-normal">

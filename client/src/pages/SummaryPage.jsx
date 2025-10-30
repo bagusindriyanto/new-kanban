@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   TrendingUp,
   TrendingDown,
@@ -60,19 +60,22 @@ import {
 } from '@/components/ui/tooltip';
 import { Link } from 'react-router';
 import { chartConfig } from '@/config/chartConfig';
-import useSummary from '@/stores/summaryStore';
 import useFilter from '@/stores/filterStore';
 import { ModeToggle } from '@/components/ModeToggle';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
 import { useFetchPics } from '@/api/fetchPics';
+import { useFetchSummary } from '@/api/fetchSummary';
+import { useFetchTableSummary } from '@/api/fetchTableSummary';
 
 const SummaryPage = () => {
   // State
   const { data: pics } = useFetchPics();
-  const summary = useSummary((state) => state.summary);
-  const tableSummary = useSummary((state) => state.tableSummary);
+  const { data: summary } = useFetchSummary();
+  const { data: tableSummary } = useFetchTableSummary();
+
+  // State Filter
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const range = useFilter((state) => state.range);
@@ -80,10 +83,9 @@ const SummaryPage = () => {
 
   // Urutkan dan filter task berdasarkan PIC
   const filteredSummary = useMemo(() => {
+    if (!summary) return [];
     // Filtering PIC
-    let result = [...summary].sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
-    );
+    let result = summary.sort((a, b) => new Date(a.date) - new Date(b.date));
     if (selectedPicId !== 'all') {
       result = result.filter((res) => res.pic_id === selectedPicId);
     }
@@ -140,7 +142,8 @@ const SummaryPage = () => {
   }, [summary, selectedPicId, range]);
 
   const filteredTableSummary = useMemo(() => {
-    let result = [...tableSummary];
+    if (!tableSummary) return [];
+    let result = tableSummary;
     // Filtering PIC
     if (selectedPicId !== 'all') {
       result = result.filter((res) => res.pic_id === selectedPicId);
@@ -193,21 +196,6 @@ const SummaryPage = () => {
     totalProgressActivity +
     totalDoneActivity +
     totalArchivedActivity;
-
-  // Fungsi panggil data
-  const fetchSummary = useSummary((state) => state.fetchSummary);
-  const fetchTableSummary = useSummary((state) => state.fetchTableSummary);
-
-  // Ambil tasks ketika halaman dimuat
-  useEffect(() => {
-    const fetchAll = () => {
-      fetchSummary();
-      fetchTableSummary();
-    };
-    fetchAll();
-    const interval = setInterval(fetchAll, 20000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="h-screen flex flex-col">

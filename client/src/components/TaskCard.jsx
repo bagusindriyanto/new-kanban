@@ -256,7 +256,7 @@ const TaskCard = ({ task }) => {
         <h4 className="font-semibold text-base text-white">{picName || '-'}</h4>
       </div>
       <p className="mt-1 font-medium text-sm text-white">{detail}</p>
-      <div className="my-2 grid grid-cols-2 font-light text-[11px] text-white">
+      <div className="my-2 grid grid-cols-2 font-light text-[9px] text-white">
         <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
         <p>
           Progress:{' '}
