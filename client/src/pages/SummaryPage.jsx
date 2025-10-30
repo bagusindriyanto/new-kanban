@@ -432,7 +432,7 @@ const SummaryPage = () => {
                             }}
                           />
                           {chartConfig[name]?.label || name}
-                          <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-medium">
+                          <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-medium tabular-nums">
                             {value}
                             <span className="ml-0.5 text-muted-foreground font-normal">
                               menit

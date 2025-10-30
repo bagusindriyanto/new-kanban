@@ -186,28 +186,25 @@ const HomePage = () => {
           <Button
             onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
             variant="nav"
-            size="sm"
           >
             Tambah Activity
           </Button>
           <Button
             onClick={() => handleOpenModal('Tambah PIC', 'addPic')}
             variant="nav"
-            size="sm"
           >
             Tambah PIC
           </Button>
           <Button
             onClick={() => handleOpenModal('Tambah Task', 'addTask')}
             variant="nav"
-            size="sm"
           >
             Tambah Task
           </Button>
           {/* Pindah ke Halaman Summary */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Button asChild variant="outline" size="icon-sm">
+              <Button asChild variant="outline" size="icon">
                 <Link to="/summary">
                   <ChartNoAxesCombined />
                 </Link>
@@ -229,7 +226,7 @@ const HomePage = () => {
           </div>
         )}
         {sortedTasks.length > 0 && fetchTasksError && (
-          <Item variant="outline">
+          <Item variant="muted">
             <ItemMedia variant="icon">
               <WifiOff className="text-destructive" />
             </ItemMedia>
@@ -238,11 +235,15 @@ const HomePage = () => {
                 Tidak Ada Koneksi
               </ItemTitle>
               <ItemDescription className="text-destructive/90">
-                Error: {fetchTasksError.message}
+                {fetchTasksError.message}
               </ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button size="sm" variant="outline">
+              <Button
+                onClick={() => window.location.reload(false)}
+                size="sm"
+                variant="outline"
+              >
                 Refresh Halaman
               </Button>
             </ItemActions>
@@ -258,11 +259,16 @@ const HomePage = () => {
                 Tidak Ada Koneksi
               </EmptyTitle>
               <EmptyDescription className="text-destructive/90">
-                Error: {fetchTasksError.message}
+                {fetchTasksError.message}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button variant="outline">Refresh Halaman</Button>
+              <Button
+                onClick={() => window.location.reload(false)}
+                variant="outline"
+              >
+                Refresh Halaman
+              </Button>
             </EmptyContent>
           </Empty>
         )}

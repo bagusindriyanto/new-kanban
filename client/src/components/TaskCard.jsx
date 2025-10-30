@@ -23,6 +23,7 @@ import { columns } from '@/config/column.js';
 import { useFetchPics } from '@/api/fetchPics.js';
 import { useUpdateTask } from '@/api/updateTask.js';
 import { cn } from '@/lib/utils';
+import { fetchTasksQueryKey } from '@/api/fetchTasks.js';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -60,7 +61,41 @@ const TaskCard = ({ task }) => {
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
-  const { mutateAsync: updateTaskMutate } = useUpdateTask();
+  const { mutateAsync: updateTaskMutate, isPending } = useUpdateTask({
+    mutationConfig: {
+      // When mutate is called:
+      onMutate: async (newTask, context) => {
+        // Cancel any outgoing refetches
+        // (so they don't overwrite our optimistic update)
+        await context.client.cancelQueries({ queryKey: fetchTasksQueryKey() });
+
+        // Snapshot the previous value
+        const previousTasks = context.client.getQueryData(fetchTasksQueryKey());
+
+        // Optimistically update to the new value
+        context.client.setQueryData(fetchTasksQueryKey(), (oldTasks) => {
+          const filteredOldTasks = oldTasks.filter(
+            (task) => task.id !== newTask.taskId
+          );
+          return [{ id: newTask.taskId, ...newTask.data }, ...filteredOldTasks];
+        });
+        // params.mutationConfig?.onMutate?.(newTask, context);
+        // Return a result with the snapshotted value
+        return { previousTasks };
+      },
+      // If the mutation fails,
+      // use the result returned from onMutate to roll back
+      onError: (err, newTask, onMutateResult, context) => {
+        context.client.setQueryData(
+          fetchTasksQueryKey(),
+          onMutateResult.previousTasks
+        );
+      },
+      // Always refetch after error or success:
+      onSettled: (data, error, variables, onMutateResult, context) =>
+        context.client.invalidateQueries({ queryKey: fetchTasksQueryKey() }),
+    },
+  });
 
   // Fungsi buka form modal
   const handleFormModal = (title, formId) => {
@@ -248,6 +283,7 @@ const TaskCard = ({ task }) => {
         'bg-progress-500': status === 'on progress',
         'bg-done-500': status === 'done',
         'bg-archived-500': status === 'archived',
+        'opacity-30': isPending,
       })}
     >
       {/* Content */}
