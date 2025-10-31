@@ -61,7 +61,11 @@ const TaskCard = ({ task }) => {
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
-  const { mutateAsync: updateTaskMutate, isPending } = useUpdateTask({
+  const {
+    mutateAsync: updateTaskMutate,
+    isPending,
+    variables,
+  } = useUpdateTask({
     mutationConfig: {
       // When mutate is called:
       onMutate: async (newTask, context) => {
@@ -73,12 +77,13 @@ const TaskCard = ({ task }) => {
         const previousTasks = context.client.getQueryData(fetchTasksQueryKey());
 
         // Optimistically update to the new value
-        context.client.setQueryData(fetchTasksQueryKey(), (oldTasks) => {
-          const filteredOldTasks = oldTasks.filter(
-            (task) => task.id !== newTask.taskId
-          );
-          return [{ id: newTask.taskId, ...newTask.data }, ...filteredOldTasks];
-        });
+        context.client.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
+          oldTasks.map((task) =>
+            task.id === newTask.taskId
+              ? { ...task, ...newTask.data, optimistic: true }
+              : task
+          )
+        );
         // params.mutationConfig?.onMutate?.(newTask, context);
         // Return a result with the snapshotted value
         return { previousTasks };
@@ -96,6 +101,9 @@ const TaskCard = ({ task }) => {
         context.client.invalidateQueries({ queryKey: fetchTasksQueryKey() }),
     },
   });
+
+  console.log(variables);
+  const isUpdating = isPending && variables?.taskId === id;
 
   // Fungsi buka form modal
   const handleFormModal = (title, formId) => {
@@ -283,7 +291,7 @@ const TaskCard = ({ task }) => {
         'bg-progress-500': status === 'on progress',
         'bg-done-500': status === 'done',
         'bg-archived-500': status === 'archived',
-        'opacity-30': isPending,
+        'opacity-30': isUpdating,
       })}
     >
       {/* Content */}
