@@ -61,11 +61,7 @@ const TaskCard = ({ task }) => {
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
-  const {
-    mutateAsync: updateTaskMutate,
-    isPending,
-    variables,
-  } = useUpdateTask({
+  const { mutateAsync: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
       // When mutate is called:
       onMutate: async (newTask, context) => {
@@ -78,9 +74,13 @@ const TaskCard = ({ task }) => {
 
         // Optimistically update to the new value
         context.client.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
-          oldTasks.map((task) =>
+          oldTasks?.map((task) =>
             task.id === newTask.taskId
-              ? { ...task, ...newTask.data, optimistic: true }
+              ? {
+                  ...task,
+                  ...newTask.data,
+                  updated_at: new Date().toISOString(),
+                }
               : task
           )
         );
@@ -95,15 +95,15 @@ const TaskCard = ({ task }) => {
           fetchTasksQueryKey(),
           onMutateResult.previousTasks
         );
+        toast.error('Gagal memperbarui task', {
+          description: err.message,
+        });
       },
       // Always refetch after error or success:
       onSettled: (data, error, variables, onMutateResult, context) =>
         context.client.invalidateQueries({ queryKey: fetchTasksQueryKey() }),
     },
   });
-
-  console.log(variables);
-  const isUpdating = isPending && variables?.taskId === id;
 
   // Fungsi buka form modal
   const handleFormModal = (title, formId) => {
@@ -188,13 +188,7 @@ const TaskCard = ({ task }) => {
       minute_pause: mnt_pause,
       pause_time: pause,
     };
-    try {
-      await updateTaskMutate({ taskId: id, data });
-    } catch (err) {
-      toast.error('Gagal memperbarui task', {
-        description: err.message,
-      });
-    }
+    await updateTaskMutate({ taskId: id, data });
   };
 
   // State untuk hitung durasi pause
@@ -291,7 +285,7 @@ const TaskCard = ({ task }) => {
         'bg-progress-500': status === 'on progress',
         'bg-done-500': status === 'done',
         'bg-archived-500': status === 'archived',
-        'opacity-30': isUpdating,
+        // 'opacity-30': isPending,
       })}
     >
       {/* Content */}
