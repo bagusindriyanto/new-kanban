@@ -33,6 +33,7 @@ export const useUpdateTask = (params = {}) => {
                 ...task,
                 ...newTask.data,
                 updated_at: new Date().toISOString(),
+                optimistic: true,
               }
             : task
         )

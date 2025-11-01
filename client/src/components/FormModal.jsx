@@ -12,7 +12,7 @@ import AddPICForm from './AddPICForm';
 import AddTaskForm from './AddTaskForm';
 import UpdateTaskForm from './UpdateTaskForm';
 import useFormModal from '@/stores/formModalStore';
-import { Loader } from 'lucide-react';
+import { Spinner } from '@/components/ui/spinner';
 
 const FormModal = () => {
   const isModalOpen = useFormModal((state) => state.isModalOpen);
@@ -52,7 +52,7 @@ const FormModal = () => {
             form={formId}
             disabled={isLoading}
           >
-            {isLoading && <Loader className="animate-spin" />}
+            {isLoading && <Spinner />}
             {isLoading
               ? 'Mengirim...'
               : formId === 'updateTask'
