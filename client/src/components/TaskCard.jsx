@@ -63,45 +63,11 @@ const TaskCard = ({ task }) => {
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
   const { mutateAsync: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
-      // When mutate is called:
-      onMutate: async (newTask, context) => {
-        // Cancel any outgoing refetches
-        // (so they don't overwrite our optimistic update)
-        await context.client.cancelQueries({ queryKey: fetchTasksQueryKey() });
-
-        // Snapshot the previous value
-        const previousTasks = context.client.getQueryData(fetchTasksQueryKey());
-
-        // Optimistically update to the new value
-        context.client.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
-          oldTasks?.map((task) =>
-            task.id === newTask.taskId
-              ? {
-                  ...task,
-                  ...newTask.data,
-                  updated_at: new Date().toISOString(),
-                }
-              : task
-          )
-        );
-        // params.mutationConfig?.onMutate?.(newTask, context);
-        // Return a result with the snapshotted value
-        return { previousTasks };
-      },
-      // If the mutation fails,
-      // use the result returned from onMutate to roll back
-      onError: (err, newTask, onMutateResult, context) => {
-        context.client.setQueryData(
-          fetchTasksQueryKey(),
-          onMutateResult.previousTasks
-        );
+      onError: (err, _newTask, _onMutateResult, _context) => {
         toast.error('Gagal memperbarui task', {
           description: err.message,
         });
       },
-      // Always refetch after error or success:
-      onSettled: (data, error, variables, onMutateResult, context) =>
-        context.client.invalidateQueries({ queryKey: fetchTasksQueryKey() }),
     },
   });
 
@@ -268,14 +234,8 @@ const TaskCard = ({ task }) => {
       minute_pause: updatedMinutePause,
       pause_time: updatedPauseTime,
     };
-    try {
-      await updateTaskMutate({ taskId: id, data });
-      setIsPaused(!resetPauseTime);
-    } catch (err) {
-      toast.error('Gagal memperbarui task', {
-        description: err.message,
-      });
-    }
+    await updateTaskMutate({ taskId: id, data });
+    setIsPaused(!resetPauseTime);
   };
 
   return (

@@ -16,10 +16,45 @@ export const useUpdateTask = (params = {}) => {
   return useMutation({
     mutationFn: updateTask,
     ...params.mutationConfig,
-    onSuccess: (data, variables, onMutateResult, context) => {
+    // When mutate is called:
+    onMutate: async (newTask, context) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
+
+      // Snapshot the previous value
+      const previousTasks = queryClient.getQueryData(fetchTasksQueryKey());
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
+        oldTasks?.map((task) =>
+          task.id === newTask.taskId
+            ? {
+                ...task,
+                ...newTask.data,
+                updated_at: new Date().toISOString(),
+              }
+            : task
+        )
+      );
+      params.mutationConfig?.onMutate?.(newTask, context);
+      // Return a result with the snapshotted value
+      return { previousTasks };
+    },
+    // If the mutation fails,
+    // use the result returned from onMutate to roll back
+    onError: (err, newTask, onMutateResult, context) => {
+      queryClient.setQueryData(
+        fetchTasksQueryKey(),
+        onMutateResult.previousTasks
+      );
+      params.mutationConfig?.onError?.(err, newTask, onMutateResult, context);
+    },
+    onSettled: (data, error, variables, onMutateResult, context) => {
       queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
-      params.mutationConfig?.onSuccess?.(
+      params.mutationConfig?.onSettled?.(
         data,
+        error,
         variables,
         onMutateResult,
         context
