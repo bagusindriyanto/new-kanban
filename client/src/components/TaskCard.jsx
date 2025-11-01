@@ -42,6 +42,7 @@ const TaskCard = ({ task }) => {
     minute_pause,
     minute_activity,
     pause_time,
+    optimistic = false,
   } = task;
 
   // State untuk PIC
@@ -61,7 +62,7 @@ const TaskCard = ({ task }) => {
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
-  const { mutateAsync: updateTaskMutate } = useUpdateTask({
+  const { mutate: updateTaskMutate, isPending } = useUpdateTask({
     mutationConfig: {
       onError: (err, _newTask, _onMutateResult, _context) => {
         toast.error('Gagal memperbarui task', {
@@ -92,7 +93,7 @@ const TaskCard = ({ task }) => {
   };
 
   // State untuk update status dengan tombol kanan / kiri
-  const onMove = async (isRight) => {
+  const onMove = (isRight) => {
     const now = new Date().toISOString();
     let todo = timestamp_todo;
     let progress = timestamp_progress;
@@ -154,7 +155,7 @@ const TaskCard = ({ task }) => {
       minute_pause: mnt_pause,
       pause_time: pause,
     };
-    await updateTaskMutate({ taskId: id, data });
+    updateTaskMutate({ taskId: id, data });
   };
 
   // State untuk hitung durasi pause
@@ -187,23 +188,23 @@ const TaskCard = ({ task }) => {
     return () => clearInterval(intervalRef.current);
   }, [isPaused, pause_time]);
 
-  const togglePause = async () => {
+  const togglePause = () => {
     if (isPaused) {
       // Play: hitung durasi pause berjalan, tambahkan ke minute_pause, reset pause_time di DB
       const pauseEnd = Date.now();
       const pauseDuration = Math.floor(
         (pauseEnd - pauseStartRef.current) / 60000
       );
-      await onPauseToggle(pauseDuration, true);
+      onPauseToggle(pauseDuration, true);
     } else {
       // Pause: set pause_time ke sekarang di DB
       const nowISO = new Date().toISOString();
-      await onPauseToggle(0, false, nowISO);
+      onPauseToggle(0, false, nowISO);
     }
   };
 
   // Hitung pause berjalan
-  const onPauseToggle = async (
+  const onPauseToggle = (
     pauseMinutes,
     resetPauseTime = false,
     newPauseTime = null
@@ -234,7 +235,7 @@ const TaskCard = ({ task }) => {
       minute_pause: updatedMinutePause,
       pause_time: updatedPauseTime,
     };
-    await updateTaskMutate({ taskId: id, data });
+    updateTaskMutate({ taskId: id, data });
     setIsPaused(!resetPauseTime);
   };
 
@@ -245,7 +246,7 @@ const TaskCard = ({ task }) => {
         'bg-progress-500': status === 'on progress',
         'bg-done-500': status === 'done',
         'bg-archived-500': status === 'archived',
-        // 'opacity-30': isPending,
+        // 'opacity-30': optimistic,
       })}
     >
       {/* Content */}
@@ -254,7 +255,7 @@ const TaskCard = ({ task }) => {
         <h4 className="font-semibold text-base text-white">{picName || '-'}</h4>
       </div>
       <p className="mt-1 font-medium text-sm text-white">{detail}</p>
-      <div className="my-2 grid grid-cols-2 font-light text-[9px] text-white">
+      <div className="my-2 grid grid-cols-2 font-light text-[10px] text-white">
         <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
         <p>
           Progress:{' '}
@@ -276,7 +277,12 @@ const TaskCard = ({ task }) => {
             onClick={() => onMove(false)}
             variant={status}
             size="icon-xs-rounded"
-            disabled={status === 'todo' || status === 'archived' || isPaused}
+            disabled={
+              status === 'todo' ||
+              status === 'archived' ||
+              isPaused ||
+              optimistic
+            }
           >
             <ArrowLeftIcon />
           </Button>
@@ -286,6 +292,7 @@ const TaskCard = ({ task }) => {
               onClick={togglePause}
               variant={status}
               size="icon-xs-rounded"
+              disabled={optimistic}
             >
               {isPaused ? <PlayIcon /> : <PauseIcon />}
             </Button>
@@ -295,14 +302,18 @@ const TaskCard = ({ task }) => {
             onClick={() => onMove(true)}
             variant={status}
             size="icon-xs-rounded"
-            disabled={status === 'archived' || isPaused}
+            disabled={status === 'archived' || isPaused || optimistic}
           >
             <ArrowRightIcon />
           </Button>
           {/* Dropdown Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={status} size="icon-xs-rounded">
+              <Button
+                variant={status}
+                size="icon-xs-rounded"
+                disabled={optimistic}
+              >
                 <EllipsisHorizontalIcon />
               </Button>
             </DropdownMenuTrigger>

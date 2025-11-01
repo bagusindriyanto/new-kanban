@@ -70,25 +70,38 @@ const HomePage = () => {
     error: fetchTasksError,
   } = useFetchTasks();
   // Tanstack query untuk pics
-  const { data: pics } = useFetchPics();
+  const {
+    data: pics,
+    isLoading: fetchPicsLoading,
+    error: fetchPicsError,
+  } = useFetchPics();
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const sortedTasks = useMemo(() => {
     // Check data tasks ada atau tidak
     if (!tasks) return [];
-    return tasks.filter((task) => {
-      // 1. Filter berdasarkan PIC
-      const matchedPic =
-        selectedPicId === 'all' || task.pic_id === selectedPicId;
-      // 2. Filter berdasarkan tanggal
-      const taskDate =
-        startOfDay(parseISO(task.timestamp_todo)) ?? startOfDay(new Date(null));
-      const fromDate = range.from;
-      const toDate = range.to;
-      const matchedDate =
-        (!fromDate || taskDate >= fromDate) && (!toDate || taskDate <= toDate);
-      return matchedPic && matchedDate;
-    });
+    return tasks
+      .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+      .filter((task) => {
+        // 1. Filter berdasarkan PIC
+        const matchedPic =
+          selectedPicId === 'all' || task.pic_id === selectedPicId;
+        // 2. Filter berdasarkan tanggal
+        let matchedDate;
+        if (task.status === 'todo') {
+          matchedDate = true;
+        } else {
+          const taskDate =
+            startOfDay(parseISO(task.timestamp_progress)) ??
+            startOfDay(new Date(null));
+          const fromDate = range.from;
+          const toDate = range.to;
+          matchedDate =
+            (!fromDate || taskDate >= fromDate) &&
+            (!toDate || taskDate <= toDate);
+        }
+        return matchedPic && matchedDate;
+      });
   }, [tasks, selectedPicId, range]);
 
   // State untuk modal
@@ -220,12 +233,12 @@ const HomePage = () => {
       </header>
       {/* Main */}
       <main className="flex flex-1 flex-col p-4 gap-4">
-        {fetchTasksLoading && (
+        {(fetchTasksLoading || fetchPicsLoading) && (
           <div className="flex flex-1 justify-center items-center">
             <Spinner className="size-10" />
           </div>
         )}
-        {sortedTasks.length > 0 && fetchTasksError && (
+        {sortedTasks.length > 0 && (fetchTasksError || fetchPicsError) && (
           <Item variant="muted">
             <ItemMedia variant="icon">
               <WifiOff className="text-destructive" />
@@ -235,7 +248,7 @@ const HomePage = () => {
                 Tidak Ada Koneksi
               </ItemTitle>
               <ItemDescription className="text-destructive/90">
-                {fetchTasksError.message}
+                {fetchTasksError.message || fetchPicsError.message}
               </ItemDescription>
             </ItemContent>
             <ItemActions>
@@ -249,7 +262,7 @@ const HomePage = () => {
             </ItemActions>
           </Item>
         )}
-        {sortedTasks.length === 0 && fetchTasksError && (
+        {sortedTasks.length === 0 && (fetchTasksError || fetchPicsError) && (
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -259,7 +272,7 @@ const HomePage = () => {
                 Tidak Ada Koneksi
               </EmptyTitle>
               <EmptyDescription className="text-destructive/90">
-                {fetchTasksError.message}
+                {fetchTasksError.message || fetchPicsError.message}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
