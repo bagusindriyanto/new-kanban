@@ -27,14 +27,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import useActivities from '@/stores/activityStore';
-import usePics from '@/stores/picStore';
-// ##############################################
-// import useTasks from '@/stores/taskStore';
-import { useAddTask } from '@/hooks/useAddTask';
-// ##############################################
 import useFormModal from '@/stores/formModalStore';
 import { useState } from 'react';
+import { useFetchActivities } from '@/api/fetchActivities';
+import { useFetchPics } from '@/api/fetchPics';
+import { useAddTask } from '@/api/addTask';
 
 const FormSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
@@ -47,30 +44,36 @@ export default function AddTaskForm() {
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
   // Fetch activity
-  const contents = useActivities((state) => state.activities);
+  const { data: contents } = useFetchActivities();
   // Fetch pics
-  const pics = usePics((state) => state.pics);
+  const { data: pics } = useFetchPics();
   // Add Tasks
-  const { mutate } = useAddTask();
-  // const addTask = useTasks((state) => state.addTask);
+  const { mutateAsync: addTaskMutation } = useAddTask();
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+  // Proses Kirim Data
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
   });
 
   const onSubmit = (data) => {
-    // tampilkan loading toast dulu
-    const toastId = toast.loading('Sedang menambahkan task...');
-    mutate(data, {
-      onSuccess: () => {
-        form.reset();
-        setIsModalOpen(false);
-        toast.success('Task berhasil ditambahkan!', { id: toastId });
+    toast.promise(addTaskMutation(data), {
+      loading: () => {
+        setIsLoading(true);
+        return 'Sedang menambahkan task...';
       },
-      onError: (err) => {
-        toast.error(err.message || 'Gagal menambahkan task', { id: toastId });
+      success: () => {
+        form.reset(); // reset form setelah submit
+        setIsModalOpen(false);
+        setIsLoading(false);
+        return 'Task berhasil ditambahkan';
+      },
+      error: (err) => {
+        setIsLoading(false);
+        // err adalah error yang dilempar dari store
+        return err.message || 'Gagal menambahkan task';
       },
     });
   };
@@ -106,7 +109,7 @@ export default function AddTaskForm() {
                         >
                           <span className="truncate">
                             {field.value
-                              ? contents.find(
+                              ? contents?.find(
                                   (content) => content.name === field.value
                                 )?.name
                               : 'Pilih activity'}
@@ -128,7 +131,7 @@ export default function AddTaskForm() {
                         >
                           <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
-                            {contents.map((content) => (
+                            {contents?.map((content) => (
                               <CommandItem
                                 value={content.name}
                                 key={content.id}
@@ -178,7 +181,7 @@ export default function AddTaskForm() {
                           )}
                         >
                           {field.value
-                            ? pics.find((pic) => pic.id === field.value)?.name
+                            ? pics?.find((pic) => pic.id === field.value)?.name
                             : 'Pilih PIC'}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -214,7 +217,7 @@ export default function AddTaskForm() {
                                 )}
                               />
                             </CommandItem>
-                            {pics.map((pic) => (
+                            {pics?.map((pic) => (
                               <CommandItem
                                 value={pic.name}
                                 key={pic.id}

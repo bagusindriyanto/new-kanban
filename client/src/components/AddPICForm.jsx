@@ -12,17 +12,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import usePics from '@/stores/picStore';
 import useFormModal from '@/stores/formModalStore';
+import { useAddPic } from '@/api/addPic';
 
 const FormSchema = z.object({
   pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
 });
 
 export default function AddPICForm() {
-  const addPic = usePics((state) => state.addPic);
+  const { mutateAsync: addPicMutation } = useAddPic();
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+  // Proses Kirim Data
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -32,14 +34,19 @@ export default function AddPICForm() {
   });
 
   const onSubmit = (data) => {
-    toast.promise(addPic(data.pic), {
-      loading: 'Sedang menambahkan PIC...',
+    toast.promise(addPicMutation(data.pic), {
+      loading: () => {
+        setIsLoading(true);
+        return 'Sedang menambahkan PIC...';
+      },
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
+        setIsLoading(false);
         return `"${data.pic}" telah ditambahkan ke daftar PIC`;
       },
       error: (err) => {
+        setIsLoading(false);
         // err adalah error yang dilempar dari store
         return err.message || 'Gagal menambahkan PIC';
       },
@@ -59,7 +66,9 @@ export default function AddPICForm() {
           name="pic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama PIC</FormLabel>
+              <FormLabel className="gap-1">
+                Nama PIC<span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="contoh: Bagus"

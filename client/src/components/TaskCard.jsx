@@ -4,6 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { formatTimestamp } from '../services/formatTimestamp.js';
 import {
@@ -17,9 +18,12 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import useFormModal from '@/stores/formModalStore.js';
 import useConfirmModal from '@/stores/confirmModalStore.js';
 import useTasks from '@/stores/taskStore';
-import usePics from '@/stores/picStore.js';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column.js';
+import { useFetchPics } from '@/api/fetchPics.js';
+import { useUpdateTask } from '@/api/updateTask.js';
+import { cn } from '@/lib/utils';
+import { fetchTasksQueryKey } from '@/api/fetchTasks.js';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -38,11 +42,13 @@ const TaskCard = ({ task }) => {
     minute_pause,
     minute_activity,
     pause_time,
+    optimistic = false,
   } = task;
 
   // State untuk PIC
-  const pics = usePics((state) => state.pics);
-  const picName = pics.find((p) => p.id === pic_id)?.name;
+  const { data: pics } = useFetchPics();
+  // const pics = usePics((state) => state.pics);
+  const picName = pics?.find((p) => p.id === pic_id)?.name;
 
   // State untuk form modal
   const setIsFormModalOpen = useFormModal((state) => state.setIsModalOpen);
@@ -56,7 +62,15 @@ const TaskCard = ({ task }) => {
 
   // State untuk pilih task saat ini
   const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
-  const updateTask = useTasks((state) => state.updateTask);
+  const { mutate: updateTaskMutate } = useUpdateTask({
+    mutationConfig: {
+      onError: (err, _newTask, _onMutateResult, _context) => {
+        toast.error('Gagal memperbarui task', {
+          description: err.message,
+        });
+      },
+    },
+  });
 
   // Fungsi buka form modal
   const handleFormModal = (title, formId) => {
@@ -79,7 +93,7 @@ const TaskCard = ({ task }) => {
   };
 
   // State untuk update status dengan tombol kanan / kiri
-  const onMove = async (isRight) => {
+  const onMove = (isRight) => {
     const now = new Date().toISOString();
     let todo = timestamp_todo;
     let progress = timestamp_progress;
@@ -141,13 +155,7 @@ const TaskCard = ({ task }) => {
       minute_pause: mnt_pause,
       pause_time: pause,
     };
-    try {
-      await updateTask(id, data);
-    } catch (err) {
-      toast.error('Gagal memperbarui task', {
-        description: err.message,
-      });
-    }
+    updateTaskMutate({ taskId: id, data });
   };
 
   // State untuk hitung durasi pause
@@ -180,23 +188,23 @@ const TaskCard = ({ task }) => {
     return () => clearInterval(intervalRef.current);
   }, [isPaused, pause_time]);
 
-  const togglePause = async () => {
+  const togglePause = () => {
     if (isPaused) {
       // Play: hitung durasi pause berjalan, tambahkan ke minute_pause, reset pause_time di DB
       const pauseEnd = Date.now();
       const pauseDuration = Math.floor(
         (pauseEnd - pauseStartRef.current) / 60000
       );
-      await onPauseToggle(pauseDuration, true);
+      onPauseToggle(pauseDuration, true);
     } else {
       // Pause: set pause_time ke sekarang di DB
       const nowISO = new Date().toISOString();
-      await onPauseToggle(0, false, nowISO);
+      onPauseToggle(0, false, nowISO);
     }
   };
 
   // Hitung pause berjalan
-  const onPauseToggle = async (
+  const onPauseToggle = (
     pauseMinutes,
     resetPauseTime = false,
     newPauseTime = null
@@ -227,23 +235,19 @@ const TaskCard = ({ task }) => {
       minute_pause: updatedMinutePause,
       pause_time: updatedPauseTime,
     };
-    try {
-      await updateTask(id, data);
-      setIsPaused(!resetPauseTime);
-    } catch (err) {
-      toast.error('Gagal memperbarui task', {
-        description: err.message,
-      });
-    }
+    updateTaskMutate({ taskId: id, data });
+    setIsPaused(!resetPauseTime);
   };
 
   return (
     <div
-      className={`grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg
-        ${status === 'todo' ? 'bg-todo-500' : ''} 
-        ${status === 'on progress' ? 'bg-progress-500' : ''} 
-        ${status === 'done' ? 'bg-done-500' : ''}
-        ${status === 'archived' ? 'bg-archived-500' : ''}`}
+      className={cn('grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg', {
+        'bg-todo-500': status === 'todo',
+        'bg-progress-500': status === 'on progress',
+        'bg-done-500': status === 'done',
+        'bg-archived-500': status === 'archived',
+        // 'opacity-30': optimistic,
+      })}
     >
       {/* Content */}
       <div className="flex justify-between gap-3 items-start">
@@ -251,7 +255,7 @@ const TaskCard = ({ task }) => {
         <h4 className="font-semibold text-base text-white">{picName || '-'}</h4>
       </div>
       <p className="mt-1 font-medium text-sm text-white">{detail}</p>
-      <div className="my-2 grid grid-cols-2 font-light text-[11px] text-white">
+      <div className="my-2 grid grid-cols-2 font-light text-[10px] text-white">
         <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
         <p>
           Progress:{' '}
@@ -269,101 +273,65 @@ const TaskCard = ({ task }) => {
         <div className="flex gap-1">
           {/* Control Button */}
           {/* Tombol Kiri */}
-          <button
+          <Button
             onClick={() => onMove(false)}
-            className={`cursor-pointer rounded-full size-6 text-white p-1 disabled:opacity-25 disabled:cursor-not-allowed transition duration-300 ease-in-out ${
-              status === 'todo' ? 'bg-todo-600 enabled:hover:bg-todo-400' : ''
-            } ${
-              status === 'on progress'
-                ? 'bg-progress-600 enabled:hover:bg-progress-400'
-                : ''
-            } ${
-              status === 'done' ? 'bg-done-600 enabled:hover:bg-done-400' : ''
-            } ${
-              status === 'archived'
-                ? 'bg-archived-600 enabled:hover:bg-archived-400'
-                : ''
-            }`}
-            disabled={status === 'todo' || status === 'archived' || isPaused}
+            variant={status}
+            size="icon-xs-rounded"
+            disabled={
+              status === 'todo' ||
+              status === 'archived' ||
+              isPaused ||
+              optimistic
+            }
           >
             <ArrowLeftIcon />
-          </button>
+          </Button>
           {/* Tombol Pause */}
           {status === 'on progress' && (
-            <button
+            <Button
               onClick={togglePause}
-              className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                status === 'todo' ? 'bg-todo-600 hover:bg-todo-400' : ''
-              } ${
-                status === 'on progress'
-                  ? 'bg-progress-600 hover:bg-progress-400'
-                  : ''
-              } ${status === 'done' ? 'bg-done-600 hover:bg-done-400' : ''} ${
-                status === 'archived'
-                  ? 'bg-archived-600 hover:bg-archived-400'
-                  : ''
-              }`}
+              variant={status}
+              size="icon-xs-rounded"
+              disabled={optimistic}
             >
               {isPaused ? <PlayIcon /> : <PauseIcon />}
-            </button>
+            </Button>
           )}
           {/* Tombol Kanan */}
-          <button
+          <Button
             onClick={() => onMove(true)}
-            className={`cursor-pointer rounded-full size-6 text-white p-1 disabled:opacity-25 disabled:cursor-not-allowed transition duration-300 ease-in-out ${
-              status === 'todo' ? 'bg-todo-600 enabled:hover:bg-todo-400' : ''
-            } ${
-              status === 'on progress'
-                ? 'bg-progress-600 enabled:hover:bg-progress-400'
-                : ''
-            } ${
-              status === 'done' ? 'bg-done-600 enabled:hover:bg-done-400' : ''
-            } ${
-              status === 'archived'
-                ? 'bg-archived-600 enabled:hover:bg-archived-400'
-                : ''
-            }`}
-            disabled={status === 'archived' || isPaused}
+            variant={status}
+            size="icon-xs-rounded"
+            disabled={status === 'archived' || isPaused || optimistic}
           >
             <ArrowRightIcon />
-          </button>
+          </Button>
           {/* Dropdown Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                className={`cursor-pointer rounded-full size-6 text-white p-1 transition duration-300 ease-in-out ${
-                  status === 'todo' ? 'bg-todo-600 hover:bg-todo-400' : ''
-                } ${
-                  status === 'on progress'
-                    ? 'bg-progress-600 hover:bg-progress-400'
-                    : ''
-                } ${status === 'done' ? 'bg-done-600 hover:bg-done-400' : ''} ${
-                  status === 'archived'
-                    ? 'bg-archived-600 hover:bg-archived-400'
-                    : ''
-                }`}
+              <Button
+                variant={status}
+                size="icon-xs-rounded"
+                disabled={optimistic}
               >
                 <EllipsisHorizontalIcon />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem className="m-0 p-0">
-                <button
-                  onClick={() => handleFormModal('Edit Task', 'updateTask')}
-                  className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
-                >
-                  <PencilSquareIcon />
-                  <span>Edit</span>
-                </button>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => handleFormModal('Edit Task', 'updateTask')}
+              >
+                <PencilSquareIcon />
+                Edit
               </DropdownMenuItem>
-              <DropdownMenuItem className="m-0 p-0">
-                <button
-                  onClick={handleConfirmModal}
-                  className="cursor-pointer size-full p-2 flex text-center items-center gap-2"
-                >
-                  <TrashIcon className="text-red-500" />
-                  <span className="text-red-500">Hapus</span>
-                </button>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={handleConfirmModal}
+                variant="destructive"
+              >
+                <TrashIcon />
+                Hapus
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

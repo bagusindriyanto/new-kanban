@@ -1,8 +1,11 @@
 import { create } from 'zustand';
+import { startOfDay } from 'date-fns';
 
 const useFilter = create((set) => ({
-  picId: 'all',
-  setPicId: (id) => set({ picId: id }),
+  selectedPicId: 'all',
+  setSelectedPicId: (id) => set({ selectedPicId: id }),
+  range: { from: startOfDay(new Date()), to: startOfDay(new Date()) },
+  setRange: ({ from, to }) => set({ range: { from, to } }),
 }));
 
 export default useFilter;

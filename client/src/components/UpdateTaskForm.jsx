@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown, Trash2Icon } from 'lucide-react';
+import { Check, ChevronsUpDown, Trash2Icon, CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -25,6 +25,12 @@ import {
 } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from './ui/input-group';
+import {
   Form,
   FormControl,
   FormField,
@@ -38,17 +44,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import useActivities from '@/stores/activityStore';
-import usePics from '@/stores/picStore';
 import useTasks from '@/stores/taskStore';
 import useFormModal from '@/stores/formModalStore';
 
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
 import { useState } from 'react';
+import { useFetchActivities } from '@/api/fetchActivities';
+import { useFetchPics } from '@/api/fetchPics';
+import { useUpdateTask } from '@/api/updateTask';
+import { useFetchTasks } from '@/api/fetchTasks';
 
 // Aturan form
 const FormSchema = z.object({
@@ -78,20 +85,23 @@ export default function UpdateTaskForm() {
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
   // Fetch activity
-  const contents = useActivities((state) => state.activities);
+  const { data: contents } = useFetchActivities();
   // Fetch pics
-  const pics = usePics((state) => state.pics);
+  const { data: pics } = useFetchPics();
   // Fetch task yang dipilih
-  const tasks = useTasks((state) => state.tasks);
+  const { data: tasks } = useFetchTasks();
+  // const tasks = useTasks((state) => state.tasks);
   const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  const task = tasks.data.filter((task) => task.id === selectedTaskId)[0];
-  console.log(task);
+  const task = tasks?.filter((task) => task.id === selectedTaskId)[0];
 
   // Update Tasks
-  const updateTask = useTasks((state) => state.updateTask);
+  const { mutateAsync: updateTaskMutate } = useUpdateTask();
 
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
+
+  // Proses Kirim Data
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   // Set nilai awal form
   const form = useForm({
@@ -166,18 +176,26 @@ export default function UpdateTaskForm() {
           : null,
       };
 
-      toast.promise(updateTask(selectedTaskId, taskData), {
-        loading: 'Sedang memperbarui task...',
-        success: () => {
-          form.reset();
-          setIsModalOpen(false);
-          return 'Task berhasil diperbarui';
-        },
-        error: (err) => {
-          // err adalah error yang dilempar dari store
-          return err.message || 'Gagal memperbarui task';
-        },
-      });
+      toast.promise(
+        updateTaskMutate({ taskId: selectedTaskId, data: taskData }),
+        {
+          loading: () => {
+            setIsLoading(true);
+            return 'Sedang memperbarui task...';
+          },
+          success: () => {
+            form.reset();
+            setIsModalOpen(false);
+            setIsLoading(false);
+            return 'Task berhasil diperbarui';
+          },
+          error: (err) => {
+            setIsLoading(false);
+            // err adalah error yang dilempar dari store
+            return err.message || 'Gagal memperbarui task';
+          },
+        }
+      );
     } else {
       toast.error('Password salah!');
       form.setValue('password', '');
@@ -216,7 +234,7 @@ export default function UpdateTaskForm() {
                         >
                           <span className="truncate">
                             {field.value
-                              ? contents.find(
+                              ? contents?.find(
                                   (content) => content.name === field.value
                                 )?.name
                               : 'Pilih activity'}
@@ -238,7 +256,7 @@ export default function UpdateTaskForm() {
                         >
                           <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
-                            {contents.map((content) => (
+                            {contents?.map((content) => (
                               <CommandItem
                                 value={content.name}
                                 key={content.id}
@@ -288,7 +306,7 @@ export default function UpdateTaskForm() {
                           )}
                         >
                           {field.value
-                            ? pics.find((pic) => pic.id === field.value)?.name
+                            ? pics?.find((pic) => pic.id === field.value)?.name
                             : 'Pilih PIC'}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -324,7 +342,7 @@ export default function UpdateTaskForm() {
                                 )}
                               />
                             </CommandItem>
-                            {pics.map((pic) => (
+                            {pics?.map((pic) => (
                               <CommandItem
                                 value={pic.name}
                                 key={pic.id}
@@ -763,7 +781,19 @@ export default function UpdateTaskForm() {
                 Masukkan Password<span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input type="password" autoComplete="off" {...field} />
+                {/* <Input type="password" autoComplete="off" {...field} /> */}
+                <InputGroup>
+                  <InputGroupInput
+                    type="password"
+                    autoComplete="off"
+                    {...field}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton variant="secondary">
+                      Show
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -1,81 +1,36 @@
 import TaskCard from './TaskCard';
-import { SkeletonCard } from './SkeletonCard';
-import { ScrollArea } from '@/components/ui/scroll-area';
-// Import untuk infinite scroll
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
-import { useEffect } from 'react';
-import { fetchTasksByStatus } from '@/api/tasks';
-import useFilter from '@/stores/filterStore';
+import { Virtuoso } from 'react-virtuoso';
+import { cn } from '@/lib/utils';
 
-const StatusColumn = ({ status, title }) => {
-  const picId = useFilter((state) => state.picId);
-  const {
-    data,
-    error,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    status: condition,
-  } = useInfiniteQuery({
-    queryKey: ['tasks', { status, picId }],
-    queryFn: fetchTasksByStatus,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.hasMore ? lastPage.nextPage : undefined,
-  });
-  const { ref, inView } = useInView();
-
-  // Ambil halaman berikutnya ketika di scroll
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // Ambil tasks dari hasil query
-  const tasks = data?.pages.flatMap((page) => page.data) || [];
-
+const StatusColumn = ({ title, tasks }) => {
   return (
     <div className="flex flex-1 flex-col rounded-lg overflow-clip">
       <h2
-        className={`text-xl font-semibold py-4 px-3 border-b border-border bg-neutral-50 dark:bg-neutral-900
-        ${title === 'TO DO' ? 'text-todo-500' : ''} 
-        ${title === 'ON PROGRESS' ? 'text-progress-500' : ''} 
-        ${title === 'DONE' ? 'text-done-500' : ''}
-        ${
-          title === 'ARCHIVED' ? 'text-archived-500 dark:text-neutral-400' : ''
-        }`}
+        className={cn(
+          'text-xl font-semibold py-4 px-3 border-b border-border bg-neutral-50 dark:bg-neutral-900',
+          {
+            'text-todo-500': title === 'TO DO',
+            'text-progress-500': title === 'ON PROGRESS',
+            'text-done-500': title === 'DONE',
+            'text-archived-500': title === 'ARCHIVED',
+            'dark:text-archived-400': title === 'ARCHIVED',
+          }
+        )}
       >
         {title}
       </h2>
-      <ScrollArea className="flex-1 max-h-[calc(100dvh-56px-39px-32px-60.8px)] px-3 bg-neutral-100 dark:bg-neutral-900/80">
-        {condition === 'pending' ? (
-          <>
-            <SkeletonCard />
-            <SkeletonCard />
-          </>
-        ) : condition === 'error' ? (
-          <div>Error: {error.message}</div>
-        ) : (
-          <>
-            <div className="flex flex-col flex-1 gap-3 py-3">
-              {tasks?.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-            <div ref={ref}>
-              {isFetchingNextPage ? (
-                <p className="text-center text-sm mb-3">Memuat lainnya...</p>
-              ) : hasNextPage ? (
-                <p className="text-center text-sm mb-3">
-                  Scroll untuk memuat lainnya
-                </p>
-              ) : null}
-            </div>
-          </>
+      <Virtuoso
+        className="!max-h-[calc(100dvh-56px-39px-32px-60.8px)] bg-neutral-100 dark:bg-neutral-900/80 
+        [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-none [&::-webkit-scrollbar-thumb]:relative 
+        [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 
+        dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+        data={tasks}
+        itemContent={(_, task) => (
+          <div className="px-3 pt-3">
+            <TaskCard task={task} />
+          </div>
         )}
-      </ScrollArea>
+      />
     </div>
   );
 };
