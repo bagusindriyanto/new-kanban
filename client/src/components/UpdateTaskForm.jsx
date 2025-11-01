@@ -206,7 +206,7 @@ export default function UpdateTaskForm() {
   return (
     <Form {...form}>
       <form
-        id="updateTask"
+        id="update-task"
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6"
       >

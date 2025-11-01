@@ -35,73 +35,19 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    // Cek parameter GET
-    // ambil parameter dari request
-    $status = isset($_GET['status']) ? $_GET['status'] : null;
-    $pic_id = isset($_GET['pic_id']) ? $_GET['pic_id'] : null;
-    $page = isset($_GET['page']) ? (int) $_GET['page'] : null;
-    $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : null;
-
-    // base query
-    $sql = "SELECT * FROM tasks";
-    $countSql = "SELECT COUNT(*) FROM tasks";
-    $conditions = [];
-
-    // filter berdasarkan status
-    if ($status !== null) {
-      $conditions[] = "status = :status";
-    }
-    if ($pic_id !== null) {
-      if ($pic_id === 'null') {
-        $conditions[] = "pic_id IS NULL";
-      } else {
-        $conditions[] = "pic_id = :pic_id";
-      }
-    }
-
-    if (count($conditions) > 0) {
-      $where = " WHERE " . implode(" AND ", $conditions);
-      $sql .= $where;
-      $countSql .= $where;
-    }
-
-    // urutkan berdasarkan data terbaru
-    $sql .= " ORDER BY updated_at DESC";
-
-    // jika ada pagination
-    // pagination
-    if ($page !== null) {
-      if ($limit === null) {
-        $limit = 5; // default limit
-      }
-      $offset = ($page - 1) * $limit;
-      $sql .= " LIMIT :limit OFFSET :offset";
-    }
-
+    $sql = "SELECT * FROM tasks ORDER BY updated_at DESC";
     $stmt = $pdo->prepare($sql);
-
-    // binding condition kalau ada
-    if ($status !== null) {
-      $stmt->bindValue(':status', $status, PDO::PARAM_STR);
-    }
-    if ($pic_id !== null && $pic_id !== 'null') {
-      $stmt->bindValue(':pic_id', $pic_id, PDO::PARAM_STR);
-    }
-
-    // binding pagination kalau ada
-    if ($page !== null && $limit !== null) {
-      $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-      $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    }
-
-
-    // Ambil tasks
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     $data = array_map(function ($row) {
       $timestamp_fields = ['timestamp_todo', 'timestamp_progress', 'timestamp_done', 'timestamp_archived', 'created_at', 'pause_time', 'updated_at'];
+
       foreach ($timestamp_fields as $field) {
         if (!empty($row[$field])) {
+          // $utcDate = new DateTime($row[$field], new DateTimeZone('UTC'));
+          // $row[$field] = $utcDate->format('c');
+          // Format WIB agar MySQL bisa menampilkan sesuai jam WIB
           $localeDate = new DateTime($row[$field], new DateTimeZone('Asia/Jakarta'));
           $localeDate->setTimezone(new DateTimeZone('UTC'));
           $row[$field] = $localeDate->format('c');
@@ -110,31 +56,7 @@ function handleGet($pdo)
       return $row;
     }, $rows);
 
-    // Hitung total untuk pagination
-    if ($page !== null && $limit !== null) {
-      $countStmt = $pdo->prepare($countSql);
-      if ($status !== null) {
-        $countStmt->bindValue(':status', $status, PDO::PARAM_STR);
-      }
-      if ($pic_id !== null && $pic_id !== 'null') {
-        $countStmt->bindValue(':pic_id', $pic_id, PDO::PARAM_STR);
-      }
-      $countStmt->execute();
-      $totalRows = $countStmt->fetchColumn();
-      // Tentukan apakah ada halaman berikutnya
-      $hasMore = ($offset + $limit) < $totalRows;
-      $nextPage = $hasMore ? $page + 1 : null;
-    }
-
-    // Response dalam JSON
-    $response = ["data" => $data];
-
-    if ($page !== null && $limit !== null) {
-      $response["hasMore"] = $hasMore;
-      $response["nextPage"] = $nextPage;
-    }
-
-    echo json_encode($response, JSON_NUMERIC_CHECK);
+    echo json_encode($data, JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Failed to fetch tasks: ' . $e->getMessage()]);

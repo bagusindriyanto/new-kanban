@@ -1,22 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import useFormModal from '@/stores/formModalStore';
 import { useAddPic } from '@/api/addPic';
 
 const FormSchema = z.object({
-  pic: z.string().trim().nonempty({ message: 'Mohon tuliskan nama PIC.' }),
+  pic: z.string().trim().min(1, 'Mohon tuliskan nama PIC.'),
 });
 
 export default function AddPICForm() {
@@ -54,33 +52,24 @@ export default function AddPICForm() {
   };
 
   return (
-    <Form {...form}>
-      <form
-        id="addPic"
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-      >
-        {/* Input PIC */}
-        <FormField
-          control={form.control}
-          name="pic"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="gap-1">
-                Nama PIC<span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="contoh: Bagus"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
+    <form id="add-pic" onSubmit={form.handleSubmit(onSubmit)}>
+      <Controller
+        name="pic"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="add-pic-pic">Nama PIC</FieldLabel>
+            <Input
+              {...field}
+              id="add-pic-pic"
+              aria-invalid={fieldState.invalid}
+              placeholder="contoh: Bagus"
+              autoComplete="off"
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+    </form>
   );
 }

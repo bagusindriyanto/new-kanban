@@ -27,10 +27,10 @@ const FormModal = () => {
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        {formId === 'addActivity' && <AddActivityForm />}
-        {formId === 'addPic' && <AddPICForm />}
-        {formId === 'addTask' && <AddTaskForm />}
-        {formId === 'updateTask' && <UpdateTaskForm />}
+        {formId === 'add-activity' && <AddActivityForm />}
+        {formId === 'add-pic' && <AddPICForm />}
+        {formId === 'add-task' && <AddTaskForm />}
+        {formId === 'update-task' && <UpdateTaskForm />}
         <DialogFooter>
           <DialogClose asChild>
             <Button
@@ -44,7 +44,7 @@ const FormModal = () => {
           </DialogClose>
           <Button
             className={`cursor-pointer text-white ${
-              formId === 'updateTask'
+              formId === 'update-task'
                 ? 'bg-blue-700 hover:bg-blue-800'
                 : 'bg-emerald-600 hover:bg-emerald-700'
             }`}
@@ -55,7 +55,7 @@ const FormModal = () => {
             {isLoading && <Spinner />}
             {isLoading
               ? 'Mengirim...'
-              : formId === 'updateTask'
+              : formId === 'update-task'
               ? 'Edit'
               : 'Tambah'}
           </Button>

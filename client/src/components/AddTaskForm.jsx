@@ -81,7 +81,7 @@ export default function AddTaskForm() {
   return (
     <Form {...form}>
       <form
-        id="addTask"
+        id="add-task"
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6"
       >

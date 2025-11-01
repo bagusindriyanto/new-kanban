@@ -38,14 +38,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import useFilter from '@/stores/filterStore';
 // Format Tanggal
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { id } from 'date-fns/locale';
+import { FilterCalendar } from '@/components/FilterCalendar';
 import { startOfDay, parseISO } from 'date-fns';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { useFetchPics } from '@/api/fetchPics';
@@ -125,7 +118,7 @@ const HomePage = () => {
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
           {/* Filter PIC */}
-          <Select value={picId} onValueChange={setPicId}>
+          <Select value={selectedPicId} onValueChange={setSelectedPicId}>
             <SelectTrigger className="w-[160px] bg-neutral-100">
               <SelectValue placeholder="Pilih PIC" />
             </SelectTrigger>
@@ -144,72 +137,22 @@ const HomePage = () => {
           </Select>
           {/* Akhir Filter PIC */}
           {/* Filter Tanggal */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline">
-                <CalendarIcon />
-                {range.from && range.to
-                  ? `${range.from.toLocaleDateString(
-                      'id'
-                    )} - ${range.to.toLocaleDateString('id')}`
-                  : 'Semua Hari'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto overflow-hidden p-0">
-              <Calendar
-                className="w-full"
-                mode="range"
-                locale={id}
-                showWeekNumber
-                captionLayout="dropdown"
-                defaultMonth={range.from}
-                weekStartsOn={1}
-                // max={6}
-                selected={range}
-                onSelect={setRange}
-                startMonth={new Date(2011, 12)}
-                disabled={(date) =>
-                  date > new Date() || date <= new Date('2011-12-31')
-                }
-              />
-              <div className="p-3 flex gap-3 justify-between items-end border-t border-border">
-                <Button
-                  className="flex-1"
-                  variant="outline"
-                  onClick={() =>
-                    setRange({
-                      from: startOfDay(new Date()),
-                      to: startOfDay(new Date()),
-                    })
-                  }
-                >
-                  Hari Ini
-                </Button>
-                <Button
-                  className="flex-1"
-                  variant="outline"
-                  onClick={() => setRange({ from: null, to: null })}
-                >
-                  Semua Hari
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
+          <FilterCalendar />
           {/* Akhir Tanggal */}
           <Button
-            onClick={() => handleOpenModal('Tambah Activity', 'addActivity')}
+            onClick={() => handleOpenModal('Tambah Activity', 'add-activity')}
             variant="nav"
           >
             Tambah Activity
           </Button>
           <Button
-            onClick={() => handleOpenModal('Tambah PIC', 'addPic')}
+            onClick={() => handleOpenModal('Tambah PIC', 'add-pic')}
             variant="nav"
           >
             Tambah PIC
           </Button>
           <Button
-            onClick={() => handleOpenModal('Tambah Task', 'addTask')}
+            onClick={() => handleOpenModal('Tambah Task', 'add-task')}
             variant="nav"
           >
             Tambah Task
@@ -298,7 +241,9 @@ const HomePage = () => {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button onClick={() => handleOpenModal('Tambah Task', 'addTask')}>
+              <Button
+                onClick={() => handleOpenModal('Tambah Task', 'add-task')}
+              >
                 Tambah Task
               </Button>
             </EmptyContent>

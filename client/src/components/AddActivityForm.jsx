@@ -22,7 +22,7 @@ export default function AddActivityForm() {
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
   // Proses Kirim Data
-  // const setIsLoading = useFormModal((state) => state.setIsLoading);
+  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -34,17 +34,17 @@ export default function AddActivityForm() {
   const onSubmit = (data) => {
     toast.promise(addActivityMutation(data.activity), {
       loading: () => {
-        // setIsLoading(true);
+        setIsLoading(true);
         return 'Sedang menambahkan activity...';
       },
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
-        // setIsLoading(false);
+        setIsLoading(false);
         return `"${data.activity}" telah ditambahkan ke daftar activity`;
       },
       error: (err) => {
-        // setIsLoading(false);
+        setIsLoading(false);
         // err adalah error yang dilempar dari store
         return err.message || 'Gagal menambahkan activity';
       },
@@ -52,16 +52,18 @@ export default function AddActivityForm() {
   };
 
   return (
-    <form id="addActivity" onSubmit={form.handleSubmit(onSubmit)}>
+    <form id="add-activity" onSubmit={form.handleSubmit(onSubmit)}>
       <Controller
         name="activity"
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="form-activity">Nama Activity</FieldLabel>
+            <FieldLabel htmlFor="add-activity-activity">
+              Nama Activity
+            </FieldLabel>
             <Input
               {...field}
-              id="form-activity"
+              id="add-activity-activity"
               aria-invalid={fieldState.invalid}
               placeholder="contoh: Meeting, Review, dan sebagainya"
               autoComplete="off"

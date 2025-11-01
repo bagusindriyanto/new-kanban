@@ -11,8 +11,6 @@ import { z } from 'zod';
 import useFormModal from '@/stores/formModalStore';
 import useConfirmModal from '@/stores/confirmModalStore';
 import useTasks from '@/stores/taskStore';
-import { useDeleteTask } from '@/hooks/useDeleteTask';
-// ##############################################
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
