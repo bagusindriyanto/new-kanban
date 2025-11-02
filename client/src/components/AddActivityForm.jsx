@@ -3,13 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import useFormModal from '@/stores/formModalStore';
 import { useAddActivity } from '@/api/addActivity';
 
@@ -58,8 +52,8 @@ export default function AddActivityForm() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="add-activity-activity">
-              Nama Activity
+            <FieldLabel htmlFor="add-activity-activity" className="gap-0.5">
+              Nama Activity<span className="text-red-500">*</span>
             </FieldLabel>
             <Input
               {...field}

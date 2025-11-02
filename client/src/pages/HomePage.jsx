@@ -54,7 +54,6 @@ import {
 const HomePage = () => {
   // State untuk filter tanggal
   const range = useFilter((state) => state.range);
-  const setRange = useFilter((state) => state.setRange);
 
   // Tanstack query untuk tasks
   const {
@@ -176,11 +175,13 @@ const HomePage = () => {
       </header>
       {/* Main */}
       <main className="flex flex-1 flex-col p-4 gap-4">
-        {(fetchTasksLoading || fetchPicsLoading) && (
-          <div className="flex flex-1 justify-center items-center">
-            <Spinner className="size-10" />
-          </div>
-        )}
+        {(fetchTasksLoading || fetchPicsLoading) &&
+          !fetchTasksError &&
+          !fetchPicsError && (
+            <div className="flex flex-1 justify-center items-center">
+              <Spinner className="size-10" />
+            </div>
+          )}
         {sortedTasks.length > 0 && (fetchTasksError || fetchPicsError) && (
           <Item variant="muted">
             <ItemMedia variant="icon">
@@ -191,7 +192,7 @@ const HomePage = () => {
                 Tidak Ada Koneksi
               </ItemTitle>
               <ItemDescription className="text-destructive/90">
-                {fetchTasksError.message || fetchPicsError.message}
+                {fetchTasksError?.message || fetchPicsError?.message}
               </ItemDescription>
             </ItemContent>
             <ItemActions>
@@ -215,7 +216,7 @@ const HomePage = () => {
                 Tidak Ada Koneksi
               </EmptyTitle>
               <EmptyDescription className="text-destructive/90">
-                {fetchTasksError.message || fetchPicsError.message}
+                {fetchTasksError?.message || fetchPicsError?.message}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>

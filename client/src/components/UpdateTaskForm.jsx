@@ -1,5 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown, Trash2Icon, CalendarIcon } from 'lucide-react';
+import {
+  Check,
+  ChevronsUpDown,
+  Trash2Icon,
+  CalendarIcon,
+  Eye,
+  EyeClosed,
+} from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -23,13 +30,14 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
   InputGroupButton,
-} from './ui/input-group';
+  InputGroupText,
+} from '@/components/ui/input-group';
 import {
   Form,
   FormControl,
@@ -44,7 +52,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import useTasks from '@/stores/taskStore';
+import useFilter from '@/stores/filterStore';
 import useFormModal from '@/stores/formModalStore';
 
 import { format } from 'date-fns';
@@ -84,14 +92,15 @@ export default function UpdateTaskForm() {
   // State Buka/Tutup Popover
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
+  // Tampilkan Password/Tidak
+  const [showPassword, setShowPassword] = useState(false);
   // Fetch activity
   const { data: contents } = useFetchActivities();
   // Fetch pics
   const { data: pics } = useFetchPics();
   // Fetch task yang dipilih
   const { data: tasks } = useFetchTasks();
-  // const tasks = useTasks((state) => state.tasks);
-  const selectedTaskId = useTasks((state) => state.selectedTaskId);
+  const selectedTaskId = useFilter((state) => state.selectedTaskId);
   const task = tasks?.filter((task) => task.id === selectedTaskId)[0];
 
   // Update Tasks
@@ -394,10 +403,22 @@ export default function UpdateTaskForm() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Status</SelectLabel>
-                        <SelectItem value="todo">To Do</SelectItem>
-                        <SelectItem value="on progress">On Progress</SelectItem>
-                        <SelectItem value="done">Done</SelectItem>
-                        <SelectItem value="archived">Archived</SelectItem>
+                        <SelectItem value="todo">
+                          <span className="size-3 rounded-full bg-todo-500"></span>
+                          To Do
+                        </SelectItem>
+                        <SelectItem value="on progress">
+                          <span className="size-3 rounded-full bg-progress-500"></span>
+                          On Progress
+                        </SelectItem>
+                        <SelectItem value="done">
+                          <span className="size-3 rounded-full bg-done-500"></span>
+                          Done
+                        </SelectItem>
+                        <SelectItem value="archived">
+                          <span className="size-3 rounded-full bg-archived-500"></span>
+                          Archived
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -414,17 +435,19 @@ export default function UpdateTaskForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Durasi Pause</FormLabel>
-                  <div className="flex items-center gap-3">
-                    <FormControl>
-                      <Input
+                  <FormControl>
+                    <InputGroup>
+                      <InputGroupInput
                         type="number"
                         min="0"
                         {...field}
-                        className="w-1/2"
+                        className="text-center"
                       />
-                    </FormControl>
-                    <p>Menit</p>
-                  </div>
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>Menit</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -441,14 +464,15 @@ export default function UpdateTaskForm() {
                     Activity di Pause?<span className="text-red-500">*</span>
                   </FormLabel>
                   <div className="flex justify-center items-center h-9 gap-3">
-                    <p>Tidak</p>
+                    <Label htmlFor="update-task-paused">Tidak</Label>
                     <FormControl>
                       <Switch
+                        id="update-task-paused"
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <p>Ya</p>
+                    <Label htmlFor="update-task-paused">Ya</Label>
                   </div>
                 </FormItem>
               )}
@@ -781,16 +805,18 @@ export default function UpdateTaskForm() {
                 Masukkan Password<span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                {/* <Input type="password" autoComplete="off" {...field} /> */}
                 <InputGroup>
                   <InputGroupInput
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     autoComplete="off"
                     {...field}
                   />
                   <InputGroupAddon align="inline-end">
-                    <InputGroupButton variant="secondary">
-                      Show
+                    <InputGroupButton
+                      onMouseDown={() => setShowPassword(true)}
+                      onMouseUp={() => setShowPassword(false)}
+                    >
+                      {showPassword ? <EyeClosed /> : <Eye />}
                     </InputGroupButton>
                   </InputGroupAddon>
                 </InputGroup>

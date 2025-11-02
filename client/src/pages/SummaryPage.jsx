@@ -1,13 +1,5 @@
 import { useMemo } from 'react';
-import {
-  TrendingUp,
-  TrendingDown,
-  ListTodo,
-  Clock4,
-  Check,
-  Archive,
-  SquareKanban,
-} from 'lucide-react';
+import { ListTodo, Clock4, Check, Archive, SquareKanban } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -42,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FilterCalendar } from '@/components/FilterCalendar';
 import {
@@ -71,7 +62,6 @@ const SummaryPage = () => {
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const range = useFilter((state) => state.range);
-  const setRange = useFilter((state) => state.setRange);
 
   // Urutkan dan filter task berdasarkan PIC
   const filteredSummary = useMemo(() => {

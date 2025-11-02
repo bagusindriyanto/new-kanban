@@ -17,13 +17,12 @@ import {
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import useFormModal from '@/stores/formModalStore.js';
 import useConfirmModal from '@/stores/confirmModalStore.js';
-import useTasks from '@/stores/taskStore';
+import useFilter from '@/stores/filterStore';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column.js';
 import { useFetchPics } from '@/api/fetchPics.js';
 import { useUpdateTask } from '@/api/updateTask.js';
 import { cn } from '@/lib/utils';
-import { fetchTasksQueryKey } from '@/api/fetchTasks.js';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -61,7 +60,7 @@ const TaskCard = ({ task }) => {
   );
 
   // State untuk pilih task saat ini
-  const setSelectedTaskId = useTasks((state) => state.setSelectedTaskId);
+  const setSelectedTaskId = useFilter((state) => state.setSelectedTaskId);
   const { mutate: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
       onError: (err, _newTask, _onMutateResult, _context) => {

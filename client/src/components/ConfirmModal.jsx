@@ -4,40 +4,42 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogFooter,
 } from '@/components/ui/alert-dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import useFormModal from '@/stores/formModalStore';
 import useConfirmModal from '@/stores/confirmModalStore';
-import useTasks from '@/stores/taskStore';
+import useFilter from '@/stores/filterStore';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Loader } from 'lucide-react';
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Eye, EyeClosed } from 'lucide-react';
+import { Spinner } from '@/components/ui/spinner';
 import { useDeleteTask } from '@/api/deleteTask';
+import { useState } from 'react';
 
 const FormSchema = z.object({
   password: z.string().nonempty({ message: 'Mohon isi password.' }),
 });
 
 export default function ConfirmModal() {
-  const selectedTaskId = useTasks((state) => state.selectedTaskId);
-  // const deleteTask = useTasks((state) => state.deleteTask);
+  const selectedTaskId = useFilter((state) => state.selectedTaskId);
   const { mutateAsync: deleteTaskMutation } = useDeleteTask();
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
   const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
   // Proses Kirim Data
   const isLoading = useFormModal((state) => state.isLoading);
   const setIsLoading = useFormModal((state) => state.setIsLoading);
+  // Tampilkan Password/Tidak
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -85,51 +87,61 @@ export default function ConfirmModal() {
             Tindakan ini tidak dapat dibatalkan. Tindakan ini akan menghapus
             task secara permanen.
           </AlertDialogDescription>
-          <Form {...form}>
-            <form
-              id="deleteTask"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="mt-1 space-y-6"
-            >
-              {/* Input Password */}
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex gap-1">
-                      Masukkan Password<span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="password" autoComplete="off" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Button Modal */}
-              <div className="w-full flex justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="cursor-pointer"
-                  onClick={onClose}
-                  disabled={isLoading}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="submit"
-                  className="cursor-pointer text-white bg-red-600 hover:bg-red-700"
-                  disabled={isLoading}
-                >
-                  {isLoading && <Loader className="animate-spin" />}
-                  {isLoading ? 'Menghapus...' : 'Hapus'}
-                </Button>
-              </div>
-            </form>
-          </Form>
         </AlertDialogHeader>
+        <form id="delete-task" onSubmit={form.handleSubmit(onSubmit)}>
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="delete-task-password" className="gap-0.5">
+                  Masukkan Password<span className="text-red-500">*</span>
+                </FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    {...field}
+                    type={showPassword ? 'text' : 'password'}
+                    id="delete-task-password"
+                    aria-invalid={fieldState.invalid}
+                    autoComplete="off"
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                      onMouseDown={() => setShowPassword(true)}
+                      onMouseUp={() => setShowPassword(false)}
+                    >
+                      {showPassword ? <EyeClosed /> : <Eye />}
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </form>
+        {/* Button Modal */}
+        <AlertDialogFooter>
+          <Button
+            type="button"
+            variant="secondary"
+            className="cursor-pointer"
+            onClick={onClose}
+            disabled={isLoading}
+          >
+            Batal
+          </Button>
+          <Button
+            type="submit"
+            form="delete-task"
+            className="cursor-pointer text-white bg-red-600 hover:bg-red-700"
+            disabled={isLoading}
+          >
+            {isLoading && <Spinner />}
+            {isLoading ? 'Menghapus...' : 'Hapus'}
+          </Button>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
