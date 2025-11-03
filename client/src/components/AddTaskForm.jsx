@@ -24,6 +24,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import useFormModal from '@/stores/formModalStore';
 import { useState } from 'react';
@@ -46,11 +48,9 @@ export default function AddTaskForm() {
   // Fetch pics
   const { data: pics } = useFetchPics();
   // Add Tasks
-  const { mutateAsync: addTaskMutation } = useAddTask();
+  const { mutateAsync: addTaskMutation, isPending } = useAddTask();
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
-  // Proses Kirim Data
-  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -59,17 +59,14 @@ export default function AddTaskForm() {
   const onSubmit = (data) => {
     toast.promise(addTaskMutation(data), {
       loading: () => {
-        setIsLoading(true);
         return 'Sedang menambahkan task...';
       },
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
-        setIsLoading(false);
         return 'Task berhasil ditambahkan';
       },
       error: (err) => {
-        setIsLoading(false);
         // err adalah error yang dilempar dari store
         return err.message || 'Gagal menambahkan task';
       },
@@ -77,188 +74,211 @@ export default function AddTaskForm() {
   };
 
   return (
-    <form id="add-task" onSubmit={form.handleSubmit(onSubmit)}>
-      <FieldGroup>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Activity */}
-          <Controller
-            name="content"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-content" className="gap-0.5">
-                  Activity<span className="text-red-500">*</span>
-                </FieldLabel>
-                <Popover open={activityOpen} onOpenChange={setActivityOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      id="add-task-content"
-                      aria-invalid={fieldState.invalid}
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      <span className="truncate">
-                        {field.value
-                          ? contents?.find(
-                              (content) => content.name === field.value
-                            )?.name
-                          : 'Pilih activity'}
-                      </span>
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Cari activity..."
-                        className="h-9"
-                      />
-                      <CommandList
-                        onWheel={(e) => {
-                          e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                        }}
+    <>
+      <form id="add-task" onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldGroup>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Activity */}
+            <Controller
+              name="content"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="add-task-content" className="gap-0.5">
+                    Activity<span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Popover open={activityOpen} onOpenChange={setActivityOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        id="add-task-content"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
                       >
-                        <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
-                        <CommandGroup>
-                          {contents?.map((content) => (
-                            <CommandItem
-                              value={content.name}
-                              key={content.id}
-                              onSelect={() => {
-                                form.setValue('content', content.name);
-                                setActivityOpen(false);
-                              }}
-                            >
-                              {content.name}
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  content.name === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-          {/* PIC */}
-          <Controller
-            name="pic_id"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-pic">PIC</FieldLabel>
-                <Popover open={picOpen} onOpenChange={setPicOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      id="add-task-pic"
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      <span className="truncate">
-                        {field.value
-                          ? pics?.find((pic) => pic.id === field.value)?.name
-                          : 'Pilih PIC'}
-                      </span>
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent p-0">
-                    <Command>
-                      <CommandInput placeholder="Cari PIC..." className="h-9" />
-                      <CommandList
-                        onWheel={(e) => {
-                          e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                        }}
+                        <span className="truncate">
+                          {field.value
+                            ? contents?.find(
+                                (content) => content.name === field.value
+                              )?.name
+                            : 'Pilih activity'}
+                        </span>
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="PopoverContent p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Cari activity..."
+                          className="h-9"
+                        />
+                        <CommandList
+                          onWheel={(e) => {
+                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                          }}
+                        >
+                          <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
+                          <CommandGroup>
+                            {contents?.map((content) => (
+                              <CommandItem
+                                value={content.name}
+                                key={content.id}
+                                onSelect={() => {
+                                  form.setValue('content', content.name);
+                                  setActivityOpen(false);
+                                }}
+                              >
+                                {content.name}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    content.name === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            {/* PIC */}
+            <Controller
+              name="pic_id"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="add-task-pic">PIC</FieldLabel>
+                  <Popover open={picOpen} onOpenChange={setPicOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        id="add-task-pic"
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
                       >
-                        <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                        <CommandGroup>
-                          <CommandItem
-                            value="null"
-                            onSelect={() => {
-                              form.setValue('pic_id', null);
-                              setPicOpen(false);
-                            }}
-                          >
-                            -
-                            <Check
-                              className={cn(
-                                'ml-auto',
-                                field.value === null
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
-                              )}
-                            />
-                          </CommandItem>
-                          {pics?.map((pic) => (
+                        <span className="truncate">
+                          {field.value
+                            ? pics?.find((pic) => pic.id === field.value)?.name
+                            : 'Pilih PIC'}
+                        </span>
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="PopoverContent p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Cari PIC..."
+                          className="h-9"
+                        />
+                        <CommandList
+                          onWheel={(e) => {
+                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                          }}
+                        >
+                          <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
+                          <CommandGroup>
                             <CommandItem
-                              value={pic.name}
-                              key={pic.id}
+                              value="null"
                               onSelect={() => {
-                                form.setValue('pic_id', pic.id);
+                                form.setValue('pic_id', null);
                                 setPicOpen(false);
                               }}
                             >
-                              {pic.name}
+                              -
                               <Check
                                 className={cn(
                                   'ml-auto',
-                                  pic.id === field.value
+                                  field.value === null
                                     ? 'opacity-100'
                                     : 'opacity-0'
                                 )}
                               />
                             </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                            {pics?.map((pic) => (
+                              <CommandItem
+                                value={pic.name}
+                                key={pic.id}
+                                onSelect={() => {
+                                  form.setValue('pic_id', pic.id);
+                                  setPicOpen(false);
+                                }}
+                              >
+                                {pic.name}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    pic.id === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
+          {/* Detail */}
+          <Controller
+            name="detail"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="add-task-detail">Detail</FieldLabel>
+                <Textarea
+                  {...field}
+                  id="add-task-detail"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Detail task"
+                  className="resize-none"
+                />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
               </Field>
             )}
           />
-        </div>
-        {/* Detail */}
-        <Controller
-          name="detail"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="add-task-detail">Detail</FieldLabel>
-              <Textarea
-                {...field}
-                id="add-task-detail"
-                aria-invalid={fieldState.invalid}
-                placeholder="Detail task"
-                className="resize-none"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-      </FieldGroup>
-    </form>
+        </FieldGroup>
+      </form>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="secondary" disabled={isPending}>
+            Batal
+          </Button>
+        </DialogClose>
+        <Button
+          className="bg-emerald-600 hover:bg-emerald-700 text-white"
+          type="submit"
+          form="add-task"
+          disabled={isPending}
+        >
+          {isPending && <Spinner />}
+          {isPending ? 'Mengirim...' : 'Tambah'}
+        </Button>
+      </DialogFooter>
+    </>
   );
 }

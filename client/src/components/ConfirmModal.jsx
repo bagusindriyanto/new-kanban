@@ -32,12 +32,9 @@ const FormSchema = z.object({
 
 export default function ConfirmModal() {
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
-  const { mutateAsync: deleteTaskMutation } = useDeleteTask();
+  const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
   const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
-  // Proses Kirim Data
-  const isLoading = useFormModal((state) => state.isLoading);
-  const setIsLoading = useFormModal((state) => state.setIsLoading);
   // Tampilkan Password/Tidak
   const [showPassword, setShowPassword] = useState(false);
 
@@ -52,17 +49,14 @@ export default function ConfirmModal() {
     if (data.password === 'Semarang@2025') {
       toast.promise(deleteTaskMutation(selectedTaskId), {
         loading: () => {
-          setIsLoading(true);
           return 'Sedang menghapus task...';
         },
         success: () => {
           form.reset();
           setIsModalOpen(false);
-          setIsLoading(false);
           return 'Task berhasil dihapus';
         },
         error: (err) => {
-          setIsLoading(false);
           // err adalah error yang dilempar dari store
           return err.message || 'Gagal menghapus task';
         },
@@ -128,18 +122,18 @@ export default function ConfirmModal() {
             variant="secondary"
             className="cursor-pointer"
             onClick={onClose}
-            disabled={isLoading}
+            disabled={isPending}
           >
             Batal
           </Button>
           <Button
             type="submit"
             form="delete-task"
-            className="cursor-pointer text-white bg-red-600 hover:bg-red-700"
-            disabled={isLoading}
+            className="bg-red-600 hover:bg-red-700 text-white"
+            disabled={isPending}
           >
-            {isLoading && <Spinner />}
-            {isLoading ? 'Menghapus...' : 'Hapus'}
+            {isPending && <Spinner />}
+            {isPending ? 'Menghapus...' : 'Hapus'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
