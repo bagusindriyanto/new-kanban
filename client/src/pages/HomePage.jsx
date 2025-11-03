@@ -5,7 +5,12 @@ import FormModal from '@/components/FormModal';
 import ConfirmModal from '@/components/ConfirmModal';
 import { ModeToggle } from '@/components/ModeToggle';
 import useFormModal from '@/stores/formModalStore';
-import { ChartNoAxesCombined, ClipboardCheck, WifiOff } from 'lucide-react';
+import {
+  ChartNoAxesCombined,
+  ClipboardCheck,
+  WifiOff,
+  RefreshCw,
+} from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -201,6 +206,7 @@ const HomePage = () => {
                 size="sm"
                 variant="outline"
               >
+                <RefreshCw />
                 Refresh Halaman
               </Button>
             </ItemActions>
@@ -224,6 +230,7 @@ const HomePage = () => {
                 onClick={() => window.location.reload(false)}
                 variant="outline"
               >
+                <RefreshCw />
                 Refresh Halaman
               </Button>
             </EmptyContent>
@@ -238,7 +245,7 @@ const HomePage = () => {
               <EmptyTitle>Tidak Ada Task</EmptyTitle>
               <EmptyDescription>
                 Kamu belum menambahkan task. Klik tombol di bawah ini untuk
-                mulai membuat daftar kegiatanmu.
+                mulai membuat daftar aktivitasmu.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
