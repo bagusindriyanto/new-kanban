@@ -51,6 +51,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import useFilter from '@/stores/filterStore';
 import useFormModal from '@/stores/formModalStore';
@@ -104,13 +106,10 @@ export default function UpdateTaskForm() {
   const task = tasks?.filter((task) => task.id === selectedTaskId)[0];
 
   // Update Tasks
-  const { mutateAsync: updateTaskMutate } = useUpdateTask();
+  const { mutateAsync: updateTaskMutate, isPending } = useUpdateTask();
 
   // Close Modal
   const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
-
-  // Proses Kirim Data
-  const setIsLoading = useFormModal((state) => state.setIsLoading);
 
   // Set nilai awal form
   const form = useForm({
@@ -189,17 +188,14 @@ export default function UpdateTaskForm() {
         updateTaskMutate({ taskId: selectedTaskId, data: taskData }),
         {
           loading: () => {
-            setIsLoading(true);
             return 'Sedang memperbarui task...';
           },
           success: () => {
             form.reset();
             setIsModalOpen(false);
-            setIsLoading(false);
             return 'Task berhasil diperbarui';
           },
           error: (err) => {
-            setIsLoading(false);
             // err adalah error yang dilempar dari store
             return err.message || 'Gagal memperbarui task';
           },
@@ -213,167 +209,565 @@ export default function UpdateTaskForm() {
 
   // Form
   return (
-    <Form {...form}>
-      <form
-        id="update-task"
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-      >
-        <div className="grid grid-cols-12 gap-4">
-          {/* Activity */}
-          <div className="col-span-6">
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="gap-1">
-                    Activity<span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Popover open={activityOpen} onOpenChange={setActivityOpen}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          <span className="truncate">
+    <>
+      <Form {...form}>
+        <form
+          id="update-task"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
+          <div className="grid grid-cols-12 gap-4">
+            {/* Activity */}
+            <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="gap-1">
+                      Activity<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Popover open={activityOpen} onOpenChange={setActivityOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            <span className="truncate">
+                              {field.value
+                                ? contents?.find(
+                                    (content) => content.name === field.value
+                                  )?.name
+                                : 'Pilih activity'}
+                            </span>
+                            <ChevronsUpDown className="opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Cari activity..."
+                            className="h-9"
+                          />
+                          <CommandList
+                            onWheel={(e) => {
+                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                            }}
+                          >
+                            <CommandEmpty>
+                              Activity tidak ditemukan.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {contents?.map((content) => (
+                                <CommandItem
+                                  value={content.name}
+                                  key={content.id}
+                                  onSelect={() => {
+                                    form.setValue('content', content.name);
+                                    setActivityOpen(false);
+                                  }}
+                                >
+                                  {content.name}
+                                  <Check
+                                    className={cn(
+                                      'ml-auto',
+                                      content.name === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* PIC */}
+            <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="pic_id"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>PIC</FormLabel>
+                    <Popover open={picOpen} onOpenChange={setPicOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
                             {field.value
-                              ? contents?.find(
-                                  (content) => content.name === field.value
-                                )?.name
-                              : 'Pilih activity'}
-                          </span>
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="PopoverContent p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Cari activity..."
-                          className="h-9"
-                        />
-                        <CommandList
-                          onWheel={(e) => {
-                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                          }}
-                        >
-                          <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
-                          <CommandGroup>
-                            {contents?.map((content) => (
+                              ? pics?.find((pic) => pic.id === field.value)
+                                  ?.name
+                              : 'Pilih PIC'}
+                            <ChevronsUpDown className="opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Cari PIC..."
+                            className="h-9"
+                          />
+                          <CommandList
+                            onWheel={(e) => {
+                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                            }}
+                          >
+                            <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
+                            <CommandGroup>
                               <CommandItem
-                                value={content.name}
-                                key={content.id}
+                                value="null"
                                 onSelect={() => {
-                                  form.setValue('content', content.name);
-                                  setActivityOpen(false);
-                                }}
-                              >
-                                {content.name}
-                                <Check
-                                  className={cn(
-                                    'ml-auto',
-                                    content.name === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* PIC */}
-          <div className="col-span-6">
-            <FormField
-              control={form.control}
-              name="pic_id"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>PIC</FormLabel>
-                  <Popover open={picOpen} onOpenChange={setPicOpen}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value
-                            ? pics?.find((pic) => pic.id === field.value)?.name
-                            : 'Pilih PIC'}
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="PopoverContent p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Cari PIC..."
-                          className="h-9"
-                        />
-                        <CommandList
-                          onWheel={(e) => {
-                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                          }}
-                        >
-                          <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                          <CommandGroup>
-                            <CommandItem
-                              value="null"
-                              onSelect={() => {
-                                form.setValue('pic_id', null);
-                                setPicOpen(false);
-                              }}
-                            >
-                              -
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  field.value === null
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                            {pics?.map((pic) => (
-                              <CommandItem
-                                value={pic.name}
-                                key={pic.id}
-                                onSelect={() => {
-                                  form.setValue('pic_id', pic.id);
+                                  form.setValue('pic_id', null);
                                   setPicOpen(false);
                                 }}
                               >
-                                {pic.name}
+                                -
                                 <Check
                                   className={cn(
                                     'ml-auto',
-                                    pic.id === field.value
+                                    field.value === null
                                       ? 'opacity-100'
                                       : 'opacity-0'
                                   )}
                                 />
                               </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
+                              {pics?.map((pic) => (
+                                <CommandItem
+                                  value={pic.name}
+                                  key={pic.id}
+                                  onSelect={() => {
+                                    form.setValue('pic_id', pic.id);
+                                    setPicOpen(false);
+                                  }}
+                                >
+                                  {pic.name}
+                                  <Check
+                                    className={cn(
+                                      'ml-auto',
+                                      pic.id === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Status */}
+            <div className="col-span-4">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="gap-1">
+                      Status<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih status task" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Status</SelectLabel>
+                          <SelectItem value="todo">
+                            <span className="size-3 rounded-full bg-todo-500"></span>
+                            To Do
+                          </SelectItem>
+                          <SelectItem value="on progress">
+                            <span className="size-3 rounded-full bg-progress-500"></span>
+                            On Progress
+                          </SelectItem>
+                          <SelectItem value="done">
+                            <span className="size-3 rounded-full bg-done-500"></span>
+                            Done
+                          </SelectItem>
+                          <SelectItem value="archived">
+                            <span className="size-3 rounded-full bg-archived-500"></span>
+                            Archived
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Minute Pause */}
+            <div className="col-span-4">
+              <FormField
+                control={form.control}
+                name="minute_pause"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Durasi Pause</FormLabel>
+                    <FormControl>
+                      <InputGroup>
+                        <InputGroupInput
+                          type="number"
+                          min="0"
+                          {...field}
+                          className="text-center"
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>Menit</InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Pause Time */}
+            <div className="col-span-4">
+              <FormField
+                control={form.control}
+                name="pause_time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="gap-1">
+                      Activity di Pause?<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <div className="flex justify-center items-center h-9 gap-3">
+                      <Label htmlFor="update-task-paused">Tidak</Label>
+                      <FormControl>
+                        <Switch
+                          id="update-task-paused"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <Label htmlFor="update-task-paused">Ya</Label>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Grid Timestamp */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Timestamp Todo */}
+            <FormField
+              control={form.control}
+              name="timestamp_todo"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-left gap-1">
+                    Timestamp To Do<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Popover>
+                    <FormControl>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                              locale: id,
+                            })
+                          ) : (
+                            <span>Pilih tanggal dan waktu</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                    </FormControl>
+                    <PopoverContent side="left" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={(date) =>
+                          date > new Date() || date <= new Date('2011-12-31')
+                        }
+                        initialFocus
+                      />
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
+                        />
+                        <Button variant="ghost" disabled>
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Timestamp On Progress */}
+            <FormField
+              control={form.control}
+              name="timestamp_progress"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-left gap-1">
+                    Timestamp On Progress
+                    <span
+                      className={cn(
+                        'text-red-500',
+                        statusInput === 'todo' && 'hidden'
+                      )}
+                    >
+                      *
+                    </span>
+                  </FormLabel>
+                  <Popover>
+                    <FormControl>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                          disabled={statusInput === 'todo'}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                              locale: id,
+                            })
+                          ) : (
+                            <span>Pilih tanggal dan waktu</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                    </FormControl>
+                    <PopoverContent side="right" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={(date) =>
+                          date > new Date() || date <= new Date('2011-12-31')
+                        }
+                        initialFocus
+                      />
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
+                        />
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() =>
+                            form.setValue('timestamp_progress', undefined)
+                          }
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Timestamp Done */}
+            <FormField
+              control={form.control}
+              name="timestamp_done"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-left gap-1">
+                    Timestamp Done
+                    <span
+                      className={cn(
+                        'text-red-500',
+                        (statusInput === 'todo' ||
+                          statusInput === 'on progress') &&
+                          'hidden'
+                      )}
+                    >
+                      *
+                    </span>
+                  </FormLabel>
+                  <Popover>
+                    <FormControl>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                          disabled={
+                            statusInput === 'todo' ||
+                            statusInput === 'on progress'
+                          }
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                              locale: id,
+                            })
+                          ) : (
+                            <span>Pilih tanggal dan waktu</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                    </FormControl>
+                    <PopoverContent side="left" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={(date) =>
+                          date > new Date() || date <= new Date('2011-12-31')
+                        }
+                        initialFocus
+                      />
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
+                        />
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() =>
+                            form.setValue('timestamp_done', undefined)
+                          }
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Timestamp Archived */}
+            <FormField
+              control={form.control}
+              name="timestamp_archived"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-left gap-1">
+                    Timestamp Archived
+                    <span
+                      className={cn(
+                        'text-red-500',
+                        statusInput !== 'archived' && 'hidden'
+                      )}
+                    >
+                      *
+                    </span>
+                  </FormLabel>
+                  <Popover>
+                    <FormControl>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                          disabled={statusInput !== 'archived'}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                              locale: id,
+                            })
+                          ) : (
+                            <span>Pilih tanggal dan waktu</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                    </FormControl>
+                    <PopoverContent side="right" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={(date) =>
+                          date > new Date() || date <= new Date('2011-12-31')
+                        }
+                        initialFocus
+                      />
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
+                        />
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() =>
+                            form.setValue('timestamp_archived', undefined)
+                          }
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
                     </PopoverContent>
                   </Popover>
                   <FormMessage />
@@ -381,451 +775,74 @@ export default function UpdateTaskForm() {
               )}
             />
           </div>
-          {/* Status */}
-          <div className="col-span-4">
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="gap-1">
-                    Status<span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Pilih status task" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Status</SelectLabel>
-                        <SelectItem value="todo">
-                          <span className="size-3 rounded-full bg-todo-500"></span>
-                          To Do
-                        </SelectItem>
-                        <SelectItem value="on progress">
-                          <span className="size-3 rounded-full bg-progress-500"></span>
-                          On Progress
-                        </SelectItem>
-                        <SelectItem value="done">
-                          <span className="size-3 rounded-full bg-done-500"></span>
-                          Done
-                        </SelectItem>
-                        <SelectItem value="archived">
-                          <span className="size-3 rounded-full bg-archived-500"></span>
-                          Archived
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Minute Pause */}
-          <div className="col-span-4">
-            <FormField
-              control={form.control}
-              name="minute_pause"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Durasi Pause</FormLabel>
-                  <FormControl>
-                    <InputGroup>
-                      <InputGroupInput
-                        type="number"
-                        min="0"
-                        {...field}
-                        className="text-center"
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupText>Menit</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Pause Time */}
-          <div className="col-span-4">
-            <FormField
-              control={form.control}
-              name="pause_time"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="gap-1">
-                    Activity di Pause?<span className="text-red-500">*</span>
-                  </FormLabel>
-                  <div className="flex justify-center items-center h-9 gap-3">
-                    <Label htmlFor="update-task-paused">Tidak</Label>
-                    <FormControl>
-                      <Switch
-                        id="update-task-paused"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <Label htmlFor="update-task-paused">Ya</Label>
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
 
-        {/* Grid Timestamp */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Timestamp Todo */}
+          {/* Detail */}
           <FormField
             control={form.control}
-            name="timestamp_todo"
+            name="detail"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel className="text-left gap-1">
-                  Timestamp To Do<span className="text-red-500">*</span>
-                </FormLabel>
-                <Popover>
-                  <FormControl>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                            locale: id,
-                          })
-                        ) : (
-                          <span>Pilih tanggal dan waktu</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                  </FormControl>
-                  <PopoverContent side="left" className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      locale={id}
-                      captionLayout="dropdown"
-                      weekStartsOn={1}
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      startMonth={new Date(2011, 12)}
-                      disabled={(date) =>
-                        date > new Date() || date <= new Date('2011-12-31')
-                      }
-                      initialFocus
-                    />
-                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                      <TimePickerDemo
-                        setDate={field.onChange}
-                        date={field.value}
-                      />
-                      <Button variant="ghost" disabled>
-                        <Trash2Icon />
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Timestamp On Progress */}
-          <FormField
-            control={form.control}
-            name="timestamp_progress"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel className="text-left gap-1">
-                  Timestamp On Progress
-                  <span
-                    className={cn(
-                      'text-red-500',
-                      statusInput === 'todo' && 'hidden'
-                    )}
-                  >
-                    *
-                  </span>
-                </FormLabel>
-                <Popover>
-                  <FormControl>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                        disabled={statusInput === 'todo'}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                            locale: id,
-                          })
-                        ) : (
-                          <span>Pilih tanggal dan waktu</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                  </FormControl>
-                  <PopoverContent side="right" className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      locale={id}
-                      captionLayout="dropdown"
-                      weekStartsOn={1}
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      startMonth={new Date(2011, 12)}
-                      disabled={(date) =>
-                        date > new Date() || date <= new Date('2011-12-31')
-                      }
-                      initialFocus
-                    />
-                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                      <TimePickerDemo
-                        setDate={field.onChange}
-                        date={field.value}
-                      />
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        className="text-red-500 hover:text-red-600"
-                        onClick={() =>
-                          form.setValue('timestamp_progress', undefined)
-                        }
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Timestamp Done */}
-          <FormField
-            control={form.control}
-            name="timestamp_done"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel className="text-left gap-1">
-                  Timestamp Done
-                  <span
-                    className={cn(
-                      'text-red-500',
-                      (statusInput === 'todo' ||
-                        statusInput === 'on progress') &&
-                        'hidden'
-                    )}
-                  >
-                    *
-                  </span>
-                </FormLabel>
-                <Popover>
-                  <FormControl>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                        disabled={
-                          statusInput === 'todo' ||
-                          statusInput === 'on progress'
-                        }
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                            locale: id,
-                          })
-                        ) : (
-                          <span>Pilih tanggal dan waktu</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                  </FormControl>
-                  <PopoverContent side="left" className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      locale={id}
-                      captionLayout="dropdown"
-                      weekStartsOn={1}
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      startMonth={new Date(2011, 12)}
-                      disabled={(date) =>
-                        date > new Date() || date <= new Date('2011-12-31')
-                      }
-                      initialFocus
-                    />
-                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                      <TimePickerDemo
-                        setDate={field.onChange}
-                        date={field.value}
-                      />
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        className="text-red-500 hover:text-red-600"
-                        onClick={() =>
-                          form.setValue('timestamp_done', undefined)
-                        }
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Timestamp Archived */}
-          <FormField
-            control={form.control}
-            name="timestamp_archived"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel className="text-left gap-1">
-                  Timestamp Archived
-                  <span
-                    className={cn(
-                      'text-red-500',
-                      statusInput !== 'archived' && 'hidden'
-                    )}
-                  >
-                    *
-                  </span>
-                </FormLabel>
-                <Popover>
-                  <FormControl>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                        disabled={statusInput !== 'archived'}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                            locale: id,
-                          })
-                        ) : (
-                          <span>Pilih tanggal dan waktu</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                  </FormControl>
-                  <PopoverContent side="right" className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      locale={id}
-                      captionLayout="dropdown"
-                      weekStartsOn={1}
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      startMonth={new Date(2011, 12)}
-                      disabled={(date) =>
-                        date > new Date() || date <= new Date('2011-12-31')
-                      }
-                      initialFocus
-                    />
-                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                      <TimePickerDemo
-                        setDate={field.onChange}
-                        date={field.value}
-                      />
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        className="text-red-500 hover:text-red-600"
-                        onClick={() =>
-                          form.setValue('timestamp_archived', undefined)
-                        }
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Detail */}
-        <FormField
-          control={form.control}
-          name="detail"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Detail</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Detail task"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Input Password */}
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex gap-1">
-                Masukkan Password<span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <InputGroup>
-                  <InputGroupInput
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="off"
+              <FormItem>
+                <FormLabel>Detail</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Detail task"
+                    className="resize-none"
                     {...field}
                   />
-                  <InputGroupAddon align="inline-end">
-                    <InputGroupButton
-                      onMouseDown={() => setShowPassword(true)}
-                      onMouseUp={() => setShowPassword(false)}
-                    >
-                      {showPassword ? <EyeClosed /> : <Eye />}
-                    </InputGroupButton>
-                  </InputGroupAddon>
-                </InputGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Input Password */}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex gap-1">
+                  Masukkan Password<span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <InputGroup>
+                    <InputGroupInput
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="off"
+                      {...field}
+                    />
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton
+                        onMouseDown={() => setShowPassword(true)}
+                        onMouseUp={() => setShowPassword(false)}
+                      >
+                        {showPassword ? <EyeClosed /> : <Eye />}
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </form>
+      </Form>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="secondary" disabled={isPending}>
+            Batal
+          </Button>
+        </DialogClose>
+        <Button
+          className="'bg-blue-700 hover:bg-blue-800' text-white"
+          type="submit"
+          form="update-task"
+          disabled={isPending}
+        >
+          {isPending && <Spinner />}
+          {isPending ? 'Mengirim...' : 'Edit'}
+        </Button>
+      </DialogFooter>
+    </>
   );
 }
