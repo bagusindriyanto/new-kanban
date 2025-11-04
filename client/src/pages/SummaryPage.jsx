@@ -120,6 +120,7 @@ const SummaryPage = () => {
         )
       );
     }
+    console.log(result);
     return result;
   }, [summary, selectedPicId, range]);
 
