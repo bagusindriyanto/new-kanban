@@ -64,11 +64,17 @@ export default function AddTaskForm() {
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
-        return 'Task berhasil ditambahkan';
+        return 'Task berhasil ditambahkan.';
       },
       error: (err) => {
         // err adalah error yang dilempar dari store
-        return err.message || 'Gagal menambahkan task';
+        return {
+          message:
+            err.response?.data?.message ||
+            err.message ||
+            'Gagal menambahkan task.',
+          description: err.response?.data?.error_detail || null,
+        };
       },
     });
   };

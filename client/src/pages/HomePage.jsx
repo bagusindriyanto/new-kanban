@@ -9,6 +9,7 @@ import {
   ChartNoAxesCombined,
   ClipboardCheck,
   WifiOff,
+  ServerOff,
   RefreshCw,
 } from 'lucide-react';
 import {
@@ -55,6 +56,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
+import { useState, useEffect } from 'react';
 
 const HomePage = () => {
   // State untuk filter tanggal
@@ -114,6 +116,37 @@ const HomePage = () => {
     // Set id formnya
     setFormId(id);
   };
+
+  // Error log
+  if (fetchTasksError) {
+    console.log('Error Fetch Tasks:');
+    console.error(
+      fetchTasksError?.response?.data?.error_detail ||
+        'Gagal terhubung ke server.'
+    );
+  }
+  if (fetchPicsError) {
+    console.log('Error Fetch PIC:');
+    console.error(
+      fetchPicsError?.response?.data?.error_detail ||
+        'Gagal terhubung ke server.'
+    );
+  }
+
+  // Cek status online/offline
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return (
     <div className="h-screen flex flex-col">
@@ -180,83 +213,105 @@ const HomePage = () => {
       </header>
       {/* Main */}
       <main className="flex flex-1 flex-col p-4 gap-4">
-        {(fetchTasksLoading || fetchPicsLoading) &&
+        {isOnline &&
+          (fetchTasksLoading || fetchPicsLoading) &&
           !fetchTasksError &&
           !fetchPicsError && (
             <div className="flex flex-1 justify-center items-center">
               <Spinner className="size-10" />
             </div>
           )}
-        {sortedTasks.length > 0 && (fetchTasksError || fetchPicsError) && (
-          <Item variant="muted">
-            <ItemMedia variant="icon">
-              <WifiOff className="text-destructive" />
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle className="text-destructive">
-                Tidak Ada Koneksi
-              </ItemTitle>
-              <ItemDescription className="text-destructive/90">
-                {fetchTasksError?.message || fetchPicsError?.message}
-              </ItemDescription>
-            </ItemContent>
-            <ItemActions>
-              <Button
-                onClick={() => window.location.reload(false)}
-                size="sm"
-                variant="outline"
-              >
-                <RefreshCw />
-                Refresh Halaman
-              </Button>
-            </ItemActions>
-          </Item>
-        )}
-        {sortedTasks.length === 0 && (fetchTasksError || fetchPicsError) && (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <WifiOff className="text-destructive" />
-              </EmptyMedia>
-              <EmptyTitle className="text-destructive">
-                Tidak Ada Koneksi
-              </EmptyTitle>
-              <EmptyDescription className="text-destructive/90">
-                {fetchTasksError?.message || fetchPicsError?.message}
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button
-                onClick={() => window.location.reload(false)}
-                variant="outline"
-              >
-                <RefreshCw />
-                Refresh Halaman
-              </Button>
-            </EmptyContent>
-          </Empty>
-        )}
-        {sortedTasks.length === 0 && !fetchTasksLoading && !fetchTasksError && (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <ClipboardCheck />
-              </EmptyMedia>
-              <EmptyTitle>Tidak Ada Task</EmptyTitle>
-              <EmptyDescription>
-                Kamu belum menambahkan task. Klik tombol di bawah ini untuk
-                mulai membuat daftar aktivitasmu.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button
-                onClick={() => handleOpenModal('Tambah Task', 'add-task')}
-              >
-                Tambah Task
-              </Button>
-            </EmptyContent>
-          </Empty>
-        )}
+        {sortedTasks.length > 0 &&
+          (fetchTasksError || fetchPicsError || !isOnline) && (
+            <Item variant="muted">
+              <ItemMedia variant="icon">
+                {!isOnline ? (
+                  <WifiOff className="text-destructive" />
+                ) : (
+                  <ServerOff className="text-destructive" />
+                )}
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle className="text-destructive">
+                  {!isOnline ? 'Kamu Sedang Offine' : 'Terjadi Kesalahan'}
+                </ItemTitle>
+                <ItemDescription className="text-destructive/90">
+                  {!isOnline
+                    ? 'Mohon periksa koneksi internetmu.'
+                    : fetchTasksError?.response?.data?.message ||
+                      fetchPicsError?.response?.data?.message ||
+                      'Gagal terhubung ke server.'}
+                </ItemDescription>
+              </ItemContent>
+              <ItemActions>
+                <Button
+                  onClick={() => window.location.reload(false)}
+                  size="sm"
+                  variant="outline"
+                >
+                  <RefreshCw />
+                  Refresh Halaman
+                </Button>
+              </ItemActions>
+            </Item>
+          )}
+        {sortedTasks.length === 0 &&
+          (fetchTasksError || fetchPicsError || !isOnline) && (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  {!isOnline ? (
+                    <WifiOff className="text-destructive" />
+                  ) : (
+                    <ServerOff className="text-destructive" />
+                  )}
+                </EmptyMedia>
+                <EmptyTitle className="text-destructive">
+                  {!isOnline ? 'Kamu Sedang Offine' : 'Terjadi Kesalahan'}
+                </EmptyTitle>
+                <EmptyDescription className="text-destructive/90">
+                  {!isOnline
+                    ? 'Mohon periksa koneksi internetmu.'
+                    : fetchTasksError?.response?.data?.message ||
+                      fetchPicsError?.response?.data?.message ||
+                      'Gagal terhubung ke server.'}
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button
+                  onClick={() => window.location.reload(false)}
+                  variant="outline"
+                >
+                  <RefreshCw />
+                  Refresh Halaman
+                </Button>
+              </EmptyContent>
+            </Empty>
+          )}
+        {sortedTasks.length === 0 &&
+          !fetchTasksLoading &&
+          !fetchTasksError &&
+          isOnline && (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <ClipboardCheck />
+                </EmptyMedia>
+                <EmptyTitle>Tidak Ada Task</EmptyTitle>
+                <EmptyDescription>
+                  Kamu belum menambahkan task. Klik tombol di bawah ini untuk
+                  mulai membuat daftar aktivitasmu.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button
+                  onClick={() => handleOpenModal('Tambah Task', 'add-task')}
+                >
+                  Tambah Task
+                </Button>
+              </EmptyContent>
+            </Empty>
+          )}
         {sortedTasks.length > 0 && (
           <div className="flex gap-4 flex-1">
             {columns.map((column) => (

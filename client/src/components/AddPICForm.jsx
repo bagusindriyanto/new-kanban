@@ -34,11 +34,17 @@ export default function AddPICForm() {
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
-        return `"${data.pic}" telah ditambahkan ke daftar PIC`;
+        return `"${data.pic}" telah ditambahkan ke daftar PIC.`;
       },
       error: (err) => {
         // err adalah error yang dilempar dari store
-        return err.message || 'Gagal menambahkan PIC';
+        return {
+          message:
+            err.response?.data?.message ||
+            err.message ||
+            'Gagal menambahkan PIC.',
+          description: err.response?.data?.error_detail || null,
+        };
       },
     });
   };

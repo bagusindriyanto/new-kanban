@@ -34,11 +34,17 @@ export default function AddActivityForm() {
       success: () => {
         form.reset(); // reset form setelah submit
         setIsModalOpen(false);
-        return `"${data.activity}" telah ditambahkan ke daftar activity`;
+        return `"${data.activity}" telah ditambahkan ke daftar activity.`;
       },
       error: (err) => {
         // err adalah error yang dilempar dari store
-        return err.message || 'Gagal menambahkan activity';
+        return {
+          message:
+            err.response?.data?.message ||
+            err.message ||
+            'Gagal menambahkan activity.',
+          description: err.response?.data?.error_detail || null,
+        };
       },
     });
   };

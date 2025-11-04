@@ -193,11 +193,17 @@ export default function UpdateTaskForm() {
           success: () => {
             form.reset();
             setIsModalOpen(false);
-            return 'Task berhasil diperbarui';
+            return 'Task berhasil diperbarui.';
           },
           error: (err) => {
             // err adalah error yang dilempar dari store
-            return err.message || 'Gagal memperbarui task';
+            return {
+              message:
+                err.response?.data?.message ||
+                err.message ||
+                'Gagal memperbarui task.',
+              description: err.response?.data?.error_detail || null,
+            };
           },
         }
       );
@@ -834,7 +840,7 @@ export default function UpdateTaskForm() {
           </Button>
         </DialogClose>
         <Button
-          className="'bg-blue-700 hover:bg-blue-800' text-white"
+          className="bg-blue-700 hover:bg-blue-800 text-white"
           type="submit"
           form="update-task"
           disabled={isPending}

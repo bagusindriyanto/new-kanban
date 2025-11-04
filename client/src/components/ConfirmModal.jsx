@@ -54,11 +54,17 @@ export default function ConfirmModal() {
         success: () => {
           form.reset();
           setIsModalOpen(false);
-          return 'Task berhasil dihapus';
+          return 'Task berhasil dihapus.';
         },
         error: (err) => {
           // err adalah error yang dilempar dari store
-          return err.message || 'Gagal menghapus task';
+          return {
+            message:
+              err.response?.data?.message ||
+              err.message ||
+              'Gagal menghapus task.',
+            description: err.response?.data?.error_detail || null,
+          };
         },
       });
     } else {

@@ -9,5 +9,11 @@ try {
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   http_response_code(500);
-  die("Connection failed: " . $e->getMessage());
+  // die("Connection failed: " . $e->getMessage());
+  echo json_encode([
+    "status" => "error",
+    "message" => "Gagal terhubung ke database.",
+    "error_detail" => $e->getMessage(),
+  ]);
+  exit();
 }
