@@ -7,7 +7,7 @@ import {
   SquareKanban,
   WifiOff,
   ServerOff,
-  RefreshCw,
+  RotateCw,
 } from 'lucide-react';
 import {
   Bar,
@@ -282,7 +282,7 @@ const SummaryPage = () => {
                 size="sm"
                 variant="outline"
               >
-                <RefreshCw />
+                <RotateCw />
                 Refresh Halaman
               </Button>
             </ItemActions>
@@ -458,9 +458,21 @@ const SummaryPage = () => {
         </Card>
         {/* Card */}
         {/* Table */}
-        <div className="md:col-span-2">
-          <DataTable columns={columns} data={filteredTableSummary}></DataTable>
-        </div>
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Tabel Aktivitas</CardTitle>
+            <CardDescription>
+              Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
+              rata-rata durasi setiap aktivitas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DataTable
+              columns={columns}
+              data={filteredTableSummary}
+            ></DataTable>
+          </CardContent>
+        </Card>
       </main>
       {/* Footer */}
       <footer className="flex items-center justify-center h-[39px] bg-nav py-2">

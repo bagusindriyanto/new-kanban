@@ -10,7 +10,7 @@ import {
   ClipboardCheck,
   WifiOff,
   ServerOff,
-  RefreshCw,
+  RotateCw,
 } from 'lucide-react';
 import {
   Tooltip,
@@ -57,6 +57,8 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { useState, useEffect } from 'react';
+import { RefreshButton } from '@/components/RefreshData';
+import { formatTimestamp } from '@/services/formatTimestamp';
 
 const HomePage = () => {
   // State untuk filter tanggal
@@ -67,6 +69,8 @@ const HomePage = () => {
     data: tasks,
     isLoading: fetchTasksLoading,
     error: fetchTasksError,
+    isFetching,
+    dataUpdatedAt,
   } = useFetchTasks();
   // Tanstack query untuk pics
   const {
@@ -249,7 +253,7 @@ const HomePage = () => {
                   size="sm"
                   variant="outline"
                 >
-                  <RefreshCw />
+                  <RotateCw />
                   Refresh Halaman
                 </Button>
               </ItemActions>
@@ -282,7 +286,7 @@ const HomePage = () => {
                   onClick={() => window.location.reload(false)}
                   variant="outline"
                 >
-                  <RefreshCw />
+                  <RotateCw />
                   Refresh Halaman
                 </Button>
               </EmptyContent>

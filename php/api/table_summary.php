@@ -23,7 +23,7 @@ function handleGet($pdo)
   try {
     $sql = "SELECT t.date,
        		t.pic_id,
-       		p.NAME,
+       		p.name,
        		t.content,
        		t.total_minutes,
        		t.activity_count,
@@ -50,7 +50,9 @@ function handleGet($pdo)
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode([
-      "error" => "Failed to fetch table summary: " . $e->getMessage(),
+      "status" => "error",
+      "message" => "Gagal mengambil data.",
+      "error_detail" => $e->getMessage(),
     ]);
   }
   exit();
