@@ -223,7 +223,7 @@ const HomePage = () => {
           )}
         {sortedTasks.length > 0 &&
           (fetchTasksError || fetchPicsError || !isOnline) && (
-            <Item variant="muted">
+            <Item className="bg-destructive/15" variant="muted">
               <ItemMedia variant="icon">
                 {!isOnline ? (
                   <WifiOff className="text-destructive" />

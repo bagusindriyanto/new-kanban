@@ -1,5 +1,14 @@
-import { useMemo } from 'react';
-import { ListTodo, Clock4, Check, Archive, SquareKanban } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import {
+  ListTodo,
+  Clock4,
+  Check,
+  Archive,
+  SquareKanban,
+  WifiOff,
+  ServerOff,
+  RefreshCw,
+} from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -13,7 +22,7 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -51,12 +60,22 @@ import { columns } from '@/components/table/columns';
 import { useFetchPics } from '@/api/fetchPics';
 import { useFetchSummary } from '@/api/fetchSummary';
 import { useFetchTableSummary } from '@/api/fetchTableSummary';
+// Status
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item';
 
 const SummaryPage = () => {
   // State
-  const { data: pics } = useFetchPics();
-  const { data: summary } = useFetchSummary();
-  const { data: tableSummary } = useFetchTableSummary();
+  const { data: pics, error: fetchPicsError } = useFetchPics();
+  const { data: summary, error: fetchSummaryError } = useFetchSummary();
+  const { data: tableSummary, error: fetchTableSummaryError } =
+    useFetchTableSummary();
 
   // State Filter
   const selectedPicId = useFilter((state) => state.selectedPicId);
@@ -65,124 +84,126 @@ const SummaryPage = () => {
 
   // Urutkan dan filter task berdasarkan PIC
   const filteredSummary = useMemo(() => {
-    if (!summary) return [];
-    // Filtering PIC
-    let result = summary.sort((a, b) => new Date(a.date) - new Date(b.date));
-    if (selectedPicId !== 'all') {
-      result = result.filter((res) => res.pic_id === selectedPicId);
-    }
-    // Filtering Tanggal
-    if (range.from && range.to) {
-      result = result.filter((res) => {
-        if (!res.date) return false;
-        const [year, month, day] = res.date.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
-        return date >= range.from && date <= range.to;
+    if (!summary || selectedPicId === 'all') return [];
+    return summary
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .filter((row) => {
+        const matchedPic = row.pic_id === selectedPicId;
+        const [year, month, day] = row.date.split('-').map(Number);
+        const rowDate = new Date(year, month - 1, day);
+        const fromDate = range.from;
+        const toDate = range.to;
+        const matchedDate =
+          (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
+        return matchedPic && matchedDate;
       });
+  }, [summary, selectedPicId, range]);
+
+  const stats = useMemo(() => {
+    if (!summary || selectedPicId === 'all')
+      return {
+        totalTodo: 0,
+        totalProgress: 0,
+        totalDone: 0,
+        totalArchived: 0,
+        totalActivities: 0,
+        totalActivityMinutes: 0,
+        totalWorkingMinutes: 0,
+        operationalTimePercentage: 0,
+      };
+    let result;
+    result = summary
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .filter((row) => row.pic_id === selectedPicId);
+
+    const totalTodo = result[0]?.todo_count ?? 0;
+
+    result = result.filter((row) => {
+      const [year, month, day] = row.date.split('-').map(Number);
+      const rowDate = new Date(year, month - 1, day);
+      const fromDate = range.from;
+      const toDate = range.to;
+      const matchedDate =
+        (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
+      return matchedDate;
+    });
+
+    let totalProgress = 0;
+    let totalDone = 0;
+    let totalArchived = 0;
+    let totalActivityMinutes = 0;
+    let totalWorkingMinutes = 0;
+
+    const comboList = new Set();
+    for (const row of result) {
+      const key = `${row.date}`;
+      if (!comboList.has(key)) {
+        comboList.add(key);
+        totalProgress += row.on_progress_count;
+        totalDone += row.done_count;
+        totalArchived += row.archived_count;
+        totalActivityMinutes += row.activity_duration;
+        totalWorkingMinutes += row.working_minute;
+      }
     }
-    // Total Activity, Activity Duration, Working Minute
-    if (!range.from && !range.to) {
-      result = Object.values(
-        result.reduce(
-          (
-            acc,
-            {
-              date,
-              todo_count,
-              on_progress_count,
-              done_count,
-              archived_count,
-              activity_duration,
-              working_minute,
-            }
-          ) => {
-            // const num = Number(value); // pastikan angka meskipun string
-            if (!acc[date]) {
-              acc[date] = {
-                date,
-                todo_count: 0,
-                on_progress_count: 0,
-                done_count: 0,
-                archived_count: 0,
-                activity_duration: 0,
-                working_minute: 0,
-              };
-            }
-            acc[date].todo_count += todo_count;
-            acc[date].on_progress_count += on_progress_count;
-            acc[date].done_count += done_count;
-            acc[date].archived_count += archived_count;
-            acc[date].activity_duration += activity_duration;
-            acc[date].working_minute += working_minute;
-            return acc;
-          },
-          {}
-        )
-      );
-    }
-    console.log(result);
-    return result;
+
+    const totalActivities =
+      totalTodo + totalProgress + totalDone + totalArchived;
+    const operationalTimePercentage = Number.isFinite(
+      totalActivityMinutes / totalWorkingMinutes
+    )
+      ? (totalActivityMinutes / totalWorkingMinutes) * 100
+      : 0;
+
+    return {
+      totalTodo,
+      totalProgress,
+      totalDone,
+      totalArchived,
+      totalActivities,
+      totalActivityMinutes,
+      totalWorkingMinutes,
+      operationalTimePercentage,
+    };
   }, [summary, selectedPicId, range]);
 
   const filteredTableSummary = useMemo(() => {
-    if (!tableSummary) return [];
-    let result = tableSummary;
-    // Filtering PIC
-    if (selectedPicId !== 'all') {
-      result = result.filter((res) => res.pic_id === selectedPicId);
-    }
-    // Filtering Tanggal
-    if (range.from && range.to) {
-      result = result.filter((res) => {
-        if (!res.date) return false;
-        const [year, month, day] = res.date.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
-        return date >= range.from && date <= range.to;
-      });
-    }
-    return result;
+    if (!tableSummary || selectedPicId === 'all') return [];
+    return tableSummary.filter((row) => {
+      const matchedPic = row.pic_id === selectedPicId;
+      let matchedDate;
+      if (!row.date) {
+        matchedDate = false;
+      } else {
+        const [year, month, day] = row.date.split('-').map(Number);
+        const rowDate = new Date(year, month - 1, day);
+        const fromDate = range.from;
+        const toDate = range.to;
+        matchedDate =
+          (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
+      }
+      return matchedPic && matchedDate;
+    });
   }, [tableSummary, selectedPicId, range]);
 
-  // Data pada Card
-  const totalActivityMinutes = filteredSummary.reduce(
-    (sum, res) => sum + res.activity_duration,
-    0
-  );
-  const totalWorkingMinutes = filteredSummary.reduce(
-    (sum, res) => sum + res.working_minute,
-    0
-  );
-  const operationalTimePercentage = Number.isFinite(
-    totalActivityMinutes / totalWorkingMinutes
-  )
-    ? (totalActivityMinutes / totalWorkingMinutes) * 100
-    : 0;
+  // Cek status online/offline
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-  const totalTodoActivity = filteredSummary.reduce(
-    (sum, res) => sum + res.todo_count,
-    0
-  );
-  const totalProgressActivity = filteredSummary.reduce(
-    (sum, res) => sum + res.on_progress_count,
-    0
-  );
-  const totalDoneActivity = filteredSummary.reduce(
-    (sum, res) => sum + res.done_count,
-    0
-  );
-  const totalArchivedActivity = filteredSummary.reduce(
-    (sum, res) => sum + res.archived_count,
-    0
-  );
-  const totalActivity =
-    totalTodoActivity +
-    totalProgressActivity +
-    totalDoneActivity +
-    totalArchivedActivity;
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return (
     <div className="h-screen flex flex-col">
-      <header className="sticky top-0 flex items-center justify-between bg-nav h-[56px] px-5 py-3">
+      <header className="sticky top-0 z-10 flex items-center justify-between bg-nav h-[56px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
           {/* Filter PIC */}
@@ -193,7 +214,9 @@ const SummaryPage = () => {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>PIC</SelectLabel>
-                <SelectItem value="all">Semua PIC</SelectItem>
+                <SelectItem className="hidden" value="all" disabled>
+                  Pilih PIC
+                </SelectItem>
                 <SelectItem value={null}>-</SelectItem>
                 {pics?.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>
@@ -225,18 +248,52 @@ const SummaryPage = () => {
       </header>
       {/* Main */}
       <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+        {(fetchSummaryError ||
+          fetchTableSummaryError ||
+          fetchPicsError ||
+          !isOnline) && (
+          <Item
+            className="md:col-span-2 xl:col-span-4 bg-destructive/15"
+            variant="muted"
+          >
+            <ItemMedia variant="icon">
+              {!isOnline ? (
+                <WifiOff className="text-destructive" />
+              ) : (
+                <ServerOff className="text-destructive" />
+              )}
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle className="text-destructive">
+                {!isOnline ? 'Kamu Sedang Offine' : 'Terjadi Kesalahan'}
+              </ItemTitle>
+              <ItemDescription className="text-destructive/90">
+                {!isOnline
+                  ? 'Mohon periksa koneksi internetmu.'
+                  : fetchSummaryError?.response?.data?.message ||
+                    fetchTableSummaryError?.response?.data?.message ||
+                    fetchPicsError?.response?.data?.message ||
+                    'Gagal terhubung ke server.'}
+              </ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <Button
+                onClick={() => window.location.reload(false)}
+                size="sm"
+                variant="outline"
+              >
+                <RefreshCw />
+                Refresh Halaman
+              </Button>
+            </ItemActions>
+          </Item>
+        )}
         <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
           <CardHeader>
             <CardDescription>Total Activities</CardDescription>
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {totalActivity} Aktivitas
+              {stats.totalActivities} Aktivitas
             </CardTitle>
-            {/* <CardAction>
-              <Badge variant="outline">
-                <TrendingDown />
-                -20%
-              </Badge>
-            </CardAction> */}
           </CardHeader>
         </Card>
         <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
@@ -244,36 +301,30 @@ const SummaryPage = () => {
             <CardDescription>Operational Time</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {operationalTimePercentage.toFixed(2)} %
+                {stats.operationalTimePercentage.toFixed(2)} %
               </CardTitle>
               <div className="flex flex-col items-end gap-1.5 text-sm">
                 <div className="font-medium">
                   Lama Aktivitas:{' '}
                   <span className="text-muted-foreground">
-                    {totalActivityMinutes} menit
+                    {stats.totalActivityMinutes} menit
                   </span>
                 </div>
                 <div className="font-medium">
                   Lama Bekerja:{' '}
                   <span className="text-muted-foreground">
-                    {totalWorkingMinutes} menit
+                    {stats.totalWorkingMinutes} menit
                   </span>
                 </div>
               </div>
             </div>
-            {/* <CardAction>
-              <Badge variant="outline">
-                <TrendingDown />
-                -20%
-              </Badge>
-            </CardAction> */}
           </CardHeader>
         </Card>
         <Card className="bg-linear-to-t from-todo-500/60 to-card border-none">
           <CardHeader>
             <CardDescription>Total To Do Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {totalTodoActivity} Aktivitas
+              {stats.totalTodo} Aktivitas
             </CardTitle>
             <CardAction>
               <ListTodo className="text-muted-foreground size-5" />
@@ -284,7 +335,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total On Progress Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {totalProgressActivity} Aktivitas
+              {stats.totalProgress} Aktivitas
             </CardTitle>
             <CardAction>
               <Clock4 className="text-muted-foreground size-5" />
@@ -295,7 +346,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total Done Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {totalDoneActivity} Aktivitas
+              {stats.totalDone} Aktivitas
             </CardTitle>
             <CardAction>
               <Check className="text-muted-foreground size-5" />
@@ -306,7 +357,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total Archived Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {totalArchivedActivity} Aktivitas
+              {stats.totalArchived} Aktivitas
             </CardTitle>
             <CardAction>
               <Archive className="text-muted-foreground size-5" />
@@ -314,7 +365,7 @@ const SummaryPage = () => {
           </CardHeader>
         </Card>
         {/* Chart */}
-        <Card className="w-full  md:col-span-2">
+        <Card className="w-full md:col-span-2">
           <CardHeader>
             <CardTitle>Lama Aktivitas vs Lama Bekerja</CardTitle>
             <CardDescription>
@@ -407,7 +458,7 @@ const SummaryPage = () => {
         </Card>
         {/* Card */}
         {/* Table */}
-        <div className="w-full h-full md:col-span-2">
+        <div className="md:col-span-2">
           <DataTable columns={columns} data={filteredTableSummary}></DataTable>
         </div>
       </main>
