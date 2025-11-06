@@ -12,8 +12,9 @@ import { fetchTasksQueryKey } from '@/api/fetchTasks';
 import { fetchSummaryQueryKey } from '@/api/fetchSummary';
 import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
 import { cn } from '@/lib/utils';
+import { formatTimestamp } from '@/services/formatTimestamp';
 
-export const RefreshButton = ({ isFetching }) => {
+export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
   const refreshData = () => {
     queryClient.invalidateQueries({ queryKey: fetchActivitiesQueryKey() });
     queryClient.invalidateQueries({ queryKey: fetchPicsQueryKey() });
@@ -35,7 +36,7 @@ export const RefreshButton = ({ isFetching }) => {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Refresh Data</p>
+        <p>Terakhir Diperbarui: {formatTimestamp(dataUpdatedAt) ?? '-'}</p>
       </TooltipContent>
     </Tooltip>
   );

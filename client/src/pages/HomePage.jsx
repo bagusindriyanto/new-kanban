@@ -57,8 +57,8 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { useState, useEffect } from 'react';
-import { RefreshButton } from '@/components/RefreshData';
-import { formatTimestamp } from '@/services/formatTimestamp';
+import { RefreshToggle } from '@/components/RefreshToggle';
+import Footer from '@/components/Footer';
 
 const HomePage = () => {
   // State untuk filter tanggal
@@ -155,12 +155,17 @@ const HomePage = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between bg-nav h-[56px] px-5 py-3">
+      <header className="flex items-center justify-between bg-nav h-[52px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
+          {/* Refresh Data */}
+          <RefreshToggle
+            isFetching={isFetching}
+            dataUpdatedAt={dataUpdatedAt}
+          />
           {/* Filter PIC */}
           <Select value={selectedPicId} onValueChange={setSelectedPicId}>
-            <SelectTrigger className="w-[160px] bg-neutral-100">
+            <SelectTrigger className="w-[150px] bg-white" size="sm">
               <SelectValue placeholder="Pilih PIC" />
             </SelectTrigger>
             <SelectContent>
@@ -183,25 +188,28 @@ const HomePage = () => {
           <Button
             onClick={() => handleOpenModal('Tambah Activity', 'add-activity')}
             variant="nav"
+            size="sm"
           >
             Tambah Activity
           </Button>
           <Button
             onClick={() => handleOpenModal('Tambah PIC', 'add-pic')}
             variant="nav"
+            size="sm"
           >
             Tambah PIC
           </Button>
           <Button
             onClick={() => handleOpenModal('Tambah Task', 'add-task')}
             variant="nav"
+            size="sm"
           >
             Tambah Task
           </Button>
           {/* Pindah ke Halaman Summary */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Button asChild variant="outline" size="icon">
+              <Button asChild variant="outline" size="icon-sm">
                 <Link to="/summary">
                   <ChartNoAxesCombined />
                 </Link>
@@ -216,7 +224,7 @@ const HomePage = () => {
         </div>
       </header>
       {/* Main */}
-      <main className="flex flex-1 flex-col p-4 gap-4">
+      <main className="flex flex-1 flex-col p-3 gap-3">
         {isOnline &&
           (fetchTasksLoading || fetchPicsLoading) &&
           !fetchTasksError &&
@@ -329,11 +337,7 @@ const HomePage = () => {
         )}
       </main>
       {/* Footer */}
-      <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
-        <p className="text-white text-sm font-normal">
-          Made with &#10084; by Data Analyst &copy; {new Date().getFullYear()}
-        </p>
-      </footer>
+      <Footer />
       {/* Form Modal */}
       <FormModal />
       {/* Confirm Modal */}

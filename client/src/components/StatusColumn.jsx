@@ -20,7 +20,7 @@ const StatusColumn = ({ title, tasks }) => {
         {title}
       </h2>
       <Virtuoso
-        className="!max-h-[calc(100dvh-56px-39px-32px-60.8px)] bg-neutral-100 dark:bg-neutral-900/80 
+        className="!max-h-[calc(100dvh-52px-35px-24px-60.8px)] bg-neutral-100 dark:bg-neutral-900/80 
         [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-none [&::-webkit-scrollbar-thumb]:relative 
         [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 
         dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"

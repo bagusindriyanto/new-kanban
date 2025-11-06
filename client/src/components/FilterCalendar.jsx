@@ -18,7 +18,7 @@ export const FilterCalendar = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" size="sm">
           <CalendarIcon />
           {range.from && range.to
             ? range.from.getTime() === range.to.getTime()

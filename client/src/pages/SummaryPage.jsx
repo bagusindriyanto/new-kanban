@@ -69,11 +69,18 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item';
+import { RefreshToggle } from '@/components/RefreshToggle';
+import Footer from '@/components/Footer';
 
 const SummaryPage = () => {
   // State
   const { data: pics, error: fetchPicsError } = useFetchPics();
-  const { data: summary, error: fetchSummaryError } = useFetchSummary();
+  const {
+    data: summary,
+    error: fetchSummaryError,
+    isFetching,
+    dataUpdatedAt,
+  } = useFetchSummary();
   const { data: tableSummary, error: fetchTableSummaryError } =
     useFetchTableSummary();
 
@@ -203,12 +210,17 @@ const SummaryPage = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <header className="sticky top-0 z-10 flex items-center justify-between bg-nav h-[56px] px-5 py-3">
+      <header className="sticky top-0 z-10 flex items-center justify-between bg-nav h-[52px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
+          {/* Refresh Data */}
+          <RefreshToggle
+            isFetching={isFetching}
+            dataUpdatedAt={dataUpdatedAt}
+          />
           {/* Filter PIC */}
           <Select value={selectedPicId} onValueChange={setSelectedPicId}>
-            <SelectTrigger className="w-[160px] bg-neutral-100">
+            <SelectTrigger className="w-[150px] bg-white" size="sm">
               <SelectValue placeholder="Pilih PIC" />
             </SelectTrigger>
             <SelectContent>
@@ -233,7 +245,7 @@ const SummaryPage = () => {
           {/* Pindah ke Halaman Kanban */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
-              <Button asChild variant="outline" size="icon">
+              <Button asChild variant="outline" size="icon-sm">
                 <Link to="/">
                   <SquareKanban />
                 </Link>
@@ -475,11 +487,7 @@ const SummaryPage = () => {
         </Card>
       </main>
       {/* Footer */}
-      <footer className="flex items-center justify-center h-[39px] bg-nav py-2">
-        <p className="text-white text-sm font-normal">
-          Made with &#10084; by Data Analyst &copy; {new Date().getFullYear()}
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 };
