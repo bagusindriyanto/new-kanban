@@ -250,7 +250,7 @@ const TaskCard = ({ task }) => {
         'bg-progress-500': status === 'on progress',
         'bg-done-500': status === 'done',
         'bg-archived-500': status === 'archived',
-        'animate-pulse': optimistic,
+        // 'animate-pulse': optimistic,
       })}
     >
       {/* Content */}

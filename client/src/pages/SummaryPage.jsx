@@ -277,7 +277,7 @@ const SummaryPage = () => {
             </ItemMedia>
             <ItemContent>
               <ItemTitle className="text-destructive">
-                {!isOnline ? 'Kamu Sedang Offine' : 'Terjadi Kesalahan'}
+                {!isOnline ? 'Kamu Sedang Offline' : 'Terjadi Kesalahan'}
               </ItemTitle>
               <ItemDescription className="text-destructive/90">
                 {!isOnline
