@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import {
   ListTodo,
   Clock4,
@@ -53,11 +53,11 @@ import {
 import { Link } from 'react-router';
 import { chartConfig } from '@/config/chartConfig';
 import useFilter from '@/stores/filterStore';
-import { ModeToggle } from '@/components/ModeToggle';
+import ModeToggle from '@/components/ModeToggle';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchPICs } from '@/api/fetchPICs';
 import { useFetchSummary } from '@/api/fetchSummary';
 import { useFetchTableSummary } from '@/api/fetchTableSummary';
 // Status
@@ -71,10 +71,11 @@ import {
 } from '@/components/ui/item';
 import { RefreshToggle } from '@/components/RefreshToggle';
 import Footer from '@/components/Footer';
+import { useIsOnline } from '@/hooks/useIsOnline';
 
 const SummaryPage = () => {
   // State
-  const { data: pics, error: fetchPicsError } = useFetchPics();
+  const { data: pics, error: fetchPICsError } = useFetchPICs();
   const {
     data: summary,
     error: fetchSummaryError,
@@ -194,19 +195,7 @@ const SummaryPage = () => {
   }, [tableSummary, selectedPicId, range]);
 
   // Cek status online/offline
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  const isOnline = useIsOnline();
 
   return (
     <div className="h-screen flex flex-col">
@@ -262,7 +251,7 @@ const SummaryPage = () => {
       <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {(fetchSummaryError ||
           fetchTableSummaryError ||
-          fetchPicsError ||
+          fetchPICsError ||
           !isOnline) && (
           <Item
             className="md:col-span-2 xl:col-span-4 bg-destructive/15"
@@ -284,7 +273,7 @@ const SummaryPage = () => {
                   ? 'Mohon periksa koneksi internetmu.'
                   : fetchSummaryError?.response?.data?.message ||
                     fetchTableSummaryError?.response?.data?.message ||
-                    fetchPicsError?.response?.data?.message ||
+                    fetchPICsError?.response?.data?.message ||
                     'Gagal terhubung ke server.'}
               </ItemDescription>
             </ItemContent>

@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useTheme } from 'next-themes';
 
-export function ModeToggle() {
+const ModeToggle = () => {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -31,4 +31,6 @@ export function ModeToggle() {
       </TooltipContent>
     </Tooltip>
   );
-}
+};
+
+export default ModeToggle;

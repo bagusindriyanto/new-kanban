@@ -7,7 +7,7 @@ import {
 import { RefreshCw } from 'lucide-react';
 import { queryClient } from '@/lib/react-query';
 import { fetchActivitiesQueryKey } from '@/api/fetchActivities';
-import { fetchPicsQueryKey } from '@/api/fetchPics';
+import { fetchPICsQueryKey } from '@/api/fetchPICs';
 import { fetchTasksQueryKey } from '@/api/fetchTasks';
 import { fetchSummaryQueryKey } from '@/api/fetchSummary';
 import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
@@ -18,7 +18,7 @@ export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
   const refreshData = () => {
     const queryKeys = [
       fetchActivitiesQueryKey(),
-      fetchPicsQueryKey(),
+      fetchPICsQueryKey(),
       fetchTasksQueryKey(),
       fetchSummaryQueryKey(),
       fetchTableSummaryQueryKey(),
@@ -43,7 +43,7 @@ export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
       <TooltipContent>
         <p>
           Terakhir Diperbarui:{' '}
-          {!!dataUpdatedAt ? formatTimestamp(dataUpdatedAt) : '-'}
+          {dataUpdatedAt ? formatTimestamp(dataUpdatedAt) : '-'}
         </p>
       </TooltipContent>
     </Tooltip>

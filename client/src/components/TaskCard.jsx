@@ -20,7 +20,7 @@ import useConfirmModal from '@/stores/confirmModalStore';
 import useFilter from '@/stores/filterStore';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column';
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 
@@ -45,8 +45,7 @@ const TaskCard = ({ task }) => {
   } = task;
 
   // State untuk PIC
-  const { data: pics } = useFetchPics();
-  // const pics = usePics((state) => state.pics);
+  const { data: pics } = useFetchPICs();
   const picName = pics?.find((p) => p.id === pic_id)?.name;
 
   // State untuk form modal

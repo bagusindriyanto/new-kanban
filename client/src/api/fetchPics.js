@@ -1,23 +1,23 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
-export const fetchPics = async () => {
+export const fetchPICs = async () => {
   const response = await api.get('/pics.php');
   return response.data;
 };
 
-export const fetchPicsQueryKey = () => ['pics'];
+export const fetchPICsQueryKey = () => ['pics'];
 
-const fetchPicsQueryOptions = () => {
+const fetchPICsQueryOptions = () => {
   return queryOptions({
-    queryKey: fetchPicsQueryKey(),
-    queryFn: fetchPics,
+    queryKey: fetchPICsQueryKey(),
+    queryFn: fetchPICs,
   });
 };
 
-export const useFetchPics = (params = {}) => {
+export const useFetchPICs = (params = {}) => {
   return useQuery({
-    ...fetchPicsQueryOptions(),
+    ...fetchPICsQueryOptions(),
     ...params.queryConfig,
   });
 };

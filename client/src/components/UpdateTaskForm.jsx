@@ -63,7 +63,7 @@ import { id } from 'date-fns/locale';
 import { TimePickerDemo } from './ui/time-picker-demo';
 import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 
@@ -90,7 +90,7 @@ const FormSchema = z.object({
   password: z.string().nonempty({ message: 'Mohon isi password.' }),
 });
 
-export default function UpdateTaskForm() {
+const UpdateTaskForm = () => {
   // State Buka/Tutup Popover
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
@@ -99,7 +99,7 @@ export default function UpdateTaskForm() {
   // Fetch activity
   const { data: contents } = useFetchActivities();
   // Fetch pics
-  const { data: pics } = useFetchPics();
+  const { data: pics } = useFetchPICs();
   // Fetch task yang dipilih
   const { data: tasks } = useFetchTasks();
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
@@ -840,8 +840,8 @@ export default function UpdateTaskForm() {
           </Button>
         </DialogClose>
         <Button
-          className="bg-blue-700 hover:bg-blue-800 text-white"
           type="submit"
+          variant="info"
           form="update-task"
           disabled={isPending}
         >
@@ -851,4 +851,6 @@ export default function UpdateTaskForm() {
       </DialogFooter>
     </>
   );
-}
+};
+
+export default UpdateTaskForm;

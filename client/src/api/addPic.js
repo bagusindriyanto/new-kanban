@@ -1,19 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { queryClient } from '@/lib/react-query';
-import { fetchPicsQueryKey } from './fetchPics';
+import { fetchPICsQueryKey } from './fetchPICs';
 
-export const addPic = async (name) => {
+export const addPIC = async (name) => {
   const response = await api.post('/pics.php', { name });
   return response.data;
 };
 
-export const useAddPic = (params = {}) => {
+export const useAddPIC = (params = {}) => {
   return useMutation({
-    mutationFn: addPic,
+    mutationFn: addPIC,
     ...params.mutationConfig,
     onSuccess: (data, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: fetchPicsQueryKey() });
+      queryClient.invalidateQueries({ queryKey: fetchPICsQueryKey() });
       params.mutationConfig?.onSuccess?.(
         data,
         variables,

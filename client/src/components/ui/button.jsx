@@ -24,6 +24,9 @@ const buttonVariants = cva(
         'on progress': 'bg-progress-600 hover:bg-progress-400 text-white',
         done: 'bg-done-600 hover:bg-done-400 text-white',
         archived: 'bg-archived-600 hover:bg-archived-400 text-white',
+        success: 'bg-emerald-600 hover:bg-emerald-700 text-white',
+        danger: 'bg-red-600 hover:bg-red-700 text-white',
+        info: 'bg-blue-700 hover:bg-blue-800 text-white',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

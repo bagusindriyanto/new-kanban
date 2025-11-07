@@ -9,7 +9,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import useFormModal from '@/stores/formModalStore';
 import useConfirmModal from '@/stores/confirmModalStore';
 import useFilter from '@/stores/filterStore';
 import { toast } from 'sonner';
@@ -30,7 +29,7 @@ const FormSchema = z.object({
   password: z.string().nonempty({ message: 'Mohon isi password.' }),
 });
 
-export default function ConfirmModal() {
+const ConfirmModal = () => {
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
   const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
   const isModalOpen = useConfirmModal((state) => state.isModalOpen);
@@ -134,8 +133,8 @@ export default function ConfirmModal() {
           </Button>
           <Button
             type="submit"
+            variant="danger"
             form="delete-task"
-            className="bg-red-600 hover:bg-red-700 text-white"
             disabled={isPending}
           >
             {isPending && <Spinner />}
@@ -145,4 +144,6 @@ export default function ConfirmModal() {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
+
+export default ConfirmModal;

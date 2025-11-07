@@ -3,7 +3,7 @@ import { Toaster } from '@/components/ui/sonner';
 import StatusColumn from '@/components/StatusColumn';
 import FormModal from '@/components/FormModal';
 import ConfirmModal from '@/components/ConfirmModal';
-import { ModeToggle } from '@/components/ModeToggle';
+import ModeToggle from '@/components/ModeToggle';
 import useFormModal from '@/stores/formModalStore';
 import {
   ChartNoAxesCombined,
@@ -47,7 +47,7 @@ import useFilter from '@/stores/filterStore';
 import { FilterCalendar } from '@/components/FilterCalendar';
 import { startOfDay, parseISO } from 'date-fns';
 import { useFetchTasks } from '@/api/fetchTasks';
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchPICs } from '@/api/fetchPICs';
 import {
   Empty,
   EmptyContent,
@@ -56,9 +56,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { useState, useEffect } from 'react';
 import { RefreshToggle } from '@/components/RefreshToggle';
 import Footer from '@/components/Footer';
+import { useIsOnline } from '@/hooks/useIsOnline';
+import AddActivityModal from '@/components/AddActivityModal';
+import AddPICModal from '@/components/AddPICModal';
+import AddTaskModal from '@/components/AddTaskModal';
 
 const HomePage = () => {
   // State untuk filter tanggal
@@ -75,9 +78,9 @@ const HomePage = () => {
   // Tanstack query untuk pics
   const {
     data: pics,
-    isLoading: fetchPicsLoading,
-    error: fetchPicsError,
-  } = useFetchPics();
+    isLoading: fetchPICsLoading,
+    error: fetchPICsError,
+  } = useFetchPICs();
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const sortedTasks = useMemo(() => {
@@ -129,28 +132,16 @@ const HomePage = () => {
         'Gagal terhubung ke server.'
     );
   }
-  if (fetchPicsError) {
+  if (fetchPICsError) {
     console.log('Error Fetch PIC:');
     console.error(
-      fetchPicsError?.response?.data?.error_detail ||
+      fetchPICsError?.response?.data?.error_detail ||
         'Gagal terhubung ke server.'
     );
   }
 
   // Cek status online/offline
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  const isOnline = useIsOnline();
 
   return (
     <div className="h-screen flex flex-col">
@@ -185,27 +176,9 @@ const HomePage = () => {
           {/* Filter Tanggal */}
           <FilterCalendar />
           {/* Akhir Tanggal */}
-          <Button
-            onClick={() => handleOpenModal('Tambah Activity', 'add-activity')}
-            variant="nav"
-            size="sm"
-          >
-            Tambah Activity
-          </Button>
-          <Button
-            onClick={() => handleOpenModal('Tambah PIC', 'add-pic')}
-            variant="nav"
-            size="sm"
-          >
-            Tambah PIC
-          </Button>
-          <Button
-            onClick={() => handleOpenModal('Tambah Task', 'add-task')}
-            variant="nav"
-            size="sm"
-          >
-            Tambah Task
-          </Button>
+          <AddActivityModal />
+          <AddPICModal />
+          <AddTaskModal />
           {/* Pindah ke Halaman Summary */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
@@ -226,15 +199,15 @@ const HomePage = () => {
       {/* Main */}
       <main className="flex flex-1 flex-col p-3 gap-3">
         {isOnline &&
-          (fetchTasksLoading || fetchPicsLoading) &&
+          (fetchTasksLoading || fetchPICsLoading) &&
           !fetchTasksError &&
-          !fetchPicsError && (
+          !fetchPICsError && (
             <div className="flex flex-1 justify-center items-center">
               <Spinner className="size-10" />
             </div>
           )}
         {sortedTasks.length > 0 &&
-          (fetchTasksError || fetchPicsError || !isOnline) && (
+          (fetchTasksError || fetchPICsError || !isOnline) && (
             <Item className="bg-destructive/15" variant="muted">
               <ItemMedia variant="icon">
                 {!isOnline ? (
@@ -251,7 +224,7 @@ const HomePage = () => {
                   {!isOnline
                     ? 'Mohon periksa koneksi internetmu.'
                     : fetchTasksError?.response?.data?.message ||
-                      fetchPicsError?.response?.data?.message ||
+                      fetchPICsError?.response?.data?.message ||
                       'Gagal terhubung ke server.'}
                 </ItemDescription>
               </ItemContent>
@@ -268,7 +241,7 @@ const HomePage = () => {
             </Item>
           )}
         {sortedTasks.length === 0 &&
-          (fetchTasksError || fetchPicsError || !isOnline) && (
+          (fetchTasksError || fetchPICsError || !isOnline) && (
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
@@ -285,7 +258,7 @@ const HomePage = () => {
                   {!isOnline
                     ? 'Mohon periksa koneksi internetmu.'
                     : fetchTasksError?.response?.data?.message ||
-                      fetchPicsError?.response?.data?.message ||
+                      fetchPICsError?.response?.data?.message ||
                       'Gagal terhubung ke server.'}
                 </EmptyDescription>
               </EmptyHeader>
