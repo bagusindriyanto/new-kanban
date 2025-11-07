@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { formatTimestamp } from '../services/formatTimestamp.js';
+import { formatTimestamp } from '@/utils/formatTimestamp';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -15,13 +15,13 @@ import {
   EllipsisHorizontalIcon,
 } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import useFormModal from '@/stores/formModalStore.js';
-import useConfirmModal from '@/stores/confirmModalStore.js';
+import useFormModal from '@/stores/formModalStore';
+import useConfirmModal from '@/stores/confirmModalStore';
 import useFilter from '@/stores/filterStore';
 import { useEffect, useRef, useState } from 'react';
-import { columns } from '@/config/column.js';
-import { useFetchPics } from '@/api/fetchPics.js';
-import { useUpdateTask } from '@/api/updateTask.js';
+import { columns } from '@/config/column';
+import { useFetchPics } from '@/api/fetchPics';
+import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 
 const TaskCard = ({ task }) => {
@@ -250,7 +250,7 @@ const TaskCard = ({ task }) => {
         'bg-progress-500': status === 'on progress',
         'bg-done-500': status === 'done',
         'bg-archived-500': status === 'archived',
-        // 'animate-pulse': optimistic,
+        'animate-pulse': optimistic,
       })}
     >
       {/* Content */}

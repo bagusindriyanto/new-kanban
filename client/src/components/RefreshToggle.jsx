@@ -12,15 +12,20 @@ import { fetchTasksQueryKey } from '@/api/fetchTasks';
 import { fetchSummaryQueryKey } from '@/api/fetchSummary';
 import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
 import { cn } from '@/lib/utils';
-import { formatTimestamp } from '@/services/formatTimestamp';
+import { formatTimestamp } from '@/utils/formatTimestamp';
 
 export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
   const refreshData = () => {
-    queryClient.invalidateQueries({ queryKey: fetchActivitiesQueryKey() });
-    queryClient.invalidateQueries({ queryKey: fetchPicsQueryKey() });
-    queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
-    queryClient.invalidateQueries({ queryKey: fetchSummaryQueryKey() });
-    queryClient.invalidateQueries({ queryKey: fetchTableSummaryQueryKey() });
+    const queryKeys = [
+      fetchActivitiesQueryKey(),
+      fetchPicsQueryKey(),
+      fetchTasksQueryKey(),
+      fetchSummaryQueryKey(),
+      fetchTableSummaryQueryKey(),
+    ];
+    queryKeys.forEach((key) => {
+      queryClient.invalidateQueries({ queryKey: key });
+    });
   };
 
   return (
@@ -36,7 +41,10 @@ export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Terakhir Diperbarui: {formatTimestamp(dataUpdatedAt) ?? '-'}</p>
+        <p>
+          Terakhir Diperbarui:{' '}
+          {!!dataUpdatedAt ? formatTimestamp(dataUpdatedAt) : '-'}
+        </p>
       </TooltipContent>
     </Tooltip>
   );
