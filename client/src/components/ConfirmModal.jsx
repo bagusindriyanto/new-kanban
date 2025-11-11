@@ -25,8 +25,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { useDeleteTask } from '@/api/deleteTask';
 import { useState } from 'react';
 
-const FormSchema = z.object({
-  password: z.string().nonempty({ message: 'Mohon isi password.' }),
+const formSchema = z.object({
+  password: z.string().min(1, 'Mohon isi password.'),
 });
 
 const ConfirmModal = () => {
@@ -38,7 +38,7 @@ const ConfirmModal = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       password: '',
     },

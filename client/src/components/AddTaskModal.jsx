@@ -13,14 +13,17 @@ import AddTaskForm from './AddTaskForm';
 import { useState } from 'react';
 import { useAddTask } from '@/api/addTask';
 
-const AddTaskModal = () => {
+const AddTaskModal = ({
+  buttonVariant = 'default',
+  buttonSize = 'default',
+}) => {
   const [open, setOpen] = useState(false);
   const { mutateAsync: addTaskMutation, isPending } = useAddTask();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="nav" size="sm">
+        <Button variant={buttonVariant} size={buttonSize}>
           Tambah Task
         </Button>
       </DialogTrigger>

@@ -4,7 +4,6 @@ import StatusColumn from '@/components/StatusColumn';
 import FormModal from '@/components/FormModal';
 import ConfirmModal from '@/components/ConfirmModal';
 import ModeToggle from '@/components/ModeToggle';
-import useFormModal from '@/stores/formModalStore';
 import {
   ChartNoAxesCombined,
   ClipboardCheck,
@@ -70,7 +69,7 @@ const HomePage = () => {
   // Tanstack query untuk tasks
   const {
     data: tasks,
-    isLoading: fetchTasksLoading,
+    isLoading: isFetchTasksLoading,
     error: fetchTasksError,
     isFetching,
     dataUpdatedAt,
@@ -78,7 +77,7 @@ const HomePage = () => {
   // Tanstack query untuk pics
   const {
     data: pics,
-    isLoading: fetchPICsLoading,
+    isLoading: isFetchPICsLoading,
     error: fetchPICsError,
   } = useFetchPICs();
   const selectedPicId = useFilter((state) => state.selectedPicId);
@@ -109,20 +108,6 @@ const HomePage = () => {
         return matchedPic && matchedDate;
       });
   }, [tasks, selectedPicId, range]);
-
-  // State untuk modal
-  const setIsModalOpen = useFormModal((state) => state.setIsModalOpen);
-  const setModalTitle = useFormModal((state) => state.setModalTitle);
-  const setFormId = useFormModal((state) => state.setFormId);
-
-  const handleOpenModal = (title, id) => {
-    // Buka modalnya
-    setIsModalOpen(true);
-    // Set tipe modalnya
-    setModalTitle(title);
-    // Set id formnya
-    setFormId(id);
-  };
 
   // Error log
   if (fetchTasksError) {
@@ -178,7 +163,7 @@ const HomePage = () => {
           {/* Akhir Tanggal */}
           <AddActivityModal />
           <AddPICModal />
-          <AddTaskModal />
+          <AddTaskModal buttonVariant="nav" buttonSize="sm" />
           {/* Pindah ke Halaman Summary */}
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>
@@ -199,7 +184,7 @@ const HomePage = () => {
       {/* Main */}
       <main className="flex flex-1 flex-col p-3 gap-3">
         {isOnline &&
-          (fetchTasksLoading || fetchPICsLoading) &&
+          (isFetchTasksLoading || isFetchPICsLoading) &&
           !fetchTasksError &&
           !fetchPICsError && (
             <div className="flex flex-1 justify-center items-center">
@@ -274,7 +259,7 @@ const HomePage = () => {
             </Empty>
           )}
         {sortedTasks.length === 0 &&
-          !fetchTasksLoading &&
+          !isFetchTasksLoading &&
           !fetchTasksError &&
           isOnline && (
             <Empty>
@@ -289,11 +274,7 @@ const HomePage = () => {
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button
-                  onClick={() => handleOpenModal('Tambah Task', 'add-task')}
-                >
-                  Tambah Task
-                </Button>
+                <AddTaskModal />
               </EmptyContent>
             </Empty>
           )}

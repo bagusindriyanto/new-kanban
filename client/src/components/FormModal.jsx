@@ -4,10 +4,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import AddActivityForm from './AddActivityForm';
-import AddPICForm from './AddPICForm';
-import AddTaskForm from './AddTaskForm';
 import UpdateTaskForm from './UpdateTaskForm';
+import NewUpdateTaskForm from './NewUpdateTaskForm';
 import useFormModal from '@/stores/formModalStore';
 
 const FormModal = () => {
@@ -22,10 +20,8 @@ const FormModal = () => {
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        {formId === 'add-activity' && <AddActivityForm />}
-        {formId === 'add-pic' && <AddPICForm />}
-        {formId === 'add-task' && <AddTaskForm />}
         {formId === 'update-task' && <UpdateTaskForm />}
+        {formId === 'update-task-2' && <NewUpdateTaskForm />}
       </DialogContent>
     </Dialog>
   );

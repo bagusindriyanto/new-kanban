@@ -29,10 +29,10 @@ import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
 
-const FormSchema = z.object({
+const formSchema = z.object({
   content: z.string('Mohon pilih salah satu activity.'),
   pic_id: z.number().nullish(),
-  detail: z.string().optional(),
+  detail: z.string().trim().optional(),
 });
 
 const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
@@ -44,7 +44,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   // Fetch pics
   const { data: pics } = useFetchPICs();
   const form = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(formSchema),
   });
 
   const onSubmit = (data) => {

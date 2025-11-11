@@ -3,8 +3,8 @@ import { api } from '../lib/api';
 import { queryClient } from '@/lib/react-query';
 import { fetchActivitiesQueryKey } from './fetchActivities';
 
-export const addActivity = async (name) => {
-  const response = await api.post('/activities.php', { name });
+export const addActivity = async (data) => {
+  const response = await api.post('/activities.php', data);
   return response.data;
 };
 

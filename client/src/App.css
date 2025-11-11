@@ -120,6 +120,12 @@
   }
 }
 
+/* styles.css */
+.PopoverContent {
+  width: var(--radix-popover-trigger-width);
+  max-height: var(--radix-popover-content-available-height);
+}
+
 @theme {
   --font-sans: 'Inter', 'Arial', system-ui, sans-serif;
 

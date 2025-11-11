@@ -3,8 +3,8 @@ import { api } from '../lib/api';
 import { queryClient } from '@/lib/react-query';
 import { fetchPICsQueryKey } from './fetchPICs';
 
-export const addPIC = async (name) => {
-  const response = await api.post('/pics.php', { name });
+export const addPIC = async (data) => {
+  const response = await api.post('/pics.php', data);
   return response.data;
 };
 

@@ -18,7 +18,7 @@ const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
   });
 
   const onSubmit = (data) => {
-    toast.promise(mutateAsync(data.activity), {
+    toast.promise(mutateAsync(data), {
       loading: () => {
         return 'Sedang menambahkan activity...';
       },

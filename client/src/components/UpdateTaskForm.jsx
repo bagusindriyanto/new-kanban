@@ -7,7 +7,7 @@ import {
   Eye,
   EyeClosed,
 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
@@ -51,6 +51,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
@@ -68,7 +74,7 @@ import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 
 // Aturan form
-const FormSchema = z.object({
+const formSchema = z.object({
   content: z.string('Activity harus dipilih.'),
   pic_id: z.number().nullish(),
   status: z.enum(['todo', 'on progress', 'done', 'archived'], {
@@ -82,12 +88,12 @@ const FormSchema = z.object({
     .boolean()
     .optional()
     .transform((val) => val ?? false),
-  detail: z.string().optional(),
+  detail: z.string().trim().optional(),
   timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
   timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
   timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
   timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
-  password: z.string().nonempty({ message: 'Mohon isi password.' }),
+  password: z.string().min(1, 'Mohon isi password.'),
 });
 
 const UpdateTaskForm = () => {
@@ -113,7 +119,7 @@ const UpdateTaskForm = () => {
 
   // Set nilai awal form
   const form = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       content: task.content ?? undefined,
       pic_id: task.pic_id ?? undefined,
@@ -222,6 +228,81 @@ const UpdateTaskForm = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6"
         >
+          {/* Activity */}
+          <Controller
+            name="content"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="update-task-content" className="gap-0.5">
+                  Activity<span className="text-red-500">*</span>
+                </FieldLabel>
+                <Popover open={activityOpen} onOpenChange={setActivityOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      id="update-task-content"
+                      aria-invalid={fieldState.invalid}
+                      className={cn(
+                        'w-full justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      <span className="truncate">
+                        {field.value
+                          ? contents?.find(
+                              (content) => content.name === field.value
+                            )?.name
+                          : 'Pilih activity'}
+                      </span>
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="PopoverContent p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Cari activity..."
+                        className="h-9"
+                      />
+                      <CommandList
+                        onWheel={(e) => {
+                          e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                        }}
+                      >
+                        <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
+                        <CommandGroup>
+                          {contents?.map((content) => (
+                            <CommandItem
+                              value={content.name}
+                              key={content.id}
+                              onSelect={() => {
+                                form.setValue('content', content.name);
+                                setActivityOpen(false);
+                              }}
+                            >
+                              {content.name}
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  content.name === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <div className="grid grid-cols-12 gap-4">
             {/* Activity */}
             <div className="col-span-6">

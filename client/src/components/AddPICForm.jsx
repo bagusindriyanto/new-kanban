@@ -5,20 +5,20 @@ import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 
-const FormSchema = z.object({
+const formSchema = z.object({
   pic: z.string().trim().min(1, 'Mohon tuliskan nama PIC.'),
 });
 
 const AddPICForm = ({ mutateAsync, onOpenChange }) => {
   const form = useForm({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       pic: '',
     },
   });
 
   const onSubmit = (data) => {
-    toast.promise(mutateAsync(data.pic), {
+    toast.promise(mutateAsync(data), {
       loading: () => {
         return 'Sedang menambahkan PIC...';
       },

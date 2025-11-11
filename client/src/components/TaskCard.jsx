@@ -323,6 +323,15 @@ const TaskCard = ({ task }) => {
             <DropdownMenuContent>
               <DropdownMenuItem
                 className="cursor-pointer"
+                onClick={() =>
+                  handleFormModal('Edit Task Baru', 'update-task-2')
+                }
+              >
+                <PencilSquareIcon />
+                Edit 2
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer"
                 onClick={() => handleFormModal('Edit Task', 'update-task')}
               >
                 <PencilSquareIcon />
