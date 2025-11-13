@@ -9,7 +9,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import useConfirmModal from '@/stores/confirmModalStore';
+import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -29,11 +29,11 @@ const formSchema = z.object({
   password: z.string().min(1, 'Mohon isi password.'),
 });
 
-const ConfirmModal = () => {
+const DeleteTaskModal = () => {
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
   const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
-  const isModalOpen = useConfirmModal((state) => state.isModalOpen);
-  const setIsModalOpen = useConfirmModal((state) => state.setIsModalOpen);
+  const isModalOpen = useDeleteTaskModal((state) => state.isModalOpen);
+  const setIsModalOpen = useDeleteTaskModal((state) => state.setIsModalOpen);
   // Tampilkan Password/Tidak
   const [showPassword, setShowPassword] = useState(false);
 
@@ -146,4 +146,4 @@ const ConfirmModal = () => {
   );
 };
 
-export default ConfirmModal;
+export default DeleteTaskModal;

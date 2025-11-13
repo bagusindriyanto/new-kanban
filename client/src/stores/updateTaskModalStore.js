@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
-const useConfirmModal = create((set) => ({
+const useUpdateTaskModal = create((set) => ({
   isModalOpen: false,
   setIsModalOpen: (bool) => set({ isModalOpen: bool }),
 }));
 
-export default useConfirmModal;
+export default useUpdateTaskModal;

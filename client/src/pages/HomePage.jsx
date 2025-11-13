@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import StatusColumn from '@/components/StatusColumn';
-import FormModal from '@/components/FormModal';
-import ConfirmModal from '@/components/ConfirmModal';
+import UpdateTaskModal from '@/components/UpdateTaskModal';
+import DeleteTaskModal from '@/components/DeleteTaskModal';
 import ModeToggle from '@/components/ModeToggle';
 import {
   ChartNoAxesCombined,
@@ -292,10 +292,10 @@ const HomePage = () => {
       </main>
       {/* Footer */}
       <Footer />
-      {/* Form Modal */}
-      <FormModal />
-      {/* Confirm Modal */}
-      <ConfirmModal />
+      {/* Modal untuk update task */}
+      <UpdateTaskModal />
+      {/* Modal untuk hapus task */}
+      <DeleteTaskModal />
       {/* Toast */}
       <Toaster position="top-center" richColors />
     </div>

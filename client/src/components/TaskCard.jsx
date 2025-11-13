@@ -15,8 +15,8 @@ import {
   EllipsisHorizontalIcon,
 } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import useFormModal from '@/stores/formModalStore';
-import useConfirmModal from '@/stores/confirmModalStore';
+import useUpdateTaskModal from '@/stores/updateTaskModalStore';
+import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column';
@@ -49,12 +49,12 @@ const TaskCard = ({ task }) => {
   const picName = pics?.find((p) => p.id === pic_id)?.name;
 
   // State untuk form modal
-  const setIsFormModalOpen = useFormModal((state) => state.setIsModalOpen);
-  const setFormModalTitle = useFormModal((state) => state.setModalTitle);
-  const setFormId = useFormModal((state) => state.setFormId);
+  const setIsUpdateTaskModalOpen = useUpdateTaskModal(
+    (state) => state.setIsModalOpen
+  );
 
   // State untuk confirm modal
-  const setIsConfirmModalOpen = useConfirmModal(
+  const setIsDeleteTaskModalOpen = useDeleteTaskModal(
     (state) => state.setIsModalOpen
   );
 
@@ -76,21 +76,17 @@ const TaskCard = ({ task }) => {
   });
 
   // Fungsi buka form modal
-  const handleFormModal = (title, formId) => {
+  const handleUpdateTaskModal = () => {
     // Buka modalnya
-    setIsFormModalOpen(true);
+    setIsUpdateTaskModalOpen(true);
     // Set id task yang dipilih
     setSelectedTaskId(id);
-    // Set tipe modalnya
-    setFormModalTitle(title);
-    // Set id formnya
-    setFormId(formId);
   };
 
   // Fungsi buka confirm modal
-  const handleConfirmModal = () => {
+  const handleDeleteTaskModal = () => {
     // Buka modalnya
-    setIsConfirmModalOpen(true);
+    setIsDeleteTaskModalOpen(true);
     // Set id task yang dipilih
     setSelectedTaskId(id);
   };
@@ -323,23 +319,14 @@ const TaskCard = ({ task }) => {
             <DropdownMenuContent>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() =>
-                  handleFormModal('Edit Task Baru', 'update-task-2')
-                }
-              >
-                <PencilSquareIcon />
-                Edit 2
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => handleFormModal('Edit Task', 'update-task')}
+                onClick={handleUpdateTaskModal}
               >
                 <PencilSquareIcon />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={handleConfirmModal}
+                onClick={handleDeleteTaskModal}
                 variant="destructive"
               >
                 <TrashIcon />
