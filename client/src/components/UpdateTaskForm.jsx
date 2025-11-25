@@ -66,27 +66,44 @@ import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 
 // Aturan form
-const formSchema = z.object({
-  content: z.string('Activity harus dipilih.'),
-  pic_id: z.number().nullish(),
-  status: z.enum(['todo', 'on progress', 'done', 'archived'], {
-    error: 'Status harus dipilih.',
-  }),
-  minute_pause: z.coerce
-    .number()
-    .min(0, 'Durasi pause harus 0 atau lebih.')
-    .default(0),
-  pause_time: z
-    .boolean()
-    .optional()
-    .transform((val) => val ?? false),
-  detail: z.string().trim().optional(),
-  timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
-  timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
-  timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
-  timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
-  password: z.string().min(1, 'Mohon isi password.'),
-});
+const formSchema = z
+  .object({
+    content: z.string('Activity harus dipilih.'),
+    pic_id: z.number().nullish(),
+    status: z.enum(['todo', 'on progress', 'done', 'archived'], {
+      error: 'Status harus dipilih.',
+    }),
+    minute_pause: z.coerce
+      .number()
+      .min(0, 'Durasi pause harus 0 atau lebih.')
+      .default(0),
+    pause_time: z.boolean(),
+    detail: z.string().trim().optional(),
+    timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
+    timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
+    timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
+    timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
+    password: z.string().min(1, 'Mohon isi password.'),
+  })
+  .transform((data) => ({
+    ...data,
+    minute_activity:
+      data.timestamp_progress && data.timestamp_done
+        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
+          data.minute_pause
+        : 0,
+    pause_time: data.pause_time ? new Date().toISOString() : null,
+    timestamp_todo: data.timestamp_todo.toISOString(),
+    timestamp_progress: data.timestamp_progress
+      ? data.timestamp_progress.toISOString()
+      : null,
+    timestamp_done: data.timestamp_done
+      ? data.timestamp_done.toISOString()
+      : null,
+    timestamp_archived: data.timestamp_archived
+      ? data.timestamp_archived.toISOString()
+      : null,
+  }));
 
 const UpdateTaskForm = () => {
   // State Buka/Tutup Popover
@@ -158,53 +175,26 @@ const UpdateTaskForm = () => {
   const onSubmit = (data) => {
     // Cek password
     if (data.password === 'Semarang@2025') {
-      // Hitung minute_activity
-      const minute_activity =
-        data.timestamp_progress && data.timestamp_done
-          ? Math.floor(
-              (data.timestamp_done - data.timestamp_progress) / 60000
-            ) - data.minute_pause
-          : 0;
-      // Ubah timestamp ke ISOString
-      const taskData = {
-        ...data,
-        minute_activity,
-        pause_time: data.pause_time ? new Date().toISOString() : null,
-        timestamp_todo: data.timestamp_todo.toISOString(),
-        timestamp_progress: data.timestamp_progress
-          ? data.timestamp_progress.toISOString()
-          : null,
-        timestamp_done: data.timestamp_done
-          ? data.timestamp_done.toISOString()
-          : null,
-        timestamp_archived: data.timestamp_archived
-          ? data.timestamp_archived.toISOString()
-          : null,
-      };
-
-      toast.promise(
-        updateTaskMutate({ taskId: selectedTaskId, data: taskData }),
-        {
-          loading: () => {
-            return 'Sedang memperbarui task...';
-          },
-          success: () => {
-            form.reset();
-            setIsModalOpen(false);
-            return 'Task berhasil diperbarui.';
-          },
-          error: (err) => {
-            // err adalah error yang dilempar dari store
-            return {
-              message:
-                err.response?.data?.message ||
-                err.message ||
-                'Gagal memperbarui task.',
-              description: err.response?.data?.error_detail || null,
-            };
-          },
-        }
-      );
+      toast.promise(updateTaskMutate({ taskId: selectedTaskId, data }), {
+        loading: () => {
+          return 'Sedang memperbarui task...';
+        },
+        success: () => {
+          form.reset();
+          setIsModalOpen(false);
+          return 'Task berhasil diperbarui.';
+        },
+        error: (err) => {
+          // err adalah error yang dilempar dari store
+          return {
+            message:
+              err.response?.data?.message ||
+              err.message ||
+              'Gagal memperbarui task.',
+            description: err.response?.data?.error_detail || null,
+          };
+        },
+      });
     } else {
       toast.error('Password salah!');
       form.setValue('password', '');
