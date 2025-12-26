@@ -93,11 +93,11 @@ const HomePage = () => {
           selectedPicId === 'all' || task.pic_id === selectedPicId;
         // 2. Filter berdasarkan tanggal
         let matchedDate;
-        if (task.status === 'todo') {
+        if (task.status === 'todo' || task.status === 'on progress') {
           matchedDate = true;
         } else {
           const taskDate =
-            startOfDay(parseISO(task.timestamp_progress)) ??
+            startOfDay(parseISO(task.timestamp_done)) ??
             startOfDay(new Date(null));
           const fromDate = range.from;
           const toDate = range.to;
