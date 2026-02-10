@@ -93,6 +93,7 @@ function handlePost($pdo, $input)
     $pic_id = $input["pic_id"] ?? null;
     $detail = $input["detail"] ?? "";
     $status = $input["status"] ?? "todo";
+    $scheduled_at = $input["scheduled_at"] ?? null;
     $timestamp_todo = $input["timestamp_todo"];
     $timestamp_progress = null;
     $timestamp_done = null;
@@ -102,13 +103,14 @@ function handlePost($pdo, $input)
     $pause_time = null;
 
     $sql =
-      "INSERT INTO tasks (content, pic_id, detail, status, timestamp_todo, timestamp_progress, timestamp_done, timestamp_archived, minute_pause, minute_activity, pause_time) VALUES (:content, :pic_id, :detail, :status, :timestamp_todo, :timestamp_progress, :timestamp_done, :timestamp_archived, :minute_pause, :minute_activity, :pause_time)";
+      "INSERT INTO tasks (content, pic_id, detail, status, scheduled_at, timestamp_todo, timestamp_progress, timestamp_done, timestamp_archived, minute_pause, minute_activity, pause_time) VALUES (:content, :pic_id, :detail, :status, :scheduled_at, :timestamp_todo, :timestamp_progress, :timestamp_done, :timestamp_archived, :minute_pause, :minute_activity, :pause_time)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
       ":content" => $content,
       ":pic_id" => $pic_id,
       ":detail" => $detail,
       ":status" => $status,
+      ":scheduled_at" => $scheduled_at,
       ":timestamp_todo" => $timestamp_todo,
       ":timestamp_progress" => $timestamp_progress,
       ":timestamp_done" => $timestamp_done,
@@ -125,6 +127,7 @@ function handlePost($pdo, $input)
         "pic_id" => $pic_id,
         "detail" => $detail,
         "status" => $status,
+        "scheduled_at" => $scheduled_at,
         "timestamp_todo" => $timestamp_todo,
         "timestamp_progress" => $timestamp_progress,
         "timestamp_done" => $timestamp_done,
@@ -162,6 +165,7 @@ function handlePatch($pdo, $input)
     $pic_id = $input["pic_id"] ?? null;
     $detail = $input["detail"] ?? "";
     $status = $input["status"] ?? null;
+    $scheduled_at = $input["scheduled_at"] ?? null;
     $timestamp_todo = $input["timestamp_todo"] ?? null;
     $timestamp_progress = $input["timestamp_progress"] ?? null;
     $timestamp_done = $input["timestamp_done"] ?? null;
@@ -176,6 +180,7 @@ function handlePatch($pdo, $input)
       "pic_id = ?",
       "detail = ?",
       "status = ?",
+      "scheduled_at = ?",
       "timestamp_todo = ?",
       "timestamp_progress = ?",
       "timestamp_done = ?",
@@ -190,6 +195,7 @@ function handlePatch($pdo, $input)
       $pic_id,
       $detail,
       $status,
+      $scheduled_at,
       $timestamp_todo,
       $timestamp_progress,
       $timestamp_done,
@@ -212,6 +218,7 @@ function handlePatch($pdo, $input)
 
       // daftar kolom datetime yang mau diubah
       $timestampFields = [
+        "scheduled_at",
         "timestamp_todo",
         "timestamp_progress",
         "timestamp_done",
