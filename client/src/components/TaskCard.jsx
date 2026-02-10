@@ -42,6 +42,7 @@ const TaskCard = ({ task }) => {
     minute_activity,
     pause_time,
     optimistic = false,
+    scheduled_at,
   } = task;
 
   // State untuk PIC
@@ -50,12 +51,12 @@ const TaskCard = ({ task }) => {
 
   // State untuk form modal
   const setIsUpdateTaskModalOpen = useUpdateTaskModal(
-    (state) => state.setIsModalOpen
+    (state) => state.setIsModalOpen,
   );
 
   // State untuk confirm modal
   const setIsDeleteTaskModalOpen = useDeleteTaskModal(
-    (state) => state.setIsModalOpen
+    (state) => state.setIsModalOpen,
   );
 
   // State untuk pilih task saat ini
@@ -69,7 +70,7 @@ const TaskCard = ({ task }) => {
             'Gagal memperbarui task.',
           {
             description: err.response?.data?.error_detail || null,
-          }
+          },
         );
       },
     },
@@ -153,6 +154,7 @@ const TaskCard = ({ task }) => {
       minute_activity: mnt_activity,
       minute_pause: mnt_pause,
       pause_time: pause,
+      scheduled_at,
     };
     updateTaskMutate({ taskId: id, data });
   };
@@ -192,7 +194,7 @@ const TaskCard = ({ task }) => {
       // Play: hitung durasi pause berjalan, tambahkan ke minute_pause, reset pause_time di DB
       const pauseEnd = Date.now();
       const pauseDuration = Math.floor(
-        (pauseEnd - pauseStartRef.current) / 60000
+        (pauseEnd - pauseStartRef.current) / 60000,
       );
       onPauseToggle(pauseDuration, true);
     } else {
@@ -206,7 +208,7 @@ const TaskCard = ({ task }) => {
   const onPauseToggle = (
     pauseMinutes,
     resetPauseTime = false,
-    newPauseTime = null
+    newPauseTime = null,
   ) => {
     if (!task) return;
     let updatedMinutePause = minute_pause || 0;
@@ -233,6 +235,7 @@ const TaskCard = ({ task }) => {
       minute_activity,
       minute_pause: updatedMinutePause,
       pause_time: updatedPauseTime,
+      scheduled_at,
     };
     updateTaskMutate({ taskId: id, data });
     setIsPaused(!resetPauseTime);
@@ -339,6 +342,11 @@ const TaskCard = ({ task }) => {
           <p className="font-medium text-sm text-white">
             Activity Minutes:{' '}
             <span className="font-normal">{minute_activity || 0}</span>
+          </p>
+        )}
+        {status === 'todo' && scheduled_at && (
+          <p className="font-medium text-xs text-white">
+            Scheduled: {formatTimestamp(scheduled_at)}
           </p>
         )}
       </div>

@@ -48,6 +48,7 @@ function handleGet($pdo)
         "timestamp_archived",
         "created_at",
         "pause_time",
+        "scheduled_at",
         "updated_at",
       ];
 

@@ -114,14 +114,14 @@ const HomePage = () => {
     console.log('Error Fetch Tasks:');
     console.error(
       fetchTasksError?.response?.data?.error_detail ||
-        'Gagal terhubung ke server.'
+        'Gagal terhubung ke server.',
     );
   }
   if (fetchPICsError) {
     console.log('Error Fetch PIC:');
     console.error(
       fetchPICsError?.response?.data?.error_detail ||
-        'Gagal terhubung ke server.'
+        'Gagal terhubung ke server.',
     );
   }
 
