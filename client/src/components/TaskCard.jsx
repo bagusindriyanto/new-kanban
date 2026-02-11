@@ -23,6 +23,7 @@ import { columns } from '@/config/column';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
+import { CalendarClock } from 'lucide-react';
 
 const TaskCard = ({ task }) => {
   // Urutan Status
@@ -345,9 +346,12 @@ const TaskCard = ({ task }) => {
           </p>
         )}
         {status === 'todo' && scheduled_at && (
-          <p className="font-medium text-xs text-white">
-            Scheduled: {formatTimestamp(scheduled_at)}
-          </p>
+          <div className="flex items-center gap-1 px-1.5 py-1 rounded-full bg-todo-600">
+            <CalendarClock className="size-4" />
+            <span className="font-medium text-[10px] text-white">
+              {formatTimestamp(scheduled_at)}
+            </span>
+          </div>
         )}
       </div>
     </div>

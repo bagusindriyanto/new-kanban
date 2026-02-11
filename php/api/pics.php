@@ -43,18 +43,18 @@ function handleGet($pdo)
 
 function handlePost($pdo, $input)
 {
-  if (!isset($input["name"])) {
+  if (!isset($input["pic"])) {
     http_response_code(400);
-    echo json_encode(["message" => "Name diperlukan."]);
+    echo json_encode(["message" => "Nama PIC diperlukan."]);
     exit();
   }
   try {
     $sql = "INSERT INTO pics (name) VALUES (:name)";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([":name" => $input["name"]]);
+    $stmt->execute([":name" => $input["pic"]]);
     http_response_code(201);
     echo json_encode(
-      ["id" => $pdo->lastInsertId(), "name" => $input["name"]],
+      ["id" => $pdo->lastInsertId(), "pic" => $input["pic"]],
       JSON_NUMERIC_CHECK,
     );
   } catch (PDOException $e) {
