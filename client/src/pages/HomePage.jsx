@@ -20,6 +20,7 @@ import { useIsOnline } from '@/hooks/useIsOnline';
 import AddTaskModal from '@/components/AddTaskModal';
 import useDeadlineChecker from '@/hooks/useDeadlineChecker';
 import useNotification from '@/stores/notificationStore';
+import UpcomingTasksPanel from '@/components/UpcomingTasksPanel';
 import { useEffect } from 'react';
 
 const HomePage = () => {
@@ -89,6 +90,8 @@ const HomePage = () => {
           isFetching={isFetching}
           dataUpdatedAt={dataUpdatedAt}
         />
+        {/* Panel Notifikasi Task akan dimulai */}
+        <UpcomingTasksPanel tasks={sortedTasks} currentTime={currentTime} />
       </header>
       {/* Main */}
       <main className="flex flex-1 flex-col p-3 gap-3">

@@ -12,7 +12,7 @@ const useDeadlineChecker = (tasks) => {
           return;
 
         const scheduledTime = new Date(task.scheduled_at);
-        const diffInMinutes = Math.floor((scheduledTime - currentTime) / 60000);
+        const diffInMinutes = Math.ceil((scheduledTime - currentTime) / 60000);
 
         if (
           diffInMinutes > 0 &&
