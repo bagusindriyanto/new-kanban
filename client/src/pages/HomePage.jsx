@@ -85,13 +85,13 @@ const HomePage = () => {
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <HeaderControls
           pics={pics}
+          tasks={sortedTasks}
           selectedPicId={selectedPicId}
           setSelectedPicId={setSelectedPicId}
           isFetching={isFetching}
           dataUpdatedAt={dataUpdatedAt}
+          currentTime={currentTime}
         />
-        {/* Panel Notifikasi Task akan dimulai */}
-        <UpcomingTasksPanel tasks={sortedTasks} currentTime={currentTime} />
       </header>
       {/* Main */}
       <main className="flex flex-1 flex-col p-3 gap-3">
@@ -143,7 +143,7 @@ const HomePage = () => {
       {/* Modal untuk hapus task */}
       <DeleteTaskModal />
       {/* Toast */}
-      <Toaster richColors />
+      <Toaster position="top-center" richColors />
     </div>
   );
 };

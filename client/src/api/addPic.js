@@ -18,7 +18,7 @@ export const useAddPIC = (params = {}) => {
         data,
         variables,
         onMutateResult,
-        context
+        context,
       );
     },
   });

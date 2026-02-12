@@ -413,19 +413,19 @@ const UpdateTaskForm = () => {
                       <SelectGroup>
                         <SelectLabel>Status</SelectLabel>
                         <SelectItem value="todo">
-                          <span className="size-3 rounded-full bg-todo-500"></span>
+                          <span className="size-2 rounded-full bg-todo-500"></span>
                           To Do
                         </SelectItem>
                         <SelectItem value="on progress">
-                          <span className="size-3 rounded-full bg-progress-500"></span>
+                          <span className="size-2 rounded-full bg-progress-500"></span>
                           On Progress
                         </SelectItem>
                         <SelectItem value="done">
-                          <span className="size-3 rounded-full bg-done-500"></span>
+                          <span className="size-2 rounded-full bg-done-500"></span>
                           Done
                         </SelectItem>
                         <SelectItem value="archived">
-                          <span className="size-3 rounded-full bg-archived-500"></span>
+                          <span className="size-2 rounded-full bg-archived-500"></span>
                           Archived
                         </SelectItem>
                       </SelectGroup>

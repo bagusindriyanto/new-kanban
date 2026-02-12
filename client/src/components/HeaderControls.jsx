@@ -21,13 +21,16 @@ import ModeToggle from '@/components/ModeToggle';
 import AddActivityModal from '@/components/AddActivityModal';
 import AddPICModal from '@/components/AddPICModal';
 import AddTaskModal from '@/components/AddTaskModal';
+import UpcomingTasksPanel from './UpcomingTasksPanel';
 
 const HeaderControls = ({
   pics = [],
+  tasks = [],
   selectedPicId,
   setSelectedPicId,
   isFetching,
   dataUpdatedAt,
+  currentTime,
 }) => {
   return (
     <div className="flex gap-2 items-center">
@@ -50,6 +53,7 @@ const HeaderControls = ({
         </SelectContent>
       </Select>
       <FilterCalendar />
+      <UpcomingTasksPanel tasks={tasks} currentTime={currentTime} />
       <AddActivityModal />
       <AddPICModal />
       <AddTaskModal buttonVariant="nav" buttonSize="sm" />

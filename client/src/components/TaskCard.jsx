@@ -368,7 +368,7 @@ const TaskCard = ({ task, currentTime }) => {
                 'flex items-center gap-1 px-1.5 py-1 rounded-full bg-todo-600 relative',
                 {
                   'animate-pulse': isUrgent,
-                  'opacity-30': diffInMinutes <= 0,
+                  'opacity-40': diffInMinutes <= 0,
                 },
               )}
             >

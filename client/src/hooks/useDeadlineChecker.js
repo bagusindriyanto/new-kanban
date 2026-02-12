@@ -20,6 +20,7 @@ const useDeadlineChecker = (tasks) => {
           !notifiedTaskIds.has(task.id)
         ) {
           toast.info(task.content, {
+            position: 'bottom-center',
             description: `Task akan dimulai dalam ${diffInMinutes} menit.`,
             duration: 10000,
             closeButton: true,
