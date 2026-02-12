@@ -2,7 +2,7 @@ import TaskCard from './TaskCard';
 import { Virtuoso } from 'react-virtuoso';
 import { cn } from '@/lib/utils';
 
-const StatusColumn = ({ title, tasks }) => {
+const StatusColumn = ({ title, tasks, currentTime }) => {
   return (
     <div className="flex flex-1 flex-col rounded-lg overflow-clip">
       <h2
@@ -14,7 +14,7 @@ const StatusColumn = ({ title, tasks }) => {
             'text-done-500': title === 'DONE',
             'text-archived-500': title === 'ARCHIVED',
             'dark:text-archived-400': title === 'ARCHIVED',
-          }
+          },
         )}
       >
         {title}
@@ -27,7 +27,7 @@ const StatusColumn = ({ title, tasks }) => {
         data={tasks}
         itemContent={(_, task) => (
           <div className="px-3 pt-3">
-            <TaskCard task={task} />
+            <TaskCard task={task} currentTime={currentTime} />
           </div>
         )}
       />

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { startOfDay, parseISO } from 'date-fns';
 
-export default function useFilteredTasks(tasks, selectedPicId, range) {
+const useFilteredTasks = (tasks, selectedPicId, range) => {
   return useMemo(() => {
     if (!tasks) return [];
     return [...tasks]
@@ -31,4 +31,6 @@ export default function useFilteredTasks(tasks, selectedPicId, range) {
         return matchedPic && matchedDate;
       });
   }, [tasks, selectedPicId, range]);
-}
+};
+
+export default useFilteredTasks;

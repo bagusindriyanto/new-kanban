@@ -1,4 +1,3 @@
-import React from 'react';
 import { ClipboardCheck } from 'lucide-react';
 import {
   Empty,

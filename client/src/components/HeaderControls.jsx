@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router';
 import { ChartNoAxesCombined } from 'lucide-react';
 import {

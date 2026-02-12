@@ -25,7 +25,7 @@ import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 import { CalendarClock } from 'lucide-react';
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, currentTime }) => {
   // Urutan Status
   const statusOrder = columns.map((column) => column.id);
   // Destructure isi props
@@ -242,6 +242,16 @@ const TaskCard = ({ task }) => {
     setIsPaused(!resetPauseTime);
   };
 
+  // Hitung waktu tersisa jika ada scheduled_at
+  const diffInMinutes = scheduled_at
+    ? (new Date(task.scheduled_at) - currentTime) / 60000
+    : 0;
+  const isUrgent =
+    status === 'todo' &&
+    diffInMinutes > 0 &&
+    diffInMinutes <= 15 &&
+    !optimistic;
+
   return (
     <div
       className={cn('grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg', {
@@ -346,11 +356,27 @@ const TaskCard = ({ task }) => {
           </p>
         )}
         {status === 'todo' && scheduled_at && (
-          <div className="flex items-center gap-1 px-1.5 py-1 rounded-full bg-todo-600">
-            <CalendarClock className="size-4" />
-            <span className="font-medium text-[10px] text-white">
-              {formatTimestamp(scheduled_at)}
-            </span>
+          <div className="relative">
+            {isUrgent && (
+              <span className="flex h-2 w-2 absolute -top-0.5 -right-0.5 z-10">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+              </span>
+            )}
+            <div
+              className={cn(
+                'flex items-center gap-1 px-1.5 py-1 rounded-full bg-todo-600 relative',
+                {
+                  'animate-pulse': isUrgent,
+                  'opacity-30': diffInMinutes <= 0,
+                },
+              )}
+            >
+              <CalendarClock className="size-4 text-white" />
+              <span className="font-medium text-[10px] text-white">
+                {formatTimestamp(scheduled_at)}
+              </span>
+            </div>
           </div>
         )}
       </div>

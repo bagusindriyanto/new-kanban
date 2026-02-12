@@ -83,7 +83,18 @@ const formSchema = z
     timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
     timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
     timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
+    is_scheduled: z.boolean(),
+    scheduled_at: z.date().nullish(),
     password: z.string().min(1, 'Mohon isi password.'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.is_scheduled && !data.scheduled_at) {
+      ctx.addIssue({
+        code: 'no_scheduled_at',
+        message: 'Mohon isi tanggal dan waktu.',
+        path: ['scheduled_at'],
+      });
+    }
   })
   .transform((data) => ({
     ...data,
@@ -103,6 +114,7 @@ const formSchema = z
     timestamp_archived: data.timestamp_archived
       ? data.timestamp_archived.toISOString()
       : null,
+    scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
   }));
 
 const UpdateTaskForm = () => {
@@ -148,12 +160,15 @@ const UpdateTaskForm = () => {
       timestamp_archived: task.timestamp_archived
         ? new Date(task.timestamp_archived)
         : undefined,
+      is_scheduled: !!task.scheduled_at,
+      scheduled_at: task.scheduled_at ? new Date(task.scheduled_at) : undefined,
       password: '',
     },
   });
 
   // Cek input status untuk disable timestamp
   const statusInput = form.watch('status');
+  const isScheduled = form.watch('is_scheduled');
 
   // Reset value timestamp
   switch (statusInput) {
@@ -225,13 +240,13 @@ const UpdateTaskForm = () => {
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           'w-full justify-between',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                       >
                         <span className="truncate">
                           {field.value
                             ? contents?.find(
-                                (content) => content.name === field.value
+                                (content) => content.name === field.value,
                               )?.name
                             : 'Pilih activity'}
                         </span>
@@ -266,7 +281,7 @@ const UpdateTaskForm = () => {
                                     'ml-auto',
                                     content.name === field.value
                                       ? 'opacity-100'
-                                      : 'opacity-0'
+                                      : 'opacity-0',
                                   )}
                                 />
                               </CommandItem>
@@ -300,7 +315,7 @@ const UpdateTaskForm = () => {
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           'w-full justify-between',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                       >
                         <span className="truncate">
@@ -337,7 +352,7 @@ const UpdateTaskForm = () => {
                                   'ml-auto',
                                   field.value === null
                                     ? 'opacity-100'
-                                    : 'opacity-0'
+                                    : 'opacity-0',
                                 )}
                               />
                             </CommandItem>
@@ -356,7 +371,7 @@ const UpdateTaskForm = () => {
                                     'ml-auto',
                                     pic.id === field.value
                                       ? 'opacity-100'
-                                      : 'opacity-0'
+                                      : 'opacity-0',
                                   )}
                                 />
                               </CommandItem>
@@ -398,19 +413,19 @@ const UpdateTaskForm = () => {
                       <SelectGroup>
                         <SelectLabel>Status</SelectLabel>
                         <SelectItem value="todo">
-                          <span className="w-1 h-3 bg-todo-500"></span>
+                          <span className="size-3 rounded-full bg-todo-500"></span>
                           To Do
                         </SelectItem>
                         <SelectItem value="on progress">
-                          <span className="w-1 h-3 bg-progress-500"></span>
+                          <span className="size-3 rounded-full bg-progress-500"></span>
                           On Progress
                         </SelectItem>
                         <SelectItem value="done">
-                          <span className="w-1 h-3 bg-done-500"></span>
+                          <span className="size-3 rounded-full bg-done-500"></span>
                           Done
                         </SelectItem>
                         <SelectItem value="archived">
-                          <span className="w-1 h-3 bg-archived-500"></span>
+                          <span className="size-3 rounded-full bg-archived-500"></span>
                           Archived
                         </SelectItem>
                       </SelectGroup>
@@ -505,7 +520,7 @@ const UpdateTaskForm = () => {
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                       >
                         <CalendarIcon className="mr-2 size-4" />
@@ -579,7 +594,7 @@ const UpdateTaskForm = () => {
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                         disabled={statusInput === 'todo'}
                       >
@@ -662,7 +677,7 @@ const UpdateTaskForm = () => {
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                         disabled={
                           statusInput === 'todo' ||
@@ -746,7 +761,7 @@ const UpdateTaskForm = () => {
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                         disabled={statusInput !== 'archived'}
                       >
@@ -785,6 +800,114 @@ const UpdateTaskForm = () => {
                           className="text-red-500 hover:text-red-600"
                           onClick={() =>
                             form.setValue('timestamp_archived', undefined)
+                          }
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
+          {/* Appointment Switch */}
+          <div className="col-span-3 flex items-center">
+            <Controller
+              name="is_scheduled"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                >
+                  <Switch
+                    id="update-task-is-scheduled"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="update-task-is-scheduled">
+                    Jadwalkan Task?
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
+          {/* Appointment Date */}
+          <div className="col-span-3">
+            <Controller
+              name="scheduled_at"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="update-task-scheduled-at"
+                    className="gap-0.5"
+                  >
+                    Tanggal & Waktu Jadwal
+                    <span
+                      className={cn('text-red-500', {
+                        hidden: !isScheduled,
+                      })}
+                    >
+                      *
+                    </span>
+                  </FieldLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        id="update-task-scheduled-at"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={!isScheduled}
+                      >
+                        <CalendarIcon className="mr-2 size-4" />
+                        {field.value ? (
+                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                            locale: id,
+                          })
+                        ) : (
+                          <span>Pilih tanggal dan waktu</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent side="right" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={{
+                          before: new Date('2012-01-01'),
+                          after: new Date(),
+                        }}
+                        initialFocus
+                      />
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
+                        />
+                        <Button
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() =>
+                            form.setValue('scheduled_at', undefined)
                           }
                         >
                           <Trash2Icon />

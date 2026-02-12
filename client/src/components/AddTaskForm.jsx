@@ -284,7 +284,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                   aria-invalid={fieldState.invalid}
                 />
                 <FieldLabel htmlFor="add-task-is-scheduled">
-                  Appointment
+                  Jadwalkan Task?
                 </FieldLabel>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -303,7 +303,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                     htmlFor="add-task-scheduled-at"
                     className="gap-0.5"
                   >
-                    Jadwal Appointment
+                    Tanggal & Waktu Jadwal
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Popover>

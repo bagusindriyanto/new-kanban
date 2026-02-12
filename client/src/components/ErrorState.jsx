@@ -1,4 +1,3 @@
-import React from 'react';
 import { RotateCw, WifiOff, ServerOff } from 'lucide-react';
 import {
   Item,
@@ -38,11 +37,17 @@ export const ErrorBanner = ({ isOnline, fetchTasksError, fetchPICsError }) => {
           {!isOnline ? 'Kamu Sedang Offline' : 'Terjadi Kesalahan'}
         </ItemTitle>
         <ItemDescription className="text-destructive/90">
-          {!isOnline ? 'Mohon periksa koneksi internetmu.' : getMessage(fetchTasksError, fetchPICsError)}
+          {!isOnline
+            ? 'Mohon periksa koneksi internetmu.'
+            : getMessage(fetchTasksError, fetchPICsError)}
         </ItemDescription>
       </ItemContent>
       <ItemActions>
-        <Button onClick={() => window.location.reload(false)} size="sm" variant="outline">
+        <Button
+          onClick={() => window.location.reload(false)}
+          size="sm"
+          variant="outline"
+        >
           <RotateCw />
           Refresh Halaman
         </Button>
@@ -51,7 +56,12 @@ export const ErrorBanner = ({ isOnline, fetchTasksError, fetchPICsError }) => {
   );
 };
 
-export const ErrorFull = ({ isOnline, fetchTasksError, fetchPICsError, action }) => {
+export const ErrorFull = ({
+  isOnline,
+  fetchTasksError,
+  fetchPICsError,
+  action,
+}) => {
   return (
     <Empty>
       <EmptyHeader>
@@ -66,12 +76,17 @@ export const ErrorFull = ({ isOnline, fetchTasksError, fetchPICsError, action })
           {!isOnline ? 'Kamu Sedang Offline' : 'Terjadi Kesalahan'}
         </EmptyTitle>
         <EmptyDescription className="text-destructive/90">
-          {!isOnline ? 'Mohon periksa koneksi internetmu.' : getMessage(fetchTasksError, fetchPICsError)}
+          {!isOnline
+            ? 'Mohon periksa koneksi internetmu.'
+            : getMessage(fetchTasksError, fetchPICsError)}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         {action || (
-          <Button onClick={() => window.location.reload(false)} variant="outline">
+          <Button
+            onClick={() => window.location.reload(false)}
+            variant="outline"
+          >
             <RotateCw />
             Refresh Halaman
           </Button>

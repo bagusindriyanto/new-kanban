@@ -1,4 +1,3 @@
-import React from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import StatusColumn from '@/components/StatusColumn';
 import UpdateTaskModal from '@/components/UpdateTaskModal';
@@ -19,6 +18,9 @@ import EmptyState from '@/components/EmptyState';
 import Footer from '@/components/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import AddTaskModal from '@/components/AddTaskModal';
+import useDeadlineChecker from '@/hooks/useDeadlineChecker';
+import useNotification from '@/stores/notificationStore';
+import { useEffect } from 'react';
 
 const HomePage = () => {
   // State untuk filter tanggal
@@ -38,9 +40,14 @@ const HomePage = () => {
     isLoading: isFetchPICsLoading,
     error: fetchPICsError,
   } = useFetchPICs();
+
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+
   const sortedTasks = useFilteredTasks(tasks, selectedPicId, range);
+
+  const currentTime = useNotification((state) => state.currentTime);
+  const updateCurrentTime = useNotification((state) => state.updateCurrentTime);
 
   // Error log
   if (fetchTasksError) {
@@ -60,6 +67,15 @@ const HomePage = () => {
 
   // Cek status online/offline
   const isOnline = useIsOnline();
+
+  // Update current time setiap menit
+  useEffect(() => {
+    const interval = setInterval(updateCurrentTime, 60000);
+    return () => clearInterval(interval);
+  }, [updateCurrentTime]);
+
+  // Cek deadline tasks
+  useDeadlineChecker(sortedTasks);
 
   return (
     <div className="h-screen flex flex-col">
@@ -111,6 +127,7 @@ const HomePage = () => {
                 key={column.id}
                 title={column.title}
                 tasks={sortedTasks.filter((task) => task.status === column.id)}
+                currentTime={currentTime}
               />
             ))}
           </div>
@@ -123,7 +140,7 @@ const HomePage = () => {
       {/* Modal untuk hapus task */}
       <DeleteTaskModal />
       {/* Toast */}
-      <Toaster position="top-center" richColors />
+      <Toaster richColors />
     </div>
   );
 };
