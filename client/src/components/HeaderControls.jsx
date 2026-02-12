@@ -18,9 +18,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshToggle } from '@/components/RefreshToggle';
 import { FilterCalendar } from '@/components/FilterCalendar';
 import ModeToggle from '@/components/ModeToggle';
-import AddActivityModal from '@/components/AddActivityModal';
-import AddPICModal from '@/components/AddPICModal';
-import AddTaskModal from '@/components/AddTaskModal';
+import AddItemsDropdown from '@/components/AddItemsDropdown';
 import UpcomingTasksPanel from './UpcomingTasksPanel';
 
 const HeaderControls = ({
@@ -43,7 +41,7 @@ const HeaderControls = ({
           <SelectGroup>
             <SelectLabel>PIC</SelectLabel>
             <SelectItem value="all">Semua PIC</SelectItem>
-            <SelectItem value="null">-</SelectItem>
+            <SelectItem value={null}>-</SelectItem>
             {pics?.map((pic) => (
               <SelectItem value={pic.id} key={pic.id}>
                 {pic.name}
@@ -54,9 +52,7 @@ const HeaderControls = ({
       </Select>
       <FilterCalendar />
       <UpcomingTasksPanel tasks={tasks} currentTime={currentTime} />
-      <AddActivityModal />
-      <AddPICModal />
-      <AddTaskModal buttonVariant="nav" buttonSize="sm" />
+      <AddItemsDropdown />
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>
           <Button asChild variant="outline" size="icon-sm">

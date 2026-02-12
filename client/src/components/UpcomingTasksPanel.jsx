@@ -46,7 +46,7 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
             <BellRing />
           </Button>
           {visibleTasks.length > 0 && (
-            <Badge className="absolute -top-2 -right-2 size-4 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
+            <Badge className="absolute -top-2 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
               {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
             </Badge>
           )}

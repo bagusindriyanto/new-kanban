@@ -8,10 +8,7 @@ const useFilteredTasks = (tasks, selectedPicId, range) => {
       .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
       .filter((task) => {
         const matchedPic =
-          selectedPicId === 'all' ||
-          selectedPicId === null ||
-          selectedPicId === 'null' ||
-          task.pic_id === selectedPicId;
+          selectedPicId === 'all' || task.pic_id === selectedPicId;
 
         let matchedDate;
         if (task.status === 'todo' || task.status === 'on progress') {

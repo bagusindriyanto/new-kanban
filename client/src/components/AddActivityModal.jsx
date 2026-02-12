@@ -9,20 +9,29 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import AddActivityForm from './AddActivityForm';
 import { useState } from 'react';
 import { useAddActivity } from '@/api/addActivity';
+import { Layers } from 'lucide-react';
 
-const AddActivityModal = () => {
+const AddActivityModal = ({ hideButton = false }) => {
   const [open, setOpen] = useState(false);
   const { mutateAsync: addActivityMutation, isPending } = useAddActivity();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="nav" size="sm">
-          Tambah Activity
-        </Button>
+        {hideButton ? (
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <Layers />
+            Tambah Activity
+          </DropdownMenuItem>
+        ) : (
+          <Button variant="nav" size="sm">
+            Tambah Activity
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>
