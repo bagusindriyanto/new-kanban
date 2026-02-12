@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot"
+import { Slot as SlotPrimitive } from "radix-ui"
 import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils"
@@ -41,7 +41,7 @@ function ButtonGroupText({
   asChild = false,
   ...props
 }) {
-  const Comp = asChild ? Slot : "div"
+  const Comp = asChild ? SlotPrimitive.Slot : "div"
 
   return (
     <Comp
