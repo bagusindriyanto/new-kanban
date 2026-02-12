@@ -69,7 +69,7 @@ import { useFetchTasks } from '@/api/fetchTasks';
 const formSchema = z
   .object({
     content: z.string('Activity harus dipilih.'),
-    pic_id: z.number().nullish(),
+    pic_id: z.number('PIC harus dipilih.'),
     status: z.enum(['todo', 'on progress', 'done', 'archived'], {
       error: 'Status harus dipilih.',
     }),
@@ -305,7 +305,9 @@ const UpdateTaskForm = () => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="update-task-pic">PIC</FieldLabel>
+                  <FieldLabel htmlFor="update-task-pic" className="gap-0.5">
+                    PIC<span className="text-red-500">*</span>
+                  </FieldLabel>
                   <Popover open={picOpen} onOpenChange={setPicOpen}>
                     <PopoverTrigger asChild>
                       <Button
@@ -339,23 +341,6 @@ const UpdateTaskForm = () => {
                         >
                           <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
                           <CommandGroup>
-                            <CommandItem
-                              value="null"
-                              onSelect={() => {
-                                form.setValue('pic_id', null);
-                                setPicOpen(false);
-                              }}
-                            >
-                              -
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  field.value === null
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                                )}
-                              />
-                            </CommandItem>
                             {pics?.map((pic) => (
                               <CommandItem
                                 value={pic.name}

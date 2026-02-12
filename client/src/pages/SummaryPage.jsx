@@ -158,7 +158,7 @@ const SummaryPage = () => {
     const totalActivities =
       totalTodo + totalProgress + totalDone + totalArchived;
     const operationalTimePercentage = Number.isFinite(
-      totalActivityMinutes / totalWorkingMinutes
+      totalActivityMinutes / totalWorkingMinutes,
     )
       ? (totalActivityMinutes / totalWorkingMinutes) * 100
       : 0;
@@ -218,7 +218,6 @@ const SummaryPage = () => {
                 <SelectItem className="hidden" value="all" disabled>
                   Pilih PIC
                 </SelectItem>
-                <SelectItem value={null}>-</SelectItem>
                 {pics?.map((pic) => (
                   <SelectItem value={pic.id} key={pic.id}>
                     {pic.name}

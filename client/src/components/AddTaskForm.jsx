@@ -37,7 +37,7 @@ import { TimePickerDemo } from './ui/time-picker-demo';
 const formSchema = z
   .object({
     content: z.string('Mohon pilih salah satu activity.'),
-    pic_id: z.number().nullish(),
+    pic_id: z.number('Mohon pilih salah satu PIC.'),
     detail: z.string().trim().optional(),
     is_scheduled: z.boolean(),
     scheduled_at: z.date().nullish(),
@@ -191,7 +191,9 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-pic">PIC</FieldLabel>
+                <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
+                  PIC<span className="text-red-500">*</span>
+                </FieldLabel>
                 <Popover open={picOpen} onOpenChange={setPicOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -221,23 +223,6 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                       >
                         <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
                         <CommandGroup>
-                          <CommandItem
-                            value="null"
-                            onSelect={() => {
-                              form.setValue('pic_id', null);
-                              setPicOpen(false);
-                            }}
-                          >
-                            -
-                            <Check
-                              className={cn(
-                                'ml-auto',
-                                field.value === null
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
-                              )}
-                            />
-                          </CommandItem>
                           {pics?.map((pic) => (
                             <CommandItem
                               value={pic.name}
