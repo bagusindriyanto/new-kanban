@@ -72,131 +72,44 @@ import {
 import { RefreshToggle } from '@/components/RefreshToggle';
 import Footer from '@/components/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
+import { format } from 'date-fns';
 
 const SummaryPage = () => {
   // State
   const { data: pics, error: fetchPICsError } = useFetchPICs();
-  const {
-    data: summary,
-    error: fetchSummaryError,
-    isFetching,
-    dataUpdatedAt,
-  } = useFetchSummary();
-  const { data: tableSummary, error: fetchTableSummaryError } =
-    useFetchTableSummary();
+  // const {
+  //   data: summary,
+  //   error: fetchSummaryError,
+  //   isFetching,
+  //   dataUpdatedAt,
+  // } = useFetchSummary();
+  // const { data: tableSummary, error: fetchTableSummaryError } =
+  //   useFetchTableSummary();
 
   // State Filter
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const range = useFilter((state) => state.range);
 
-  // Urutkan dan filter task berdasarkan PIC
-  const filteredSummary = useMemo(() => {
-    if (!summary || selectedPicId === 'all') return [];
-    return summary
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .filter((row) => {
-        const matchedPic = row.pic_id === selectedPicId;
-        const [year, month, day] = row.date.split('-').map(Number);
-        const rowDate = new Date(year, month - 1, day);
-        const fromDate = range.from;
-        const toDate = range.to;
-        const matchedDate =
-          (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
-        return matchedPic && matchedDate;
-      });
-  }, [summary, selectedPicId, range]);
+  // Buat filter object untuk API
+  const filters = useMemo(
+    () => ({
+      pic_id: selectedPicId !== 'all' ? selectedPicId : undefined,
+      from_date: range.from ? format(range.from, 'yyyy-MM-dd') : undefined,
+      to_date: range.to ? format(range.to, 'yyyy-MM-dd') : undefined,
+    }),
+    [selectedPicId, range],
+  );
 
-  const stats = useMemo(() => {
-    if (!summary || selectedPicId === 'all')
-      return {
-        totalTodo: 0,
-        totalProgress: 0,
-        totalDone: 0,
-        totalArchived: 0,
-        totalActivities: 0,
-        totalActivityMinutes: 0,
-        totalWorkingMinutes: 0,
-        operationalTimePercentage: 0,
-      };
-    let result;
-    result = summary
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .filter((row) => row.pic_id === selectedPicId);
-
-    const totalTodo = result[0]?.todo_count ?? 0;
-
-    result = result.filter((row) => {
-      const [year, month, day] = row.date.split('-').map(Number);
-      const rowDate = new Date(year, month - 1, day);
-      const fromDate = range.from;
-      const toDate = range.to;
-      const matchedDate =
-        (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
-      return matchedDate;
-    });
-
-    let totalProgress = 0;
-    let totalDone = 0;
-    let totalArchived = 0;
-    let totalActivityMinutes = 0;
-    let totalWorkingMinutes = 0;
-
-    const comboList = new Set();
-    for (const row of result) {
-      const key = `${row.date}`;
-      if (!comboList.has(key)) {
-        comboList.add(key);
-        totalProgress += row.on_progress_count;
-        totalDone += row.done_count;
-        totalArchived += row.archived_count;
-        totalActivityMinutes += row.activity_duration;
-        totalWorkingMinutes += row.working_minute;
-      }
-    }
-
-    const totalActivities =
-      totalTodo + totalProgress + totalDone + totalArchived;
-    const operationalTimePercentage = Number.isFinite(
-      totalActivityMinutes / totalWorkingMinutes,
-    )
-      ? (totalActivityMinutes / totalWorkingMinutes) * 100
-      : 0;
-
-    return {
-      totalTodo,
-      totalProgress,
-      totalDone,
-      totalArchived,
-      totalActivities,
-      totalActivityMinutes,
-      totalWorkingMinutes,
-      operationalTimePercentage,
-    };
-  }, [summary, selectedPicId, range]);
-
-  const filteredTableSummary = useMemo(() => {
-    if (!tableSummary || selectedPicId === 'all') return [];
-    return tableSummary.filter((row) => {
-      const matchedPic = row.pic_id === selectedPicId;
-      let matchedDate;
-      if (!row.date) {
-        matchedDate = false;
-      } else {
-        const [year, month, day] = row.date.split('-').map(Number);
-        const rowDate = new Date(year, month - 1, day);
-        const fromDate = range.from;
-        const toDate = range.to;
-        matchedDate =
-          (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
-      }
-      return matchedPic && matchedDate;
-    });
-  }, [tableSummary, selectedPicId, range]);
+  const {
+    data,
+    error: fetchSummaryError,
+    isFetching,
+    dataUpdatedAt,
+  } = useFetchSummary(filters);
 
   // Cek status online/offline
   const isOnline = useIsOnline();
-
   return (
     <div className="h-screen flex flex-col">
       <header className="sticky top-0 z-10 flex items-center justify-between bg-nav h-[52px] px-5 py-3">
@@ -248,10 +161,7 @@ const SummaryPage = () => {
       </header>
       {/* Main */}
       <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-        {(fetchSummaryError ||
-          fetchTableSummaryError ||
-          fetchPICsError ||
-          !isOnline) && (
+        {(fetchSummaryError || fetchPICsError || !isOnline) && (
           <Item
             className="md:col-span-2 xl:col-span-4 bg-destructive/15"
             variant="muted"
@@ -271,7 +181,6 @@ const SummaryPage = () => {
                 {!isOnline
                   ? 'Mohon periksa koneksi internetmu.'
                   : fetchSummaryError?.response?.data?.message ||
-                    fetchTableSummaryError?.response?.data?.message ||
                     fetchPICsError?.response?.data?.message ||
                     'Gagal terhubung ke server.'}
               </ItemDescription>
@@ -292,7 +201,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total Activities</CardDescription>
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {stats.totalActivities} Aktivitas
+              {data?.summary.total_count} Aktivitas
             </CardTitle>
           </CardHeader>
         </Card>
@@ -301,19 +210,19 @@ const SummaryPage = () => {
             <CardDescription>Operational Time</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {stats.operationalTimePercentage.toFixed(2)} %
+                {data?.summary.percentage.toFixed(2)}
               </CardTitle>
               <div className="flex flex-col items-end gap-1.5 text-sm">
                 <div className="font-medium">
                   Lama Aktivitas:{' '}
                   <span className="text-muted-foreground">
-                    {stats.totalActivityMinutes} menit
+                    {data?.summary.total_activity_minutes} menit
                   </span>
                 </div>
                 <div className="font-medium">
                   Lama Bekerja:{' '}
                   <span className="text-muted-foreground">
-                    {stats.totalWorkingMinutes} menit
+                    {data?.summary.total_working_minutes} menit
                   </span>
                 </div>
               </div>
@@ -324,7 +233,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total To Do Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {stats.totalTodo} Aktivitas
+              {data?.summary.todo_count} Aktivitas
             </CardTitle>
             <CardAction>
               <ListTodo className="text-muted-foreground size-5" />
@@ -335,7 +244,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total On Progress Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {stats.totalProgress} Aktivitas
+              {data?.summary.on_progress_count} Aktivitas
             </CardTitle>
             <CardAction>
               <Clock4 className="text-muted-foreground size-5" />
@@ -346,7 +255,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total Done Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {stats.totalDone} Aktivitas
+              {data?.summary.done_count} Aktivitas
             </CardTitle>
             <CardAction>
               <Check className="text-muted-foreground size-5" />
@@ -357,7 +266,7 @@ const SummaryPage = () => {
           <CardHeader>
             <CardDescription>Total Archived Activities</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {stats.totalArchived} Aktivitas
+              {data?.summary.archived_count} Aktivitas
             </CardTitle>
             <CardAction>
               <Archive className="text-muted-foreground size-5" />
@@ -374,11 +283,7 @@ const SummaryPage = () => {
           </CardHeader>
           <CardContent className="my-auto">
             <ChartContainer config={chartConfig} className="w-full max-h-96">
-              <BarChart
-                accessibilityLayer
-                data={filteredSummary}
-                margin={{ top: 18 }}
-              >
+              <BarChart accessibilityLayer data={[]} margin={{ top: 18 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="date"
@@ -469,7 +374,7 @@ const SummaryPage = () => {
           <CardContent>
             <DataTable
               columns={columns}
-              data={filteredTableSummary}
+              data={data?.table_summary || []}
             ></DataTable>
           </CardContent>
         </Card>

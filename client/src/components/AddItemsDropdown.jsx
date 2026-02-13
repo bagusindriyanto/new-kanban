@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,10 @@ const AddItemsDropdown = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <AddTaskModal hideButton />
+        <DropdownMenuSeparator />
         <AddActivityModal hideButton />
         <AddPICModal hideButton />
-        <AddTaskModal hideButton />
       </DropdownMenuContent>
     </DropdownMenu>
   );

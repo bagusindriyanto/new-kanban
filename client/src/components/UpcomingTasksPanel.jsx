@@ -4,6 +4,11 @@ import { BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -40,18 +45,23 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <div className="relative w-fit">
-          <Button variant="outline" size="icon-sm">
-            <BellRing />
-          </Button>
-          {visibleTasks.length > 0 && (
-            <Badge className="absolute -top-2 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
-              {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
-            </Badge>
-          )}
-        </div>
-      </SheetTrigger>
+      <Tooltip delayDuration={500}>
+        <TooltipTrigger asChild>
+          <SheetTrigger asChild>
+            <div className="relative w-fit">
+              <Button variant="outline" size="icon-sm">
+                <BellRing />
+              </Button>
+              {visibleTasks.length > 0 && (
+                <Badge className="absolute -top-2 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
+                  {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
+                </Badge>
+              )}
+            </div>
+          </SheetTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Task yang Akan Dimulai</TooltipContent>
+      </Tooltip>
       <SheetContent className="flex flex-col">
         <SheetHeader>
           <SheetTitle>Task yang Akan Dimulai</SheetTitle>

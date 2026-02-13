@@ -1,23 +1,24 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
-export const fetchSummary = async () => {
-  const response = await api.get('/summary.php');
+export const fetchSummary = async (filters = {}) => {
+  const response = await api.get('/summary.php', { params: filters });
   return response.data;
 };
 
-export const fetchSummaryQueryKey = () => ['summary'];
+export const fetchSummaryQueryKey = (filters = {}) => ['summary', filters];
 
-const fetchSummaryQueryOptions = () => {
+const fetchSummaryQueryOptions = (filters = {}) => {
   return queryOptions({
-    queryKey: fetchSummaryQueryKey(),
-    queryFn: fetchSummary,
+    queryKey: fetchSummaryQueryKey(filters),
+    queryFn: () => fetchSummary(filters),
+    placeholderData: (previousData) => previousData,
   });
 };
 
-export const useFetchSummary = (params = {}) => {
+export const useFetchSummary = (filters = {}, params = {}) => {
   return useQuery({
-    ...fetchSummaryQueryOptions(),
+    ...fetchSummaryQueryOptions(filters),
     ...params.queryConfig,
   });
 };

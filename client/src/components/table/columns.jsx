@@ -1,32 +1,5 @@
-// This type is used to define the shape of our data.
-import { MoreHorizontal } from 'lucide-react';
-import { ArrowUpDown } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-
 // You can use a Zod schema here if you want.
 export const columns = [
-  {
-    accessorKey: 'date',
-    header: 'Tanggal',
-    cell: ({ row }) => {
-      const date = new Date(row.getValue('date'));
-      const formatted = date.toLocaleDateString('id');
-      return <div className="font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: 'name',
-    header: 'PIC',
-  },
   {
     accessorKey: 'content',
     header: 'Aktivitas',
