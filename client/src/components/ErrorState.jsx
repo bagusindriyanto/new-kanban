@@ -16,15 +16,14 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-const getMessage = (fetchTasksError, fetchPICsError) =>
-  fetchTasksError?.response?.data?.message ||
-  fetchPICsError?.response?.data?.message ||
-  'Gagal terhubung ke server.';
+const getMessage = (errorMessage) =>
+  errorMessage || 'Gagal terhubung ke server.';
 
-export const ErrorBanner = ({ isOnline, fetchTasksError, fetchPICsError }) => {
+export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
   return (
-    <Item className="bg-destructive/15" variant="muted">
+    <Item className={cn('bg-destructive/15', className)} variant="muted">
       <ItemMedia variant="icon">
         {!isOnline ? (
           <WifiOff className="text-destructive" />
@@ -39,7 +38,7 @@ export const ErrorBanner = ({ isOnline, fetchTasksError, fetchPICsError }) => {
         <ItemDescription className="text-destructive/90">
           {!isOnline
             ? 'Mohon periksa koneksi internetmu.'
-            : getMessage(fetchTasksError, fetchPICsError)}
+            : getMessage(errorMessage)}
         </ItemDescription>
       </ItemContent>
       <ItemActions>
@@ -56,12 +55,7 @@ export const ErrorBanner = ({ isOnline, fetchTasksError, fetchPICsError }) => {
   );
 };
 
-export const ErrorFull = ({
-  isOnline,
-  fetchTasksError,
-  fetchPICsError,
-  action,
-}) => {
+export const ErrorFull = ({ isOnline, errorMessage }) => {
   return (
     <Empty>
       <EmptyHeader>
@@ -78,19 +72,14 @@ export const ErrorFull = ({
         <EmptyDescription className="text-destructive/90">
           {!isOnline
             ? 'Mohon periksa koneksi internetmu.'
-            : getMessage(fetchTasksError, fetchPICsError)}
+            : getMessage(errorMessage)}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        {action || (
-          <Button
-            onClick={() => window.location.reload(false)}
-            variant="outline"
-          >
-            <RotateCw />
-            Refresh Halaman
-          </Button>
-        )}
+        <Button onClick={() => window.location.reload(false)} variant="outline">
+          <RotateCw />
+          Refresh Halaman
+        </Button>
       </EmptyContent>
     </Empty>
   );

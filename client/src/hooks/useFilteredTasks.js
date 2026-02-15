@@ -11,13 +11,13 @@ const useFilteredTasks = (tasks, selectedPicId, range) => {
           selectedPicId === 'all' || task.pic_id === selectedPicId;
 
         let matchedDate;
-        if (task.status === 'todo' || task.status === 'on progress') {
+        if (task.status === 'todo') {
           matchedDate = true;
         } else {
           const fromDate = range.from;
           const toDate = range.to;
-          const taskDate = task.timestamp_done
-            ? startOfDay(parseISO(task.timestamp_done))
+          const taskDate = task.timestamp_progress
+            ? startOfDay(parseISO(task.timestamp_progress))
             : null;
           matchedDate =
             (!!taskDate || (!fromDate && !toDate)) &&

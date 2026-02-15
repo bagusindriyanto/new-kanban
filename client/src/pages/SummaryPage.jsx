@@ -5,9 +5,7 @@ import {
   Check,
   Archive,
   SquareKanban,
-  WifiOff,
-  ServerOff,
-  RotateCw,
+  Ban,
 } from 'lucide-react';
 import {
   Bar,
@@ -16,6 +14,8 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
+  PieChart,
+  Pie,
 } from 'recharts';
 import {
   Card,
@@ -59,20 +59,18 @@ import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { useFetchSummary } from '@/api/fetchSummary';
-import { useFetchTableSummary } from '@/api/fetchTableSummary';
-// Status
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from '@/components/ui/item';
 import { RefreshToggle } from '@/components/RefreshToggle';
 import Footer from '@/components/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import { format } from 'date-fns';
+import ErrorBanner from '@/components/ErrorState';
+import usePieChartData from '@/hooks/usePieChartData';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 
 const SummaryPage = () => {
   // State
@@ -108,10 +106,21 @@ const SummaryPage = () => {
     dataUpdatedAt,
   } = useFetchSummary(filters);
 
+  // Ambil pesan error
+  const errorMessage =
+    fetchSummaryError?.response?.data?.message ||
+    fetchPICsError?.response?.data?.message ||
+    null;
+
   // Cek status online/offline
   const isOnline = useIsOnline();
+
+  // Pie Chart Data
+  const { chartData: pieChartData, chartConfig: pieChartConfig } =
+    usePieChartData(data?.table_summary || []);
+
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-10 flex items-center justify-between bg-nav h-[52px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <div className="flex gap-2 items-center">
@@ -162,40 +171,11 @@ const SummaryPage = () => {
       {/* Main */}
       <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {(fetchSummaryError || fetchPICsError || !isOnline) && (
-          <Item
-            className="md:col-span-2 xl:col-span-4 bg-destructive/15"
-            variant="muted"
-          >
-            <ItemMedia variant="icon">
-              {!isOnline ? (
-                <WifiOff className="text-destructive" />
-              ) : (
-                <ServerOff className="text-destructive" />
-              )}
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle className="text-destructive">
-                {!isOnline ? 'Kamu Sedang Offline' : 'Terjadi Kesalahan'}
-              </ItemTitle>
-              <ItemDescription className="text-destructive/90">
-                {!isOnline
-                  ? 'Mohon periksa koneksi internetmu.'
-                  : fetchSummaryError?.response?.data?.message ||
-                    fetchPICsError?.response?.data?.message ||
-                    'Gagal terhubung ke server.'}
-              </ItemDescription>
-            </ItemContent>
-            <ItemActions>
-              <Button
-                onClick={() => window.location.reload(false)}
-                size="sm"
-                variant="outline"
-              >
-                <RotateCw />
-                Refresh Halaman
-              </Button>
-            </ItemActions>
-          </Item>
+          <ErrorBanner
+            isOnline={isOnline}
+            errorMessage={errorMessage}
+            className="md:col-span-2 xl:col-span-4"
+          />
         )}
         <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
           <CardHeader>
@@ -376,6 +356,75 @@ const SummaryPage = () => {
               columns={columns}
               data={data?.table_summary || []}
             ></DataTable>
+          </CardContent>
+        </Card>
+        {/* Pie Chart */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Proporsi Aktivitas</CardTitle>
+            <CardDescription>
+              Menampilkan proporsi setiap aktivitas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1">
+            {pieChartData.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Ban />
+                  </EmptyMedia>
+                  <EmptyTitle>Tidak Ada Aktivitas</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            ) : (
+              <ChartContainer
+                config={pieChartConfig}
+                className="[&_.recharts-pie-label-text]:fill-foreground mx-auto max-h-96"
+              >
+                <PieChart>
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        hideLabel
+                        formatter={(value, name) => (
+                          <>
+                            <div
+                              className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
+                              style={{
+                                '--color-bg': `var(--color-${name})`,
+                              }}
+                            />
+                            {pieChartConfig[name]?.label || name}
+                            <div className="text-foreground ml-auto flex items-baseline gap-1 font-medium tabular-nums">
+                              {value}
+                              <span className="text-muted-foreground font-normal">
+                                menit
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      />
+                    }
+                  />
+                  <Pie
+                    data={pieChartData}
+                    dataKey="total_minutes"
+                    nameKey="content"
+                    label={({ percent }) => {
+                      return `${(percent * 100).toFixed(1)}%`;
+                    }}
+                  />
+                  <ChartLegend
+                    content={
+                      <ChartLegendContent
+                        nameKey="content"
+                        className="translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                      />
+                    }
+                  />
+                </PieChart>
+              </ChartContainer>
+            )}
           </CardContent>
         </Card>
       </main>

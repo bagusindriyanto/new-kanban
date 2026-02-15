@@ -1,13 +1,5 @@
 import { useState } from 'react';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardDescription,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  // SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,7 +7,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
 import {
   Table,
   TableBody,
@@ -25,19 +16,18 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   ChevronLeft,
   ChevronFirst,
   ChevronRight,
   ChevronLast,
+  Search,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 
 export function DataTable({ columns, data }) {
   const [sorting, setSorting] = useState([]);
@@ -64,28 +54,32 @@ export function DataTable({ columns, data }) {
   return (
     <div className="h-full">
       <div className="flex items-center mb-4">
-        <Input
-          placeholder="Cari aktivitas..."
-          value={table.getColumn('content')?.getFilterValue() ?? ''}
-          onChange={(event) =>
-            table.getColumn('content')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <InputGroup className="max-w-sm">
+          <InputGroupInput
+            placeholder="Cari aktivitas..."
+            value={table.getColumn('content')?.getFilterValue() ?? ''}
+            onChange={(event) =>
+              table.getColumn('content')?.setFilterValue(event.target.value)
+            }
+          />
+          <InputGroupAddon align="inline-end">
+            <Search />
+          </InputGroupAddon>
+        </InputGroup>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader className="bg-muted">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead className="px-0 w-1/4" key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -104,7 +98,7 @@ export function DataTable({ columns, data }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

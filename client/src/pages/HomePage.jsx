@@ -20,7 +20,6 @@ import { useIsOnline } from '@/hooks/useIsOnline';
 import AddTaskModal from '@/components/AddTaskModal';
 import useDeadlineChecker from '@/hooks/useDeadlineChecker';
 import useNotification from '@/stores/notificationStore';
-import UpcomingTasksPanel from '@/components/UpcomingTasksPanel';
 import { useEffect } from 'react';
 
 const HomePage = () => {
@@ -66,6 +65,12 @@ const HomePage = () => {
     );
   }
 
+  // Ambil pesan error
+  const errorMessage =
+    fetchTasksError?.response?.data?.message ||
+    fetchPICsError?.response?.data?.message ||
+    null;
+
   // Cek status online/offline
   const isOnline = useIsOnline();
 
@@ -105,19 +110,11 @@ const HomePage = () => {
           )}
         {sortedTasks.length > 0 &&
           (fetchTasksError || fetchPICsError || !isOnline) && (
-            <ErrorBanner
-              isOnline={isOnline}
-              fetchTasksError={fetchTasksError}
-              fetchPICsError={fetchPICsError}
-            />
+            <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
           )}
         {sortedTasks.length === 0 &&
           (fetchTasksError || fetchPICsError || !isOnline) && (
-            <ErrorFull
-              isOnline={isOnline}
-              fetchTasksError={fetchTasksError}
-              fetchPICsError={fetchPICsError}
-            />
+            <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
           )}
         {sortedTasks.length === 0 &&
           !isFetchTasksLoading &&
