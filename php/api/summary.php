@@ -152,6 +152,13 @@ function handleGet($pdo)
     $stmt_chart->execute($params);
     $chart_summary = $stmt_chart->fetchAll(PDO::FETCH_ASSOC);
 
+    $updated_summary = [
+      "todo_count" => $todo_summary['todo_count'] ?? 0,
+      "total_count" => ($summary['on_progress_count'] ?? 0) + ($summary['done_count'] ?? 0) + ($summary['archived_count'] ?? 0) + ($todo_summary['todo_count'] ?? 0),
+      "total_working_minutes" => $working_summary['total_working_minutes'] ?? 0,
+      "percentage" => $working_summary['total_working_minutes'] > 0 ? $summary['total_activity_minutes'] / $working_summary['total_working_minutes'] : 0
+    ];
+
     echo json_encode([
       "status" => "success",
       "filter" => [
@@ -159,13 +166,7 @@ function handleGet($pdo)
         "to_date" => $to_date,
         "pic_id" => $pic_id
       ],
-      "summary" => [
-        ...$summary,
-        "todo_count" => $todo_summary['todo_count'] ?? 0,
-        "total_count" => ($summary['on_progress_count'] ?? 0) + ($summary['done_count'] ?? 0) + ($summary['archived_count'] ?? 0) + ($todo_summary['todo_count'] ?? 0),
-        "total_working_minutes" => $working_summary['total_working_minutes'] ?? 0,
-        "percentage" => $working_summary['total_working_minutes'] > 0 ? $summary['total_activity_minutes'] / $working_summary['total_working_minutes'] : 0
-      ],
+      "summary" => array_merge($summary, $updated_summary),
       "table_summary" => $table_summary,
       "chart_summary" => $chart_summary,
     ], JSON_NUMERIC_CHECK);
