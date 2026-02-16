@@ -85,30 +85,20 @@ function handleGet($pdo)
       FROM tasks
       WHERE 1=1";
 
-    $sql_chart_summary = "WITH Rekap_A AS (
-      SELECT 
-          DATE(t.timestamp_progress) AS tgl, -- Konversi timestamp ke date
-          t.pic_id,
-          SUM(
-              CASE
-                  WHEN t.status = 'on progress' THEN TIMESTAMPDIFF(MINUTE, t.timestamp_progress, NOW())
-                  WHEN t.status IN ('done', 'archived') THEN t.minute_activity
-                  ELSE 0
-              END
-          ) AS total_activity_minutes
+    $sql_chart_summary = "SELECT 
+      COALESCE(DATE(t.timestamp_progress), w.date) AS date,
+      COALESCE(t.pic_id, w.pic_id) AS pic_id,
+      SUM(
+        CASE
+          WHEN t.status = 'on progress' THEN TIMESTAMPDIFF(MINUTE, t.timestamp_progress, NOW())
+          WHEN t.status = 'done' OR t.status = 'archived' THEN t.minute_activity
+          ELSE 0
+        END
+      ) AS total_activity_minutes
       FROM tasks t
-      WHERE t.pic_id = :pic_id
-      GROUP BY DATE(t.timestamp_progress), t.pic_id
-      )
-
-      SELECT 
-          A.tgl AS date,
-          A.total_activity_minutes AS activity_minute,
-          IFNULL(B.working_minute, 0) AS working_minute
-      FROM Rekap_A A
-      LEFT JOIN work_time B 
-          ON A.tgl = DATE(B.date) 
-          AND A.pic_id = B.pic_id
+      FULL OUTER JOIN work_time w
+        ON DATE(t.timestamp_progress), w.date
+        AND t.pic_id, w.pic_id
       WHERE 1=1";
 
     $params = [];
@@ -119,7 +109,7 @@ function handleGet($pdo)
       $sql_summary .= " AND timestamp_progress BETWEEN :from_date AND :to_date";
       $sql_working_summary .= " AND date BETWEEN :from_date AND :to_date";
       $sql_table_summary .= " AND timestamp_progress BETWEEN :from_date AND :to_date";
-      $sql_chart_summary .= " AND A.tgl BETWEEN :from_date AND :to_date";
+      $sql_chart_summary .= " AND date BETWEEN :from_date AND :to_date";
     }
 
     $params[':pic_id'] = $pic_id;
@@ -128,7 +118,7 @@ function handleGet($pdo)
     $sql_todo_summary .= " AND pic_id = :pic_id";
     $sql_working_summary .= " AND pic_id = :pic_id";
     $sql_table_summary .= " AND pic_id = :pic_id";
-    $sql_chart_summary .= " ORDER BY A.tgl";
+    $sql_chart_summary .= " AND pic_id = :pic_id";
 
     $sql_table_summary .= " AND status <> 'todo' GROUP BY content";
 
