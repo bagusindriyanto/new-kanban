@@ -6,6 +6,8 @@ import {
   Archive,
   SquareKanban,
   Ban,
+  UserRound,
+  IdCardLanyard,
 } from 'lucide-react';
 import {
   Bar,
@@ -71,23 +73,22 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
+import PieChartCard from '@/components/PieChartCard';
+import { Badge } from '@/components/ui/badge';
 
 const SummaryPage = () => {
   // State
   const { data: pics, error: fetchPICsError } = useFetchPICs();
-  // const {
-  //   data: summary,
-  //   error: fetchSummaryError,
-  //   isFetching,
-  //   dataUpdatedAt,
-  // } = useFetchSummary();
-  // const { data: tableSummary, error: fetchTableSummaryError } =
-  //   useFetchTableSummary();
 
   // State Filter
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
   const range = useFilter((state) => state.range);
+  const selectedPic = pics?.find((pic) => pic.id === selectedPicId) ?? {
+    full_name: '-',
+    nik: null,
+    alias: ' ',
+  };
 
   // Buat filter object untuk API
   const filters = useMemo(
@@ -114,10 +115,6 @@ const SummaryPage = () => {
 
   // Cek status online/offline
   const isOnline = useIsOnline();
-
-  // Pie Chart Data
-  const { chartData: pieChartData, chartConfig: pieChartConfig } =
-    usePieChartData(data?.table_summary || []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -169,92 +166,103 @@ const SummaryPage = () => {
         </div>
       </header>
       {/* Main */}
-      <main className="flex-1 grid gap-4 p-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+      <main className="flex-1 grid gap-3 p-3 md:grid-cols-2 xl:grid-cols-6">
         {(fetchSummaryError || fetchPICsError || !isOnline) && (
           <ErrorBanner
             isOnline={isOnline}
             errorMessage={errorMessage}
-            className="md:col-span-2 xl:col-span-4"
+            className="md:col-span-4 xl:col-span-6"
           />
         )}
-        <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
+        <Card className="xl:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
+          <CardContent className="my-auto">
+            {/* Content Section */}
+            <div className="flex items-center gap-6">
+              <div className="rounded-full size-24 flex justify-center items-center border border-border p-1 bg-accent text-muted-foreground shadow-md">
+                <UserRound className="size-full" />
+              </div>
+              {/* Judul (Title Text) */}
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold tracking-tight">
+                  {selectedPic.full_name}
+                </h2>
+                {/* Badge ID (Tambahan Opsional) */}
+                <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                  <IdCardLanyard data-icon="inline-start" />
+                  {selectedPic.nik ? `MGM ${selectedPic.nik}` : '-'}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="xl:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
           <CardHeader>
-            <CardDescription>Total Activities</CardDescription>
+            <CardDescription>Total Aktivitas</CardDescription>
+            {/* <div className="flex justify-between items-center"> */}
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {data?.summary.total_count} Aktivitas
             </CardTitle>
+            {/* </div> */}
           </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-1.5">
+              <Badge className="bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
+                To Do: {data?.summary.todo_count}
+              </Badge>
+              <Badge className="bg-orange-300 text-orange-700 dark:bg-orange-700 dark:text-orange-300">
+                On Progress: {data?.summary.on_progress_count}
+              </Badge>
+              <Badge className="bg-green-300 text-green-700 dark:bg-green-700 dark:text-green-300">
+                Done: {data?.summary.done_count}
+              </Badge>
+              <Badge className="bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+                Archived: {data?.summary.archived_count}
+              </Badge>
+            </div>
+          </CardContent>
         </Card>
         <Card className="md:col-span-2 bg-linear-to-t from-primary/10 to-card border-none">
           <CardHeader>
             <CardDescription>Operational Time</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {data?.summary.percentage.toFixed(2)}
+                {(data?.summary.percentage * 100).toFixed(2)}%
               </CardTitle>
               <div className="flex flex-col items-end gap-1.5 text-sm">
                 <div className="font-medium">
                   Lama Aktivitas:{' '}
                   <span className="text-muted-foreground">
-                    {data?.summary.total_activity_minutes} menit
+                    {data?.summary.total_activity_minutes ?? 0} menit
                   </span>
                 </div>
                 <div className="font-medium">
                   Lama Bekerja:{' '}
                   <span className="text-muted-foreground">
-                    {data?.summary.total_working_minutes} menit
+                    {data?.summary.total_working_minutes ?? 0} menit
                   </span>
                 </div>
               </div>
             </div>
           </CardHeader>
         </Card>
-        <Card className="bg-linear-to-t from-todo-500/60 to-card border-none">
+        {/* Table */}
+        <Card className="md:col-span-2 xl:col-span-3 xl:row-span-2">
           <CardHeader>
-            <CardDescription>Total To Do Activities</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary.todo_count} Aktivitas
-            </CardTitle>
-            <CardAction>
-              <ListTodo className="text-muted-foreground size-5" />
-            </CardAction>
+            <CardTitle>Tabel Aktivitas</CardTitle>
+            <CardDescription>
+              Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
+              rata-rata durasi setiap aktivitas.
+            </CardDescription>
           </CardHeader>
-        </Card>
-        <Card className="bg-linear-to-t from-progress-500/60 to-card border-none">
-          <CardHeader>
-            <CardDescription>Total On Progress Activities</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary.on_progress_count} Aktivitas
-            </CardTitle>
-            <CardAction>
-              <Clock4 className="text-muted-foreground size-5" />
-            </CardAction>
-          </CardHeader>
-        </Card>
-        <Card className="bg-linear-to-t from-done-500/60 to-card border-none">
-          <CardHeader>
-            <CardDescription>Total Done Activities</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary.done_count} Aktivitas
-            </CardTitle>
-            <CardAction>
-              <Check className="text-muted-foreground size-5" />
-            </CardAction>
-          </CardHeader>
-        </Card>
-        <Card className="bg-linear-to-t from-archived-500/60 to-card border-none">
-          <CardHeader>
-            <CardDescription>Total Archived Activities</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary.archived_count} Aktivitas
-            </CardTitle>
-            <CardAction>
-              <Archive className="text-muted-foreground size-5" />
-            </CardAction>
-          </CardHeader>
+          <CardContent>
+            <DataTable
+              columns={columns}
+              data={data?.table_summary || []}
+            ></DataTable>
+          </CardContent>
         </Card>
         {/* Chart */}
-        <Card className="w-full md:col-span-2">
+        <Card className="w-full md:col-span-2 xl:col-span-3">
           <CardHeader>
             <CardTitle>Lama Aktivitas vs Lama Bekerja</CardTitle>
             <CardDescription>
@@ -341,92 +349,8 @@ const SummaryPage = () => {
             </ChartContainer>
           </CardContent>
         </Card>
-        {/* Card */}
-        {/* Table */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Tabel Aktivitas</CardTitle>
-            <CardDescription>
-              Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
-              rata-rata durasi setiap aktivitas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <DataTable
-              columns={columns}
-              data={data?.table_summary || []}
-            ></DataTable>
-          </CardContent>
-        </Card>
         {/* Pie Chart */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Proporsi Aktivitas</CardTitle>
-            <CardDescription>
-              Menampilkan proporsi setiap aktivitas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1">
-            {pieChartData.length === 0 ? (
-              <Empty>
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <Ban />
-                  </EmptyMedia>
-                  <EmptyTitle>Tidak Ada Aktivitas</EmptyTitle>
-                </EmptyHeader>
-              </Empty>
-            ) : (
-              <ChartContainer
-                config={pieChartConfig}
-                className="[&_.recharts-pie-label-text]:fill-foreground mx-auto max-h-96"
-              >
-                <PieChart>
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        hideLabel
-                        formatter={(value, name) => (
-                          <>
-                            <div
-                              className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-                              style={{
-                                '--color-bg': `var(--color-${name})`,
-                              }}
-                            />
-                            {pieChartConfig[name]?.label || name}
-                            <div className="text-foreground ml-auto flex items-baseline gap-1 font-medium tabular-nums">
-                              {value}
-                              <span className="text-muted-foreground font-normal">
-                                menit
-                              </span>
-                            </div>
-                          </>
-                        )}
-                      />
-                    }
-                  />
-                  <Pie
-                    data={pieChartData}
-                    dataKey="total_minutes"
-                    nameKey="content"
-                    label={({ percent }) => {
-                      return `${(percent * 100).toFixed(1)}%`;
-                    }}
-                  />
-                  <ChartLegend
-                    content={
-                      <ChartLegendContent
-                        nameKey="content"
-                        className="translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
-                      />
-                    }
-                  />
-                </PieChart>
-              </ChartContainer>
-            )}
-          </CardContent>
-        </Card>
+        <PieChartCard data={data?.table_summary} />
       </main>
       {/* Footer */}
       <Footer />

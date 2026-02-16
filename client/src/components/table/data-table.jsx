@@ -33,12 +33,17 @@ export function DataTable({ columns, data }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, //initial page index
+    pageSize: 20, //default page size
+  });
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -48,6 +53,7 @@ export function DataTable({ columns, data }) {
       sorting,
       columnFilters,
       columnVisibility,
+      pagination,
     },
   });
 

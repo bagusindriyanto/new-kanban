@@ -24,6 +24,29 @@ function handleGet($pdo)
     $to_date = isset($_GET['to_date']) ? $_GET['to_date'] : null;
     $pic_id = isset($_GET['pic_id']) ? $_GET['pic_id'] : null;
 
+    if (!$pic_id || $pic_id === 'all') {
+      echo json_encode([
+        "status" => "success",
+        "filter" => [
+          "from_date" => $from_date,
+          "to_date" => $to_date,
+          "pic_id" => $pic_id,
+        ],
+        "summary" => [
+          "todo_count" => 0,
+          "on_progress_count" => 0,
+          "done_count" => 0,
+          "archived_count" => 0,
+          "total_count" => 0,
+          "total_activity_minutes" => 0,
+          "total_working_minutes" => 0,
+          "percentage" => 0
+        ],
+        "table_summary" => []
+      ], JSON_NUMERIC_CHECK);
+      die();
+    }
+
     $sql_summary = "SELECT
         COUNT(CASE WHEN status = 'on progress' THEN 1 END) AS on_progress_count,
         COUNT(CASE WHEN status = 'done' THEN 1 END) AS done_count,
@@ -71,14 +94,12 @@ function handleGet($pdo)
       $sql_table_summary .= " AND timestamp_progress BETWEEN :from_date AND :to_date";
     }
 
-    if ($pic_id && $pic_id !== 'all') {
-      $params[':pic_id'] = $pic_id;
-      $todo_params[':pic_id'] = $pic_id;
-      $sql_summary .= " AND pic_id = :pic_id";
-      $sql_todo_summary .= " AND pic_id = :pic_id";
-      $sql_working_summary .= " AND pic_id = :pic_id";
-      $sql_table_summary .= " AND pic_id = :pic_id";
-    }
+    $params[':pic_id'] = $pic_id;
+    $todo_params[':pic_id'] = $pic_id;
+    $sql_summary .= " AND pic_id = :pic_id";
+    $sql_todo_summary .= " AND pic_id = :pic_id";
+    $sql_working_summary .= " AND pic_id = :pic_id";
+    $sql_table_summary .= " AND pic_id = :pic_id";
 
     $sql_table_summary .= " AND status <> 'todo' GROUP BY content";
 
