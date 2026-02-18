@@ -35,9 +35,28 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT * FROM tasks ORDER BY updated_at DESC";
+    $pic_id = $_GET['pic_id'] ?? null;
+    $from_date = $_GET['from_date'] ?? null;
+    $to_date = $_GET['to_date'] ?? null;
+
+    $sql = "SELECT * FROM tasks WHERE 1=1";
+    $params = [];
+
+    if ($pic_id) {
+      $sql .= " AND pic_id = :pic_id";
+      $params[':pic_id'] = $pic_id;
+    }
+
+    if ($from_date && $to_date) {
+      $sql .= " AND (status = 'todo' OR (timestamp_progress BETWEEN :from_date AND :to_date))";
+      $params[':from_date'] = $from_date . " 00:00:00";
+      $params[':to_date'] = $to_date . " 23:59:59";
+    }
+
+    $sql .= " ORDER BY updated_at DESC";
+
     $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $data = array_map(function ($row) {

@@ -65,6 +65,7 @@ import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { ScrollArea } from './ui/scroll-area';
+import useTaskFilters from '@/hooks/useTaskFilters';
 
 // Aturan form
 const formSchema = z
@@ -129,9 +130,12 @@ const UpdateTaskForm = () => {
   // Fetch pics
   const { data: pics } = useFetchPICs();
   // Fetch task yang dipilih
-  const { data: tasks } = useFetchTasks();
+  // Gunakan custom hook untuk logic filter
+  const { queryParams } = useTaskFilters();
+
+  const { data: tasks } = useFetchTasks(queryParams);
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
-  const task = tasks?.filter((task) => task.id === selectedTaskId)[0];
+  const task = tasks?.find((task) => task.id === selectedTaskId);
 
   // Update Tasks
   const { mutateAsync: updateTaskMutate, isPending } = useUpdateTask();

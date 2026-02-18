@@ -1,23 +1,25 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
-export const fetchTasks = async () => {
-  const response = await api.get('/tasks.php');
+export const fetchTasks = async (filters = {}) => {
+  const response = await api.get('/tasks.php', {
+    params: filters,
+  });
   return response.data;
 };
 
-export const fetchTasksQueryKey = () => ['tasks'];
+export const fetchTasksQueryKey = (filters = {}) => ['tasks', filters];
 
-const fetchTasksQueryOptions = () => {
+const fetchTasksQueryOptions = (filters = {}) => {
   return queryOptions({
-    queryKey: fetchTasksQueryKey(),
-    queryFn: fetchTasks,
+    queryKey: fetchTasksQueryKey(filters),
+    queryFn: () => fetchTasks(filters),
   });
 };
 
-export const useFetchTasks = (params = {}) => {
+export const useFetchTasks = (filters = {}, params = {}) => {
   return useQuery({
-    ...fetchTasksQueryOptions(),
+    ...fetchTasksQueryOptions(filters),
     ...params.queryConfig,
   });
 };

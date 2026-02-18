@@ -41,37 +41,27 @@ import ErrorBanner from '@/components/ErrorState';
 import PieChartCard from '@/components/PieChartCard';
 import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/BarChartCard';
+import useTaskFilters from '@/hooks/useTaskFilters';
 
 const SummaryPage = () => {
   // State
   const { data: pics, error: fetchPICsError } = useFetchPICs();
 
-  // State Filter
-  const selectedPicId = useFilter((state) => state.selectedPicId);
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
-  const range = useFilter((state) => state.range);
+  // Gunakan custom hook untuk logic filter
+  const { selectedPicId, setSelectedPicId, queryParams } = useTaskFilters();
+
   const selectedPic = pics?.find((pic) => pic.id === selectedPicId) ?? {
     full_name: '-',
     nik: null,
     alias: ' ',
   };
 
-  // Buat filter object untuk API
-  const filters = useMemo(
-    () => ({
-      pic_id: selectedPicId !== 'all' ? selectedPicId : undefined,
-      from_date: range.from ? format(range.from, 'yyyy-MM-dd') : undefined,
-      to_date: range.to ? format(range.to, 'yyyy-MM-dd') : undefined,
-    }),
-    [selectedPicId, range],
-  );
-
   const {
     data,
     error: fetchSummaryError,
     isFetching,
     dataUpdatedAt,
-  } = useFetchSummary(filters);
+  } = useFetchSummary(queryParams);
 
   // Ambil pesan error
   const errorMessage =

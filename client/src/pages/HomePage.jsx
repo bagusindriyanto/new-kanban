@@ -8,9 +8,7 @@ import { columns } from '@/config/column';
 
 // Komponen Filter
 import { Spinner } from '@/components/ui/spinner';
-import useFilter from '@/stores/filterStore';
 import HeaderControls from '@/components/HeaderControls';
-import useFilteredTasks from '@/hooks/useFilteredTasks';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { ErrorBanner, ErrorFull } from '@/components/ErrorState';
@@ -22,9 +20,11 @@ import useDeadlineChecker from '@/hooks/useDeadlineChecker';
 import useNotification from '@/stores/notificationStore';
 import { useEffect } from 'react';
 
+import useTaskFilters from '@/hooks/useTaskFilters';
+
 const HomePage = () => {
-  // State untuk filter tanggal
-  const range = useFilter((state) => state.range);
+  // Gunakan custom hook untuk logic filter
+  const { selectedPicId, setSelectedPicId, queryParams } = useTaskFilters();
 
   // Tanstack query untuk tasks
   const {
@@ -33,18 +33,14 @@ const HomePage = () => {
     error: fetchTasksError,
     isFetching,
     dataUpdatedAt,
-  } = useFetchTasks();
+  } = useFetchTasks(queryParams);
+
   // Tanstack query untuk pics
   const {
     data: pics,
     isLoading: isFetchPICsLoading,
     error: fetchPICsError,
   } = useFetchPICs();
-
-  const selectedPicId = useFilter((state) => state.selectedPicId);
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
-
-  const sortedTasks = useFilteredTasks(tasks, selectedPicId, range);
 
   const currentTime = useNotification((state) => state.currentTime);
   const updateCurrentTime = useNotification((state) => state.updateCurrentTime);
@@ -81,7 +77,7 @@ const HomePage = () => {
   }, [updateCurrentTime]);
 
   // Cek deadline tasks
-  useDeadlineChecker(sortedTasks);
+  useDeadlineChecker(tasks);
 
   return (
     <div className="h-screen flex flex-col">
@@ -90,7 +86,7 @@ const HomePage = () => {
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <HeaderControls
           pics={pics}
-          tasks={sortedTasks}
+          tasks={tasks}
           selectedPicId={selectedPicId}
           setSelectedPicId={setSelectedPicId}
           isFetching={isFetching}
@@ -108,25 +104,25 @@ const HomePage = () => {
               <Spinner className="size-10" />
             </div>
           )}
-        {sortedTasks.length > 0 &&
+        {tasks?.length > 0 &&
           (fetchTasksError || fetchPICsError || !isOnline) && (
             <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
           )}
-        {sortedTasks.length === 0 &&
+        {tasks?.length === 0 &&
           (fetchTasksError || fetchPICsError || !isOnline) && (
             <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
           )}
-        {sortedTasks.length === 0 &&
+        {tasks?.length === 0 &&
           !isFetchTasksLoading &&
           !fetchTasksError &&
           isOnline && <EmptyState action={<AddTaskModal />} />}
-        {sortedTasks.length > 0 && (
+        {tasks?.length > 0 && (
           <div className="flex gap-4 flex-1">
             {columns.map((column) => (
               <StatusColumn
                 key={column.id}
                 title={column.title}
-                tasks={sortedTasks.filter((task) => task.status === column.id)}
+                tasks={tasks?.filter((task) => task.status === column.id)}
                 currentTime={currentTime}
               />
             ))}

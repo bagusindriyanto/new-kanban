@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 import useNotification from '@/stores/notificationStore';
 
-const useDeadlineChecker = (tasks) => {
+const useDeadlineChecker = (tasks = []) => {
   const { notifiedTaskIds, markAsNotified, currentTime } = useNotification();
 
   useEffect(() => {

@@ -19,46 +19,55 @@ export const useUpdateTask = (params = {}) => {
     // When mutate is called:
     onMutate: async (newTask, context) => {
       // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(fetchTasksQueryKey());
+      const previousTasks = queryClient.getQueriesData({ queryKey: ['tasks'] });
 
       // Optimistically update to the new value
-      queryClient.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
-        oldTasks?.map((task) =>
-          task.id === newTask.taskId
-            ? {
+      previousTasks.forEach(([queryKey, oldTasks]) => {
+        // We can check filters here if we want to remove the task if it no longer matches,
+        // but strictly speaking, simply updating it in place is safer for optimistic updates
+        // to avoid UI jumping. Real validation happens on invalidate.
+        queryClient.setQueryData(queryKey, (old) => {
+          if (!old) return old;
+          return old.map((task) => {
+            if (task.id === newTask.taskId) {
+              return {
                 ...task,
                 ...newTask.data,
                 updated_at: new Date().toISOString(),
                 optimistic: true,
-              }
-            : task
-        )
-      );
+              };
+            }
+            return task;
+          });
+        });
+      });
+
       params.mutationConfig?.onMutate?.(newTask, context);
       // Return a result with the snapshotted value
       return { previousTasks };
     },
     // If the mutation fails,
     // use the result returned from onMutate to roll back
-    onError: (err, newTask, onMutateResult, context) => {
-      queryClient.setQueryData(
-        fetchTasksQueryKey(),
-        onMutateResult.previousTasks
-      );
-      params.mutationConfig?.onError?.(err, newTask, onMutateResult, context);
+    onError: (err, newTask, context) => {
+      // Rollback all queries
+      if (context?.previousTasks) {
+        context.previousTasks.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+      params.mutationConfig?.onError?.(err, newTask, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
       params.mutationConfig?.onSettled?.(
         data,
         error,
         variables,
         onMutateResult,
-        context
+        context,
       );
     },
   });
