@@ -15,15 +15,14 @@ export const useDeleteTask = (params = {}) => {
     // When mutate is called:
     onMutate: async (taskId, context) => {
       // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(fetchTasksQueryKey());
+      const previousTasks = queryClient.getQueriesData({ queryKey: ['tasks'] });
 
-      // Optimistically update to the new value
-      queryClient.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
-        oldTasks?.filter((task) => task.id !== taskId)
+      // Optimistically update
+      queryClient.setQueriesData({ queryKey: ['tasks'] }, (oldTasks) =>
+        oldTasks?.filter((task) => task.id !== taskId),
       );
       params.mutationConfig?.onMutate?.(taskId, context);
       // Return a result with the snapshotted value
@@ -32,20 +31,19 @@ export const useDeleteTask = (params = {}) => {
     // If the mutation fails,
     // use the result returned from onMutate to roll back
     onError: (err, taskId, onMutateResult, context) => {
-      queryClient.setQueryData(
-        fetchTasksQueryKey(),
-        onMutateResult.previousTasks
-      );
+      onMutateResult.previousTasks.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
       params.mutationConfig?.onError?.(err, taskId, onMutateResult, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
       params.mutationConfig?.onSettled?.(
         data,
         error,
         variables,
         onMutateResult,
-        context
+        context,
       );
     },
   });

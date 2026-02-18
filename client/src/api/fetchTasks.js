@@ -1,23 +1,36 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
+import { format } from 'date-fns';
 
-export const fetchTasks = async () => {
-  const response = await api.get('/tasks.php');
+export const fetchTasks = async ({ queryKey }) => {
+  const [_key, { picId, range }] = queryKey;
+  const params = {};
+
+  if (picId && picId !== 'all') {
+    params.pic_id = picId;
+  }
+
+  if (range?.from && range?.to) {
+    params.start_date = format(range.from, 'yyyy-MM-dd');
+    params.end_date = format(range.to, 'yyyy-MM-dd');
+  }
+
+  const response = await api.get('/tasks.php', { params });
   return response.data;
 };
 
-export const fetchTasksQueryKey = () => ['tasks'];
+export const fetchTasksQueryKey = (filters = {}) => ['tasks', filters];
 
-const fetchTasksQueryOptions = () => {
-  return queryOptions({
-    queryKey: fetchTasksQueryKey(),
-    queryFn: fetchTasks,
+export const useFetchTasks = (filters = {}, params = {}) => {
+  return useQuery({
+    ...fetchTasksQueryOptions(filters),
+    ...params.queryConfig,
   });
 };
 
-export const useFetchTasks = (params = {}) => {
-  return useQuery({
-    ...fetchTasksQueryOptions(),
-    ...params.queryConfig,
+const fetchTasksQueryOptions = (filters) => {
+  return queryOptions({
+    queryKey: fetchTasksQueryKey(filters),
+    queryFn: fetchTasks,
   });
 };

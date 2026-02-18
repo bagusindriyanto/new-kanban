@@ -19,14 +19,13 @@ export const useUpdateTask = (params = {}) => {
     // When mutate is called:
     onMutate: async (newTask, context) => {
       // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(fetchTasksQueryKey());
+      const previousTasks = queryClient.getQueriesData({ queryKey: ['tasks'] });
 
-      // Optimistically update to the new value
-      queryClient.setQueryData(fetchTasksQueryKey(), (oldTasks) =>
+      // Optimistically update
+      queryClient.setQueriesData({ queryKey: ['tasks'] }, (oldTasks) =>
         oldTasks?.map((task) =>
           task.id === newTask.taskId
             ? {
@@ -35,8 +34,8 @@ export const useUpdateTask = (params = {}) => {
                 updated_at: new Date().toISOString(),
                 optimistic: true,
               }
-            : task
-        )
+            : task,
+        ),
       );
       params.mutationConfig?.onMutate?.(newTask, context);
       // Return a result with the snapshotted value
@@ -45,20 +44,19 @@ export const useUpdateTask = (params = {}) => {
     // If the mutation fails,
     // use the result returned from onMutate to roll back
     onError: (err, newTask, onMutateResult, context) => {
-      queryClient.setQueryData(
-        fetchTasksQueryKey(),
-        onMutateResult.previousTasks
-      );
+      onMutateResult.previousTasks.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
       params.mutationConfig?.onError?.(err, newTask, onMutateResult, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
       params.mutationConfig?.onSettled?.(
         data,
         error,
         variables,
         onMutateResult,
-        context
+        context,
       );
     },
   });

@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 import useNotification from '@/stores/notificationStore';
 
-const useDeadlineChecker = (tasks) => {
+const useDeadlineChecker = (tasks = []) => {
   const { notifiedTaskIds, markAsNotified, currentTime } = useNotification();
 
   useEffect(() => {
     const checkDeadlines = () => {
-      tasks.forEach((task) => {
+      tasks?.forEach((task) => {
         if (!task.scheduled_at || task.status !== 'todo' || !!task.optimistic)
           return;
 
