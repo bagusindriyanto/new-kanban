@@ -878,8 +878,7 @@ const UpdateTaskForm = () => {
                         onSelect={field.onChange}
                         startMonth={new Date(2011, 12)}
                         disabled={{
-                          before: new Date('2012-01-01'),
-                          after: new Date(),
+                          before: new Date(),
                         }}
                         initialFocus
                       />

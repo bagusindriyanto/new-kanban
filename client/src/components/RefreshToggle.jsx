@@ -10,7 +10,6 @@ import { fetchActivitiesQueryKey } from '@/api/fetchActivities';
 import { fetchPICsQueryKey } from '@/api/fetchPICs';
 import { fetchTasksQueryKey } from '@/api/fetchTasks';
 import { fetchSummaryQueryKey } from '@/api/fetchSummary';
-import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
 import { cn } from '@/lib/utils';
 import { formatTimestamp } from '@/utils/formatTimestamp';
 
@@ -21,7 +20,6 @@ export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
       fetchPICsQueryKey(),
       fetchTasksQueryKey(),
       fetchSummaryQueryKey(),
-      fetchTableSummaryQueryKey(),
     ];
     queryKeys.forEach((key) => {
       queryClient.invalidateQueries({ queryKey: key });

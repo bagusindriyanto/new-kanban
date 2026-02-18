@@ -1,7 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { fetchSummaryQueryKey } from '@/api/fetchSummary';
-import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,9 +25,6 @@ export const queryClient = new QueryClient({
       onSuccess: () => {
         // Invalidate data summary
         queryClient.invalidateQueries({ queryKey: fetchSummaryQueryKey() });
-        queryClient.invalidateQueries({
-          queryKey: fetchTableSummaryQueryKey(),
-        });
       },
     },
   },
