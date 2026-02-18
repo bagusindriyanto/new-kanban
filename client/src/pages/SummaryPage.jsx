@@ -150,7 +150,7 @@ const SummaryPage = () => {
               {/* Judul (Title Text) */}
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold tracking-tight">
-                  {selectedPic.full_name ?? '-'}
+                  {selectedPic.full_name}
                 </h2>
                 {/* Badge ID (Tambahan Opsional) */}
                 <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
@@ -166,23 +166,23 @@ const SummaryPage = () => {
             <CardDescription>Total Aktivitas</CardDescription>
             {/* <div className="flex justify-between items-center"> */}
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary.total_count ?? 0} Aktivitas
+              {data?.summary?.total_count ?? 0} Aktivitas
             </CardTitle>
             {/* </div> */}
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-1.5">
               <Badge className="bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
-                To Do: {data?.summary.todo_count ?? 0}
+                To Do: {data?.summary?.todo_count ?? 0}
               </Badge>
               <Badge className="bg-orange-300 text-orange-700 dark:bg-orange-700 dark:text-orange-300">
-                On Progress: {data?.summary.on_progress_count ?? 0}
+                On Progress: {data?.summary?.on_progress_count ?? 0}
               </Badge>
               <Badge className="bg-green-300 text-green-700 dark:bg-green-700 dark:text-green-300">
-                Done: {data?.summary.done_count ?? 0}
+                Done: {data?.summary?.done_count ?? 0}
               </Badge>
               <Badge className="bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
-                Archived: {data?.summary.archived_count ?? 0}
+                Archived: {data?.summary?.archived_count ?? 0}
               </Badge>
             </div>
           </CardContent>
@@ -192,19 +192,19 @@ const SummaryPage = () => {
             <CardDescription>Operational Time</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {((data?.summary.percentage ?? 0) * 100).toFixed(2)}%
+                {((data?.summary?.percentage ?? 0) * 100).toFixed(2)}%
               </CardTitle>
               <div className="flex flex-col items-end gap-1.5 text-sm">
                 <div className="font-medium">
                   Lama Aktivitas:{' '}
                   <span className="text-muted-foreground">
-                    {data?.summary.total_activity_minutes ?? 0} menit
+                    {data?.summary?.total_activity_minutes ?? 0} menit
                   </span>
                 </div>
                 <div className="font-medium">
                   Lama Bekerja:{' '}
                   <span className="text-muted-foreground">
-                    {data?.summary.total_working_minutes ?? 0} menit
+                    {data?.summary?.total_working_minutes ?? 0} menit
                   </span>
                 </div>
               </div>
