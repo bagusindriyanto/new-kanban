@@ -144,7 +144,7 @@ const SummaryPage = () => {
           <CardContent className="my-auto">
             {/* Content Section */}
             <div className="flex items-center gap-6">
-              <div className="rounded-full size-24 flex justify-center items-center border border-border p-1 bg-accent text-muted-foreground shadow-md">
+              <div className="rounded-full size-24 shrink-0 flex justify-center items-center border border-border p-1 bg-accent text-muted-foreground shadow-md">
                 <UserRound className="size-full" />
               </div>
               {/* Judul (Title Text) */}

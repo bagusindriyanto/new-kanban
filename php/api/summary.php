@@ -17,30 +17,183 @@ switch ($method) {
     break;
 }
 
-function handleGet($pdo)
+// ─── Helper: reusable SQL expression for activity minutes ───
+function activityMinutesExpr(string $alias = ''): string
+{
+  $prefix = $alias ? "{$alias}." : '';
+  return "
+    CASE
+      WHEN {$prefix}status = 'on progress'
+        THEN TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, NOW()) - {$prefix}minute_pause
+      WHEN {$prefix}status IN ('done', 'archived')
+        THEN {$prefix}minute_activity
+      ELSE 0
+    END";
+}
+
+// ─── Helper: build WHERE clause + params from filters ───
+function buildFilters(array $get, string $dateCol, string $picCol): array
+{
+  $conditions = [];
+  $params     = [];
+
+  $from_date = $get['from_date'] ?? null;
+  $to_date   = $get['to_date']   ?? null;
+  $pic_id    = $get['pic_id']    ?? null;
+
+  if ($from_date && $to_date) {
+    $conditions[]          = "{$dateCol} BETWEEN :from_date AND :to_date";
+    $params[':from_date']  = $from_date . ' 00:00:00';
+    $params[':to_date']    = $to_date   . ' 23:59:59';
+  }
+
+  if ($pic_id) {
+    $conditions[]        = "{$picCol} = :pic_id";
+    $params[':pic_id']   = $pic_id;
+  }
+
+  $where = $conditions
+    ? 'WHERE ' . implode(' AND ', $conditions)
+    : '';
+
+  return [$where, $params];
+}
+
+// ─── Helper: prepare → execute → return result ───
+function query(PDO $pdo, string $sql, array $params, bool $fetchAll = false)
+{
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute($params);
+  return $fetchAll
+    ? $stmt->fetchAll(PDO::FETCH_ASSOC)
+    : $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// ─── Individual query builders ──────────────────────────────
+
+function querySummary(PDO $pdo, string $where, array $params): array
+{
+  $activityExpr = activityMinutesExpr();
+  $sql = "
+    SELECT
+      COUNT(CASE WHEN status = 'on progress' THEN 1 END) AS on_progress_count,
+      COUNT(CASE WHEN status = 'done'        THEN 1 END) AS done_count,
+      COUNT(CASE WHEN status = 'archived'    THEN 1 END) AS archived_count,
+      SUM({$activityExpr}) AS total_activity_minutes
+    FROM tasks
+    {$where}
+  ";
+  return query($pdo, $sql, $params) ?: [];
+}
+
+function queryTodoCount(PDO $pdo, string $picId): array
+{
+  $sql = "
+    SELECT COUNT(id) AS todo_count
+    FROM tasks
+    WHERE status = 'todo' AND pic_id = :pic_id
+  ";
+  return query($pdo, $sql, [':pic_id' => $picId]) ?: [];
+}
+
+function queryWorkingMinutes(PDO $pdo, string $where, array $params): array
+{
+  $sql = "
+    SELECT SUM(working_minute) AS total_working_minutes
+    FROM work_time
+    {$where}
+  ";
+  return query($pdo, $sql, $params) ?: [];
+}
+
+function queryTableSummary(PDO $pdo, string $where, array $params): array
+{
+  $activityExpr = activityMinutesExpr();
+  $statusFilter = $where
+    ? "{$where} AND status <> 'todo'"
+    : "WHERE status <> 'todo'";
+
+  $sql = "
+    SELECT
+      content,
+      SUM({$activityExpr})  AS total_minutes,
+      COUNT(id)              AS activity_count,
+      AVG(
+        CASE
+          WHEN status = 'on progress'
+            THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW()) - minute_pause
+          WHEN status IN ('done', 'archived')
+            THEN minute_activity
+          ELSE NULL
+        END
+      ) AS avg_minutes
+    FROM tasks
+    {$statusFilter}
+    GROUP BY content
+  ";
+  return query($pdo, $sql, $params, true);
+}
+
+function queryChartSummary(PDO $pdo, array $params): array
+{
+  $activityExpr = activityMinutesExpr('t');
+
+  // Date range condition for the outer WHERE
+  $outerConditions = [];
+  if (isset($params[':from_date'], $params[':to_date'])) {
+    $outerConditions[] = "A.tgl BETWEEN :from_date AND :to_date";
+  }
+  $outerWhere = $outerConditions
+    ? 'WHERE ' . implode(' AND ', $outerConditions)
+    : '';
+
+  $sql = "
+    WITH Rekap_A AS (
+      SELECT
+        DATE(t.timestamp_progress) AS tgl,
+        t.pic_id,
+        SUM({$activityExpr}) AS total_activity_minutes
+      FROM tasks t
+      WHERE t.pic_id = :pic_id
+      GROUP BY DATE(t.timestamp_progress), t.pic_id
+    )
+    SELECT
+      A.tgl                          AS date,
+      A.total_activity_minutes       AS activity_minute,
+      IFNULL(B.working_minute, 0)    AS working_minute
+    FROM Rekap_A A
+    LEFT JOIN work_time B
+      ON A.tgl = DATE(B.date)
+      AND A.pic_id = B.pic_id
+    {$outerWhere}
+    ORDER BY A.tgl
+  ";
+  return query($pdo, $sql, $params, true);
+}
+
+// ─── Main handler ───────────────────────────────────────────
+
+function handleGet(PDO $pdo): void
 {
   try {
-    $from_date = isset($_GET['from_date']) ? $_GET['from_date'] : null;
-    $to_date = isset($_GET['to_date']) ? $_GET['to_date'] : null;
-    $pic_id = isset($_GET['pic_id']) ? $_GET['pic_id'] : null;
+    $from_date = $_GET['from_date'] ?? null;
+    $to_date   = $_GET['to_date']   ?? null;
+    $pic_id    = $_GET['pic_id']    ?? null;
 
+    // Early return for missing / "all" pic_id
     if (!$pic_id || $pic_id === 'all') {
       echo json_encode([
-        "status" => "success",
-        "filter" => [
-          "from_date" => $from_date,
-          "to_date" => $to_date,
-          "pic_id" => $pic_id,
-        ],
+        "status"  => "success",
+        "filter"  => compact('from_date', 'to_date', 'pic_id'),
         "summary" => [
-          "todo_count" => 0,
-          "on_progress_count" => 0,
-          "done_count" => 0,
-          "archived_count" => 0,
-          "total_count" => 0,
+          "todo_count"             => 0,
+          "on_progress_count"      => 0,
+          "done_count"             => 0,
+          "archived_count"         => 0,
+          "total_count"            => 0,
           "total_activity_minutes" => 0,
-          "total_working_minutes" => 0,
-          "percentage" => 0
+          "total_working_minutes"  => 0,
+          "percentage"             => 0,
         ],
         "table_summary" => [],
         "chart_summary" => [],
@@ -48,133 +201,49 @@ function handleGet($pdo)
       die();
     }
 
-    $sql_summary = "SELECT
-        COUNT(CASE WHEN status = 'on progress' THEN 1 END) AS on_progress_count,
-        COUNT(CASE WHEN status = 'done' THEN 1 END) AS done_count,
-        COUNT(CASE WHEN status = 'archived' THEN 1 END) AS archived_count,
-        SUM(
-          CASE
-            WHEN status = 'on progress' THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW())
-            WHEN status = 'done' OR status = 'archived' THEN minute_activity
-            ELSE 0
-          END
-        ) AS total_activity_minutes
-        FROM tasks
-        WHERE 1=1";
+    // Build filters for each table
+    [$taskWhere,  $taskParams]  = buildFilters($_GET, 'timestamp_progress', 'pic_id');
+    [$workWhere,  $workParams]  = buildFilters($_GET, 'date',               'pic_id');
+    [$chartParams]              = [array_merge($taskParams)]; // chart reuses task params
 
-    $sql_todo_summary = "SELECT COUNT(id) AS todo_count FROM tasks WHERE status = 'todo'";
+    // Run queries
+    $summary         = querySummary($pdo, $taskWhere, $taskParams);
+    $todoSummary     = queryTodoCount($pdo, $pic_id);
+    $workingSummary  = queryWorkingMinutes($pdo, $workWhere, $workParams);
+    $tableSummary    = queryTableSummary($pdo, $taskWhere, $taskParams);
+    $chartSummary    = queryChartSummary($pdo, $chartParams);
 
-    $sql_working_summary = "SELECT SUM(working_minute) AS total_working_minutes FROM work_time WHERE 1=1";
+    // Derived values
+    $todoCount           = $todoSummary['todo_count']              ?? 0;
+    $totalActivityMin    = $summary['total_activity_minutes']      ?? 0;
+    $totalWorkingMin     = $workingSummary['total_working_minutes'] ?? 0;
 
-    $sql_table_summary = "SELECT content,
-      SUM(
-        CASE
-          WHEN status = 'on progress' THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW())
-          WHEN status = 'done' OR status = 'archived' THEN minute_activity
-          ELSE 0
-        END
-      ) AS total_minutes,
-      COUNT(id) AS activity_count,
-      AVG(
-        CASE
-          WHEN status = 'on progress' THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW())
-          WHEN status = 'done' OR status = 'archived' THEN minute_activity
-          ELSE NULL
-        END
-      ) AS avg_minutes
-      FROM tasks
-      WHERE 1=1";
+    $totalCount = ($summary['on_progress_count'] ?? 0)
+      + ($summary['done_count']        ?? 0)
+      + ($summary['archived_count']    ?? 0)
+      + $todoCount;
 
-    $sql_chart_summary = "WITH Rekap_A AS (
-      SELECT 
-          DATE(t.timestamp_progress) AS tgl, -- Konversi timestamp ke date
-          t.pic_id,
-          SUM(
-              CASE
-                  WHEN t.status = 'on progress' THEN TIMESTAMPDIFF(MINUTE, t.timestamp_progress, NOW())
-                  WHEN t.status IN ('done', 'archived') THEN t.minute_activity
-                  ELSE 0
-              END
-          ) AS total_activity_minutes
-      FROM tasks t
-      WHERE t.pic_id = :pic_id
-      GROUP BY DATE(t.timestamp_progress), t.pic_id
-      )
-
-      SELECT 
-          A.tgl AS date,
-          A.total_activity_minutes AS activity_minute,
-          IFNULL(B.working_minute, 0) AS working_minute
-      FROM Rekap_A A
-      LEFT JOIN work_time B 
-          ON A.tgl = DATE(B.date) 
-          AND A.pic_id = B.pic_id
-      WHERE 1=1";
-
-    $params = [];
-    $todo_params = [];
-    if ($from_date && $to_date) {
-      $params[':from_date'] = $from_date . ' 00:00:00';
-      $params[':to_date'] = $to_date . ' 23:59:59';
-      $sql_summary .= " AND timestamp_progress BETWEEN :from_date AND :to_date";
-      $sql_working_summary .= " AND date BETWEEN :from_date AND :to_date";
-      $sql_table_summary .= " AND timestamp_progress BETWEEN :from_date AND :to_date";
-      $sql_chart_summary .= " AND A.tgl BETWEEN :from_date AND :to_date";
-    }
-
-    $params[':pic_id'] = $pic_id;
-    $todo_params[':pic_id'] = $pic_id;
-    $sql_summary .= " AND pic_id = :pic_id";
-    $sql_todo_summary .= " AND pic_id = :pic_id";
-    $sql_working_summary .= " AND pic_id = :pic_id";
-    $sql_table_summary .= " AND pic_id = :pic_id";
-    $sql_chart_summary .= " ORDER BY A.tgl";
-
-    $sql_table_summary .= " AND status <> 'todo' GROUP BY content";
-
-    $stmt = $pdo->prepare($sql_summary);
-    $stmt->execute($params);
-    $summary = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    $stmt_todo = $pdo->prepare($sql_todo_summary);
-    $stmt_todo->execute($todo_params);
-    $todo_summary = $stmt_todo->fetch(PDO::FETCH_ASSOC);
-
-    $stmt_working = $pdo->prepare($sql_working_summary);
-    $stmt_working->execute($params);
-    $working_summary = $stmt_working->fetch(PDO::FETCH_ASSOC);
-
-    $stmt_table = $pdo->prepare($sql_table_summary);
-    $stmt_table->execute($params);
-    $table_summary = $stmt_table->fetchAll(PDO::FETCH_ASSOC);
-
-    $stmt_chart = $pdo->prepare($sql_chart_summary);
-    $stmt_chart->execute($params);
-    $chart_summary = $stmt_chart->fetchAll(PDO::FETCH_ASSOC);
-
-    $updated_summary = [
-      "todo_count" => $todo_summary['todo_count'] ?? 0,
-      "total_count" => ($summary['on_progress_count'] ?? 0) + ($summary['done_count'] ?? 0) + ($summary['archived_count'] ?? 0) + ($todo_summary['todo_count'] ?? 0),
-      "total_working_minutes" => $working_summary['total_working_minutes'] ?? 0,
-      "percentage" => $working_summary['total_working_minutes'] > 0 ? $summary['total_activity_minutes'] / $working_summary['total_working_minutes'] : 0
-    ];
+    $percentage = $totalWorkingMin > 0
+      ? $totalActivityMin / $totalWorkingMin
+      : 0;
 
     echo json_encode([
-      "status" => "success",
-      "filter" => [
-        "from_date" => $from_date,
-        "to_date" => $to_date,
-        "pic_id" => $pic_id
-      ],
-      "summary" => array_merge($summary, $updated_summary),
-      "table_summary" => $table_summary,
-      "chart_summary" => $chart_summary,
+      "status"        => "success",
+      "filter"        => compact('from_date', 'to_date', 'pic_id'),
+      "summary"       => array_merge($summary, [
+        "todo_count"            => $todoCount,
+        "total_count"           => $totalCount,
+        "total_working_minutes" => $totalWorkingMin,
+        "percentage"            => $percentage,
+      ]),
+      "table_summary" => $tableSummary,
+      "chart_summary" => $chartSummary,
     ], JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode([
-      "status" => "error",
-      "message" => "Gagal mengambil data.",
+      "status"       => "error",
+      "message"      => "Gagal mengambil data.",
       "error_detail" => $e->getMessage(),
     ]);
   }
