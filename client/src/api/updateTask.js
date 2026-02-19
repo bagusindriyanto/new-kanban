@@ -15,53 +15,57 @@ export const updateTask = async ({ taskId, data }) => {
 export const useUpdateTask = (params = {}) => {
   return useMutation({
     mutationFn: updateTask,
-    ...params.mutationConfig,
     // When mutate is called:
-    onMutate: async (newTask, context) => {
+    onMutate: async (updatedTask, context) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
 
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueriesData({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueriesData({
+        queryKey: fetchTasksQueryKey(),
+      });
 
       // Optimistically update to the new value
       previousTasks.forEach(([queryKey, oldTasks]) => {
-        // We can check filters here if we want to remove the task if it no longer matches,
-        // but strictly speaking, simply updating it in place is safer for optimistic updates
-        // to avoid UI jumping. Real validation happens on invalidate.
-        queryClient.setQueryData(queryKey, (old) => {
-          if (!old) return old;
-          return old.map((task) => {
-            if (task.id === newTask.taskId) {
-              return {
-                ...task,
-                ...newTask.data,
-                updated_at: new Date().toISOString(),
-                optimistic: true,
-              };
-            }
-            return task;
-          });
-        });
+        console.log(queryKey, oldTasks);
+        if (!oldTasks) return;
+
+        const existingTask = oldTasks.some(
+          (task) => task.id === updatedTask.id,
+        );
+        if (!existingTask) return;
+
+        queryClient.setQueryData(
+          queryKey,
+          oldTasks.map((task) =>
+            task.id === updatedTask.id
+              ? {
+                  ...task,
+                  ...updatedTask,
+                  optimistic: true,
+                }
+              : task,
+          ),
+        );
       });
 
-      params.mutationConfig?.onMutate?.(newTask, context);
+      params.mutationConfig?.onMutate?.(updatedTask, context);
       // Return a result with the snapshotted value
       return { previousTasks };
     },
     // If the mutation fails,
     // use the result returned from onMutate to roll back
-    onError: (err, newTask, context) => {
+    onError: (err, updatedTask, context) => {
       // Rollback all queries
-      if (context?.previousTasks) {
-        context.previousTasks.forEach(([queryKey, data]) => {
-          queryClient.setQueryData(queryKey, data);
-        });
-      }
-      params.mutationConfig?.onError?.(err, newTask, context);
+      context?.previousTasks.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
+
+      params.mutationConfig?.onError?.(err, updatedTask, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
+
       params.mutationConfig?.onSettled?.(
         data,
         error,
@@ -70,5 +74,6 @@ export const useUpdateTask = (params = {}) => {
         context,
       );
     },
+    ...params.mutationConfig,
   });
 };

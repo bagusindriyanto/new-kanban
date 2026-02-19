@@ -11,19 +11,26 @@ export const deleteTask = async (taskId) => {
 export const useDeleteTask = (params = {}) => {
   return useMutation({
     mutationFn: deleteTask,
-    ...params.mutationConfig,
     // When mutate is called:
     onMutate: async (taskId, context) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
 
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueriesData({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueriesData({
+        queryKey: fetchTasksQueryKey(),
+      });
 
       // Optimistically update to the new value
       previousTasks.forEach(([queryKey, oldTasks]) => {
-        queryClient.setQueryData(queryKey, (old) =>
-          old?.filter((task) => task.id !== taskId),
+        if (!oldTasks) return;
+
+        const existingTask = oldTasks.some((task) => task.id === taskId);
+        if (!existingTask) return;
+
+        queryClient.setQueryData(
+          queryKey,
+          oldTasks.filter((task) => task.id !== taskId),
         );
       });
 
@@ -35,15 +42,15 @@ export const useDeleteTask = (params = {}) => {
     // use the result returned from onMutate to roll back
     onError: (err, taskId, context) => {
       // Rollback all queries
-      if (context?.previousTasks) {
-        context.previousTasks.forEach(([queryKey, data]) => {
-          queryClient.setQueryData(queryKey, data);
-        });
-      }
+      context?.previousTasks.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
+
       params.mutationConfig?.onError?.(err, taskId, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
+
       params.mutationConfig?.onSettled?.(
         data,
         error,
@@ -52,5 +59,6 @@ export const useDeleteTask = (params = {}) => {
         context,
       );
     },
+    ...params.mutationConfig,
   });
 };

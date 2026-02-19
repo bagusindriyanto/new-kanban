@@ -23,10 +23,13 @@ function activityMinutesExpr(string $alias = ''): string
   $prefix = $alias ? "{$alias}." : '';
   return "
     CASE
-      WHEN {$prefix}status = 'on progress'
-        THEN TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, NOW()) - {$prefix}minute_pause
-      WHEN {$prefix}status IN ('done', 'archived')
-        THEN {$prefix}minute_activity
+      WHEN {$prefix}status = 'on progress' THEN
+        CASE
+          WHEN {$prefix}pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, NOW()) - {$prefix}minute_pause
+          ELSE TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, {$prefix}pause_time) - {$prefix}minute_pause
+        END
+      WHEN {$prefix}status IN ('done', 'archived') THEN
+        {$prefix}minute_activity
       ELSE 0
     END";
 }
@@ -120,10 +123,13 @@ function queryTableSummary(PDO $pdo, string $where, array $params): array
       COUNT(id)              AS activity_count,
       AVG(
         CASE
-          WHEN status = 'on progress'
-            THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW()) - minute_pause
-          WHEN status IN ('done', 'archived')
-            THEN minute_activity
+          WHEN status = 'on progress' THEN
+            CASE
+              WHEN pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW()) - minute_pause
+              ELSE TIMESTAMPDIFF(MINUTE, timestamp_progress, pause_time) - minute_pause
+            END
+          WHEN status IN ('done', 'archived') THEN
+            minute_activity
           ELSE NULL
         END
       ) AS avg_minutes

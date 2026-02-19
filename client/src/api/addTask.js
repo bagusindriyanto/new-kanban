@@ -22,45 +22,40 @@ export const addTask = async (data) => {
 export const useAddTask = (params = {}) => {
   return useMutation({
     mutationFn: addTask,
-    ...params.mutationConfig,
     // When mutate is called:
     onMutate: async (newTask, context) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
 
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueriesData({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueriesData({
+        queryKey: fetchTasksQueryKey(),
+      });
 
       // Optimistically update to the new value
       // We iterate over the existing queries to access their query keys (filters)
       previousTasks.forEach(([queryKey, oldTasks]) => {
-        const filters = queryKey[1];
+        console.log(queryKey, oldTasks);
+        if (!oldTasks) return;
 
-        // Apply pic_id filter
-        if (
+        const filters = queryKey[1];
+        if (!filters) return;
+
+        const matchedFilter =
           filters?.pic_id &&
           filters.pic_id !== 'all' &&
-          Number(filters.pic_id) !== Number(newTask.pic_id)
-        ) {
-          return; // Don't update this cache
-        }
+          Number(filters.pic_id) !== Number(newTask.pic_id);
+
+        // Apply pic_id filter
+        if (!matchedFilter) return;
 
         // New tasks are always "todo" so we generally include them unless filtered out by PIC.
         queryClient.setQueryData(queryKey, [
           {
             ...newTask,
-            status: 'todo',
-            timestamp_todo: new Date().toISOString(),
-            timestamp_progress: null,
-            timestamp_done: null,
-            timestamp_archived: null,
-            minute_pause: 0,
-            minute_activity: 0,
-            pause_time: null,
-            updated_at: new Date().toISOString(),
             optimistic: true,
           },
-          ...(oldTasks || []),
+          ...oldTasks,
         ]);
       });
 
@@ -72,15 +67,15 @@ export const useAddTask = (params = {}) => {
     // use the result returned from onMutate to roll back
     onError: (err, newTask, context) => {
       // Rollback all queries
-      if (context?.previousTasks) {
-        context.previousTasks.forEach(([queryKey, data]) => {
-          queryClient.setQueryData(queryKey, data);
-        });
-      }
+      context?.previousTasks.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
+
       params.mutationConfig?.onError?.(err, newTask, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
+
       params.mutationConfig?.onSettled?.(
         data,
         error,
@@ -89,5 +84,6 @@ export const useAddTask = (params = {}) => {
         context,
       );
     },
+    ...params.mutationConfig,
   });
 };
