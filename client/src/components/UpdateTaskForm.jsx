@@ -67,7 +67,6 @@ import { useFetchTasks } from '@/api/fetchTasks';
 import { ScrollArea } from './ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
 
-// Aturan form
 const formSchema = z
   .object({
     content: z.string('Activity harus dipilih.'),
@@ -125,15 +124,14 @@ const UpdateTaskForm = () => {
   const [picOpen, setPicOpen] = useState(false);
   // Tampilkan Password/Tidak
   const [showPassword, setShowPassword] = useState(false);
-  // Fetch activity
-  const { data: contents } = useFetchActivities();
-  // Fetch pics
-  const { data: pics } = useFetchPICs();
-  // Fetch task yang dipilih
-  // Gunakan custom hook untuk logic filter
+  // Custom hook untuk logic filter
   const { queryParams } = useTaskFilters();
-
+  // Fetch data
+  const { data: contents } = useFetchActivities();
+  const { data: pics } = useFetchPICs();
   const { data: tasks } = useFetchTasks(queryParams);
+
+  // State untuk tasks yang dipilih
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
   const task = tasks?.find((task) => task.id === selectedTaskId);
 
@@ -193,9 +191,8 @@ const UpdateTaskForm = () => {
 
   // Submit form
   const onSubmit = (data) => {
-    // Cek password
     if (data.password === 'Semarang@2025') {
-      toast.promise(updateTaskMutate({ taskId: selectedTaskId, data }), {
+      toast.promise(updateTaskMutate({ ...data, id: selectedTaskId }), {
         loading: () => {
           return 'Sedang memperbarui task...';
         },
@@ -205,7 +202,6 @@ const UpdateTaskForm = () => {
           return 'Task berhasil diperbarui.';
         },
         error: (err) => {
-          // err adalah error yang dilempar dari store
           return {
             message:
               err.response?.data?.message ||
@@ -224,8 +220,12 @@ const UpdateTaskForm = () => {
   // Form
   return (
     <>
-      <ScrollArea className="-mx-4 px-4 max-h-[60vh]">
-        <form id="update-task" onSubmit={form.handleSubmit(onSubmit)}>
+      <ScrollArea className="-mx-4 px-3 max-h-[60vh]">
+        <form
+          id="update-task"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="px-1"
+        >
           <div className="grid grid-cols-6 gap-4">
             {/* Activity */}
             <div className="col-span-3">

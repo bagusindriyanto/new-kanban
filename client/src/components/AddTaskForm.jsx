@@ -52,15 +52,18 @@ const formSchema = z
     }
   })
   .transform((data) => {
-    if (!data.is_scheduled) {
-      return {
-        ...data,
-        scheduled_at: undefined,
-      };
-    }
+    const now = new Date().toISOString();
     return {
       ...data,
-      scheduled_at: data.scheduled_at.toISOString(),
+      status: 'todo',
+      timestamp_todo: now,
+      timestamp_progress: null,
+      timestamp_done: null,
+      timestamp_archived: null,
+      minute_pause: 0,
+      minute_activity: 0,
+      pause_time: null,
+      scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
     };
   });
 
@@ -68,10 +71,10 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   // State Buka/Tutup Popover
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
-  // Fetch activity
+  // Fetch Data
   const { data: contents } = useFetchActivities();
-  // Fetch pics
   const { data: pics } = useFetchPICs();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -82,19 +85,16 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const isScheduled = form.watch('is_scheduled');
 
   const onSubmit = (data) => {
-    // console.log(data);
-    // return;
     toast.promise(mutateAsync(data), {
       loading: () => {
         return 'Sedang menambahkan task...';
       },
       success: () => {
-        form.reset(); // reset form setelah submit
+        form.reset();
         onOpenChange(false);
         return 'Task berhasil ditambahkan.';
       },
       error: (err) => {
-        // err adalah error yang dilempar dari store
         return {
           message:
             err.response?.data?.message ||
