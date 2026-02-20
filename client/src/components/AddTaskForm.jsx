@@ -51,21 +51,18 @@ const formSchema = z
       });
     }
   })
-  .transform((data) => {
-    const now = new Date().toISOString();
-    return {
-      ...data,
-      status: 'todo',
-      timestamp_todo: now,
-      timestamp_progress: null,
-      timestamp_done: null,
-      timestamp_archived: null,
-      minute_pause: 0,
-      minute_activity: 0,
-      pause_time: null,
-      scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
-    };
-  });
+  .transform((data) => ({
+    ...data,
+    status: 'todo',
+    timestamp_todo: new Date().toISOString(),
+    timestamp_progress: null,
+    timestamp_done: null,
+    timestamp_archived: null,
+    minute_pause: 0,
+    minute_activity: 0,
+    pause_time: null,
+    scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
+  }));
 
 const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   // State Buka/Tutup Popover

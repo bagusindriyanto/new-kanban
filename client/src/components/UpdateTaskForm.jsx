@@ -116,6 +116,7 @@ const formSchema = z
       ? data.timestamp_archived.toISOString()
       : null,
     scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
+    updated_at: new Date().toISOString(),
   }));
 
 const UpdateTaskForm = () => {
