@@ -116,7 +116,7 @@ const HomePage = () => {
           !isFetchTasksLoading &&
           !fetchTasksError &&
           isOnline && <EmptyState action={<AddTaskModal />} />}
-        {tasks?.length > 0 && (
+        {tasks?.length > 0 && !isFetchTasksLoading && (
           <div className="flex gap-4 flex-1">
             {columns.map((column) => (
               <StatusColumn

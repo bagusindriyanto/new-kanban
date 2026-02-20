@@ -14,6 +14,7 @@ const fetchTasksQueryOptions = (filters = {}) => {
   return queryOptions({
     queryKey: fetchTasksQueryKey(filters),
     queryFn: () => fetchTasks(filters),
+    placeholderData: (previousData) => previousData,
   });
 };
 

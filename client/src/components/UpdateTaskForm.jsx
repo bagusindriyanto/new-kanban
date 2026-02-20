@@ -224,7 +224,7 @@ const UpdateTaskForm = () => {
         <form
           id="update-task"
           onSubmit={form.handleSubmit(onSubmit)}
-          className="px-1"
+          className="p-1"
         >
           <div className="grid grid-cols-6 gap-4">
             {/* Activity */}

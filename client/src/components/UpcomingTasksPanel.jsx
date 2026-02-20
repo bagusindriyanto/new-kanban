@@ -19,7 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const UpcomingTasksPanel = ({ tasks, currentTime }) => {
+const UpcomingTasksPanel = ({ tasks, pics, currentTime }) => {
   const [visibleTasks, setVisibleTasks] = useState([]);
 
   useEffect(() => {
@@ -74,29 +74,32 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
               const diffInMinutes =
                 (new Date(task.scheduled_at) - currentTime) / 60000;
               const isUrgent = diffInMinutes <= 15;
+              const picName =
+                pics?.find((p) => p.id === task.pic_id)?.name || '-';
 
               return (
                 <div
                   key={task.id}
                   className={cn('p-3 bg-card rounded-lg text-sm border', {
-                    'bg-red-50 dark:bg-red-950/20': isUrgent,
+                    'bg-red-50 dark:bg-red-950/30': isUrgent,
                   })}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <p className="font-medium truncate">{task.content}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatTimestamp(task.scheduled_at)}
-                      </p>
-                      <p
-                        className={cn('text-xs font-semibold mt-1', {
-                          'text-red-600 dark:text-red-400': isUrgent,
-                          'text-blue-600 dark:text-blue-400': !isUrgent,
-                        })}
-                      >
-                        {Math.ceil(diffInMinutes)} menit lagi
-                      </p>
-                    </div>
+                  <div className="flex justify-between items-start">
+                    <p className="font-medium truncate">{task.content}</p>
+                    <p className="text-sm">{picName}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formatTimestamp(task.scheduled_at)}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <p
+                      className={cn('text-xs font-semibold mt-1', {
+                        'text-red-600 dark:text-red-400': isUrgent,
+                        'text-blue-600 dark:text-blue-400': !isUrgent,
+                      })}
+                    >
+                      {Math.ceil(diffInMinutes)} menit lagi
+                    </p>
                     {isUrgent && (
                       <div className="shrink-0 size-2 rounded-full bg-red-500 mt-1 animate-pulse"></div>
                     )}

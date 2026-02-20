@@ -50,7 +50,7 @@ const HeaderControls = ({
         </SelectContent>
       </Select>
       <FilterCalendar />
-      <UpcomingTasksPanel tasks={tasks} currentTime={currentTime} />
+      <UpcomingTasksPanel tasks={tasks} pics={pics} currentTime={currentTime} />
       <AddItemsDropdown />
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>
