@@ -1,8 +1,6 @@
-// This type is used to define the shape of our data.
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// You can use a Zod schema here if you want.
 export const columns = [
   {
     accessorKey: 'content',

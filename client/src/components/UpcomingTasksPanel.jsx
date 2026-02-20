@@ -22,7 +22,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const UpcomingTasksPanel = ({ tasks, currentTime }) => {
   const [visibleTasks, setVisibleTasks] = useState([]);
 
-  // Filter tasks yang akan dimulai dalam 30 menit ke depan
   useEffect(() => {
     if (!tasks || tasks.length === 0) {
       setVisibleTasks([]);
@@ -35,7 +34,7 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
 
         const diffInMinutes =
           (new Date(task.scheduled_at) - currentTime) / 60000;
-        // Tampilkan task yang scheduled 30 menit ke depan dan belum berlalu
+
         return diffInMinutes > 0 && diffInMinutes <= 30;
       })
       .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));

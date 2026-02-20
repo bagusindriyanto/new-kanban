@@ -23,12 +23,11 @@ const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
         return 'Sedang menambahkan activity...';
       },
       success: () => {
-        form.reset(); // reset form setelah submit
+        form.reset();
         onOpenChange(false);
         return `"${data.activity}" telah ditambahkan ke daftar activity.`;
       },
       error: (err) => {
-        // err adalah error yang dilempar dari store
         return {
           message:
             err.response?.data?.message ||

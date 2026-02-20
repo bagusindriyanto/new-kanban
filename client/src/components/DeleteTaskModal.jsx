@@ -30,12 +30,13 @@ const formSchema = z.object({
 });
 
 const DeleteTaskModal = () => {
-  const selectedTaskId = useFilter((state) => state.selectedTaskId);
-  const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
   const isModalOpen = useDeleteTaskModal((state) => state.isModalOpen);
   const setIsModalOpen = useDeleteTaskModal((state) => state.setIsModalOpen);
-  // Tampilkan Password/Tidak
   const [showPassword, setShowPassword] = useState(false);
+
+  const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
+
+  const selectedTaskId = useFilter((state) => state.selectedTaskId);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -56,7 +57,6 @@ const DeleteTaskModal = () => {
           return 'Task berhasil dihapus.';
         },
         error: (err) => {
-          // err adalah error yang dilempar dari store
           return {
             message:
               err.response?.data?.message ||

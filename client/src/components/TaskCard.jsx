@@ -79,17 +79,13 @@ const TaskCard = ({ task, currentTime }) => {
 
   // Fungsi buka form modal
   const handleUpdateTaskModal = () => {
-    // Buka modalnya
     setIsUpdateTaskModalOpen(true);
-    // Set id task yang dipilih
     setSelectedTaskId(id);
   };
 
   // Fungsi buka confirm modal
   const handleDeleteTaskModal = () => {
-    // Buka modalnya
     setIsDeleteTaskModalOpen(true);
-    // Set id task yang dipilih
     setSelectedTaskId(id);
   };
 
@@ -157,7 +153,7 @@ const TaskCard = ({ task, currentTime }) => {
       pause_time: pause,
       scheduled_at,
     };
-    updateTaskMutate({ taskId: id, data });
+    updateTaskMutate({ ...data, id });
   };
 
   // State untuk hitung durasi pause
@@ -238,7 +234,7 @@ const TaskCard = ({ task, currentTime }) => {
       pause_time: updatedPauseTime,
       scheduled_at,
     };
-    updateTaskMutate({ taskId: id, data });
+    updateTaskMutate({ ...data, id });
     setIsPaused(!resetPauseTime);
   };
 

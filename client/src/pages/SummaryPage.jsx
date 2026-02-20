@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { SquareKanban, UserRound, IdCardLanyard } from 'lucide-react';
 import {
   Card,
@@ -26,7 +25,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Link } from 'react-router';
-import useFilter from '@/stores/filterStore';
 import ModeToggle from '@/components/ModeToggle';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
@@ -36,7 +34,6 @@ import { useFetchSummary } from '@/api/fetchSummary';
 import { RefreshToggle } from '@/components/RefreshToggle';
 import Footer from '@/components/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
-import { format } from 'date-fns';
 import ErrorBanner from '@/components/ErrorState';
 import PieChartCard from '@/components/PieChartCard';
 import { Badge } from '@/components/ui/badge';

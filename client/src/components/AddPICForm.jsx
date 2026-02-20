@@ -23,12 +23,11 @@ const AddPICForm = ({ mutateAsync, onOpenChange }) => {
         return 'Sedang menambahkan PIC...';
       },
       success: () => {
-        form.reset(); // reset form setelah submit
+        form.reset();
         onOpenChange(false);
         return `"${data.pic}" telah ditambahkan ke daftar PIC.`;
       },
       error: (err) => {
-        // err adalah error yang dilempar dari store
         return {
           message:
             err.response?.data?.message ||

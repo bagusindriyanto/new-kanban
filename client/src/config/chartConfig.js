@@ -1,4 +1,4 @@
-// Chart Activity Minute
+// Chart Lama Aktivitas vs Waktu Bekerja
 export const chartConfig = {
   activity_minute: {
     label: 'Aktivitas',

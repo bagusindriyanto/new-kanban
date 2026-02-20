@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import useFilter from '@/stores/filterStore';
 
 export const FilterCalendar = () => {
-  // State untuk filter tanggal
   const range = useFilter((state) => state.range);
   const setRange = useFilter((state) => state.setRange);
 
@@ -24,7 +23,7 @@ export const FilterCalendar = () => {
             ? range.from.getTime() === range.to.getTime()
               ? range.from.toLocaleDateString('id')
               : `${range.from.toLocaleDateString(
-                  'id'
+                  'id',
                 )} - ${range.to.toLocaleDateString('id')}`
             : 'Semua Hari'}
         </Button>
@@ -38,7 +37,6 @@ export const FilterCalendar = () => {
           captionLayout="dropdown"
           defaultMonth={range.from}
           weekStartsOn={1}
-          // max={6}
           selected={range}
           onSelect={setRange}
           startMonth={new Date(2011, 12)}
