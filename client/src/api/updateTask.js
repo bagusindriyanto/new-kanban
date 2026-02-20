@@ -4,11 +4,7 @@ import { queryClient } from '@/lib/react-query';
 import { fetchTasksQueryKey } from './fetchTasks';
 
 export const updateTask = async (data) => {
-  const now = new Date().toISOString();
-  const response = await api.patch(`/tasks.php?id=${data.id}`, {
-    ...data,
-    updated_at: now,
-  });
+  const response = await api.patch(`/tasks.php?id=${data.id}`, data);
   return response.data;
 };
 
