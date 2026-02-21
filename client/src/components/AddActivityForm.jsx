@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 
 const formSchema = z.object({
-  activity: z.string().trim().min(1, 'Mohon tuliskan nama activity.'),
+  activity: z.string().trim().min(1, 'Mohon tuliskan nama aktivitas.'),
 });
 
 const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
@@ -20,19 +20,19 @@ const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
   const onSubmit = (data) => {
     toast.promise(mutateAsync(data), {
       loading: () => {
-        return 'Sedang menambahkan activity...';
+        return 'Sedang menambahkan aktivitas...';
       },
       success: () => {
         form.reset();
         onOpenChange(false);
-        return `"${data.activity}" telah ditambahkan ke daftar activity.`;
+        return `"${data.activity}" telah ditambahkan ke daftar aktivitas.`;
       },
       error: (err) => {
         return {
           message:
             err.response?.data?.message ||
             err.message ||
-            'Gagal menambahkan activity.',
+            'Gagal menambahkan aktivitas.',
           description: err.response?.data?.error_detail || null,
         };
       },
@@ -47,7 +47,7 @@ const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor="add-activity-activity" className="gap-0.5">
-              Nama Activity<span className="text-red-500">*</span>
+              Nama Aktivitas<span className="text-red-500">*</span>
             </FieldLabel>
             <Input
               {...field}

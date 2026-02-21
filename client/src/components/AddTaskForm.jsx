@@ -36,7 +36,7 @@ import { TimePickerDemo } from './ui/time-picker-demo';
 
 const formSchema = z
   .object({
-    content: z.string('Mohon pilih salah satu activity.'),
+    content: z.string('Mohon pilih salah satu aktivitas.'),
     pic_id: z.number('Mohon pilih salah satu PIC.'),
     detail: z.string().trim().optional(),
     is_scheduled: z.boolean(),
@@ -115,7 +115,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="add-task-content" className="gap-0.5">
-                  Activity<span className="text-red-500">*</span>
+                  Aktivitas<span className="text-red-500">*</span>
                 </FieldLabel>
                 <Popover open={activityOpen} onOpenChange={setActivityOpen}>
                   <PopoverTrigger asChild>
@@ -134,7 +134,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                           ? contents?.find(
                               (content) => content.name === field.value,
                             )?.name
-                          : 'Pilih activity'}
+                          : 'Pilih aktivitas'}
                       </span>
                       <ChevronsUpDown className="opacity-50" />
                     </Button>
@@ -142,7 +142,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                   <PopoverContent className="PopoverContent p-0">
                     <Command>
                       <CommandInput
-                        placeholder="Cari activity..."
+                        placeholder="Cari aktivitas..."
                         className="h-9"
                       />
                       <CommandList
@@ -150,7 +150,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                           e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
                         }}
                       >
-                        <CommandEmpty>Activity tidak ditemukan.</CommandEmpty>
+                        <CommandEmpty>Aktivitas tidak ditemukan.</CommandEmpty>
                         <CommandGroup>
                           {contents?.map((content) => (
                             <CommandItem

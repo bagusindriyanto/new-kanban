@@ -25,17 +25,17 @@ const AddActivityModal = ({ hideButton = false }) => {
         {hideButton ? (
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <Layers />
-            Tambah Activity
+            Tambah Aktivitas
           </DropdownMenuItem>
         ) : (
           <Button variant="nav" size="sm">
-            Tambah Activity
+            Tambah Aktivitas
           </Button>
         )}
       </DialogTrigger>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>
-          <DialogTitle>Tambah Activity</DialogTitle>
+          <DialogTitle>Tambah Aktivitas</DialogTitle>
         </DialogHeader>
         <AddActivityForm
           mutateAsync={addActivityMutation}

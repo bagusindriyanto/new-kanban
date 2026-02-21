@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router';
 import { ThemeProvider } from 'next-themes';
 import { queryClient } from './lib/react-query';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')).render(
           <App />
         </ThemeProvider>
       </BrowserRouter>
-      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      {/* {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />} */}
     </QueryClientProvider>
   </StrictMode>,
 );

@@ -69,7 +69,7 @@ import useTaskFilters from '@/hooks/useTaskFilters';
 
 const formSchema = z
   .object({
-    content: z.string('Activity harus dipilih.'),
+    content: z.string('Aktivitas harus dipilih.'),
     pic_id: z.number('PIC harus dipilih.'),
     status: z.enum(['todo', 'on progress', 'done', 'archived'], {
       error: 'Status harus dipilih.',
@@ -239,7 +239,7 @@ const UpdateTaskForm = () => {
                       htmlFor="update-task-content"
                       className="gap-0.5"
                     >
-                      Activity<span className="text-red-500">*</span>
+                      Aktivitas<span className="text-red-500">*</span>
                     </FieldLabel>
                     <Popover open={activityOpen} onOpenChange={setActivityOpen}>
                       <PopoverTrigger asChild>
@@ -258,7 +258,7 @@ const UpdateTaskForm = () => {
                               ? contents?.find(
                                   (content) => content.name === field.value,
                                 )?.name
-                              : 'Pilih activity'}
+                              : 'Pilih aktivitas'}
                           </span>
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -266,7 +266,7 @@ const UpdateTaskForm = () => {
                       <PopoverContent className="PopoverContent p-0">
                         <Command>
                           <CommandInput
-                            placeholder="Cari activity..."
+                            placeholder="Cari aktivitas..."
                             className="h-9"
                           />
                           <CommandList
@@ -275,7 +275,7 @@ const UpdateTaskForm = () => {
                             }}
                           >
                             <CommandEmpty>
-                              Activity tidak ditemukan.
+                              Aktivitas tidak ditemukan.
                             </CommandEmpty>
                             <CommandGroup>
                               {contents?.map((content) => (
@@ -480,7 +480,7 @@ const UpdateTaskForm = () => {
                       htmlFor="update-task-pause-time"
                       className="gap-0.5"
                     >
-                      Activity di Pause?<span className="text-red-500">*</span>
+                      Aktivitas di Pause?<span className="text-red-500">*</span>
                     </FieldLabel>
                     <div className="flex justify-center items-center h-9 gap-3">
                       <Label htmlFor="update-task-pause-time">Tidak</Label>
