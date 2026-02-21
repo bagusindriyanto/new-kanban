@@ -84,5 +84,3 @@ export const ErrorFull = ({ isOnline, errorMessage }) => {
     </Empty>
   );
 };
-
-export default ErrorBanner;

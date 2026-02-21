@@ -12,10 +12,7 @@ const Footer = () => {
       <div className="flex-1 flex justify-end items-center pr-4">
         <Tooltip delayDuration={500}>
           <TooltipTrigger asChild>
-            <Link
-              className="border border-white/20 rounded-sm p-1 hover:opacity-70"
-              to="/changelog"
-            >
+            <Link className="hover:opacity-70" to="/changelog">
               <Info className="text-white size-4" />
             </Link>
           </TooltipTrigger>

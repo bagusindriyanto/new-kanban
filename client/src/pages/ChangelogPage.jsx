@@ -5,20 +5,21 @@ const ChangelogPage = () => {
   const { theme } = useTheme();
 
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="min-h-screen w-full relative" id="top">
       {theme === 'light' ? (
         <div
           className="fixed inset-0 -z-1"
           style={{
+            background: '#ffffff',
             backgroundImage: `
-        linear-gradient(to right, #d1d5db 1px, transparent 1px),
-        linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
+        radial-gradient(
+          circle at top center,
+          rgba(70, 130, 180, 0.15),
+          transparent 70%
+        )
       `,
-            backgroundSize: '32px 32px',
-            WebkitMaskImage:
-              'radial-gradient(ellipse 80% 80% at 100% 0%, #000 50%, transparent 90%)',
-            maskImage:
-              'radial-gradient(ellipse 80% 80% at 100% 0%, #000 50%, transparent 90%)',
+            filter: 'blur(80px)',
+            backgroundRepeat: 'no-repeat',
           }}
         />
       ) : (

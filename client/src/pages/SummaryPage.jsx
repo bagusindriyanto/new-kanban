@@ -34,7 +34,7 @@ import { useFetchSummary } from '@/api/fetchSummary';
 import { RefreshToggle } from '@/components/RefreshToggle';
 import Footer from '@/components/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
-import ErrorBanner from '@/components/ErrorState';
+import { ErrorBanner } from '@/components/ErrorState';
 import PieChartCard from '@/components/PieChartCard';
 import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/BarChartCard';
