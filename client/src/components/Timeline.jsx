@@ -7,7 +7,7 @@ import { ArrowUp } from 'lucide-react';
 
 const timelineData = [
   {
-    date: '20 Feb 2026',
+    date: '23 Feb 2026',
     title: '2.3.1',
     content: (
       <>
@@ -18,8 +18,12 @@ const timelineData = [
             <Badge className="bg-orange-300 text-orange-700 dark:bg-orange-700 dark:text-orange-300">
               On Progress
             </Badge>{' '}
-            tidak terhitung dengan benar pada halaman Summary.
+            tidak terhitung dengan benar pada halaman Summary
           </li>
+        </ul>
+        <p className="mt-6 mb-4">Meningkatkan:</p>
+        <ul>
+          <li className="flex items-center gap-2">🚅 Performa aplikasi</li>
         </ul>
       </>
     ),
@@ -31,19 +35,19 @@ const timelineData = [
       <>
         <p className="mb-4">Menambahkan:</p>
         <ul>
-          <li className="flex items-center gap-2">⏰ Fitur jadwalkan task.</li>
+          <li className="flex items-center gap-2">⏰ Fitur jadwalkan task</li>
           <li className="flex items-center gap-2">
-            📌 Daftar task yang akan dimulai dalam 30 menit ke depan.
+            📌 Daftar task yang akan dimulai dalam 30 menit ke depan
           </li>
           <li className="flex items-center gap-2">
             📊 Grafik proporsi aktivitas, untuk menunjukkan proporsi aktivitas
-            dalam 1 waktu.
+            dalam 1 waktu
           </li>
         </ul>
         <p className="mt-6 mb-4">Memperbarui:</p>
         <ul>
           <li className="flex items-center gap-2">
-            🖥️ Tampilan UI halaman Summary.
+            🖥️ Tampilan UI halaman Summary
           </li>
         </ul>
       </>
@@ -56,9 +60,9 @@ const timelineData = [
       <>
         <p className="mb-4">Menambahkan:</p>
         <ul>
-          <li className="flex items-center gap-2">🔄 Fitur refresh data.</li>
+          <li className="flex items-center gap-2">🔄 Fitur refresh data</li>
           <li className="flex items-center gap-2">
-            ℹ️ Notifikasi ketika sedang offline/terjadi kesalahan pada server.
+            ℹ️ Notifikasi ketika sedang offline/terjadi kesalahan pada server
           </li>
         </ul>
       </>
@@ -71,7 +75,7 @@ const timelineData = [
       <>
         <p className="mb-4">Meningkatkan:</p>
         <ul>
-          <li className="flex items-center gap-2">🚅 Performa aplikasi.</li>
+          <li className="flex items-center gap-2">🚅 Performa aplikasi</li>
         </ul>
       </>
     ),
@@ -83,7 +87,7 @@ const timelineData = [
       <>
         <p className="mb-4">Meningkatkan:</p>
         <ul>
-          <li className="flex items-center gap-2">🚅 Performa aplikasi.</li>
+          <li className="flex items-center gap-2">🚅 Performa aplikasi</li>
         </ul>
       </>
     ),
@@ -96,10 +100,10 @@ const timelineData = [
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            📅 Filter task berdasarkan tanggal.
+            📅 Filter task berdasarkan tanggal
           </li>
           <li className="flex items-center gap-2">
-            ⚙️ Otomatis menyimpan preferensi filter terakhir yang digunakan.
+            ⚙️ Otomatis menyimpan preferensi filter terakhir yang digunakan
           </li>
         </ul>
       </>
@@ -115,19 +119,19 @@ const timelineData = [
           <li className="flex items-center gap-2">
             📊 Halaman Summary, menampilkan informasi:
           </li>
-          <ul className="list-disc ml-12 mt-1 font-light">
-            <li>Total aktivitas setiap status.</li>
+          <ul className="list-disc ml-12 my-1 font-light">
+            <li>Total aktivitas setiap status</li>
             <li>
               Operational time, yaitu perbandingan antara lama aktivitas dengan
-              lama bekerja.
+              lama bekerja
             </li>
             <li>
               Tabel aktivitas yang menampilkan aktivitas yang sedang/selesai
-              dikerjakan.
+              dikerjakan
             </li>
-            <li>Grafik lama aktivitas vs lama bekerja setiap harinya.</li>
+            <li>Grafik lama aktivitas vs lama bekerja setiap harinya</li>
           </ul>
-          <li className="flex items-center gap-2">🌙 Mode Gelap.</li>
+          <li className="flex items-center gap-2">🌙 Mode Gelap</li>
         </ul>
       </>
     ),
@@ -140,13 +144,13 @@ const timelineData = [
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            🧑‍💼 Filter task berdasarkan PIC.
+            🧑‍💼 Filter task berdasarkan PIC
           </li>
           <li className="flex items-center gap-2">
-            ✏️ Fitur edit dan hapus task.
+            ✏️ Fitur edit dan hapus task
           </li>
           <li className="flex items-center gap-2">
-            ℹ️ Notifikasi status tambah/edit/hapus aktivitas, PIC, dan task.
+            ℹ️ Notifikasi status tambah/edit/hapus aktivitas, PIC, dan task
           </li>
         </ul>
       </>
@@ -159,7 +163,7 @@ const timelineData = [
       <>
         <p className="mb-4">Meningkatkan:</p>
         <ul>
-          <li className="flex items-center gap-2">🚅 Performa aplikasi.</li>
+          <li className="flex items-center gap-2">🚅 Performa aplikasi</li>
         </ul>
       </>
     ),
@@ -171,7 +175,7 @@ const timelineData = [
       <>
         <p className="mb-4">Memperbarui:</p>
         <ul>
-          <li className="flex items-center gap-2">🖥️ Tampilan UI.</li>
+          <li className="flex items-center gap-2">🖥️ Tampilan UI</li>
         </ul>
       </>
     ),
@@ -184,7 +188,7 @@ const timelineData = [
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            ➕ Tambah Aktivitas, PIC, dan Task dengan judul dan detail task.
+            ➕ Tambah Aktivitas, PIC, dan Task dengan judul dan detail task
           </li>
           <li className="flex items-center gap-2">
             ➡️ Update status{' '}
@@ -200,13 +204,13 @@ const timelineData = [
             <Badge className="bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
               Archived
             </Badge>{' '}
-            task dengan tombol kanan/kiri.
+            task dengan tombol kanan/kiri
           </li>
           <li className="flex items-center gap-2">
-            ⏸️ Pause aktivitas ketika sedang menjalankan aktivitas lain.
+            ⏸️ Pause aktivitas ketika sedang menjalankan aktivitas lain
           </li>
           <li className="flex items-center gap-2">
-            📄 Tampilan board berbasis kolom.
+            📄 Tampilan board berbasis kolom
           </li>
         </ul>
       </>
