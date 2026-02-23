@@ -20,6 +20,9 @@ const timelineData = [
             </Badge>{' '}
             tidak terhitung dengan benar pada halaman Summary
           </li>
+          <li className="flex items-center gap-2">
+            📅 Pilihan tanggal untuk “Jadwalkan Task” yang tidak tepat.
+          </li>
         </ul>
         <p className="mt-6 mb-4">Meningkatkan:</p>
         <ul>
@@ -35,7 +38,7 @@ const timelineData = [
       <>
         <p className="mb-4">Menambahkan:</p>
         <ul>
-          <li className="flex items-center gap-2">⏰ Fitur jadwalkan task</li>
+          <li className="flex items-center gap-2">📅 Fitur “Jadwalkan Task”</li>
           <li className="flex items-center gap-2">
             📌 Daftar task yang akan dimulai dalam 30 menit ke depan
           </li>
@@ -60,7 +63,7 @@ const timelineData = [
       <>
         <p className="mb-4">Menambahkan:</p>
         <ul>
-          <li className="flex items-center gap-2">🔄 Fitur refresh data</li>
+          <li className="flex items-center gap-2">🔄 Fitur “Refresh Data”</li>
           <li className="flex items-center gap-2">
             ℹ️ Notifikasi ketika sedang offline/terjadi kesalahan pada server
           </li>
@@ -144,7 +147,7 @@ const timelineData = [
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            🧑‍💼 Filter task berdasarkan PIC
+            👥 Filter task berdasarkan PIC
           </li>
           <li className="flex items-center gap-2">
             ✏️ Fitur edit dan hapus task
@@ -188,7 +191,7 @@ const timelineData = [
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            ➕ Tambah Aktivitas, PIC, dan Task dengan judul dan detail task
+            ➕ Tambah Aktivitas, PIC, dan Task yang akan dikerjakan.
           </li>
           <li className="flex items-center gap-2">
             ➡️ Update status{' '}
@@ -207,7 +210,7 @@ const timelineData = [
             task dengan tombol kanan/kiri
           </li>
           <li className="flex items-center gap-2">
-            ⏸️ Pause aktivitas ketika sedang menjalankan aktivitas lain
+            ⏸️ Pause task ketika sedang menjalankan task lain
           </li>
           <li className="flex items-center gap-2">
             📄 Tampilan board berbasis kolom
