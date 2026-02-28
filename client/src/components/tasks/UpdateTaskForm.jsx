@@ -58,13 +58,13 @@ import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
-import { TimePickerDemo } from './ui/time-picker-demo';
+import { TimePickerDemo } from '../ui/time-picker-demo';
 import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
-import { ScrollArea } from './ui/scroll-area';
+import { ScrollArea } from '../ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
 
 const formSchema = z

@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { Info } from 'lucide-react';
 
 const Footer = () => {

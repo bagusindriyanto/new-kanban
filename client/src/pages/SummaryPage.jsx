@@ -18,26 +18,26 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { FilterCalendar } from '@/components/FilterCalendar';
+import { FilterCalendar } from '@/components/shared/FilterCalendar';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Link } from 'react-router';
-import ModeToggle from '@/components/ModeToggle';
+import ModeToggle from '@/components/layout/ModeToggle';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { useFetchSummary } from '@/api/fetchSummary';
-import { RefreshToggle } from '@/components/RefreshToggle';
-import Footer from '@/components/Footer';
+import { RefreshToggle } from '@/components/layout/RefreshToggle';
+import Footer from '@/components/layout/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
-import { ErrorBanner } from '@/components/ErrorState';
-import PieChartCard from '@/components/PieChartCard';
+import { ErrorBanner } from '@/components/shared/ErrorState';
+import PieChartCard from '@/components/dashboard/PieChartCard';
 import { Badge } from '@/components/ui/badge';
-import BarChartCard from '@/components/BarChartCard';
+import BarChartCard from '@/components/dashboard/BarChartCard';
 import useTaskFilters from '@/hooks/useTaskFilters';
 
 const SummaryPage = () => {

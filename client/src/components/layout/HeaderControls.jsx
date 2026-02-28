@@ -15,11 +15,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { RefreshToggle } from '@/components/RefreshToggle';
-import { FilterCalendar } from '@/components/FilterCalendar';
-import ModeToggle from '@/components/ModeToggle';
-import AddItemsDropdown from '@/components/AddItemsDropdown';
-import UpcomingTasksPanel from './UpcomingTasksPanel';
+import { RefreshToggle } from '@/components/layout/RefreshToggle';
+import { FilterCalendar } from '@/components/shared/FilterCalendar';
+import ModeToggle from '@/components/layout/ModeToggle';
+import AddItemsDropdown from '@/components/layout/AddItemsDropdown';
+import UpcomingTasksPanel from '../tasks/UpcomingTasksPanel';
 
 const HeaderControls = ({
   pics = [],

@@ -28,11 +28,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
-import { Switch } from './ui/switch';
+import { Switch } from '../ui/switch';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { Calendar } from '@/components/ui/calendar';
-import { TimePickerDemo } from './ui/time-picker-demo';
+import { TimePickerDemo } from '../ui/time-picker-demo';
 
 const formSchema = z
   .object({

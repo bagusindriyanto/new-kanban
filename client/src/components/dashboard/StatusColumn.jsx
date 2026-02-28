@@ -1,4 +1,4 @@
-import TaskCard from './TaskCard';
+import TaskCard from '../tasks/TaskCard';
 import { Virtuoso } from 'react-virtuoso';
 import { cn } from '@/lib/utils';
 

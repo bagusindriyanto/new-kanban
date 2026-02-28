@@ -1,21 +1,21 @@
 import { Toaster } from '@/components/ui/sonner';
-import StatusColumn from '@/components/StatusColumn';
-import UpdateTaskModal from '@/components/UpdateTaskModal';
-import DeleteTaskModal from '@/components/DeleteTaskModal';
+import StatusColumn from '@/components/dashboard/StatusColumn';
+import UpdateTaskModal from '@/components/tasks/UpdateTaskModal';
+import DeleteTaskModal from '@/components/tasks/DeleteTaskModal';
 
 // Setting Kolom
 import { columns } from '@/config/column';
 
 // Komponen Filter
 import { Spinner } from '@/components/ui/spinner';
-import HeaderControls from '@/components/HeaderControls';
+import HeaderControls from '@/components/layout/HeaderControls';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { useFetchPICs } from '@/api/fetchPICs';
-import { ErrorBanner, ErrorFull } from '@/components/ErrorState';
-import EmptyState from '@/components/EmptyState';
-import Footer from '@/components/Footer';
+import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
+import EmptyState from '@/components/shared/EmptyState';
+import Footer from '@/components/layout/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
-import AddTaskModal from '@/components/AddTaskModal';
+import AddTaskModal from '@/components/tasks/AddTaskModal';
 import useDeadlineChecker from '@/hooks/useDeadlineChecker';
 import useNotification from '@/stores/notificationStore';
 import { useEffect } from 'react';

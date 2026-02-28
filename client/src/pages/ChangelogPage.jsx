@@ -1,4 +1,4 @@
-import { Timeline } from '@/components/Timeline';
+import { Timeline } from '@/components/dashboard/Timeline';
 import { useTheme } from 'next-themes';
 
 const ChangelogPage = () => {
