@@ -20,6 +20,7 @@ import { FilterCalendar } from '@/components/shared/FilterCalendar';
 import ModeToggle from '@/components/layout/ModeToggle';
 import AddItemsDropdown from '@/components/layout/AddItemsDropdown';
 import UpcomingTasksPanel from '../tasks/UpcomingTasksPanel';
+import LogoutButton from '../auth/LogoutButton';
 
 const HeaderControls = ({
   pics = [],
@@ -65,6 +66,7 @@ const HeaderControls = ({
         </TooltipContent>
       </Tooltip>
       <ModeToggle />
+      <LogoutButton />
     </div>
   );
 };

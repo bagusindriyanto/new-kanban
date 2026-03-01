@@ -1,4 +1,3 @@
-import { Toaster } from '@/components/ui/sonner';
 import StatusColumn from '@/components/dashboard/StatusColumn';
 import UpdateTaskModal from '@/components/tasks/UpdateTaskModal';
 import DeleteTaskModal from '@/components/tasks/DeleteTaskModal';
@@ -135,8 +134,6 @@ const HomePage = () => {
       <UpdateTaskModal />
       {/* Modal untuk hapus task */}
       <DeleteTaskModal />
-      {/* Toast */}
-      <Toaster position="top-center" richColors />
     </div>
   );
 };

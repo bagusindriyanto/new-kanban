@@ -1,6 +1,5 @@
 import logo from '@/assets/logo.png';
-import { LoginForm } from '@/components/auth/LoginForm';
-import { Toaster } from '@/components/ui/sonner';
+import LoginForm from '@/components/auth/LoginForm';
 
 const LoginPage = () => {
   return (
@@ -12,7 +11,6 @@ const LoginPage = () => {
         </div>
         <LoginForm />
       </div>
-      <Toaster position="top-center" richColors />
     </div>
   );
 };

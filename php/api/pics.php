@@ -1,17 +1,9 @@
 <?php
 header("Content-Type: application/json");
 
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-if ($origin === 'http://localhost:5173') {
-    header("Access-Control-Allow-Origin: http://localhost:5173");
-    header("Access-Control-Allow-Credentials: true");
-    header("Access-Control-Allow-Headers: Content-Type");
-    header("Access-Control-Allow-Methods: *");
-}
-
+require_once "cors.php";
 require_once "auth.php";
-include "db.php";
+require_once "db.php";
 
 $method = $_SERVER["REQUEST_METHOD"];
 $input = json_decode(file_get_contents("php://input"), true);
@@ -33,7 +25,7 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT * FROM pics ORDER BY created_at DESC";
+    $sql = "SELECT role, name, full_name, nik FROM pics ORDER BY created_at DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

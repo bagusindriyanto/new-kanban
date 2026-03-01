@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import AddActivityModal from '@/components/activity/AddActivityModal';
-import AddPICModal from '@/components/pic/AddPICModal';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 
 const AddItemsDropdown = () => {
@@ -23,7 +22,6 @@ const AddItemsDropdown = () => {
         <AddTaskModal hideButton />
         <DropdownMenuSeparator />
         <AddActivityModal hideButton />
-        <AddPICModal hideButton />
       </DropdownMenuContent>
     </DropdownMenu>
   );
