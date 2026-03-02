@@ -1,7 +1,8 @@
 import './App.css';
 import { Routes, Route } from 'react-router';
-import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import SummaryPage from './pages/SummaryPage';
 import ChangelogPage from './pages/ChangelogPage';
@@ -27,6 +28,7 @@ const App = () => {
       <Routes>
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
         <Route
           element={

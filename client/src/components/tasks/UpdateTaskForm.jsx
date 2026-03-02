@@ -86,7 +86,7 @@ const formSchema = z
     timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
     is_scheduled: z.boolean(),
     scheduled_at: z.date().nullish(),
-    password: z.string().min(1, 'Mohon isi password.'),
+    password: z.string().min(1, 'Mohon isi kata sandi.'),
   })
   .superRefine((data, ctx) => {
     if (data.is_scheduled && !data.scheduled_at) {
@@ -213,7 +213,7 @@ const UpdateTaskForm = () => {
         },
       });
     } else {
-      toast.error('Password salah!');
+      toast.error('Kata sandi salah!');
       form.setValue('password', '');
     }
   };
@@ -954,7 +954,7 @@ const UpdateTaskForm = () => {
                       htmlFor="update-task-password"
                       className="gap-0.5"
                     >
-                      Masukkan Password<span className="text-red-500">*</span>
+                      Masukkan Kata Sandi<span className="text-red-500">*</span>
                     </FieldLabel>
                     <InputGroup>
                       <InputGroupInput

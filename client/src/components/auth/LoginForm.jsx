@@ -21,19 +21,18 @@ import {
 import { Eye, EyeClosed } from 'lucide-react';
 import { useState } from 'react';
 import useAuthStore from '@/stores/authStore';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/api';
 
 const formSchema = z.object({
   username: z.string().min(1, 'Mohon isi username anda.'),
-  password: z.string().min(1, 'Mohon isi password anda.'),
+  password: z.string().min(1, 'Mohon isi kata sandi anda.'),
 });
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { username: '', password: '' },
   });
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
@@ -76,7 +75,7 @@ const LoginForm = () => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="login-password">Password</FieldLabel>
+                  <FieldLabel htmlFor="login-password">Kata Sandi</FieldLabel>
                   <InputGroup>
                     <InputGroupInput
                       {...field}
@@ -87,8 +86,7 @@ const LoginForm = () => {
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        onMouseDown={() => setShowPassword(true)}
-                        onMouseUp={() => setShowPassword(false)}
+                        onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? <EyeClosed /> : <Eye />}
                       </InputGroupButton>
@@ -103,7 +101,7 @@ const LoginForm = () => {
             <Field>
               <Button type="submit">Login</Button>
               <FieldDescription className="text-center">
-                Belum memiliki akun? <a href="#">Daftar di sini</a>
+                Belum memiliki akun? <Link to="/register">Daftar di sini</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

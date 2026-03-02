@@ -26,7 +26,7 @@ import { useDeleteTask } from '@/api/deleteTask';
 import { useState } from 'react';
 
 const formSchema = z.object({
-  password: z.string().min(1, 'Mohon isi password.'),
+  password: z.string().min(1, 'Mohon isi kata sandi.'),
 });
 
 const DeleteTaskModal = () => {
@@ -67,7 +67,7 @@ const DeleteTaskModal = () => {
         },
       });
     } else {
-      toast.error('Password salah!');
+      toast.error('Kata sandi salah!');
       form.setValue('password', '');
     }
   };
@@ -94,7 +94,7 @@ const DeleteTaskModal = () => {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="delete-task-password" className="gap-0.5">
-                  Masukkan Password<span className="text-red-500">*</span>
+                  Masukkan Kata Sandi<span className="text-red-500">*</span>
                 </FieldLabel>
                 <InputGroup>
                   <InputGroupInput
