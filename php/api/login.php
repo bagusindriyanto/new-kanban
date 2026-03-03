@@ -15,7 +15,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user || !password_verify($password, $user['password'])) {
   http_response_code(401);
-  echo json_encode(["message" => "Username atau password salah."]);
+  echo json_encode(["message" => "Username atau kata sandi salah."]);
   exit;
 }
 

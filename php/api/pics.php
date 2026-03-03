@@ -13,10 +13,6 @@ switch ($method) {
     handleGet($pdo);
     break;
 
-  case "POST":
-    handlePost($pdo, $input);
-    break;
-
   default:
     echo json_encode(["message" => "Invalid request method."]);
     break;
@@ -25,7 +21,7 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT role, name, full_name, nik FROM pics ORDER BY created_at DESC";
+    $sql = "SELECT id, role, name, full_name, nik FROM pics WHERE role != 'admin' ORDER BY created_at DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -35,33 +31,6 @@ function handleGet($pdo)
     echo json_encode([
       "status" => "error",
       "message" => "Gagal mengambil data.",
-      "error_detail" => $e->getMessage(),
-    ]);
-  }
-  exit();
-}
-
-function handlePost($pdo, $input)
-{
-  if (!isset($input["pic"])) {
-    http_response_code(400);
-    echo json_encode(["message" => "Nama PIC diperlukan."]);
-    exit();
-  }
-  try {
-    $sql = "INSERT INTO pics (name) VALUES (:name)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([":name" => $input["pic"]]);
-    http_response_code(201);
-    echo json_encode(
-      ["id" => $pdo->lastInsertId(), "pic" => $input["pic"]],
-      JSON_NUMERIC_CHECK,
-    );
-  } catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
-      "status" => "error",
-      "message" => "Gagal menambahkan PIC.",
       "error_detail" => $e->getMessage(),
     ]);
   }

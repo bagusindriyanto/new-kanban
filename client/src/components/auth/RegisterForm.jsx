@@ -41,19 +41,32 @@ import {
 
 const formSchema = z
   .object({
-    username: z.string().min(3, 'Username minimal memiliki 3 karakter.'),
     full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
     name: z.string().min(1, 'Mohon isi nama panggilan anda.'),
-    nik: z.string().min(1, 'Mohon isi NIK anda.'),
-    role: z.enum(['supervisor', 'staff'], {
+    nik: z
+      .string()
+      .min(1, 'Mohon isi NIK anda.')
+      .refine((val) => /^[0-9]+$/.test(val), {
+        error: 'NIK hanya boleh mengandung angka.',
+      }),
+    role: z.enum(['manager', 'supervisor', 'staff'], {
       error: 'Mohon pilih jabatan anda.',
     }),
-    password: z.string().min(1, 'Mohon isi kata sandi.'),
+    username: z
+      .string()
+      .min(3, 'Username tidak boleh kurang dari 3 karakter.')
+      .max(20, 'Username tidak boleh lebih dari 20 karakter.')
+      .refine((val) => /^[A-Za-z0-9_]+$/.test(val), {
+        error: 'Username hanya boleh mengandung huruf, angka, dan underscore.',
+      }),
+    password: z
+      .string()
+      .min(8, 'Kata sandi tidak boleh kurang dari 8 karakter.'),
     confirm_password: z.string(),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: 'Kata sandi tidak sesuai.',
-    path: ['confirmPassword'], // path of error
+    path: ['confirm_password'],
   });
 
 const RegisterForm = () => {
@@ -61,14 +74,23 @@ const RegisterForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm({
+    mode: 'onBlur',
     resolver: zodResolver(formSchema),
-    defaultValues: { username: '', password: '' },
+    defaultValues: {
+      full_name: '',
+      name: '',
+      nik: '',
+      role: '',
+      username: '',
+      password: '',
+      confirm_password: '',
+    },
   });
 
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    toast.promise(api.post('/pics.php', data), {
+    toast.promise(api.post('/register.php', data), {
       loading: 'Sedang membuat akun...',
       success: () => {
         navigate('/login');
@@ -97,6 +119,9 @@ const RegisterForm = () => {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+              Informasi Pribadi
+            </FieldSeparator>
             <Field className="grid grid-cols-2 gap-4">
               {/* Nama Lengkap */}
               <Controller
@@ -104,8 +129,11 @@ const RegisterForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-full-name">
-                      Nama Lengkap
+                    <FieldLabel
+                      htmlFor="register-full-name"
+                      className="gap-0.5"
+                    >
+                      Nama Lengkap<span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input {...field} id="register-full-name" type="text" />
                     {fieldState.invalid && (
@@ -120,8 +148,8 @@ const RegisterForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-name">
-                      Nama Panggilan
+                    <FieldLabel htmlFor="register-name" className="gap-0.5">
+                      Nama Panggilan<span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input {...field} id="register-name" type="text" />
                     {fieldState.invalid && (
@@ -138,7 +166,9 @@ const RegisterForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-nik">NIK</FieldLabel>
+                    <FieldLabel htmlFor="register-nik" className="gap-0.5">
+                      NIK<span className="text-red-500">*</span>
+                    </FieldLabel>
                     <InputGroup>
                       <InputGroupAddon align="inline-start">
                         MGM -
@@ -147,7 +177,7 @@ const RegisterForm = () => {
                         {...field}
                         id="register-nik"
                         type="text"
-                        inputmode="numeric"
+                        inputMode="numeric"
                       />
                     </InputGroup>
                     {fieldState.invalid && (
@@ -178,6 +208,7 @@ const RegisterForm = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Jabatan</SelectLabel>
+                          <SelectItem value="manager">Manager</SelectItem>
                           <SelectItem value="supervisor">Supervisor</SelectItem>
                           <SelectItem value="staff">Staff</SelectItem>
                         </SelectGroup>
@@ -191,7 +222,7 @@ const RegisterForm = () => {
               />
             </Field>
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-              Akun
+              Informasi Akun
             </FieldSeparator>
             {/* Username */}
             <Controller
@@ -199,11 +230,17 @@ const RegisterForm = () => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-username">Username</FieldLabel>
+                  <FieldLabel htmlFor="register-username" className="gap-0.5">
+                    Username<span className="text-red-500">*</span>
+                  </FieldLabel>
                   <Input {...field} id="register-username" type="text" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
+                  <FieldDescription>
+                    Username minimal memiliki 3 karakter, hanya boleh mengandung
+                    huruf, angka, dan underscore.
+                  </FieldDescription>
                 </Field>
               )}
             />
@@ -213,7 +250,9 @@ const RegisterForm = () => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-password">Password</FieldLabel>
+                  <FieldLabel htmlFor="register-password" className="gap-0.5">
+                    Kata Sandi<span className="text-red-500">*</span>
+                  </FieldLabel>
                   <InputGroup>
                     <InputGroupInput
                       {...field}
@@ -233,6 +272,9 @@ const RegisterForm = () => {
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
+                  <FieldDescription>
+                    Kata sandi minimal memiliki 8 karakter.
+                  </FieldDescription>
                 </Field>
               )}
             />
@@ -242,8 +284,11 @@ const RegisterForm = () => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-confirm-password">
-                    Konfirmasi Password
+                  <FieldLabel
+                    htmlFor="register-confirm-password"
+                    className="gap-0.5"
+                  >
+                    Konfirmasi Kata Sandi<span className="text-red-500">*</span>
                   </FieldLabel>
                   <InputGroup>
                     <InputGroupInput
@@ -271,9 +316,9 @@ const RegisterForm = () => {
             />
             <Field>
               <Button type="submit">Daftar</Button>
-              <Button asChild variant="outline">
-                <Link to="/login">Saya sudah memiliki akun</Link>
-              </Button>
+              <FieldDescription className="text-center">
+                Sudah memiliki akun? <Link to="/login">Sign in di sini</Link>
+              </FieldDescription>
             </Field>
           </FieldGroup>
         </form>

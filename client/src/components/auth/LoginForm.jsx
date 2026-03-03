@@ -33,6 +33,10 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+      password: '',
+    },
   });
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
@@ -101,7 +105,7 @@ const LoginForm = () => {
             <Field>
               <Button type="submit">Login</Button>
               <FieldDescription className="text-center">
-                Belum memiliki akun? <Link to="/register">Daftar di sini</Link>
+                Belum memiliki akun? <Link to="/register">Sign up di sini</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
