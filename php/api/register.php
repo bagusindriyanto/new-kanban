@@ -21,14 +21,14 @@ function handlePost($pdo, $input)
 {
 
   $full_name = trim($input["full_name"]);
-  $name = trim($input["name"]);
+  $name = isset($input["name"]) && trim($input["name"]) !== "" ? trim($input["name"]) : trim(explode(" ", $full_name)[0]);
   $nik = trim($input["nik"]);
   $role = $input["role"];
   $username = trim($input["username"]);
   $password = $input["password"];
 
   // Cek isi field
-  if (!$full_name || !$name || !$nik || !$role || !$username || !$password) {
+  if (!$full_name || !$nik || !$role || !$username || !$password) {
     http_response_code(400);
     echo json_encode(["status" => "error", "message" => "Semua field wajib diisi"]);
     exit;
@@ -41,7 +41,11 @@ function handlePost($pdo, $input)
 
   if ($user_exists > 0) {
     http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "Username sudah terdaftar. Silahkan gunakan username lain."]);
+    echo json_encode([
+      "status" => "error",
+      "message" => "Gagal membuat akun.",
+      "error_detail" => "Username sudah terdaftar. Silahkan gunakan username lain."
+    ]);
     exit;
   }
 

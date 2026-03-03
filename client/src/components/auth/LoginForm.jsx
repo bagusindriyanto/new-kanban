@@ -49,7 +49,12 @@ const LoginForm = () => {
         navigate('/');
         return `Selamat datang, ${res.data.user.name}!`;
       },
-      error: (err) => err.response?.data?.message || 'Login gagal.',
+      error: (err) => {
+        return {
+          message: err.response?.data?.message || 'Login gagal.',
+          description: err.response?.data?.error_detail || null,
+        };
+      },
     });
   };
 

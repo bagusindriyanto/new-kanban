@@ -21,7 +21,7 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT id, role, name, full_name, nik FROM pics WHERE role != 'admin' ORDER BY created_at DESC";
+    $sql = "SELECT id, role, name, full_name, nik FROM pics WHERE role != 'admin' ORDER BY name ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

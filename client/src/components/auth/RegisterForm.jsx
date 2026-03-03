@@ -42,7 +42,7 @@ import {
 const formSchema = z
   .object({
     full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
-    name: z.string().min(1, 'Mohon isi nama panggilan anda.'),
+    name: z.string().optional(),
     nik: z
       .string()
       .min(1, 'Mohon isi NIK anda.')
@@ -56,8 +56,9 @@ const formSchema = z
       .string()
       .min(3, 'Username tidak boleh kurang dari 3 karakter.')
       .max(20, 'Username tidak boleh lebih dari 20 karakter.')
-      .refine((val) => /^[A-Za-z0-9_]+$/.test(val), {
-        error: 'Username hanya boleh mengandung huruf, angka, dan underscore.',
+      .refine((val) => /^[a-z0-9_]+$/.test(val), {
+        error:
+          'Username hanya boleh mengandung huruf kecil, angka, dan underscore.',
       }),
     password: z
       .string()
@@ -74,11 +75,10 @@ const RegisterForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm({
-    mode: 'onBlur',
+    mode: 'onTouched',
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: '',
-      name: '',
       nik: '',
       role: '',
       username: '',
@@ -148,8 +148,8 @@ const RegisterForm = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-name" className="gap-0.5">
-                      Nama Panggilan<span className="text-red-500">*</span>
+                    <FieldLabel htmlFor="register-name">
+                      Nama Panggilan
                     </FieldLabel>
                     <Input {...field} id="register-name" type="text" />
                     {fieldState.invalid && (
@@ -239,7 +239,7 @@ const RegisterForm = () => {
                   )}
                   <FieldDescription>
                     Username minimal memiliki 3 karakter, hanya boleh mengandung
-                    huruf, angka, dan underscore.
+                    huruf kecil, angka, dan underscore.
                   </FieldDescription>
                 </Field>
               )}
