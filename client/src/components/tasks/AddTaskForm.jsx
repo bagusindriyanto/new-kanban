@@ -100,11 +100,9 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
     const payload = {
       ...data,
       pic_id: isAssigned ? data.pic_id : user.id,
-      assigned_by: isAssigned ? user.id : null,
+      assigner_id: isAssigned ? user.id : null,
     };
 
-    console.log(payload);
-    return;
     toast.promise(mutateAsync(payload), {
       loading: () => {
         return 'Sedang menambahkan task...';
@@ -240,7 +238,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                    PIC<span className="text-red-500">*</span>
+                    Tugaskan Ke:<span className="text-red-500">*</span>
                   </FieldLabel>
                   <Popover open={picOpen} onOpenChange={setPicOpen}>
                     <PopoverTrigger asChild>

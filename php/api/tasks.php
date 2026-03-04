@@ -39,7 +39,15 @@ function handleGet($pdo)
     $from_date = $_GET['from_date'] ?? null;
     $to_date = $_GET['to_date'] ?? null;
 
-    $sql = "SELECT t.*, p.name as pic_name, r.level as role_level FROM tasks t JOIN pics p ON t.pic_id = p.id JOIN roles r ON p.role_id = r.id WHERE 1=1";
+    $sql = "SELECT t.*,
+        p.name as pic_name,
+        r.level as role_level,
+        a.name as assigner_name
+        FROM tasks t
+        JOIN pics p ON t.pic_id = p.id
+        JOIN roles r ON p.role_id = r.id
+        LEFT JOIN pics a ON t.assigner_id = a.id
+        WHERE 1=1";
     $params = [];
 
     if ($pic_id) {
@@ -103,14 +111,15 @@ function handleGet($pdo)
 function handlePost($pdo, $input)
 {
   // validasi input
-  if (!isset($input["content"])) {
+  if (!isset($input["pic_id"]) || !isset($input["content"])) {
     http_response_code(400);
-    echo json_encode(["message" => "Content diperlukan."]);
+    echo json_encode(["message" => "PIC dan Content diperlukan."]);
     exit();
   }
   try {
+    $pic_id = $input["pic_id"];
+    $assigner_id = $input["assigner_id"] ?? null;
     $content = $input["content"];
-    $pic_id = $input["pic_id"] ?? null;
     $detail = $input["detail"] ?? "";
     $status = $input["status"] ?? "todo";
     $scheduled_at = $input["scheduled_at"] ?? null;
@@ -123,11 +132,12 @@ function handlePost($pdo, $input)
     $pause_time = null;
 
     $sql =
-      "INSERT INTO tasks (content, pic_id, detail, status, scheduled_at, timestamp_todo, timestamp_progress, timestamp_done, timestamp_archived, minute_pause, minute_activity, pause_time) VALUES (:content, :pic_id, :detail, :status, :scheduled_at, :timestamp_todo, :timestamp_progress, :timestamp_done, :timestamp_archived, :minute_pause, :minute_activity, :pause_time)";
+      "INSERT INTO tasks (pic_id, assigner_id, content, detail, status, scheduled_at, timestamp_todo, timestamp_progress, timestamp_done, timestamp_archived, minute_pause, minute_activity, pause_time) VALUES (:pic_id, :assigner_id, :content, :detail, :status, :scheduled_at, :timestamp_todo, :timestamp_progress, :timestamp_done, :timestamp_archived, :minute_pause, :minute_activity, :pause_time)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-      ":content" => $content,
       ":pic_id" => $pic_id,
+      ":assigner_id" => $assigner_id,
+      ":content" => $content,
       ":detail" => $detail,
       ":status" => $status,
       ":scheduled_at" => $scheduled_at,
@@ -143,8 +153,9 @@ function handlePost($pdo, $input)
     echo json_encode(
       [
         "id" => $pdo->lastInsertId(),
-        "content" => $content,
         "pic_id" => $pic_id,
+        "assigner_id" => $assigner_id,
+        "content" => $content,
         "detail" => $detail,
         "status" => $status,
         "scheduled_at" => $scheduled_at,
@@ -181,8 +192,9 @@ function handlePatch($pdo, $input)
 
   try {
     $id = intval($_GET["id"]);
+    $pic_id = $input["pic_id"];
+    $assigner_id = $input["assigner_id"] ?? null;
     $content = $input["content"] ?? "";
-    $pic_id = $input["pic_id"] ?? null;
     $detail = $input["detail"] ?? "";
     $status = $input["status"] ?? null;
     $scheduled_at = $input["scheduled_at"] ?? null;
@@ -196,8 +208,9 @@ function handlePatch($pdo, $input)
     $updated_at = $input["updated_at"];
 
     $fields = [
-      "content = ?",
       "pic_id = ?",
+      "assigner_id = ?",
+      "content = ?",
       "detail = ?",
       "status = ?",
       "scheduled_at = ?",
@@ -211,8 +224,9 @@ function handlePatch($pdo, $input)
       "updated_at = ?",
     ];
     $params = [
-      $content,
       $pic_id,
+      $assigner_id,
+      $content,
       $detail,
       $status,
       $scheduled_at,

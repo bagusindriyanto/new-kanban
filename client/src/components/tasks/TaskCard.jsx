@@ -32,6 +32,7 @@ const TaskCard = ({ task, currentTime }) => {
   const {
     id,
     pic_id,
+    assigner_id,
     status,
     content,
     detail,
@@ -45,6 +46,7 @@ const TaskCard = ({ task, currentTime }) => {
     optimistic = false,
     scheduled_at,
     pic_name,
+    assigner_name,
     role_level,
   } = task;
 
@@ -142,6 +144,7 @@ const TaskCard = ({ task, currentTime }) => {
     }
     const data = {
       pic_id,
+      assigner_id,
       status: newStatus,
       content,
       detail,
@@ -223,6 +226,7 @@ const TaskCard = ({ task, currentTime }) => {
 
     const data = {
       pic_id,
+      assigner_id,
       status,
       content,
       detail,
@@ -262,9 +266,16 @@ const TaskCard = ({ task, currentTime }) => {
       {/* Content */}
       <div className="flex justify-between gap-3 items-start">
         <h3 className="font-bold text-lg text-white">{content}</h3>
-        <h4 className="font-semibold text-base text-white">
-          {pic_name || '-'}
-        </h4>
+        <div className="flex flex-col items-end gap-1">
+          <h4 className="font-semibold text-base text-white">
+            {pic_name || '-'}
+          </h4>
+          {assigner_id && (
+            <span className="text-xs text-white text-right">
+              (Ditugaskan oleh: {assigner_name})
+            </span>
+          )}
+        </div>
       </div>
       <p className="mt-1 font-medium text-sm text-white">{detail}</p>
       <div className="my-2 grid grid-cols-2 font-light text-[10px] text-white">
