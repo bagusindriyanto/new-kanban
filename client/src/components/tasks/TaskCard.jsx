@@ -24,6 +24,7 @@ import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 import { CalendarClock } from 'lucide-react';
+import useAuth from '@/stores/authStore';
 
 const TaskCard = ({ task, currentTime }) => {
   // Urutan Status
@@ -45,6 +46,9 @@ const TaskCard = ({ task, currentTime }) => {
     optimistic = false,
     scheduled_at,
   } = task;
+
+  // State untuk akun yang saat ini aktif
+  const user = useAuth((state) => state.user);
 
   // State untuk PIC
   const { data: pics } = useFetchPICs();
@@ -278,79 +282,7 @@ const TaskCard = ({ task, currentTime }) => {
         <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
         <p>Pause Minutes: {totalPause}</p>
       </div>
-      <div className="flex flex-row-reverse justify-between items-center">
-        <div className="flex gap-1">
-          {/* Control Button */}
-          {/* Tombol Kiri */}
-          <Button
-            onClick={() => onMove(false)}
-            variant={status}
-            size="icon-xs-rounded"
-            disabled={
-              status === 'todo' ||
-              status === 'archived' ||
-              isPaused ||
-              optimistic
-            }
-          >
-            <ArrowLeftIcon />
-          </Button>
-          {/* Tombol Pause */}
-          {status === 'on progress' && (
-            <Button
-              onClick={togglePause}
-              variant={status}
-              size="icon-xs-rounded"
-              disabled={optimistic}
-            >
-              {isPaused ? <PlayIcon /> : <PauseIcon />}
-            </Button>
-          )}
-          {/* Tombol Kanan */}
-          <Button
-            onClick={() => onMove(true)}
-            variant={status}
-            size="icon-xs-rounded"
-            disabled={status === 'archived' || isPaused || optimistic}
-          >
-            <ArrowRightIcon />
-          </Button>
-          {/* Dropdown Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant={status}
-                size="icon-xs-rounded"
-                disabled={optimistic}
-              >
-                <EllipsisHorizontalIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={handleUpdateTaskModal}
-              >
-                <PencilSquareIcon />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={handleDeleteTaskModal}
-                variant="destructive"
-              >
-                <TrashIcon />
-                Hapus
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        {(status === 'done' || status === 'archived') && (
-          <p className="font-medium text-sm text-white">
-            Activity Minutes:{' '}
-            <span className="font-normal">{minute_activity || 0}</span>
-          </p>
-        )}
+      <div className="flex justify-between items-center">
         {status === 'todo' && scheduled_at && (
           <div className="relative">
             {isUrgent && (
@@ -373,6 +305,80 @@ const TaskCard = ({ task, currentTime }) => {
                 {formatTimestamp(scheduled_at)}
               </span>
             </div>
+          </div>
+        )}
+        {(status === 'done' || status === 'archived') && (
+          <p className="font-medium text-sm text-white">
+            Activity Minutes:{' '}
+            <span className="font-normal">{minute_activity || 0}</span>
+          </p>
+        )}
+        {user?.id === pic_id && (
+          <div className="flex gap-1 self-end">
+            {/* Control Button */}
+            {/* Tombol Kiri */}
+            <Button
+              onClick={() => onMove(false)}
+              variant={status}
+              size="icon-xs-rounded"
+              disabled={
+                status === 'todo' ||
+                status === 'archived' ||
+                isPaused ||
+                optimistic
+              }
+            >
+              <ArrowLeftIcon />
+            </Button>
+            {/* Tombol Pause */}
+            {status === 'on progress' && (
+              <Button
+                onClick={togglePause}
+                variant={status}
+                size="icon-xs-rounded"
+                disabled={optimistic}
+              >
+                {isPaused ? <PlayIcon /> : <PauseIcon />}
+              </Button>
+            )}
+            {/* Tombol Kanan */}
+            <Button
+              onClick={() => onMove(true)}
+              variant={status}
+              size="icon-xs-rounded"
+              disabled={status === 'archived' || isPaused || optimistic}
+            >
+              <ArrowRightIcon />
+            </Button>
+            {/* Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={status}
+                  size="icon-xs-rounded"
+                  disabled={optimistic}
+                >
+                  <EllipsisHorizontalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={handleUpdateTaskModal}
+                >
+                  <PencilSquareIcon />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={handleDeleteTaskModal}
+                  variant="destructive"
+                >
+                  <TrashIcon />
+                  Hapus
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
       </div>

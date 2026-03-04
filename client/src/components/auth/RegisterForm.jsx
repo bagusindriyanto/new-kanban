@@ -38,6 +38,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import { useFetchDivisions } from '@/api/fetchDivisions';
+import { useFetchRoles } from '@/api/fetchRoles';
 
 const formSchema = z
   .object({
@@ -49,17 +51,11 @@ const formSchema = z
       .refine((val) => /^[0-9]+$/.test(val), {
         error: 'NIK hanya boleh mengandung angka.',
       }),
-    role: z.enum(['manager', 'supervisor', 'staff'], {
-      error: 'Mohon pilih jabatan anda.',
-    }),
-    username: z
-      .string()
-      .min(3, 'Username tidak boleh kurang dari 3 karakter.')
-      .max(20, 'Username tidak boleh lebih dari 20 karakter.')
-      .refine((val) => /^[a-z0-9_]+$/.test(val), {
-        error:
-          'Username hanya boleh mengandung huruf kecil, angka, dan underscore.',
-      }),
+    division_id: z.string().min(1, 'Mohon pilih divisi anda.'),
+    role_id: z.string().min(1, 'Mohon pilih jabatan anda.'),
+    email: z
+      .email('Mohon isi email dengan benar.')
+      .min(1, 'Mohon isi email anda.'),
     password: z
       .string()
       .min(8, 'Kata sandi tidak boleh kurang dari 8 karakter.'),
@@ -74,14 +70,19 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Ambil data divisi dan jabatan
+  const { data: divisions } = useFetchDivisions();
+  const { data: roles } = useFetchRoles();
+
   const form = useForm({
     mode: 'onTouched',
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: '',
       nik: '',
-      role: '',
-      username: '',
+      division_id: '',
+      role_id: '',
+      email: '',
       password: '',
       confirm_password: '',
     },
@@ -186,8 +187,49 @@ const RegisterForm = () => {
                   </Field>
                 )}
               />
+              {/* Divisi */}
               <Controller
-                name="role"
+                name="division_id"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="register-division" className="gap-0.5">
+                      Divisi<span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      name={field.name}
+                      onValueChange={field.onChange}
+                      value={field.value ? String(field.value) : ''}
+                    >
+                      <SelectTrigger
+                        id="register-division"
+                        aria-invalid={fieldState.invalid}
+                      >
+                        <SelectValue placeholder="Pilih divisi" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Divisi</SelectLabel>
+                          {divisions?.map((division) => (
+                            <SelectItem
+                              key={division.id}
+                              value={String(division.id)}
+                            >
+                              {division.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              {/* Jabatan */}
+              <Controller
+                name="role_id"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
@@ -197,7 +239,7 @@ const RegisterForm = () => {
                     <Select
                       name={field.name}
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value ? String(field.value) : ''}
                     >
                       <SelectTrigger
                         id="register-role"
@@ -208,9 +250,11 @@ const RegisterForm = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Jabatan</SelectLabel>
-                          <SelectItem value="manager">Manager</SelectItem>
-                          <SelectItem value="supervisor">Supervisor</SelectItem>
-                          <SelectItem value="staff">Staff</SelectItem>
+                          {roles?.map((role) => (
+                            <SelectItem key={role.id} value={String(role.id)}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -224,23 +268,19 @@ const RegisterForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Akun
             </FieldSeparator>
-            {/* Username */}
+            {/* Email */}
             <Controller
-              name="username"
+              name="email"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-username" className="gap-0.5">
-                    Username<span className="text-red-500">*</span>
+                  <FieldLabel htmlFor="register-email" className="gap-0.5">
+                    Email<span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Input {...field} id="register-username" type="text" />
+                  <Input {...field} id="register-email" type="email" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
-                  <FieldDescription>
-                    Username minimal memiliki 3 karakter, hanya boleh mengandung
-                    huruf kecil, angka, dan underscore.
-                  </FieldDescription>
                 </Field>
               )}
             />

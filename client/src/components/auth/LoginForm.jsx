@@ -20,32 +20,40 @@ import {
 } from '../ui/input-group';
 import { Eye, EyeClosed } from 'lucide-react';
 import { useState } from 'react';
-import useAuthStore from '@/stores/authStore';
+import useAuth from '@/stores/authStore';
 import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/api';
+import useFilter from '@/stores/filterStore';
 
 const formSchema = z.object({
-  username: z.string().min(1, 'Mohon isi username anda.'),
+  email: z
+    .email('Mohon isi email dengan benar.')
+    .min(1, 'Mohon isi email anda.'),
   password: z.string().min(1, 'Mohon isi kata sandi anda.'),
 });
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
-  const { setUser } = useAuthStore();
+
+  const setUser = useAuth((state) => state.setUser);
   const navigate = useNavigate();
+
+  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   const onSubmit = (data) => {
     toast.promise(api.post('/login.php', data), {
       loading: 'Sedang memproses login...',
       success: (res) => {
         setUser(res.data.user);
+        setSelectedPicId(res.data.user.id);
         navigate('/');
         return `Selamat datang, ${res.data.user.name}!`;
       },
@@ -67,12 +75,12 @@ const LoginForm = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
-              name="username"
+              name="email"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="login-username">Username</FieldLabel>
-                  <Input {...field} id="login-username" type="text" />
+                  <FieldLabel htmlFor="login-email">Email</FieldLabel>
+                  <Input {...field} id="login-email" type="text" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}

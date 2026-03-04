@@ -1,6 +1,6 @@
 <?php
 $passwords = [
-  1 => 'password123',
+  1 => 'AkunSuperAdmin',
   2 => 'password123',
   3 => 'password123',
   4 => 'password123',

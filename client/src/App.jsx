@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import SummaryPage from './pages/SummaryPage';
 import ChangelogPage from './pages/ChangelogPage';
-import useAuthStore from './stores/authStore';
+import useAuth from './stores/authStore';
 import { useEffect } from 'react';
 import { api } from './lib/api';
 import GuestRoute from './routes/GuestRoute';
@@ -14,14 +14,14 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import { Toaster } from './components/ui/sonner';
 
 const App = () => {
-  const { setUser, clearUser } = useAuthStore();
+  const { setUser, clearUser } = useAuth();
 
   useEffect(() => {
     api
       .get('/me.php')
       .then((res) => setUser(res.data.user))
       .catch(() => clearUser());
-  }, []);
+  }, [setUser, clearUser]);
 
   return (
     <>
@@ -33,7 +33,7 @@ const App = () => {
         <Route
           element={
             <ProtectedRoute
-              allowedRoles={['admin', 'manager', 'supervisor', 'staff']}
+              allowedRoles={['Admin', 'Manager', 'Supervisor', 'Staff']}
             />
           }
         >

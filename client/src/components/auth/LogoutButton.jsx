@@ -1,12 +1,12 @@
 import { api } from '@/lib/api';
-import useAuthStore from '@/stores/authStore';
+import useAuth from '@/stores/authStore';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 
 const LogoutButton = () => {
-  const { setUser } = useAuthStore();
+  const setUser = useAuth((state) => state.setUser);
   const navigate = useNavigate();
 
   const handleLogout = () => {
