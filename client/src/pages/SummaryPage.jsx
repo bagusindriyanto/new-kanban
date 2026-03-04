@@ -1,4 +1,4 @@
-import { SquareKanban, UserRound, IdCardLanyard } from 'lucide-react';
+import { UserRound, IdCardLanyard } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -17,15 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Link } from 'react-router';
-import ModeToggle from '@/components/layout/ModeToggle';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
@@ -70,54 +62,32 @@ const SummaryPage = () => {
   const isOnline = useIsOnline();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-10 flex items-center justify-between bg-nav h-[52px] px-5 py-3">
-        <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
-        <div className="flex gap-2 items-center">
-          {/* Refresh Data */}
-          <RefreshToggle
-            isFetching={isFetching}
-            dataUpdatedAt={dataUpdatedAt}
-          />
-          {/* Filter PIC */}
-          <Select value={selectedPicId} onValueChange={setSelectedPicId}>
-            <SelectTrigger className="w-[150px] bg-white" size="sm">
-              <SelectValue placeholder="Pilih PIC" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>PIC</SelectLabel>
-                <SelectItem className="hidden" value="all" disabled>
-                  Pilih PIC
+    <div className="min-h-full flex flex-col">
+      <div className="sticky top-0 z-10 flex items-center justify-end gap-2 px-4 py-2">
+        {/* Refresh Data */}
+        <RefreshToggle isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
+        {/* Filter PIC */}
+        <Select value={selectedPicId} onValueChange={setSelectedPicId}>
+          <SelectTrigger className="w-[150px]" size="sm">
+            <SelectValue placeholder="Pilih PIC" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>PIC</SelectLabel>
+              <SelectItem className="hidden" value="all" disabled>
+                Pilih PIC
+              </SelectItem>
+              {pics?.map((pic) => (
+                <SelectItem value={pic.id} key={pic.id}>
+                  {pic.name}
                 </SelectItem>
-                {pics?.map((pic) => (
-                  <SelectItem value={pic.id} key={pic.id}>
-                    {pic.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {/* Akhir Filter PIC */}
-          {/* Filter Tanggal */}
-          <FilterCalendar />
-          {/* Akhir Tanggal */}
-          {/* Pindah ke Halaman Kanban */}
-          <Tooltip delayDuration={500}>
-            <TooltipTrigger asChild>
-              <Button asChild variant="outline" size="icon-sm">
-                <Link to="/">
-                  <SquareKanban />
-                </Link>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Kanban Board</p>
-            </TooltipContent>
-          </Tooltip>
-          <ModeToggle />
-        </div>
-      </header>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {/* Filter Tanggal */}
+        <FilterCalendar />
+      </div>
       {/* Main */}
       <main className="flex-1 grid gap-3 p-3 md:grid-cols-2 xl:grid-cols-6">
         {(fetchSummaryError || fetchPICsError || !isOnline) && (
@@ -219,8 +189,6 @@ const SummaryPage = () => {
         {/* Pie Chart */}
         <PieChartCard data={data?.table_summary} />
       </main>
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

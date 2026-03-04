@@ -61,19 +61,16 @@ const HomePage = () => {
   useDeadlineChecker(tasks);
 
   return (
-    <div className="h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between bg-nav h-[52px] px-5 py-3">
-        <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
-        <HeaderControls
-          tasks={tasks}
-          selectedPicId={selectedPicId}
-          setSelectedPicId={setSelectedPicId}
-          isFetching={isFetching}
-          dataUpdatedAt={dataUpdatedAt}
-          currentTime={currentTime}
-        />
-      </header>
+    <div className="h-full flex flex-col">
+      {/* Header Controls */}
+      <HeaderControls
+        tasks={tasks}
+        selectedPicId={selectedPicId}
+        setSelectedPicId={setSelectedPicId}
+        isFetching={isFetching}
+        dataUpdatedAt={dataUpdatedAt}
+        currentTime={currentTime}
+      />
       {/* Main */}
       <main className="flex flex-1 flex-col p-3 gap-3">
         {isOnline && isFetchTasksLoading && !fetchTasksError && (
@@ -104,8 +101,6 @@ const HomePage = () => {
           </div>
         )}
       </main>
-      {/* Footer */}
-      <Footer />
       {/* Modal untuk update task */}
       <UpdateTaskModal />
       {/* Modal untuk hapus task */}

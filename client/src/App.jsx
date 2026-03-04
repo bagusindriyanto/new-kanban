@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { api } from './lib/api';
 import GuestRoute from './routes/GuestRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
+import AppLayout from './components/layout/AppLayout';
 import { Toaster } from './components/ui/sonner';
 import useFilter from './stores/filterStore';
 
@@ -42,9 +43,11 @@ const App = () => {
             />
           }
         >
-          <Route index element={<HomePage />} />
-          <Route path="/summary" element={<SummaryPage />} />
-          <Route path="/changelog" element={<ChangelogPage />} />
+          <Route element={<AppLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/summary" element={<SummaryPage />} />
+            <Route path="/changelog" element={<ChangelogPage />} />
+          </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
