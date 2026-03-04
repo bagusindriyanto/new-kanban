@@ -33,13 +33,15 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { Calendar } from '@/components/ui/calendar';
 import { TimePickerDemo } from '../ui/time-picker-demo';
+import useAuth from '@/stores/authStore';
 
 const formSchema = z
   .object({
     content: z.string('Mohon pilih salah satu aktivitas.'),
-    pic_id: z.number('Mohon pilih salah satu PIC.'),
+    pic_id: z.number().nullish(),
     detail: z.string().trim().optional(),
     is_scheduled: z.boolean(),
+    is_assigned: z.boolean(),
     scheduled_at: z.date().nullish(),
   })
   .superRefine((data, ctx) => {
@@ -48,6 +50,13 @@ const formSchema = z
         code: 'no_scheduled_at',
         message: 'Mohon isi tanggal dan waktu.',
         path: ['scheduled_at'],
+      });
+    }
+    if (data.is_assigned && !data.pic_id) {
+      ctx.addIssue({
+        code: 'no_pic_id',
+        message: 'Mohon pilih PIC.',
+        path: ['pic_id'],
       });
     }
   })
@@ -73,17 +82,30 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const { data: contents } = useFetchActivities();
   const { data: pics } = useFetchPICs();
 
+  const user = useAuth((state) => state.user);
+  const filteredPics = pics?.filter((pic) => pic.level < user.level);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       is_scheduled: false,
+      is_assigned: false,
     },
   });
 
   const isScheduled = form.watch('is_scheduled');
+  const isAssigned = form.watch('is_assigned');
 
   const onSubmit = (data) => {
-    toast.promise(mutateAsync(data), {
+    const payload = {
+      ...data,
+      pic_id: isAssigned ? data.pic_id : user.id,
+      assigned_by: isAssigned ? user.id : null,
+    };
+
+    console.log(payload);
+    return;
+    toast.promise(mutateAsync(payload), {
       loading: () => {
         return 'Sedang menambahkan task...';
       },
@@ -113,7 +135,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             name="content"
             control={form.control}
             render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
+              <Field data-invalid={fieldState.invalid} className="col-span-2">
                 <FieldLabel htmlFor="add-task-content" className="gap-0.5">
                   Aktivitas<span className="text-red-500">*</span>
                 </FieldLabel>
@@ -183,75 +205,109 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
               </Field>
             )}
           />
+          {/* Assigned Switch */}
+          {user.level > 1 && (
+            <Controller
+              name="is_assigned"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                >
+                  <Switch
+                    id="add-task-is-assigned"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="add-task-is-assigned">
+                    Tugaskan Task?
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          )}
           {/* PIC */}
-          <Controller
-            name="pic_id"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                  PIC<span className="text-red-500">*</span>
-                </FieldLabel>
-                <Popover open={picOpen} onOpenChange={setPicOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      id="add-task-pic"
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      <span className="truncate">
-                        {field.value
-                          ? pics?.find((pic) => pic.id === field.value)?.name
-                          : 'Pilih PIC'}
-                      </span>
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent p-0">
-                    <Command>
-                      <CommandInput placeholder="Cari PIC..." className="h-9" />
-                      <CommandList
-                        onWheel={(e) => {
-                          e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                        }}
+          {isAssigned && (
+            <Controller
+              name="pic_id"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
+                    PIC<span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Popover open={picOpen} onOpenChange={setPicOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        id="add-task-pic"
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
                       >
-                        <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                        <CommandGroup>
-                          {pics?.map((pic) => (
-                            <CommandItem
-                              value={pic.name}
-                              key={pic.id}
-                              onSelect={() => {
-                                form.setValue('pic_id', pic.id);
-                                setPicOpen(false);
-                              }}
-                            >
-                              {pic.name}
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  pic.id === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+                        <span className="truncate">
+                          {field.value
+                            ? filteredPics?.find(
+                                (pic) => pic.id === field.value,
+                              )?.name
+                            : 'Pilih PIC'}
+                        </span>
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="PopoverContent p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Cari PIC..."
+                          className="h-9"
+                        />
+                        <CommandList
+                          onWheel={(e) => {
+                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                          }}
+                        >
+                          <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
+                          <CommandGroup>
+                            {filteredPics?.map((pic) => (
+                              <CommandItem
+                                value={pic.name}
+                                key={pic.id}
+                                onSelect={() => {
+                                  form.setValue('pic_id', pic.id);
+                                  setPicOpen(false);
+                                }}
+                              >
+                                {pic.name}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    pic.id === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          )}
           {/* Appointment */}
           {/* Appointment Switch */}
           <Controller

@@ -21,7 +21,7 @@ switch ($method) {
 function handleGet($pdo)
 {
   try {
-    $sql = "SELECT p.id as id, p.full_name as full_name, p.name as name, d.name as division, r.name as role, p.nik as nik FROM pics p JOIN divisions d ON p.division_id = d.id JOIN roles r ON p.role_id = r.id WHERE r.name != 'Admin' ORDER BY name ASC";
+    $sql = "SELECT p.id as id, p.full_name as full_name, p.name as name, d.name as division, r.name as role, p.nik as nik, r.level as level FROM pics p JOIN divisions d ON p.division_id = d.id JOIN roles r ON p.role_id = r.id WHERE r.name != 'Admin' ORDER BY name ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

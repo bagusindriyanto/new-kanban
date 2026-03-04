@@ -12,16 +12,21 @@ import { api } from './lib/api';
 import GuestRoute from './routes/GuestRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { Toaster } from './components/ui/sonner';
+import useFilter from './stores/filterStore';
 
 const App = () => {
   const { setUser, clearUser } = useAuth();
+  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   useEffect(() => {
     api
       .get('/me.php')
-      .then((res) => setUser(res.data.user))
+      .then((res) => {
+        setUser(res.data.user);
+        setSelectedPicId(res.data.user.id);
+      })
       .catch(() => clearUser());
-  }, [setUser, clearUser]);
+  }, [setUser, clearUser, setSelectedPicId]);
 
   return (
     <>

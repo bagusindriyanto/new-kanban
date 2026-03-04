@@ -20,7 +20,6 @@ import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
 import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column';
-import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 import { CalendarClock } from 'lucide-react';
@@ -45,14 +44,12 @@ const TaskCard = ({ task, currentTime }) => {
     pause_time,
     optimistic = false,
     scheduled_at,
+    pic_name,
+    role_level,
   } = task;
 
   // State untuk akun yang saat ini aktif
   const user = useAuth((state) => state.user);
-
-  // State untuk PIC
-  const { data: pics } = useFetchPICs();
-  const picName = pics?.find((p) => p.id === pic_id)?.name;
 
   // State untuk form modal
   const setIsUpdateTaskModalOpen = useUpdateTaskModal(
@@ -265,7 +262,9 @@ const TaskCard = ({ task, currentTime }) => {
       {/* Content */}
       <div className="flex justify-between gap-3 items-start">
         <h3 className="font-bold text-lg text-white">{content}</h3>
-        <h4 className="font-semibold text-base text-white">{picName || '-'}</h4>
+        <h4 className="font-semibold text-base text-white">
+          {pic_name || '-'}
+        </h4>
       </div>
       <p className="mt-1 font-medium text-sm text-white">{detail}</p>
       <div className="my-2 grid grid-cols-2 font-light text-[10px] text-white">
@@ -282,7 +281,7 @@ const TaskCard = ({ task, currentTime }) => {
         <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
         <p>Pause Minutes: {totalPause}</p>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center">
         {status === 'todo' && scheduled_at && (
           <div className="relative">
             {isUrgent && (
@@ -313,8 +312,8 @@ const TaskCard = ({ task, currentTime }) => {
             <span className="font-normal">{minute_activity || 0}</span>
           </p>
         )}
-        {user?.id === pic_id && (
-          <div className="flex gap-1 self-end">
+        {(user?.level > role_level || user?.id === pic_id) && (
+          <div className="flex gap-1 ml-auto">
             {/* Control Button */}
             {/* Tombol Kiri */}
             <Button

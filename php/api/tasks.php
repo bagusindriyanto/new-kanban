@@ -39,11 +39,11 @@ function handleGet($pdo)
     $from_date = $_GET['from_date'] ?? null;
     $to_date = $_GET['to_date'] ?? null;
 
-    $sql = "SELECT * FROM tasks WHERE 1=1";
+    $sql = "SELECT t.*, p.name as pic_name, r.level as role_level FROM tasks t JOIN pics p ON t.pic_id = p.id JOIN roles r ON p.role_id = r.id WHERE 1=1";
     $params = [];
 
     if ($pic_id) {
-      $sql .= " AND pic_id = :pic_id";
+      $sql .= " AND t.pic_id = :pic_id";
       $params[':pic_id'] = $pic_id;
     }
 
