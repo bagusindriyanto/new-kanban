@@ -9,7 +9,6 @@ import { columns } from '@/config/column';
 import { Spinner } from '@/components/ui/spinner';
 import HeaderControls from '@/components/layout/HeaderControls';
 import { useFetchTasks } from '@/api/fetchTasks';
-import { useFetchPICs } from '@/api/fetchPICs';
 import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
 import EmptyState from '@/components/shared/EmptyState';
 import Footer from '@/components/layout/Footer';
@@ -34,13 +33,6 @@ const HomePage = () => {
     dataUpdatedAt,
   } = useFetchTasks(queryParams);
 
-  // Tanstack query untuk pics
-  const {
-    data: pics,
-    isLoading: isFetchPICsLoading,
-    error: fetchPICsError,
-  } = useFetchPICs();
-
   const currentTime = useNotification((state) => state.currentTime);
   const updateCurrentTime = useNotification((state) => state.updateCurrentTime);
 
@@ -52,19 +44,9 @@ const HomePage = () => {
         'Gagal terhubung ke server.',
     );
   }
-  if (fetchPICsError) {
-    console.log('Error Fetch PIC:');
-    console.error(
-      fetchPICsError?.response?.data?.error_detail ||
-        'Gagal terhubung ke server.',
-    );
-  }
 
   // Ambil pesan error
-  const errorMessage =
-    fetchTasksError?.response?.data?.message ||
-    fetchPICsError?.response?.data?.message ||
-    null;
+  const errorMessage = fetchTasksError?.response?.data?.message || null;
 
   // Cek status online/offline
   const isOnline = useIsOnline();
@@ -84,7 +66,6 @@ const HomePage = () => {
       <header className="flex items-center justify-between bg-nav h-[52px] px-5 py-3">
         <h1 className="text-3xl font-semibold text-white">Kanban App</h1>
         <HeaderControls
-          pics={pics}
           tasks={tasks}
           selectedPicId={selectedPicId}
           setSelectedPicId={setSelectedPicId}
@@ -95,22 +76,17 @@ const HomePage = () => {
       </header>
       {/* Main */}
       <main className="flex flex-1 flex-col p-3 gap-3">
-        {isOnline &&
-          (isFetchTasksLoading || isFetchPICsLoading) &&
-          !fetchTasksError &&
-          !fetchPICsError && (
-            <div className="flex flex-1 justify-center items-center">
-              <Spinner className="size-10" />
-            </div>
-          )}
-        {tasks?.length > 0 &&
-          (fetchTasksError || fetchPICsError || !isOnline) && (
-            <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
-          )}
-        {tasks?.length === 0 &&
-          (fetchTasksError || fetchPICsError || !isOnline) && (
-            <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
-          )}
+        {isOnline && isFetchTasksLoading && !fetchTasksError && (
+          <div className="flex flex-1 justify-center items-center">
+            <Spinner className="size-10" />
+          </div>
+        )}
+        {tasks?.length > 0 && (fetchTasksError || !isOnline) && (
+          <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
+        )}
+        {tasks?.length === 0 && (fetchTasksError || !isOnline) && (
+          <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
+        )}
         {tasks?.length === 0 &&
           !isFetchTasksLoading &&
           !fetchTasksError &&

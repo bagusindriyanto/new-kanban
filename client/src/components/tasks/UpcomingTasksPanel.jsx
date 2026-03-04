@@ -19,7 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const UpcomingTasksPanel = ({ tasks, pics, currentTime }) => {
+const UpcomingTasksPanel = ({ tasks, currentTime }) => {
   const [visibleTasks, setVisibleTasks] = useState([]);
 
   useEffect(() => {
@@ -74,8 +74,7 @@ const UpcomingTasksPanel = ({ tasks, pics, currentTime }) => {
               const diffInMinutes =
                 (new Date(task.scheduled_at) - currentTime) / 60000;
               const isUrgent = diffInMinutes <= 15;
-              const picName =
-                pics?.find((p) => p.id === task.pic_id)?.name || '-';
+              const picName = task.pic_name || '-';
 
               return (
                 <div

@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { FilterCalendar } from '@/components/shared/FilterCalendar';
+import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
 import {
   Tooltip,
   TooltipContent,
