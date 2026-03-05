@@ -51,10 +51,10 @@ function handlePost($pdo, $input)
   try {
     $sql = "INSERT INTO activities (name) VALUES (:name)";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([":name" => $input["activity"]]);
+    $stmt->execute([":name" => trim($input["activity"])]);
     http_response_code(201);
     echo json_encode(
-      ["id" => $pdo->lastInsertId(), "activity" => $input["activity"]],
+      ["id" => $pdo->lastInsertId(), "activity" => trim($input["activity"])],
       JSON_NUMERIC_CHECK,
     );
   } catch (PDOException $e) {

@@ -119,8 +119,8 @@ function handlePost($pdo, $input)
   try {
     $pic_id = $input["pic_id"];
     $assigner_id = $input["assigner_id"] ?? null;
-    $content = $input["content"];
-    $detail = $input["detail"] ?? "";
+    $content = trim($input["content"]);
+    $detail = trim($input["detail"]) ?? "";
     $status = $input["status"] ?? "todo";
     $scheduled_at = $input["scheduled_at"] ?? null;
     $timestamp_todo = $input["timestamp_todo"];
@@ -194,8 +194,8 @@ function handlePatch($pdo, $input)
     $id = intval($_GET["id"]);
     $pic_id = $input["pic_id"];
     $assigner_id = $input["assigner_id"] ?? null;
-    $content = $input["content"] ?? "";
-    $detail = $input["detail"] ?? "";
+    $content = trim($input["content"]) ?? "";
+    $detail = trim($input["detail"]) ?? "";
     $status = $input["status"] ?? null;
     $scheduled_at = $input["scheduled_at"] ?? null;
     $timestamp_todo = $input["timestamp_todo"] ?? null;

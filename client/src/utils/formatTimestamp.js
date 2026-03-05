@@ -1,4 +1,6 @@
 export const formatTimestamp = (ts) => {
+  if (!ts) return '-';
+
   const timestamp = new Date(ts);
   const date = new Intl.DateTimeFormat('id-ID', {
     year: 'numeric',

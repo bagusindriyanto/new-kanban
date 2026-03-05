@@ -52,7 +52,7 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
                 <BellRing />
               </Button>
               {visibleTasks.length > 0 && (
-                <Badge className="absolute -top-2 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
+                <Badge className="absolute -top-1.5 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
                   {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
                 </Badge>
               )}
@@ -79,20 +79,23 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
               return (
                 <div
                   key={task.id}
-                  className={cn('p-3 bg-card rounded-lg text-sm border', {
-                    'bg-red-50 dark:bg-red-950/30': isUrgent,
-                  })}
+                  className={cn(
+                    'p-3 bg-card rounded-lg text-sm border space-y-2',
+                    {
+                      'bg-red-50 dark:bg-red-950/30': isUrgent,
+                    },
+                  )}
                 >
                   <div className="flex justify-between items-start">
                     <p className="font-medium truncate">{task.content}</p>
                     <p className="text-sm">{picName}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground tabular-nums">
                     {formatTimestamp(task.scheduled_at)}
                   </p>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mt-1">
                     <p
-                      className={cn('text-xs font-semibold mt-1', {
+                      className={cn('text-xs font-semibold', {
                         'text-red-600 dark:text-red-400': isUrgent,
                         'text-blue-600 dark:text-blue-400': !isUrgent,
                       })}

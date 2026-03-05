@@ -1,4 +1,5 @@
 import { Timeline } from '@/components/dashboard/Timeline';
+import Footer from '@/components/layout/Footer';
 import SiteHeader from '@/components/layout/SiteHeader';
 
 const ChangelogPage = () => {
@@ -6,6 +7,7 @@ const ChangelogPage = () => {
     <div className="min-h-screen flex flex-col" id="top">
       <SiteHeader titlePage="Changelog" />
       <Timeline />
+      <Footer />
     </div>
   );
 };

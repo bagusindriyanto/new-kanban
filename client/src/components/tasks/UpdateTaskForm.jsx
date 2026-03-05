@@ -37,6 +37,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupText,
+  InputGroupTextarea,
 } from '@/components/ui/input-group';
 import {
   Popover,
@@ -80,7 +81,11 @@ const formSchema = z
       .min(0, 'Durasi pause harus 0 atau lebih.')
       .default(0),
     pause_time: z.boolean(),
-    detail: z.string().trim().optional(),
+    detail: z
+      .string()
+      .max(60, 'Detail tidak boleh lebih dari 60 karakter.')
+      .trim()
+      .optional(),
     timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
     timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
     timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
@@ -984,13 +989,20 @@ const UpdateTaskForm = () => {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="update-task-detail">Detail</FieldLabel>
-                    <Textarea
-                      {...field}
-                      id="update-task-detail"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Detail task"
-                      className="resize-none"
-                    />
+                    <InputGroup>
+                      <InputGroupTextarea
+                        {...field}
+                        id="update-task-detail"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="Detail task"
+                        className="resize-none"
+                      />
+                      <InputGroupAddon align="block-end">
+                        <InputGroupText className="tabular-nums">
+                          {field.value?.length || 0}/60 karakter
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

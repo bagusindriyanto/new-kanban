@@ -22,8 +22,10 @@ import { useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
-import { CalendarClock } from 'lucide-react';
+import { CalendarClock, User } from 'lucide-react';
 import useAuth from '@/stores/authStore';
+import { Timer } from 'lucide-react';
+import { CirclePause } from 'lucide-react';
 
 const TaskCard = ({ task, currentTime }) => {
   // Urutan Status
@@ -255,82 +257,167 @@ const TaskCard = ({ task, currentTime }) => {
 
   return (
     <div
-      className={cn('grow px-3 py-2 rounded-lg shadow-sm hover:shadow-lg', {
-        'bg-todo-500': status === 'todo',
-        'bg-progress-500': status === 'on progress',
-        'bg-done-500': status === 'done',
-        'bg-archived-500': status === 'archived',
-        'animate-pulse': optimistic,
-      })}
+      className={cn(
+        'group flex flex-col gap-4 rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
+        {
+          'border-l-4 border-l-todo-500': status === 'todo',
+          'border-l-4 border-l-progress-500': status === 'on progress',
+          'border-l-4 border-l-done-500': status === 'done',
+          'border-l-4 border-l-archived-500': status === 'archived',
+          'animate-pulse pointer-events-none': optimistic,
+        },
+      )}
     >
-      {/* Content */}
-      <div className="flex justify-between gap-3 items-start">
-        <h3 className="font-bold text-lg text-white">{content}</h3>
-        <div className="flex flex-col items-end gap-1">
-          <h4 className="font-semibold text-base text-white">
-            {pic_name || '-'}
-          </h4>
+      {/* 1. HEADER: Title & Menu */}
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="font-semibold text-base leading-tight text-card-foreground line-clamp-2">
+          {content}
+        </h3>
+
+        {(user.level > role_level || user.id === pic_id) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground -mr-1 -mt-1 shadow-none"
+                disabled={optimistic}
+              >
+                <EllipsisHorizontalIcon className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuItem onClick={handleUpdateTaskModal}>
+                <PencilSquareIcon className="mr-2 size-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleDeleteTaskModal}
+                variant="destructive"
+              >
+                <TrashIcon className="mr-2 size-4" />
+                Hapus
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+
+      {/* 2. BODY: Description */}
+      {detail && (
+        <p className="text-sm text-muted-foreground line-clamp-2 leading-snug">
+          {detail}
+        </p>
+      )}
+
+      {/* 3. ASSIGNEE & METADATA */}
+      <div className="flex flex-col gap-2 mt-1">
+        {/* Assignee Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <User className="size-3.5" />
+            <span className="font-medium text-foreground">
+              {pic_name || '-'}
+            </span>
+          </div>
           {assigner_id && (
-            <span className="text-xs text-white text-right">
-              (Ditugaskan oleh: {assigner_name})
+            <span className="text-[10px] text-muted-foreground/70">
+              oleh {assigner_name}
             </span>
           )}
         </div>
-      </div>
-      <p className="mt-1 font-medium text-sm text-white">{detail}</p>
-      <div className="my-2 grid grid-cols-2 font-light text-[10px] text-white">
-        <p>Todo: {timestamp_todo ? formatTimestamp(timestamp_todo) : '-'}</p>
-        <p>
-          Progress:{' '}
-          {timestamp_progress ? formatTimestamp(timestamp_progress) : '-'}
-        </p>
-        <p>Done: {timestamp_done ? formatTimestamp(timestamp_done) : '-'}</p>
-        <p>
-          Archived:{' '}
-          {timestamp_archived ? formatTimestamp(timestamp_archived) : '-'}
-        </p>
-        <p>Pause: {pause_time ? formatTimestamp(pause_time) : '-'}</p>
-        <p>Pause Minutes: {totalPause}</p>
-      </div>
-      <div className="flex items-center">
-        {status === 'todo' && scheduled_at && (
-          <div className="relative">
-            {isUrgent && (
-              <span className="flex h-2 w-2 absolute -top-0.5 -right-0.5 z-10">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+
+        {/* Status Context Row (Timestamps & Pause info) */}
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] text-muted-foreground border-t border-border pt-1">
+          {status === 'todo' && (
+            <div className="flex gap-1">
+              <span className="font-medium">Dibuat:</span>
+              <span>{formatTimestamp(timestamp_todo)}</span>
+            </div>
+          )}
+
+          {status === 'on progress' && (
+            <div className="flex gap-1">
+              <span className="font-medium">Mulai:</span>
+              <span>{formatTimestamp(timestamp_progress)}</span>
+            </div>
+          )}
+
+          {(status === 'done' || status === 'archived') && (
+            <div className="flex gap-1">
+              <span className="font-medium">
+                {status === 'done' ? 'Selesai:' : 'Arsip:'}
               </span>
-            )}
-            <div
-              className={cn(
-                'flex items-center gap-1 px-1.5 py-1 rounded-full bg-todo-600 relative',
-                {
-                  'animate-pulse': isUrgent,
-                  'opacity-40': diffInMinutes <= 0,
-                },
-              )}
-            >
-              <CalendarClock className="size-4 text-white" />
-              <span className="font-medium text-[10px] text-white">
-                {formatTimestamp(scheduled_at)}
+              <span>
+                {formatTimestamp(
+                  status === 'done' ? timestamp_done : timestamp_archived,
+                )}
               </span>
             </div>
-          </div>
-        )}
-        {(status === 'done' || status === 'archived') && (
-          <p className="font-medium text-sm text-white">
-            Activity Minutes:{' '}
-            <span className="font-normal">{minute_activity || 0}</span>
-          </p>
-        )}
+          )}
+        </div>
+      </div>
+
+      {/* 4. FOOTER: Controls & Schedule */}
+      <div className="mt-1 flex items-center justify-between gap-2">
+        <div className="flex items-center">
+          {status === 'todo' && scheduled_at && (
+            <div className="relative">
+              {isUrgent && (
+                <span className="absolute -right-0.5 -top-0.5 z-10 flex size-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex size-2 rounded-full bg-red-500"></span>
+                </span>
+              )}
+              <div
+                className={cn(
+                  'flex items-center gap-1 rounded-md px-1 -ml-1 py-0.5 text-[11px] font-medium border transition-colors tabular-nums',
+                  {
+                    'border-red-200 bg-red-50 text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400':
+                      isUrgent,
+                    'border-muted bg-muted/50 text-muted-foreground opacity-60':
+                      diffInMinutes <= 0 && !isUrgent,
+                    'border-blue-200 bg-blue-50 text-blue-600 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-400':
+                      diffInMinutes > 15,
+                  },
+                )}
+              >
+                Terjadwal: {formatTimestamp(scheduled_at)}
+              </div>
+            </div>
+          )}
+          {status === 'on progress' && (totalPause > 0 || isPaused) && (
+            <div
+              className={cn(
+                'flex items-center gap-1 text-[11px] text-muted-foreground',
+                isPaused ? 'font-medium animate-pulse text-destructive' : '',
+              )}
+            >
+              <CirclePause className="size-4" />
+              <span>{totalPause}m</span>
+            </div>
+          )}
+          {(status === 'done' || status === 'archived') && (
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="font-medium flex items-center gap-1">
+                <Timer className="size-4.5" /> {minute_activity || 0}m
+              </span>
+              {totalPause > 0 && (
+                <span className="opacity-70 flex items-center gap-1">
+                  <CirclePause className="size-4" /> {totalPause}m
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Action Controls */}
         {(user.level > role_level || user.id === pic_id) && (
-          <div className="flex gap-1 ml-auto">
-            {/* Control Button */}
-            {/* Tombol Kiri */}
+          <div className="flex items-center gap-1">
             <Button
               onClick={() => onMove(false)}
-              variant={status}
-              size="icon-xs-rounded"
+              variant="outline"
+              size="icon-xs"
               disabled={
                 status === 'todo' ||
                 status === 'archived' ||
@@ -340,51 +427,26 @@ const TaskCard = ({ task, currentTime }) => {
             >
               <ArrowLeftIcon />
             </Button>
-            {/* Tombol Pause */}
+
             {status === 'on progress' && (
               <Button
                 onClick={togglePause}
-                variant={status}
-                size="icon-xs-rounded"
+                variant={isPaused ? 'destructive' : 'outline'}
+                size="icon-xs"
                 disabled={optimistic}
               >
                 {isPaused ? <PlayIcon /> : <PauseIcon />}
               </Button>
             )}
-            {/* Tombol Kanan */}
+
             <Button
               onClick={() => onMove(true)}
-              variant={status}
-              size="icon-xs-rounded"
+              variant="outline"
+              size="icon-xs"
               disabled={status === 'archived' || isPaused || optimistic}
             >
               <ArrowRightIcon />
             </Button>
-            {/* Dropdown Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant={status}
-                  size="icon-xs-rounded"
-                  disabled={optimistic}
-                >
-                  <EllipsisHorizontalIcon />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleUpdateTaskModal}>
-                  <PencilSquareIcon />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={handleDeleteTaskModal}
-                  variant="destructive"
-                >
-                  <TrashIcon />
-                  Hapus
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         )}
       </div>

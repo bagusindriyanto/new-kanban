@@ -24,7 +24,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
@@ -34,12 +33,22 @@ import { id } from 'date-fns/locale';
 import { Calendar } from '@/components/ui/calendar';
 import { TimePickerDemo } from '../ui/time-picker-demo';
 import useAuth from '@/stores/authStore';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from '../ui/input-group';
 
 const formSchema = z
   .object({
     content: z.string('Mohon pilih salah satu aktivitas.'),
     pic_id: z.number().nullish(),
-    detail: z.string().trim().optional(),
+    detail: z
+      .string()
+      .max(60, 'Detail tidak boleh lebih dari 60 karakter.')
+      .trim()
+      .optional(),
     is_scheduled: z.boolean(),
     is_assigned: z.boolean(),
     scheduled_at: z.date().nullish(),
@@ -410,13 +419,20 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="add-task-detail">Detail</FieldLabel>
-              <Textarea
-                {...field}
-                id="add-task-detail"
-                aria-invalid={fieldState.invalid}
-                placeholder="Detail task"
-                className="resize-none"
-              />
+              <InputGroup>
+                <InputGroupTextarea
+                  {...field}
+                  id="add-task-detail"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Detail task"
+                  className="resize-none"
+                />
+                <InputGroupAddon align="block-end">
+                  <InputGroupText className="tabular-nums">
+                    {field.value?.length || 0}/60 karakter
+                  </InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
