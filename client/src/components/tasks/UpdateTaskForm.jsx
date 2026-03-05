@@ -66,11 +66,12 @@ import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { ScrollArea } from '../ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
+import useAuth from '@/stores/authStore';
 
 const formSchema = z
   .object({
     content: z.string('Aktivitas harus dipilih.'),
-    pic_id: z.number('PIC harus dipilih.'),
+    pic_id: z.number('PIC harus dipilih.').nullish(),
     status: z.enum(['todo', 'on progress', 'done', 'archived'], {
       error: 'Status harus dipilih.',
     }),
@@ -85,6 +86,7 @@ const formSchema = z
     timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
     timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
     is_scheduled: z.boolean(),
+    is_assigned: z.boolean(),
     scheduled_at: z.date().nullish(),
     password: z.string().min(1, 'Mohon isi kata sandi.'),
   })
@@ -94,6 +96,13 @@ const formSchema = z
         code: 'no_scheduled_at',
         message: 'Mohon isi tanggal dan waktu.',
         path: ['scheduled_at'],
+      });
+    }
+    if (data.is_assigned && !data.pic_id) {
+      ctx.addIssue({
+        code: 'no_pic_id',
+        message: 'Mohon pilih PIC.',
+        path: ['pic_id'],
       });
     }
   })
@@ -132,6 +141,9 @@ const UpdateTaskForm = () => {
   const { data: pics } = useFetchPICs();
   const { data: tasks } = useFetchTasks(queryParams);
 
+  const user = useAuth((state) => state.user);
+  const filteredPics = pics?.filter((pic) => pic.level < user.level);
+
   // State untuk tasks yang dipilih
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
   const task = tasks?.find((task) => task.id === selectedTaskId);
@@ -164,6 +176,7 @@ const UpdateTaskForm = () => {
       timestamp_archived: task.timestamp_archived
         ? new Date(task.timestamp_archived)
         : undefined,
+      is_assigned: !!task.assigner_id,
       is_scheduled: !!task.scheduled_at,
       scheduled_at: task.scheduled_at ? new Date(task.scheduled_at) : undefined,
       password: '',
@@ -173,6 +186,7 @@ const UpdateTaskForm = () => {
   // Cek input status untuk disable timestamp
   const statusInput = form.watch('status');
   const isScheduled = form.watch('is_scheduled');
+  const isAssigned = form.watch('is_assigned');
 
   // Reset value timestamp
   switch (statusInput) {
@@ -193,7 +207,14 @@ const UpdateTaskForm = () => {
   // Submit form
   const onSubmit = (data) => {
     if (data.password === 'Semarang@2025') {
-      toast.promise(updateTaskMutate({ ...data, id: selectedTaskId }), {
+      const payload = {
+        ...data,
+        id: selectedTaskId,
+        assigner_id: isAssigned ? user.pic_id : null,
+        pic_id: isAssigned ? data.pic_id : user.pic_id,
+      };
+
+      toast.promise(updateTaskMutate(payload), {
         loading: () => {
           return 'Sedang memperbarui task...';
         },
@@ -229,7 +250,7 @@ const UpdateTaskForm = () => {
         >
           <div className="grid grid-cols-6 gap-4">
             {/* Activity */}
-            <div className="col-span-3">
+            <div className="col-span-6">
               <Controller
                 name="content"
                 control={form.control}
@@ -292,82 +313,6 @@ const UpdateTaskForm = () => {
                                     className={cn(
                                       'ml-auto',
                                       content.name === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* PIC */}
-            <div className="col-span-3">
-              <Controller
-                name="pic_id"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="update-task-pic" className="gap-0.5">
-                      PIC<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Popover open={picOpen} onOpenChange={setPicOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          id="update-task-pic"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          <span className="truncate">
-                            {field.value
-                              ? pics?.find((pic) => pic.id === field.value)
-                                  ?.name
-                              : 'Pilih PIC'}
-                          </span>
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Cari PIC..."
-                            className="h-9"
-                          />
-                          <CommandList
-                            onWheel={(e) => {
-                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                            }}
-                          >
-                            <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                            <CommandGroup>
-                              {pics?.map((pic) => (
-                                <CommandItem
-                                  value={pic.name}
-                                  key={pic.id}
-                                  onSelect={() => {
-                                    form.setValue('pic_id', pic.id);
-                                    setPicOpen(false);
-                                  }}
-                                >
-                                  {pic.name}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      pic.id === field.value
                                         ? 'opacity-100'
                                         : 'opacity-0',
                                     )}
@@ -815,25 +760,26 @@ const UpdateTaskForm = () => {
                 )}
               />
             </div>
-            {/* Appointment Switch */}
-            <div className="col-span-3 flex items-center">
+            {/* Assigned Switch */}
+            {user.level > 1 && (
               <Controller
-                name="is_scheduled"
+                name="is_assigned"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field
                     data-invalid={fieldState.invalid}
                     orientation="horizontal"
+                    className="col-span-3"
                   >
                     <Switch
-                      id="update-task-is-scheduled"
+                      id="add-task-is-assigned"
                       name={field.name}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       aria-invalid={fieldState.invalid}
                     />
-                    <FieldLabel htmlFor="update-task-is-scheduled">
-                      Jadwalkan Task?
+                    <FieldLabel htmlFor="add-task-is-assigned">
+                      Tugaskan Task?
                     </FieldLabel>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -841,14 +787,123 @@ const UpdateTaskForm = () => {
                   </Field>
                 )}
               />
-            </div>
+            )}
+            {/* PIC */}
+            {isAssigned && (
+              <Controller
+                name="pic_id"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="col-span-3"
+                  >
+                    <FieldLabel htmlFor="update-task-pic" className="gap-0.5">
+                      Tugaskan Ke:<span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Popover open={picOpen} onOpenChange={setPicOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          id="update-task-pic"
+                          aria-invalid={fieldState.invalid}
+                          className={cn(
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          <span className="truncate">
+                            {field.value
+                              ? filteredPics?.find(
+                                  (pic) => pic.id === field.value,
+                                )?.name
+                              : 'Pilih PIC'}
+                          </span>
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Cari PIC..."
+                            className="h-9"
+                          />
+                          <CommandList
+                            onWheel={(e) => {
+                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                            }}
+                          >
+                            <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
+                            <CommandGroup>
+                              {filteredPics?.map((pic) => (
+                                <CommandItem
+                                  value={pic.name}
+                                  key={pic.id}
+                                  onSelect={() => {
+                                    form.setValue('pic_id', pic.id);
+                                    setPicOpen(false);
+                                  }}
+                                >
+                                  {pic.name}
+                                  <Check
+                                    className={cn(
+                                      'ml-auto',
+                                      pic.id === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0',
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            )}
+            {/* Appointment Switch */}
+            <Controller
+              name="is_scheduled"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                  className="col-span-3 flex items-center"
+                >
+                  <Switch
+                    id="update-task-is-scheduled"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="update-task-is-scheduled">
+                    Jadwalkan Task?
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
             {/* Appointment Date */}
-            <div className="col-span-3">
+            {isScheduled && (
               <Controller
                 name="scheduled_at"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="col-span-3"
+                  >
                     <FieldLabel
                       htmlFor="update-task-scheduled-at"
                       className="gap-0.5"
@@ -872,7 +927,6 @@ const UpdateTaskForm = () => {
                             'w-full justify-start text-left font-normal',
                             !field.value && 'text-muted-foreground',
                           )}
-                          disabled={!isScheduled}
                         >
                           <CalendarIcon className="mr-2 size-4" />
                           {field.value ? (
@@ -921,7 +975,7 @@ const UpdateTaskForm = () => {
                   </Field>
                 )}
               />
-            </div>
+            )}
             {/* Detail */}
             <div className="col-span-6">
               <Controller

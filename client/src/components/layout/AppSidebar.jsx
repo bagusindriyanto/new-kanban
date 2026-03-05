@@ -14,7 +14,12 @@ import {
 } from '@/components/ui/sidebar';
 import AccountMenu from '../account/AccountMenu';
 import logo from '@/assets/logo.png';
-import { SquareKanban, ChartNoAxesCombined, HelpCircle } from 'lucide-react';
+import {
+  SquareKanban,
+  ChartNoAxesCombined,
+  HelpCircle,
+  User,
+} from 'lucide-react';
 
 const navMain = [
   { to: '/', label: 'Kanban Board', icon: SquareKanban },
@@ -22,6 +27,7 @@ const navMain = [
 ];
 
 const navSecondary = [
+  { to: '/settings', label: 'Akun', icon: User },
   { to: '/changelog', label: 'Changelog', icon: HelpCircle },
 ];
 

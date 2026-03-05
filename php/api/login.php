@@ -33,7 +33,8 @@ $pic = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Simpan data user ke session
 $_SESSION['user'] = [
-  'id'   => $pic['id'],
+  'user_id' => $user_id,
+  'pic_id'   => $pic['id'],
   'name' => $pic['name'],
   'role' => $pic['role'],
   'division' => $pic['division'],

@@ -1,11 +1,14 @@
 import './App.css';
 import { Routes, Route } from 'react-router';
+
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import SummaryPage from './pages/SummaryPage';
 import ChangelogPage from './pages/ChangelogPage';
+import SettingsPage from './pages/SettingsPage';
+
 import useAuth from './stores/authStore';
 import { useEffect } from 'react';
 import { api } from './lib/api';
@@ -24,7 +27,7 @@ const App = () => {
       .get('/me.php')
       .then((res) => {
         setUser(res.data.user);
-        setSelectedPicId(res.data.user.id);
+        setSelectedPicId(res.data.user.pic_id);
       })
       .catch(() => clearUser());
   }, [setUser, clearUser, setSelectedPicId]);
@@ -47,6 +50,7 @@ const App = () => {
             <Route index element={<HomePage />} />
             <Route path="/summary" element={<SummaryPage />} />
             <Route path="/changelog" element={<ChangelogPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

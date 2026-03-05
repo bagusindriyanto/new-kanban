@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const StatusColumn = ({ title, tasks, currentTime }) => {
   return (
-    <div className="flex flex-1 flex-col rounded-lg overflow-clip">
+    <div className="flex flex-1 flex-col rounded-lg overflow-clip shadow-md border">
       <h2
         className={cn(
           'text-lg font-semibold p-3 border-b border-border bg-neutral-50 dark:bg-neutral-900',

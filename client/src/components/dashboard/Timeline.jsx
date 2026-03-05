@@ -17,7 +17,7 @@ const timelineData = [
             <Badge className="bg-orange-300 text-orange-700 dark:bg-orange-700 dark:text-orange-300">
               On Progress
             </Badge>{' '}
-            tidak terhitung dengan benar pada halaman Summary
+            tidak terhitung dengan benar pada halaman Ringkasan
           </li>
           <li className="flex items-center gap-2">
             📅 Pilihan tanggal untuk “Jadwalkan Task” yang tidak tepat.
@@ -49,7 +49,7 @@ const timelineData = [
         <p className="mt-6 mb-4">Memperbarui:</p>
         <ul>
           <li className="flex items-center gap-2">
-            🖥️ Tampilan UI halaman Summary
+            🖥️ Tampilan UI halaman Ringkasan
           </li>
         </ul>
       </>
@@ -113,13 +113,13 @@ const timelineData = [
   },
   {
     date: '20 Sep 2025',
-    title: '2.0.0 - Halaman Summary',
+    title: '2.0.0 - Halaman Ringkasan',
     content: (
       <>
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            📊 Halaman Summary, menampilkan informasi:
+            📊 Halaman Ringkasan, menampilkan informasi:
           </li>
           <ul className="list-disc ml-12 my-1 font-light">
             <li>Total aktivitas setiap status</li>

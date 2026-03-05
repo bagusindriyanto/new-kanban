@@ -12,7 +12,6 @@ import useAuth from '@/stores/authStore';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { EllipsisVertical } from 'lucide-react';
 import { LogOut } from 'lucide-react';
-import { User } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useNavigate } from 'react-router';
@@ -84,11 +83,7 @@ const AccountMenu = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User />
-              Account
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogout} variant="destructive">
               <LogOut />
               Logout
             </DropdownMenuItem>

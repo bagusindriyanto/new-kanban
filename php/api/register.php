@@ -19,7 +19,6 @@ switch ($method) {
 
 function handlePost($pdo, $input)
 {
-
   $full_name = trim($input["full_name"]);
   $name = isset($input["name"]) && trim($input["name"]) !== "" ? trim($input["name"]) : trim(explode(" ", $full_name)[0]);
   $nik = trim($input["nik"]);

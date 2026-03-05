@@ -53,7 +53,7 @@ const LoginForm = () => {
       loading: 'Sedang memproses login...',
       success: (res) => {
         setUser(res.data.user);
-        setSelectedPicId(res.data.user.id);
+        setSelectedPicId(res.data.user.pic_id);
         navigate('/');
         return `Selamat datang, ${res.data.user.name}!`;
       },

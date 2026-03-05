@@ -67,11 +67,11 @@ const HomePage = () => {
         <UpcomingTasksPanel tasks={tasks} currentTime={currentTime} />
       </SiteHeader>
       {/* Tasks Controls */}
-      <div className="flex justify-between px-3 pt-3 pb-2">
+      <div className="flex justify-between px-4 pt-4 pb-1">
         <h2 className="text-2xl ml-1 font-bold tracking-tight">Tasks</h2>
         <TasksControls isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
       </div>
-      <main className="flex flex-1 flex-col p-3 gap-3">
+      <main className="flex flex-1 flex-col p-4 gap-3">
         {/* Main */}
         {isOnline && isFetchTasksLoading && !fetchTasksError && (
           <div className="flex flex-1 justify-center items-center">

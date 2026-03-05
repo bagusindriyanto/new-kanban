@@ -67,7 +67,7 @@ const SummaryPage = () => {
     <div className="min-h-screen flex flex-col">
       <SiteHeader titlePage="Ringkasan" />
       {/* Filter */}
-      <div className="flex justify-between px-3 pt-3 pb-2">
+      <div className="flex justify-between px-4 pt-4 pb-1">
         <h2 className="text-2xl ml-1 font-bold tracking-tight">Ringkasan</h2>
         <div className="flex items-center gap-2">
           <RefreshToggle
@@ -98,7 +98,7 @@ const SummaryPage = () => {
         </div>
       </div>
       {/* Main */}
-      <main className="flex-1 grid gap-3 p-3 md:grid-cols-2 xl:grid-cols-6">
+      <main className="flex-1 grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-6">
         {(fetchSummaryError || fetchPICsError || !isOnline) && (
           <ErrorBanner
             isOnline={isOnline}
