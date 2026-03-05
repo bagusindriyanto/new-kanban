@@ -129,7 +129,10 @@ const RegisterForm = () => {
                 name="full_name"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="col-span-2"
+                  >
                     <FieldLabel
                       htmlFor="register-full-name"
                       className="gap-0.5"
@@ -159,8 +162,6 @@ const RegisterForm = () => {
                   </Field>
                 )}
               />
-            </Field>
-            <Field className="grid grid-cols-2 gap-4">
               {/* NIK */}
               <Controller
                 name="nik"
