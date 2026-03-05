@@ -1,6 +1,7 @@
 import { Separator } from '../ui/separator';
 import { SidebarTrigger } from '../ui/sidebar';
 import ModeToggle from './ModeToggle';
+import UpcomingTasksPanel from '../tasks/UpcomingTasksPanel';
 
 const SiteHeader = ({ titlePage = 'Kanban App', children }) => {
   return (
@@ -15,6 +16,7 @@ const SiteHeader = ({ titlePage = 'Kanban App', children }) => {
       </div>
       <div className="flex items-center gap-2">
         {children}
+        <UpcomingTasksPanel />
         <ModeToggle />
       </div>
     </header>

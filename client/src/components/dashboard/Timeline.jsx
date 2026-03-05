@@ -6,6 +6,24 @@ import { ArrowUp } from 'lucide-react';
 
 const timelineData = [
   {
+    date: '6 Mar 2026',
+    title: '3.0.0 - Sistem Login',
+    content: (
+      <>
+        <p className="mb-4">Menambahkan:</p>
+        <ul>
+          <li className="flex items-center gap-2">
+            Sistem login dan register akun
+          </li>
+        </ul>
+        <p className="mt-6 mb-4">Memperbarui:</p>
+        <ul>
+          <li className="flex items-center gap-2">Tampilan UI</li>
+        </ul>
+      </>
+    ),
+  },
+  {
     date: '23 Feb 2026',
     title: '2.3.1',
     content: (
@@ -20,7 +38,7 @@ const timelineData = [
             tidak terhitung dengan benar pada halaman Ringkasan
           </li>
           <li className="flex items-center gap-2">
-            📅 Pilihan tanggal untuk “Jadwalkan Task” yang tidak tepat.
+            📅 Pilihan tanggal untuk “Jadwalkan Task” yang tidak tepat
           </li>
         </ul>
         <p className="mt-6 mb-4">Meningkatkan:</p>

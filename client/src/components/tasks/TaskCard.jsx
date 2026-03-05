@@ -26,8 +26,9 @@ import { CalendarClock, User } from 'lucide-react';
 import useAuth from '@/stores/authStore';
 import { Timer } from 'lucide-react';
 import { CirclePause } from 'lucide-react';
+import useNotification from '@/stores/notificationStore';
 
-const TaskCard = ({ task, currentTime }) => {
+const TaskCard = ({ task }) => {
   // Urutan Status
   const statusOrder = columns.map((column) => column.id);
   // Destructure isi props
@@ -81,6 +82,8 @@ const TaskCard = ({ task, currentTime }) => {
       },
     },
   });
+
+  const currentTime = useNotification((state) => state.currentTime);
 
   // Fungsi buka form modal
   const handleUpdateTaskModal = () => {

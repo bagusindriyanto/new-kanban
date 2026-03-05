@@ -18,9 +18,16 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useFetchTasks } from '@/api/fetchTasks';
+import useNotification from '@/stores/notificationStore';
+import useTaskFilters from '@/hooks/useTaskFilters';
 
-const UpcomingTasksPanel = ({ tasks, currentTime }) => {
+const UpcomingTasksPanel = () => {
   const [visibleTasks, setVisibleTasks] = useState([]);
+
+  const { queryParams } = useTaskFilters();
+  const { data: tasks } = useFetchTasks(queryParams);
+  const currentTime = useNotification((state) => state.currentTime);
 
   useEffect(() => {
     if (!tasks || tasks.length === 0) {
@@ -61,7 +68,10 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
         </TooltipTrigger>
         <TooltipContent>Task yang Akan Dimulai</TooltipContent>
       </Tooltip>
-      <SheetContent className="flex flex-col">
+      <SheetContent
+        className="flex flex-col"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <SheetHeader>
           <SheetTitle>Task yang Akan Dimulai</SheetTitle>
           <SheetDescription>

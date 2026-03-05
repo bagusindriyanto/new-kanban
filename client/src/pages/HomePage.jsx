@@ -12,14 +12,8 @@ import { useFetchTasks } from '@/api/fetchTasks';
 import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
 import EmptyState from '@/components/shared/EmptyState';
 import { useIsOnline } from '@/hooks/useIsOnline';
-import AddTaskModal from '@/components/tasks/AddTaskModal';
-import useDeadlineChecker from '@/hooks/useDeadlineChecker';
-import useNotification from '@/stores/notificationStore';
-import { useEffect } from 'react';
-
 import useTaskFilters from '@/hooks/useTaskFilters';
 import SiteHeader from '@/components/layout/SiteHeader';
-import UpcomingTasksPanel from '@/components/tasks/UpcomingTasksPanel';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter
@@ -33,9 +27,6 @@ const HomePage = () => {
     isFetching,
     dataUpdatedAt,
   } = useFetchTasks(queryParams);
-
-  const currentTime = useNotification((state) => state.currentTime);
-  const updateCurrentTime = useNotification((state) => state.updateCurrentTime);
 
   // Error log
   if (fetchTasksError) {
@@ -52,20 +43,9 @@ const HomePage = () => {
   // Cek status online/offline
   const isOnline = useIsOnline();
 
-  // Update current time setiap menit
-  useEffect(() => {
-    const interval = setInterval(updateCurrentTime, 60000);
-    return () => clearInterval(interval);
-  }, [updateCurrentTime]);
-
-  // Cek deadline tasks
-  useDeadlineChecker(tasks);
-
   return (
     <div className="h-screen flex flex-col">
-      <SiteHeader titlePage="Kanban Board">
-        <UpcomingTasksPanel tasks={tasks} currentTime={currentTime} />
-      </SiteHeader>
+      <SiteHeader titlePage="Kanban Board" />
       {/* Tasks Controls */}
       <div className="flex justify-between px-4 pt-4 pb-1">
         <h2 className="text-2xl ml-1 font-bold tracking-tight">Tasks</h2>
@@ -95,7 +75,6 @@ const HomePage = () => {
                 key={column.id}
                 title={column.title}
                 tasks={tasks?.filter((task) => task.status === column.id)}
-                currentTime={currentTime}
               />
             ))}
           </div>

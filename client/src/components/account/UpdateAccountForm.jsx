@@ -90,14 +90,14 @@ const UpdateAccountForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Pribadi
             </FieldSeparator>
-            <Field className="grid grid-cols-2 gap-3">
+            <Field className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
               <Controller
                 control={form.control}
                 name="full_name"
                 render={({ field, fieldState }) => (
                   <Field
                     data-invalid={fieldState.invalid}
-                    className="col-span-2"
+                    className="col-span-1 lg:col-span-2"
                   >
                     <FieldLabel
                       htmlFor="settings-account-full-name"
@@ -162,10 +162,10 @@ const UpdateAccountForm = () => {
                 )}
               />
             </Field>
-            <FieldSeparator className="mt-4 *:data-[slot=field-separator-content]:bg-card">
+            <FieldSeparator className="mt-6 *:data-[slot=field-separator-content]:bg-card">
               Informasi Akun
             </FieldSeparator>
-            <Field className="grid grid-cols-2">
+            <Field className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 mb-8 mt-2">
               {/* Email */}
               <Controller
                 name="email"
@@ -227,7 +227,7 @@ const UpdateAccountForm = () => {
                 )}
               />
             </Field>
-            <div className="mt-auto flex justify-end gap-2">
+            <div className="mt-6 flex justify-end gap-3 border-t border-border pt-6">
               <Button
                 variant="outline"
                 type="reset"
