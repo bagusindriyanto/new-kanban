@@ -26,7 +26,7 @@ if (!$user || !password_verify($password, $user['password'])) {
 
 $user_id = $user['id'];
 
-$sql = "SELECT p.id as id, p.name as name, d.name as division, r.name as role, r.level as level FROM pics p JOIN divisions d ON p.division_id = d.id JOIN roles r ON p.role_id = r.id WHERE p.user_id = ?";
+$sql = "SELECT p.id as id, p.full_name as full_name, p.name as name, p.nik as nik, d.name as division, r.name as role, r.level as level FROM pics p JOIN divisions d ON p.division_id = d.id JOIN roles r ON p.role_id = r.id WHERE p.user_id = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
 $pic = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -34,9 +34,12 @@ $pic = $stmt->fetch(PDO::FETCH_ASSOC);
 // Simpan data user ke session
 $_SESSION['user'] = [
   'user_id' => $user_id,
-  'pic_id'   => $pic['id'],
+  'id'   => $pic['id'],
+  'full_name' => $pic['full_name'],
   'name' => $pic['name'],
+  'nik' => $pic['nik'],
   'role' => $pic['role'],
+  'email' => $user['email'],
   'division' => $pic['division'],
   'level' => $pic['level'],
 ];

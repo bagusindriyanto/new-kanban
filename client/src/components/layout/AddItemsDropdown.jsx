@@ -13,7 +13,7 @@ const AddItemsDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="nav" size="sm">
+        <Button variant="nav">
           <Plus />
           Tambah
         </Button>

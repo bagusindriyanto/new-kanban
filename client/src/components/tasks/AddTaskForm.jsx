@@ -99,8 +99,8 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      pic_id: isAssigned ? data.pic_id : user.pic_id,
-      assigner_id: isAssigned ? user.pic_id : null,
+      pic_id: isAssigned ? data.pic_id : user.id,
+      assigner_id: isAssigned ? user.id : null,
     };
 
     toast.promise(mutateAsync(payload), {

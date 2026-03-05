@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 import {
   Sidebar,
@@ -32,6 +32,8 @@ const navSecondary = [
 ];
 
 const AppSidebar = () => {
+  const { pathname } = useLocation();
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -59,11 +61,19 @@ const AppSidebar = () => {
             <SidebarMenu>
               {navMain.map((item) => (
                 <SidebarMenuItem key={item.to}>
-                  <SidebarMenuButton asChild tooltip={item.label}>
-                    <NavLink to={item.to} end={item.to === '/'}>
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.label}
+                    isActive={
+                      item.to === '/'
+                        ? pathname === '/'
+                        : pathname.startsWith(item.to)
+                    }
+                  >
+                    <Link to={item.to}>
                       <item.icon />
                       <span>{item.label}</span>
-                    </NavLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -76,11 +86,19 @@ const AppSidebar = () => {
             <SidebarMenu>
               {navSecondary.map((item) => (
                 <SidebarMenuItem key={item.to}>
-                  <SidebarMenuButton asChild tooltip={item.label}>
-                    <NavLink to={item.to} end={item.to === '/'}>
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.label}
+                    isActive={
+                      item.to === '/'
+                        ? pathname === '/'
+                        : pathname.startsWith(item.to)
+                    }
+                  >
+                    <Link to={item.to}>
                       <item.icon />
                       <span>{item.label}</span>
-                    </NavLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

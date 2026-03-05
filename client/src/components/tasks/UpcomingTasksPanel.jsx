@@ -48,7 +48,7 @@ const UpcomingTasksPanel = ({ tasks, currentTime }) => {
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
             <div className="relative w-fit">
-              <Button variant="outline" size="icon-sm">
+              <Button variant="outline" size="icon">
                 <BellRing />
               </Button>
               {visibleTasks.length > 0 && (

@@ -21,7 +21,7 @@ switch ($method) {
 // fungsi untuk menangani request PATCH
 function handlePatch($pdo, $input)
 {
-  $id = intval($_GET["id"]);
+  $id = $_SESSION['user']['user_id'];
   $full_name = trim($input["full_name"]);
   $name = isset($input["name"]) && trim($input["name"]) !== "" ? trim($input["name"]) : trim(explode(" ", $full_name)[0]);
   $nik = trim($input["nik"]);

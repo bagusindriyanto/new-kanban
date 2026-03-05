@@ -50,21 +50,27 @@ const UpdateAccountForm = () => {
     mode: 'onTouched',
     resolver: zodResolver(formSchema),
     defaultValues: {
-      full_name: '',
-      name: '',
-      nik: '',
-      email: '',
+      full_name: user.full_name,
+      name: user.name,
+      nik: user.nik,
+      email: user.email,
       password: '',
     },
   });
 
   const onSubmit = (data) => {
-    toast.promise(api.patch(`/users.php?id=${user.user_id}`, data), {
+    toast.promise(api.patch('/users.php', data), {
       loading: 'Sedang memperbarui akun...',
       success: (res) => {
-        form.reset();
         refreshData();
         setUser(res.data.user);
+        form.reset({
+          full_name: '',
+          name: '',
+          nik: '',
+          email: '',
+          password: '',
+        });
         return 'Berhasil mengubah data!';
       },
       error: (err) => {
@@ -102,8 +108,6 @@ const UpdateAccountForm = () => {
                     <Input
                       id="settings-account-full-name"
                       type="text"
-                      placeholder="John Doe"
-                      required
                       {...field}
                     />
                     {fieldState.invalid && (
@@ -158,7 +162,7 @@ const UpdateAccountForm = () => {
                 )}
               />
             </Field>
-            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+            <FieldSeparator className="mt-4 *:data-[slot=field-separator-content]:bg-card">
               Informasi Akun
             </FieldSeparator>
             <Field className="grid grid-cols-2">
@@ -228,7 +232,13 @@ const UpdateAccountForm = () => {
                 variant="outline"
                 type="reset"
                 onClick={() => {
-                  form.reset();
+                  form.reset({
+                    full_name: '',
+                    name: '',
+                    nik: '',
+                    email: '',
+                    password: '',
+                  });
                   setShowPassword(false);
                 }}
               >

@@ -323,7 +323,7 @@ const TaskCard = ({ task, currentTime }) => {
             <span className="font-normal">{minute_activity || 0}</span>
           </p>
         )}
-        {(user?.level > role_level || user?.pic_id === pic_id) && (
+        {(user.level > role_level || user.id === pic_id) && (
           <div className="flex gap-1 ml-auto">
             {/* Control Button */}
             {/* Tombol Kiri */}

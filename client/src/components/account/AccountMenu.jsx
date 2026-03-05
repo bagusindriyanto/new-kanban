@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +16,23 @@ import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useNavigate } from 'react-router';
 
+function getAvatarColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = ((hash % 360) + 360) % 360;
+  return `hsl(${hue}, 60%, 45%)`;
+}
+
 const AccountMenu = () => {
   const { user, clearUser } = useAuth();
   const navigate = useNavigate();
+
+  const avatarColor = useMemo(
+    () => getAvatarColor(user.name ?? 'User'),
+    [user.name],
+  );
 
   const handleLogout = () => {
     toast.promise(api.post('/logout.php'), {
@@ -41,18 +55,21 @@ const AccountMenu = () => {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user?.avatar} alt={user?.name} />
-                <AvatarFallback className="rounded-lg bg-blue-200 dark:bg-blue-800">
-                  {user?.name?.charAt(0).toUpperCase() ?? 'U'}
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback
+                  className="rounded-lg text-white"
+                  style={{ backgroundColor: avatarColor }}
+                >
+                  {user.name?.charAt(0).toUpperCase() ?? 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {user?.name ?? 'User'}
+                  {user.name ?? 'User'}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {user?.role ?? '-'}
+                  {user.role ?? '-'}
                 </span>
               </div>
               <EllipsisVertical className="ml-auto size-4" />
@@ -67,17 +84,20 @@ const AccountMenu = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback className="rounded-lg">
-                    {user?.name?.charAt(0).toUpperCase() ?? 'U'}
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback
+                    className="rounded-lg text-white"
+                    style={{ backgroundColor: avatarColor }}
+                  >
+                    {user.name?.charAt(0).toUpperCase() ?? 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {user?.name ?? 'User'}
+                    {user.name ?? 'User'}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">
-                    {user?.role ?? '-'}
+                    {user.role ?? '-'}
                   </span>
                 </div>
               </div>

@@ -27,7 +27,7 @@ const App = () => {
       .get('/me.php')
       .then((res) => {
         setUser(res.data.user);
-        setSelectedPicId(res.data.user.pic_id);
+        setSelectedPicId(res.data.user.id);
       })
       .catch(() => clearUser());
   }, [setUser, clearUser, setSelectedPicId]);
