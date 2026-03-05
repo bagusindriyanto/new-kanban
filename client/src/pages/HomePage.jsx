@@ -7,11 +7,10 @@ import { columns } from '@/config/column';
 
 // Komponen Filter
 import { Spinner } from '@/components/ui/spinner';
-import HeaderControls from '@/components/layout/HeaderControls';
+import TasksControls from '@/components/layout/TasksControls';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
 import EmptyState from '@/components/shared/EmptyState';
-import Footer from '@/components/layout/Footer';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 import useDeadlineChecker from '@/hooks/useDeadlineChecker';
@@ -19,10 +18,12 @@ import useNotification from '@/stores/notificationStore';
 import { useEffect } from 'react';
 
 import useTaskFilters from '@/hooks/useTaskFilters';
+import SiteHeader from '@/components/layout/SiteHeader';
+import UpcomingTasksPanel from '@/components/tasks/UpcomingTasksPanel';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter
-  const { selectedPicId, setSelectedPicId, queryParams } = useTaskFilters();
+  const { queryParams } = useTaskFilters();
 
   // Tanstack query untuk tasks
   const {
@@ -61,18 +62,17 @@ const HomePage = () => {
   useDeadlineChecker(tasks);
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Header Controls */}
-      <HeaderControls
-        tasks={tasks}
-        selectedPicId={selectedPicId}
-        setSelectedPicId={setSelectedPicId}
-        isFetching={isFetching}
-        dataUpdatedAt={dataUpdatedAt}
-        currentTime={currentTime}
-      />
-      {/* Main */}
+    <div className="h-screen flex flex-col">
+      <SiteHeader titlePage="Kanban Board">
+        <UpcomingTasksPanel tasks={tasks} currentTime={currentTime} />
+      </SiteHeader>
+      {/* Tasks Controls */}
+      <div className="flex justify-between px-3 pt-3 pb-2">
+        <h2 className="text-2xl ml-1 font-bold tracking-tight">Tasks</h2>
+        <TasksControls isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
+      </div>
       <main className="flex flex-1 flex-col p-3 gap-3">
+        {/* Main */}
         {isOnline && isFetchTasksLoading && !fetchTasksError && (
           <div className="flex flex-1 justify-center items-center">
             <Spinner className="size-10" />
@@ -89,7 +89,7 @@ const HomePage = () => {
           !fetchTasksError &&
           isOnline && <EmptyState action={<AddTaskModal />} />}
         {tasks?.length > 0 && !isFetchTasksLoading && (
-          <div className="flex gap-4 flex-1">
+          <div className="flex gap-3 flex-1">
             {columns.map((column) => (
               <StatusColumn
                 key={column.id}

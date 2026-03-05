@@ -7,7 +7,7 @@ const StatusColumn = ({ title, tasks, currentTime }) => {
     <div className="flex flex-1 flex-col rounded-lg overflow-clip">
       <h2
         className={cn(
-          'text-xl font-semibold py-4 px-3 border-b border-border bg-neutral-50 dark:bg-neutral-900',
+          'text-lg font-semibold p-3 border-b border-border bg-neutral-50 dark:bg-neutral-900',
           {
             'text-todo-500': title === 'TO DO',
             'text-progress-500': title === 'ON PROGRESS',

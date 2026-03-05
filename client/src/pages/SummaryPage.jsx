@@ -31,6 +31,8 @@ import PieChartCard from '@/components/dashboard/PieChartCard';
 import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/dashboard/BarChartCard';
 import useTaskFilters from '@/hooks/useTaskFilters';
+import SiteHeader from '@/components/layout/SiteHeader';
+import { Filter } from 'lucide-react';
 
 const SummaryPage = () => {
   // State
@@ -62,31 +64,38 @@ const SummaryPage = () => {
   const isOnline = useIsOnline();
 
   return (
-    <div className="min-h-full flex flex-col">
-      <div className="sticky top-0 z-10 flex items-center justify-end gap-2 px-4 py-2">
-        {/* Refresh Data */}
-        <RefreshToggle isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
-        {/* Filter PIC */}
-        <Select value={selectedPicId} onValueChange={setSelectedPicId}>
-          <SelectTrigger className="w-[150px]" size="sm">
-            <SelectValue placeholder="Pilih PIC" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>PIC</SelectLabel>
-              <SelectItem className="hidden" value="all" disabled>
-                Pilih PIC
-              </SelectItem>
-              {pics?.map((pic) => (
-                <SelectItem value={pic.id} key={pic.id}>
-                  {pic.name}
+    <div className="min-h-screen flex flex-col">
+      <SiteHeader titlePage="Ringkasan" />
+      {/* Filter */}
+      <div className="flex justify-between px-3 pt-3 pb-2">
+        <h2 className="text-2xl ml-1 font-bold tracking-tight">Ringkasan</h2>
+        <div className="flex items-center gap-2">
+          <RefreshToggle
+            isFetching={isFetching}
+            dataUpdatedAt={dataUpdatedAt}
+          />
+          {/* Filter PIC */}
+          <Select value={selectedPicId} onValueChange={setSelectedPicId}>
+            <SelectTrigger className="w-[150px]" size="sm">
+              <SelectValue placeholder="Pilih PIC" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>PIC</SelectLabel>
+                <SelectItem className="hidden" value="all" disabled>
+                  Pilih PIC
                 </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        {/* Filter Tanggal */}
-        <FilterCalendar />
+                {pics?.map((pic) => (
+                  <SelectItem value={pic.id} key={pic.id}>
+                    {pic.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {/* Filter Tanggal */}
+          <FilterCalendar />
+        </div>
       </div>
       {/* Main */}
       <main className="flex-1 grid gap-3 p-3 md:grid-cols-2 xl:grid-cols-6">

@@ -18,7 +18,6 @@ const ModeToggle = () => {
             theme === 'light' ? setTheme('dark') : setTheme('light')
           }
           variant="outline"
-          className="cursor-pointer"
           size="icon-sm"
         >
           <Moon className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all duration-400 dark:scale-0 dark:-rotate-90" />

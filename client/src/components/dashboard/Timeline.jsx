@@ -2,7 +2,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '../ui/button';
-import { Link } from 'react-router';
 import { ArrowUp } from 'lucide-react';
 
 const timelineData = [
@@ -224,15 +223,10 @@ const timelineData = [
 const Timeline = () => {
   return (
     <section className="py-20">
-      <div className="mx-auto max-w-7xl mb-12">
-        <Button variant="secondary" className="shadow-sm" asChild>
-          <Link to="/">Kembali ke halaman utama</Link>
-        </Button>
-      </div>
       <h1 className="mb-10 text-center text-3xl font-bold tracking-tighter text-foreground sm:text-6xl">
         Kanban App Changelog
       </h1>
-      <div className="relative mx-auto max-w-4xl">
+      <div className="relative mx-auto max-w-3xl">
         <Separator
           orientation="vertical"
           className="absolute top-4 left-2 bg-muted"

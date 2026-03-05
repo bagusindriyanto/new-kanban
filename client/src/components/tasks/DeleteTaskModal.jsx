@@ -125,7 +125,6 @@ const DeleteTaskModal = () => {
           <Button
             type="button"
             variant="secondary"
-            className="cursor-pointer"
             onClick={onClose}
             disabled={isPending}
           >

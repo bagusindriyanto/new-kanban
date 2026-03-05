@@ -1,11 +1,13 @@
 import { Timeline } from '@/components/dashboard/Timeline';
 import { useTheme } from 'next-themes';
+import SiteHeader from '@/components/layout/SiteHeader';
 
 const ChangelogPage = () => {
   const { theme } = useTheme();
 
   return (
-    <div className="min-h-screen w-full relative" id="top">
+    <div className="min-h-screen flex flex-col relative" id="top">
+      <SiteHeader titlePage="Changelog" />
       {theme === 'light' ? (
         <div
           className="fixed inset-0 -z-1"

@@ -18,7 +18,7 @@ const FilterPics = () => {
 
   return (
     <Select value={selectedPicId} onValueChange={setSelectedPicId}>
-      <SelectTrigger className="w-[150px] bg-white" size="sm">
+      <SelectTrigger className="w-[150px]" size="sm">
         <SelectValue placeholder="Pilih PIC" />
       </SelectTrigger>
       <SelectContent>

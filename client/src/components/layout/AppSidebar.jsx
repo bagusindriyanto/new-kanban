@@ -1,5 +1,4 @@
-import { NavLink } from 'react-router';
-import { LayoutDashboard, BarChart3, FileText, LogOut } from 'lucide-react';
+import { Link, NavLink } from 'react-router';
 
 import {
   Sidebar,
@@ -13,51 +12,65 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import ModeToggle from './ModeToggle';
-import useAuth from '@/stores/authStore';
-import { api } from '@/lib/api';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
+import AccountMenu from '../account/AccountMenu';
+import logo from '@/assets/logo.png';
+import { SquareKanban, ChartNoAxesCombined, HelpCircle } from 'lucide-react';
 
-const navItems = [
-  { to: '/', label: 'Kanban Board', icon: LayoutDashboard },
-  { to: '/summary', label: 'Summary', icon: BarChart3 },
-  { to: '/changelog', label: 'Changelog', icon: FileText },
+const navMain = [
+  { to: '/', label: 'Kanban Board', icon: SquareKanban },
+  { to: '/summary', label: 'Ringkasan', icon: ChartNoAxesCombined },
+];
+
+const navSecondary = [
+  { to: '/changelog', label: 'Changelog', icon: HelpCircle },
 ];
 
 const AppSidebar = () => {
-  const { user, clearUser } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    toast.promise(api.post('/logout.php'), {
-      loading: 'Sedang memproses logout...',
-      success: () => {
-        clearUser();
-        navigate('/login');
-        return 'Logout berhasil.';
-      },
-      error: (err) => err.response?.data?.message || 'Logout gagal.',
-    });
-  };
-
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-2 py-1">
-          <span className="text-lg font-bold">Kanban App</span>
-          <ModeToggle />
-        </div>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <Link to="/">
+                <img src={logo} alt="Kanban App" className="size-7 m-0.5" />
+                <span className="truncate font-semibold tracking-tight text-lg">
+                  Kanban App
+                </span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {navMain.map((item) => (
                 <SidebarMenuItem key={item.to}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.label}>
+                    <NavLink to={item.to} end={item.to === '/'}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupLabel>Pengaturan</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navSecondary.map((item) => (
+                <SidebarMenuItem key={item.to}>
+                  <SidebarMenuButton asChild tooltip={item.label}>
                     <NavLink to={item.to} end={item.to === '/'}>
                       <item.icon />
                       <span>{item.label}</span>
@@ -69,24 +82,8 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <div className="flex items-center gap-2 px-2 py-1 text-sm text-muted-foreground">
-              <span className="truncate">{user?.name ?? 'User'}</span>
-              <span className="ml-auto text-xs bg-muted px-1.5 py-0.5 rounded">
-                {user?.role ?? '-'}
-              </span>
-            </div>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout}>
-              <LogOut />
-              <span>Logout</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <AccountMenu />
       </SidebarFooter>
     </Sidebar>
   );
