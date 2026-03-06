@@ -86,7 +86,7 @@ function handlePatch($pdo, $input)
       "status" => "success",
       "message" => "Berhasil mengubah data.",
       "user" => $_SESSION['user']
-    ]);
+    ], JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     $pdo->rollBack();
     http_response_code(500);

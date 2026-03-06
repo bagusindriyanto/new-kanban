@@ -45,4 +45,4 @@ $_SESSION['user'] = [
 ];
 
 http_response_code(200);
-echo json_encode(["user" => $_SESSION['user']]);
+echo json_encode(["user" => $_SESSION['user']], JSON_NUMERIC_CHECK);
