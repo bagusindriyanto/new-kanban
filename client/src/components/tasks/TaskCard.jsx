@@ -376,6 +376,13 @@ const TaskCard = ({ task }) => {
             </div>
           )}
 
+          {status === 'on progress' && isPaused && (
+            <div className="flex gap-1 justify-between">
+              <p className="font-medium">Jeda:</p>
+              <p className="tabular-nums">{formatTimestamp(pause_time)}</p>
+            </div>
+          )}
+
           {status === 'done' && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Selesai:</p>
