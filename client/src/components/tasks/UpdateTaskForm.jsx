@@ -143,7 +143,7 @@ const UpdateTaskForm = () => {
   const { data: tasks } = useFetchTasks(queryParams);
 
   const user = useAuth((state) => state.user);
-  const filteredPics = pics?.filter((pic) => pic.level < user.level);
+  const filteredPics = pics?.filter((pic) => pic.id !== user.id);
 
   // State untuk tasks yang dipilih
   const selectedTaskId = useFilter((state) => state.selectedTaskId);
@@ -757,111 +757,116 @@ const UpdateTaskForm = () => {
                 )}
               />
             </div>
-            {user.level > 1 && (
-              <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
-                <Controller
-                  name="is_assigned"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field
-                      data-invalid={fieldState.invalid}
-                      orientation="horizontal"
-                      className="mt-6"
-                    >
-                      <Switch
-                        id="add-task-is-assigned"
-                        name={field.name}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      <FieldLabel htmlFor="add-task-is-assigned">
-                        Tugaskan Task?
-                      </FieldLabel>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-                {/* PIC */}
-                <Controller
-                  name="pic_id"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="update-task-pic" className="gap-0.5">
-                        Tugaskan ke:<span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <Popover open={picOpen} onOpenChange={setPicOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            id="update-task-pic"
-                            aria-invalid={fieldState.invalid}
-                            className={cn(
-                              'w-full justify-between',
-                              !field.value && 'text-muted-foreground',
-                            )}
-                            disabled={!isAssigned}
+            <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
+              <Controller
+                name="is_assigned"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    orientation="horizontal"
+                    className="mt-6"
+                  >
+                    <Switch
+                      id="add-task-is-assigned"
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      aria-invalid={fieldState.invalid}
+                    />
+                    <FieldLabel htmlFor="add-task-is-assigned">
+                      Tugaskan Task?
+                    </FieldLabel>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              {/* PIC */}
+              <Controller
+                name="pic_id"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="update-task-pic" className="gap-0.5">
+                      Tugaskan ke:{' '}
+                      <span
+                        className={cn('text-red-500', {
+                          hidden: !isAssigned,
+                        })}
+                      >
+                        *
+                      </span>
+                    </FieldLabel>
+                    <Popover open={picOpen} onOpenChange={setPicOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          id="update-task-pic"
+                          aria-invalid={fieldState.invalid}
+                          className={cn(
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                          disabled={!isAssigned}
+                        >
+                          <span className="truncate">
+                            {field.value
+                              ? filteredPics?.find(
+                                  (pic) => pic.id === field.value,
+                                )?.name
+                              : 'Pilih PIC'}
+                          </span>
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Cari PIC..."
+                            className="h-9"
+                          />
+                          <CommandList
+                            onWheel={(e) => {
+                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                            }}
                           >
-                            <span className="truncate">
-                              {field.value
-                                ? filteredPics?.find(
-                                    (pic) => pic.id === field.value,
-                                  )?.name
-                                : 'Pilih PIC'}
-                            </span>
-                            <ChevronsUpDown className="opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="PopoverContent p-0">
-                          <Command>
-                            <CommandInput
-                              placeholder="Cari PIC..."
-                              className="h-9"
-                            />
-                            <CommandList
-                              onWheel={(e) => {
-                                e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                              }}
-                            >
-                              <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                              <CommandGroup>
-                                {filteredPics?.map((pic) => (
-                                  <CommandItem
-                                    value={pic.name}
-                                    key={pic.id}
-                                    onSelect={() => {
-                                      form.setValue('pic_id', pic.id);
-                                      setPicOpen(false);
-                                    }}
-                                  >
-                                    {pic.name}
-                                    <Check
-                                      className={cn(
-                                        'ml-auto',
-                                        pic.id === field.value
-                                          ? 'opacity-100'
-                                          : 'opacity-0',
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              </div>
-            )}
+                            <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
+                            <CommandGroup>
+                              {filteredPics?.map((pic) => (
+                                <CommandItem
+                                  value={pic.name}
+                                  key={pic.id}
+                                  onSelect={() => {
+                                    form.setValue('pic_id', pic.id);
+                                    setPicOpen(false);
+                                  }}
+                                >
+                                  {pic.name}
+                                  <Check
+                                    className={cn(
+                                      'ml-auto',
+                                      pic.id === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0',
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
             <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
               {/* Appointment Switch */}
               <Controller

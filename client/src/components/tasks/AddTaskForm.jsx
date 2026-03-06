@@ -92,7 +92,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const { data: pics } = useFetchPICs();
 
   const user = useAuth((state) => state.user);
-  const filteredPics = pics?.filter((pic) => pic.level < user.level);
+  const filteredPics = pics?.filter((pic) => pic.id !== user.id);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -213,111 +213,117 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             )}
           />
           {/* Assigned Section */}
-          {user.level > 1 && (
-            <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
-              <Controller
-                name="is_assigned"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation="horizontal"
-                    className="mt-6"
-                  >
-                    <Switch
-                      id="add-task-is-assigned"
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <FieldLabel htmlFor="add-task-is-assigned">
-                      Tugaskan Task?
-                    </FieldLabel>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
 
-              {/* PIC Combo Box */}
-              <Controller
-                name="pic_id"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                      Tugaskan ke:<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Popover open={picOpen} onOpenChange={setPicOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          id="add-task-pic"
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          disabled={!isAssigned}
+          <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
+            <Controller
+              name="is_assigned"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                  className="mt-6"
+                >
+                  <Switch
+                    id="add-task-is-assigned"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="add-task-is-assigned">
+                    Tugaskan Task?
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            {/* PIC Combo Box */}
+            <Controller
+              name="pic_id"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
+                    Tugaskan ke:{' '}
+                    <span
+                      className={cn('text-red-500', {
+                        hidden: !isAssigned,
+                      })}
+                    >
+                      *
+                    </span>
+                  </FieldLabel>
+                  <Popover open={picOpen} onOpenChange={setPicOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        id="add-task-pic"
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={!isAssigned}
+                      >
+                        <span className="truncate">
+                          {field.value
+                            ? filteredPics?.find(
+                                (pic) => pic.id === field.value,
+                              )?.name
+                            : 'Pilih PIC'}
+                        </span>
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="PopoverContent p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Cari PIC..."
+                          className="h-9"
+                        />
+                        <CommandList
+                          onWheel={(e) => {
+                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
+                          }}
                         >
-                          <span className="truncate">
-                            {field.value
-                              ? filteredPics?.find(
-                                  (pic) => pic.id === field.value,
-                                )?.name
-                              : 'Pilih PIC'}
-                          </span>
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Cari PIC..."
-                            className="h-9"
-                          />
-                          <CommandList
-                            onWheel={(e) => {
-                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                            }}
-                          >
-                            <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                            <CommandGroup>
-                              {filteredPics?.map((pic) => (
-                                <CommandItem
-                                  value={pic.name}
-                                  key={pic.id}
-                                  onSelect={() => {
-                                    form.setValue('pic_id', pic.id);
-                                    setPicOpen(false);
-                                  }}
-                                >
-                                  {pic.name}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      pic.id === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-          )}
+                          <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
+                          <CommandGroup>
+                            {filteredPics?.map((pic) => (
+                              <CommandItem
+                                value={pic.name}
+                                key={pic.id}
+                                onSelect={() => {
+                                  form.setValue('pic_id', pic.id);
+                                  setPicOpen(false);
+                                }}
+                              >
+                                {pic.name}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    pic.id === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
 
           <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
             {/* Appointment Switch */}
@@ -356,8 +362,14 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                     htmlFor="add-task-scheduled-at"
                     className="gap-0.5"
                   >
-                    Tanggal & Waktu Jadwal
-                    <span className="text-red-500">*</span>
+                    Tanggal & Waktu Jadwal{' '}
+                    <span
+                      className={cn('text-red-500', {
+                        hidden: !isScheduled,
+                      })}
+                    >
+                      *
+                    </span>
                   </FieldLabel>
                   <Popover>
                     <PopoverTrigger asChild>

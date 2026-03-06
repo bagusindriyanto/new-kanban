@@ -47,7 +47,6 @@ const TaskCard = ({ task }) => {
     scheduled_at,
     pic_name,
     assigner_name,
-    role_level,
   } = task;
 
   // State untuk akun yang saat ini aktif
@@ -282,33 +281,31 @@ const TaskCard = ({ task }) => {
           {content}
         </h3>
 
-        {(user.level > role_level || user.id === pic_id) && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground -mr-1 -mt-1 shadow-none"
-                disabled={optimistic}
-              >
-                <EllipsisHorizontalIcon className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-36">
-              <DropdownMenuItem onClick={handleUpdateTaskModal}>
-                <PencilSquareIcon className="mr-2 size-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleDeleteTaskModal}
-                variant="destructive"
-              >
-                <TrashIcon className="mr-2 size-4" />
-                Hapus
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground -mr-1 -mt-1 shadow-none"
+              disabled={optimistic}
+            >
+              <EllipsisHorizontalIcon className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-36">
+            <DropdownMenuItem onClick={handleUpdateTaskModal}>
+              <PencilSquareIcon className="mr-2 size-4" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDeleteTaskModal}
+              variant="destructive"
+            >
+              <TrashIcon className="mr-2 size-4" />
+              Hapus
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* 2. BODY: Description */}
@@ -430,43 +427,41 @@ const TaskCard = ({ task }) => {
         </div>
 
         {/* Action Controls */}
-        {(user.level > role_level || user.id === pic_id) && (
-          <div className="flex items-center gap-1">
-            <Button
-              onClick={() => onMove(false)}
-              variant="outline"
-              size="icon-xs"
-              disabled={
-                status === 'todo' ||
-                status === 'archived' ||
-                isPaused ||
-                optimistic
-              }
-            >
-              <ArrowLeftIcon />
-            </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            onClick={() => onMove(false)}
+            variant="outline"
+            size="icon-xs"
+            disabled={
+              status === 'todo' ||
+              status === 'archived' ||
+              isPaused ||
+              optimistic
+            }
+          >
+            <ArrowLeftIcon />
+          </Button>
 
-            {status === 'on progress' && (
-              <Button
-                onClick={togglePause}
-                variant={isPaused ? 'destructive' : 'outline'}
-                size="icon-xs"
-                disabled={optimistic}
-              >
-                {isPaused ? <PlayIcon /> : <PauseIcon />}
-              </Button>
-            )}
-
+          {status === 'on progress' && (
             <Button
-              onClick={() => onMove(true)}
-              variant="outline"
+              onClick={togglePause}
+              variant={isPaused ? 'destructive' : 'outline'}
               size="icon-xs"
-              disabled={status === 'archived' || isPaused || optimistic}
+              disabled={optimistic}
             >
-              <ArrowRightIcon />
+              {isPaused ? <PlayIcon /> : <PauseIcon />}
             </Button>
-          </div>
-        )}
+          )}
+
+          <Button
+            onClick={() => onMove(true)}
+            variant="outline"
+            size="icon-xs"
+            disabled={status === 'archived' || isPaused || optimistic}
+          >
+            <ArrowRightIcon />
+          </Button>
+        </div>
       </div>
     </div>
   );
