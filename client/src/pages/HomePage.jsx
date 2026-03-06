@@ -14,6 +14,7 @@ import EmptyState from '@/components/shared/EmptyState';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import useTaskFilters from '@/hooks/useTaskFilters';
 import SiteHeader from '@/components/layout/SiteHeader';
+import AddTaskModal from '@/components/tasks/AddTaskModal';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter

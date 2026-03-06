@@ -261,7 +261,7 @@ const TaskCard = ({ task }) => {
   return (
     <div
       className={cn(
-        'group flex flex-col gap-4 rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
+        'group flex flex-col gap-2 rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
         {
           'border-l-4 border-l-todo-500': status === 'todo',
           'border-l-4 border-l-progress-500': status === 'on progress',
