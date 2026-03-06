@@ -278,7 +278,7 @@ const TaskCard = ({ task }) => {
     >
       {/* 1. HEADER: Title & Menu */}
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-semibold text-base leading-tight text-card-foreground line-clamp-2">
+        <h3 className="font-bold text-base leading-tight text-card-foreground line-clamp-2">
           {content}
         </h3>
 
@@ -312,11 +312,7 @@ const TaskCard = ({ task }) => {
       </div>
 
       {/* 2. BODY: Description */}
-      {detail && (
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-snug">
-          {detail}
-        </p>
-      )}
+      {detail && <p className="text-sm line-clamp-2 leading-snug">{detail}</p>}
 
       {/* 3. ASSIGNEE & METADATA */}
       <div className="flex flex-col gap-2 mt-1">
@@ -336,50 +332,25 @@ const TaskCard = ({ task }) => {
         </div>
 
         {/* Status Context Row (Timestamps & Pause info) */}
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] text-muted-foreground border-t border-border pt-1">
+        <div className="text-[11px] text-muted-foreground border-t border-border pt-1">
           {status === 'todo' && (
-            <div className="flex gap-1">
-              <span className="font-medium">Dibuat:</span>
-              <span>{formatTimestamp(timestamp_todo)}</span>
+            <div className="flex gap-1 justify-between">
+              <p className="font-medium">Dibuat:</p>
+              <p className="tabular-nums">{formatTimestamp(timestamp_todo)}</p>
             </div>
           )}
 
-          {status === 'on progress' && (
-            <div className="flex gap-1">
-              <span className="font-medium">Mulai:</span>
-              <span>{formatTimestamp(timestamp_progress)}</span>
-            </div>
-          )}
-
-          {(status === 'done' || status === 'archived') && (
-            <div className="flex gap-1">
-              <span className="font-medium">
-                {status === 'done' ? 'Selesai:' : 'Arsip:'}
-              </span>
-              <span>
-                {formatTimestamp(
-                  status === 'done' ? timestamp_done : timestamp_archived,
-                )}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 4. FOOTER: Controls & Schedule */}
-      <div className="mt-1 flex items-center justify-between gap-2">
-        <div className="flex items-center">
           {status === 'todo' && scheduled_at && (
-            <div className="relative">
+            <div className="relative mt-1">
               {isUrgent && (
-                <span className="absolute -right-1 -top-0.5 z-10 flex size-2">
+                <span className="absolute -right-1.5 -top-0.5 z-10 flex size-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex size-2 rounded-full bg-red-500"></span>
                 </span>
               )}
               <div
                 className={cn(
-                  'flex items-center gap-1 rounded-md px-1 -ml-1 py-0.5 text-[11px] font-medium border transition-colors tabular-nums',
+                  'flex gap-1 justify-between rounded-md px-1 -mx-1 py-0.5 font-medium border transition-colors',
                   {
                     'border-red-200 bg-red-50 text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400':
                       isUrgent,
@@ -390,15 +361,47 @@ const TaskCard = ({ task }) => {
                   },
                 )}
               >
-                Terjadwal: {formatTimestamp(scheduled_at)}
+                <p className="font-medium">Terjadwal:</p>
+                <p className="tabular-nums">{formatTimestamp(scheduled_at)}</p>
               </div>
             </div>
           )}
+
+          {(status === 'on progress' || status === 'done') && (
+            <div className="flex gap-1 justify-between">
+              <p className="font-medium">Mulai:</p>
+              <p className="tabular-nums">
+                {formatTimestamp(timestamp_progress)}
+              </p>
+            </div>
+          )}
+
+          {status === 'done' && (
+            <div className="flex gap-1 justify-between">
+              <p className="font-medium">Selesai:</p>
+              <p className="tabular-nums">{formatTimestamp(timestamp_done)}</p>
+            </div>
+          )}
+
+          {status === 'archived' && (
+            <div className="flex gap-1 justify-between">
+              <p className="font-medium">Arsip:</p>
+              <p className="tabular-nums">
+                {formatTimestamp(timestamp_archived)}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 4. FOOTER: Controls & Schedule */}
+      <div className="mt-1 flex items-center justify-between gap-2">
+        <div className="flex items-center">
           {status === 'on progress' && (totalPause > 0 || isPaused) && (
             <div
               className={cn(
-                'flex items-center gap-1 text-[11px] text-muted-foreground',
-                isPaused ? 'font-medium animate-pulse text-destructive' : '',
+                'flex items-center gap-1 text-[11px] text-destructive',
+                isPaused ? 'font-medium animate-pulse' : '',
               )}
             >
               <CirclePause className="size-4" />
@@ -411,7 +414,7 @@ const TaskCard = ({ task }) => {
                 <Timer className="size-4.5" /> {minute_activity || 0}m
               </span>
               {totalPause > 0 && (
-                <span className="opacity-70 flex items-center gap-1">
+                <span className="opacity-70 flex items-center gap-1 text-destructive">
                   <CirclePause className="size-4" /> {totalPause}m
                 </span>
               )}
