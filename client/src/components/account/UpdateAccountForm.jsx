@@ -165,7 +165,7 @@ const UpdateAccountForm = () => {
             <FieldSeparator className="mt-6 *:data-[slot=field-separator-content]:bg-card">
               Informasi Akun
             </FieldSeparator>
-            <Field className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 mb-8 mt-2">
+            <Field className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 mb-6 mt-2">
               {/* Email */}
               <Controller
                 name="email"
@@ -227,7 +227,7 @@ const UpdateAccountForm = () => {
                 )}
               />
             </Field>
-            <div className="mt-6 flex justify-end gap-3 border-t border-border pt-6">
+            <div className="flex justify-end gap-3 border-t border-border pt-6">
               <Button
                 variant="outline"
                 type="reset"

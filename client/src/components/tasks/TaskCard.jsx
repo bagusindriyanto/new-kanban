@@ -372,7 +372,7 @@ const TaskCard = ({ task }) => {
           {status === 'todo' && scheduled_at && (
             <div className="relative">
               {isUrgent && (
-                <span className="absolute -right-0.5 -top-0.5 z-10 flex size-2">
+                <span className="absolute -right-1 -top-0.5 z-10 flex size-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex size-2 rounded-full bg-red-500"></span>
                 </span>

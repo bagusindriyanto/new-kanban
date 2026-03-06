@@ -92,7 +92,6 @@ const formSchema = z
     is_scheduled: z.boolean(),
     is_assigned: z.boolean(),
     scheduled_at: z.date().nullish(),
-    password: z.string().min(1, 'Mohon isi kata sandi.'),
   })
   .superRefine((data, ctx) => {
     if (data.is_scheduled && !data.scheduled_at) {
@@ -136,8 +135,6 @@ const UpdateTaskForm = () => {
   // State Buka/Tutup Popover
   const [activityOpen, setActivityOpen] = useState(false);
   const [picOpen, setPicOpen] = useState(false);
-  // Tampilkan Password/Tidak
-  const [showPassword, setShowPassword] = useState(false);
   // Custom hook untuk logic filter
   const { queryParams } = useTaskFilters();
   // Fetch data
@@ -185,7 +182,6 @@ const UpdateTaskForm = () => {
       scheduled_at: task?.scheduled_at
         ? new Date(task.scheduled_at)
         : undefined,
-      password: '',
     },
   });
 
@@ -212,37 +208,32 @@ const UpdateTaskForm = () => {
 
   // Submit form
   const onSubmit = (data) => {
-    if (data.password === 'Semarang@2025') {
-      const payload = {
-        ...data,
-        id: selectedTaskId,
-        assigner_id: isAssigned ? user.id : null,
-        pic_id: isAssigned ? data.pic_id : user.id,
-      };
+    const payload = {
+      ...data,
+      id: selectedTaskId,
+      assigner_id: isAssigned ? user.id : null,
+      pic_id: isAssigned ? data.pic_id : user.id,
+    };
 
-      toast.promise(updateTaskMutate(payload), {
-        loading: () => {
-          return 'Sedang memperbarui task...';
-        },
-        success: () => {
-          form.reset();
-          setIsModalOpen(false);
-          return 'Task berhasil diperbarui.';
-        },
-        error: (err) => {
-          return {
-            message:
-              err.response?.data?.message ||
-              err.message ||
-              'Gagal memperbarui task.',
-            description: err.response?.data?.error_detail || null,
-          };
-        },
-      });
-    } else {
-      toast.error('Kata sandi salah!');
-      form.setValue('password', '');
-    }
+    toast.promise(updateTaskMutate(payload), {
+      loading: () => {
+        return 'Sedang memperbarui task...';
+      },
+      success: () => {
+        form.reset();
+        setIsModalOpen(false);
+        return 'Task berhasil diperbarui.';
+      },
+      error: (err) => {
+        return {
+          message:
+            err.response?.data?.message ||
+            err.message ||
+            'Gagal memperbarui task.',
+          description: err.response?.data?.error_detail || null,
+        };
+      },
+    });
   };
 
   // Form
@@ -997,42 +988,6 @@ const UpdateTaskForm = () => {
                         <InputGroupText className="tabular-nums">
                           {field.value?.length || 0}/100 karakter
                         </InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            <div className="col-span-6">
-              <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-password"
-                      className="gap-0.5"
-                    >
-                      Masukkan Kata Sandi<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        type={showPassword ? 'text' : 'password'}
-                        id="update-task-password"
-                        aria-invalid={fieldState.invalid}
-                        autoComplete="off"
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupButton
-                          onMouseDown={() => setShowPassword(true)}
-                          onMouseUp={() => setShowPassword(false)}
-                        >
-                          {showPassword ? <EyeClosed /> : <Eye />}
-                        </InputGroupButton>
                       </InputGroupAddon>
                     </InputGroup>
                     {fieldState.invalid && (

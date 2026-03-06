@@ -13,12 +13,19 @@ const timelineData = [
         <p className="mb-4">Menambahkan:</p>
         <ul>
           <li className="flex items-center gap-2">
-            Sistem login dan register akun
+            🧑 Sistem login dan register akun
+          </li>
+          <li className="flex items-center gap-2">
+            👥 Tugaskan task ke PIC lain
           </li>
         </ul>
         <p className="mt-6 mb-4">Memperbarui:</p>
         <ul>
-          <li className="flex items-center gap-2">Tampilan UI</li>
+          <li className="flex items-center gap-2">🖥️ Tampilan UI</li>
+        </ul>
+        <p className="mt-6 mb-4">Meningkatkan:</p>
+        <ul>
+          <li className="flex items-center gap-2">🚅 Performa aplikasi</li>
         </ul>
       </>
     ),

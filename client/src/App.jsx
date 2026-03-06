@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import SummaryPage from './pages/SummaryPage';
 import ChangelogPage from './pages/ChangelogPage';
 import SettingsPage from './pages/SettingsPage';
+import UnauthorizedPage from './pages/UnauthorizedPage';
 
 import useAuth from './stores/authStore';
 import { useEffect } from 'react';
@@ -53,6 +54,7 @@ const App = () => {
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Route>
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Toaster position="top-center" richColors />
