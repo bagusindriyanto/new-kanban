@@ -400,8 +400,8 @@ const TaskCard = ({ task }) => {
           {status === 'on progress' && (totalPause > 0 || isPaused) && (
             <div
               className={cn(
-                'flex items-center gap-1 text-[11px] text-muted-foreground',
-                isPaused ? 'font-medium animate-pulse text-destructive' : '',
+                'flex items-center gap-1 text-[11px] text-destructive',
+                isPaused ? 'font-medium animate-pulse' : '',
               )}
             >
               <CirclePause className="size-4" />
