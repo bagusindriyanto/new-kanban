@@ -19,15 +19,22 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useFetchTasks } from '@/api/fetchTasks';
-import useNotification from '@/stores/notificationStore';
 import useTaskFilters from '@/hooks/useTaskFilters';
 
 const UpcomingTasksPanel = () => {
   const [visibleTasks, setVisibleTasks] = useState([]);
+  const [localTick, setLocalTick] = useState(0);
 
   const { queryParams } = useTaskFilters();
   const { data: tasks } = useFetchTasks(queryParams);
-  const currentTime = useNotification((state) => state.currentTime);
+
+  useEffect(() => {
+    // Tick local timer every minute
+    const tickInterval = setInterval(() => {
+      setLocalTick((prev) => prev + 1);
+    }, 60000);
+    return () => clearInterval(tickInterval);
+  }, []);
 
   useEffect(() => {
     if (!tasks || tasks.length === 0) {
@@ -40,14 +47,14 @@ const UpcomingTasksPanel = () => {
         if (task.status !== 'todo' || !task.scheduled_at) return false;
 
         const diffInMinutes =
-          (new Date(task.scheduled_at) - currentTime) / 60000;
+          (new Date(task.scheduled_at) - new Date()) / 60000;
 
         return diffInMinutes > 0 && diffInMinutes <= 30;
       })
       .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
 
     setVisibleTasks(upcoming);
-  }, [tasks, currentTime]);
+  }, [tasks, localTick]);
 
   return (
     <Sheet>
@@ -82,7 +89,7 @@ const UpcomingTasksPanel = () => {
           <div className="px-4 space-y-3">
             {visibleTasks.map((task) => {
               const diffInMinutes =
-                (new Date(task.scheduled_at) - currentTime) / 60000;
+                (new Date(task.scheduled_at) - new Date()) / 60000;
               const isUrgent = diffInMinutes <= 15;
               const picName = task.pic_name || '-';
 

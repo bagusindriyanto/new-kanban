@@ -46,7 +46,7 @@ const formSchema = z
     pic_id: z.number().nullish(),
     detail: z
       .string()
-      .max(60, 'Detail tidak boleh lebih dari 60 karakter.')
+      .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
       .trim()
       .optional(),
     is_scheduled: z.boolean(),
@@ -213,8 +213,8 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             )}
           />
           {/* Assigned Section */}
-          <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
-            {user.level > 1 && (
+          {user.level > 1 && (
+            <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
               <Controller
                 name="is_assigned"
                 control={form.control}
@@ -240,10 +240,8 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                   </Field>
                 )}
               />
-            )}
 
-            {/* PIC Combo Box */}
-            {isAssigned && (
+              {/* PIC Combo Box */}
               <Controller
                 name="pic_id"
                 control={form.control}
@@ -262,6 +260,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                             'w-full justify-between',
                             !field.value && 'text-muted-foreground',
                           )}
+                          disabled={!isAssigned}
                         >
                           <span className="truncate">
                             {field.value
@@ -317,8 +316,8 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                   </Field>
                 )}
               />
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
             {/* Appointment Switch */}
@@ -348,78 +347,77 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
               )}
             />
             {/* Appointment Date */}
-            {isScheduled && (
-              <Controller
-                name="scheduled_at"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="add-task-scheduled-at"
-                      className="gap-0.5"
-                    >
-                      Tanggal & Waktu Jadwal
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="add-task-scheduled-at"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 size-4" />
-                          {field.value ? (
-                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                              locale: id,
-                            })
-                          ) : (
-                            <span>Pilih tanggal dan waktu</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="right" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          locale={id}
-                          captionLayout="dropdown"
-                          weekStartsOn={1}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date(),
-                          }}
-                          initialFocus
+            <Controller
+              name="scheduled_at"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="add-task-scheduled-at"
+                    className="gap-0.5"
+                  >
+                    Tanggal & Waktu Jadwal
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        id="add-task-scheduled-at"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={!isScheduled}
+                      >
+                        <CalendarIcon className="mr-2 size-4" />
+                        {field.value ? (
+                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                            locale: id,
+                          })
+                        ) : (
+                          <span>Pilih tanggal dan waktu</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent side="right" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={{
+                          before: new Date(),
+                        }}
+                        initialFocus
+                      />
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
                         />
-                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                          <TimePickerDemo
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                          <Button
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-600"
-                            onClick={() =>
-                              form.setValue('scheduled_at', undefined)
-                            }
-                          >
-                            <Trash2Icon />
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            )}
+                        <Button
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() =>
+                            form.setValue('scheduled_at', undefined)
+                          }
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
           </div>
         </div>
         {/* Detail */}
@@ -439,7 +437,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                 />
                 <InputGroupAddon align="block-end">
                   <InputGroupText className="tabular-nums">
-                    {field.value?.length || 0}/60 karakter
+                    {field.value?.length || 0}/100 karakter
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>

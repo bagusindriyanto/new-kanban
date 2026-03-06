@@ -18,19 +18,16 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
-import { CalendarClock, User } from 'lucide-react';
+import { CalendarClock, User, Timer, CirclePause } from 'lucide-react';
 import useAuth from '@/stores/authStore';
-import { Timer } from 'lucide-react';
-import { CirclePause } from 'lucide-react';
-import useNotification from '@/stores/notificationStore';
+// Urutan Status dipindah ke luar kompoen
+const statusOrder = columns.map((column) => column.id);
 
 const TaskCard = ({ task }) => {
-  // Urutan Status
-  const statusOrder = columns.map((column) => column.id);
   // Destructure isi props
   const {
     id,
@@ -70,7 +67,7 @@ const TaskCard = ({ task }) => {
   const setSelectedTaskId = useFilter((state) => state.setSelectedTaskId);
   const { mutate: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
-      onError: (err, _newTask, _onMutateResult, _context) => {
+      onError: (err) => {
         toast.error(
           err.response?.data?.message ||
             err.message ||
@@ -82,8 +79,6 @@ const TaskCard = ({ task }) => {
       },
     },
   });
-
-  const currentTime = useNotification((state) => state.currentTime);
 
   // Fungsi buka form modal
   const handleUpdateTaskModal = () => {
@@ -248,15 +243,25 @@ const TaskCard = ({ task }) => {
     setIsPaused(!resetPauseTime);
   };
 
-  // Hitung waktu tersisa jika ada scheduled_at
-  const diffInMinutes = scheduled_at
-    ? (new Date(task.scheduled_at) - currentTime) / 60000
+  // Hitung waktu tersisa dan interval lokal
+  const [isUrgent, setIsUrgent] = useState(false);
+
+  useEffect(() => {
+    if (status !== 'todo' || !scheduled_at) return;
+
+    const checkUrgency = () => {
+      const diffInMinutes = (new Date(scheduled_at) - new Date()) / 60000;
+      setIsUrgent(diffInMinutes > 0 && diffInMinutes <= 15 && !optimistic);
+    };
+
+    checkUrgency();
+    const urgentTimer = setInterval(checkUrgency, 60000); // Cek tiap 1 menit
+    return () => clearInterval(urgentTimer);
+  }, [status, scheduled_at, optimistic]);
+
+  const diffInMinutesLocal = scheduled_at
+    ? (new Date(scheduled_at) - new Date()) / 60000
     : 0;
-  const isUrgent =
-    status === 'todo' &&
-    diffInMinutes > 0 &&
-    diffInMinutes <= 15 &&
-    !optimistic;
 
   return (
     <div
@@ -379,9 +384,9 @@ const TaskCard = ({ task }) => {
                     'border-red-200 bg-red-50 text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400':
                       isUrgent,
                     'border-muted bg-muted/50 text-muted-foreground opacity-60':
-                      diffInMinutes <= 0 && !isUrgent,
+                      diffInMinutesLocal <= 0 && !isUrgent,
                     'border-blue-200 bg-blue-50 text-blue-600 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-400':
-                      diffInMinutes > 15,
+                      diffInMinutesLocal > 15,
                   },
                 )}
               >
@@ -457,4 +462,15 @@ const TaskCard = ({ task }) => {
   );
 };
 
-export default TaskCard;
+export default memo(TaskCard, (prevProps, nextProps) => {
+  return (
+    prevProps.task.status === nextProps.task.status &&
+    prevProps.task.optimistic === nextProps.task.optimistic &&
+    prevProps.task.minute_pause === nextProps.task.minute_pause &&
+    prevProps.task.pause_time === nextProps.task.pause_time &&
+    prevProps.task.content === nextProps.task.content &&
+    prevProps.task.detail === nextProps.task.detail &&
+    prevProps.task.pic_id === nextProps.task.pic_id &&
+    prevProps.task.scheduled_at === nextProps.task.scheduled_at
+  );
+});

@@ -52,7 +52,6 @@ import {
 } from '@/components/ui/field';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import { Textarea } from '@/components/ui/textarea';
 import useFilter from '@/stores/filterStore';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 
@@ -83,7 +82,7 @@ const formSchema = z
     pause_time: z.boolean(),
     detail: z
       .string()
-      .max(60, 'Detail tidak boleh lebih dari 60 karakter.')
+      .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
       .trim()
       .optional(),
     timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
@@ -163,27 +162,29 @@ const UpdateTaskForm = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      content: task.content ?? undefined,
-      pic_id: task.pic_id ?? undefined,
-      status: task.status ?? undefined,
-      minute_pause: task.minute_pause ?? undefined,
-      pause_time: task.pause_time ? true : false,
-      detail: task.detail ?? undefined,
-      timestamp_todo: task.timestamp_todo
+      content: task?.content ?? undefined,
+      pic_id: task?.pic_id ?? undefined,
+      status: task?.status ?? undefined,
+      minute_pause: task?.minute_pause ?? undefined,
+      pause_time: task?.pause_time ? true : false,
+      detail: task?.detail ?? undefined,
+      timestamp_todo: task?.timestamp_todo
         ? new Date(task.timestamp_todo)
         : undefined,
-      timestamp_progress: task.timestamp_progress
+      timestamp_progress: task?.timestamp_progress
         ? new Date(task.timestamp_progress)
         : undefined,
-      timestamp_done: task.timestamp_done
+      timestamp_done: task?.timestamp_done
         ? new Date(task.timestamp_done)
         : undefined,
-      timestamp_archived: task.timestamp_archived
+      timestamp_archived: task?.timestamp_archived
         ? new Date(task.timestamp_archived)
         : undefined,
-      is_assigned: !!task.assigner_id,
-      is_scheduled: !!task.scheduled_at,
-      scheduled_at: task.scheduled_at ? new Date(task.scheduled_at) : undefined,
+      is_assigned: !!task?.assigner_id,
+      is_scheduled: !!task?.scheduled_at,
+      scheduled_at: task?.scheduled_at
+        ? new Date(task.scheduled_at)
+        : undefined,
       password: '',
     },
   });
@@ -765,9 +766,8 @@ const UpdateTaskForm = () => {
                 )}
               />
             </div>
-            <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
-              {/* Assigned Switch */}
-              {user.level > 1 && (
+            {user.level > 1 && (
+              <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
                 <Controller
                   name="is_assigned"
                   control={form.control}
@@ -793,9 +793,7 @@ const UpdateTaskForm = () => {
                     </Field>
                   )}
                 />
-              )}
-              {/* PIC */}
-              {isAssigned && (
+                {/* PIC */}
                 <Controller
                   name="pic_id"
                   control={form.control}
@@ -815,6 +813,7 @@ const UpdateTaskForm = () => {
                               'w-full justify-between',
                               !field.value && 'text-muted-foreground',
                             )}
+                            disabled={!isAssigned}
                           >
                             <span className="truncate">
                               {field.value
@@ -870,8 +869,8 @@ const UpdateTaskForm = () => {
                     </Field>
                   )}
                 />
-              )}
-            </div>
+              </div>
+            )}
             <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
               {/* Appointment Switch */}
               <Controller
@@ -900,84 +899,83 @@ const UpdateTaskForm = () => {
                 )}
               />
               {/* Appointment Date */}
-              {isScheduled && (
-                <Controller
-                  name="scheduled_at"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel
-                        htmlFor="update-task-scheduled-at"
-                        className="gap-0.5"
+              <Controller
+                name="scheduled_at"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel
+                      htmlFor="update-task-scheduled-at"
+                      className="gap-0.5"
+                    >
+                      Tanggal & Waktu Jadwal
+                      <span
+                        className={cn('text-red-500', {
+                          hidden: !isScheduled,
+                        })}
                       >
-                        Tanggal & Waktu Jadwal
-                        <span
-                          className={cn('text-red-500', {
-                            hidden: !isScheduled,
-                          })}
+                        *
+                      </span>
+                    </FieldLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          id="update-task-scheduled-at"
+                          aria-invalid={fieldState.invalid}
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                          disabled={!isScheduled}
                         >
-                          *
-                        </span>
-                      </FieldLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            id="update-task-scheduled-at"
-                            aria-invalid={fieldState.invalid}
-                            className={cn(
-                              'w-full justify-start text-left font-normal',
-                              !field.value && 'text-muted-foreground',
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 size-4" />
-                            {field.value ? (
-                              format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                                locale: id,
-                              })
-                            ) : (
-                              <span>Pilih tanggal dan waktu</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent side="right" className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            locale={id}
-                            captionLayout="dropdown"
-                            weekStartsOn={1}
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            startMonth={new Date(2011, 12)}
-                            disabled={{
-                              before: new Date(),
-                            }}
-                            initialFocus
+                          <CalendarIcon className="mr-2 size-4" />
+                          {field.value ? (
+                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                              locale: id,
+                            })
+                          ) : (
+                            <span>Pilih tanggal dan waktu</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent side="right" className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          locale={id}
+                          captionLayout="dropdown"
+                          weekStartsOn={1}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          startMonth={new Date(2011, 12)}
+                          disabled={{
+                            before: new Date(),
+                          }}
+                          initialFocus
+                        />
+                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                          <TimePickerDemo
+                            setDate={field.onChange}
+                            date={field.value}
                           />
-                          <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                            <TimePickerDemo
-                              setDate={field.onChange}
-                              date={field.value}
-                            />
-                            <Button
-                              variant="ghost"
-                              className="text-red-500 hover:text-red-600"
-                              onClick={() =>
-                                form.setValue('scheduled_at', undefined)
-                              }
-                            >
-                              <Trash2Icon />
-                            </Button>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              )}
+                          <Button
+                            variant="ghost"
+                            className="text-red-500 hover:text-red-600"
+                            onClick={() =>
+                              form.setValue('scheduled_at', undefined)
+                            }
+                          >
+                            <Trash2Icon />
+                          </Button>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
             </div>
             {/* Detail */}
             <div className="col-span-6">
@@ -997,7 +995,7 @@ const UpdateTaskForm = () => {
                       />
                       <InputGroupAddon align="block-end">
                         <InputGroupText className="tabular-nums">
-                          {field.value?.length || 0}/60 karakter
+                          {field.value?.length || 0}/100 karakter
                         </InputGroupText>
                       </InputGroupAddon>
                     </InputGroup>
