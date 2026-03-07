@@ -6,8 +6,8 @@ import {
 } from '@/components/ui/tooltip';
 import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { formatTimestamp } from '@/utils/formatTimestamp';
 import { refreshData } from '@/utils/refreshData';
+import { format } from 'date-fns';
 
 export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
   return (
@@ -25,7 +25,7 @@ export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
       <TooltipContent>
         <p>
           Terakhir Diperbarui:{' '}
-          {dataUpdatedAt ? formatTimestamp(dataUpdatedAt) : '-'}
+          {dataUpdatedAt ? format(dataUpdatedAt, 'd/M/yyyy, HH:mm:ss') : '-'}
         </p>
       </TooltipContent>
     </Tooltip>

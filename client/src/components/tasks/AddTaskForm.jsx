@@ -39,6 +39,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from '../ui/input-group';
+import { formatToSQL } from '@/utils/formatTimestamp';
 
 const formSchema = z
   .object({
@@ -72,15 +73,14 @@ const formSchema = z
   .transform((data) => ({
     ...data,
     status: 'todo',
-    timestamp_todo: new Date().toISOString(),
+    timestamp_todo: formatToSQL(new Date()),
     timestamp_progress: null,
     timestamp_done: null,
     timestamp_archived: null,
     minute_pause: 0,
     minute_activity: 0,
     pause_time: null,
-    scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
-    updated_at: new Date().toISOString(),
+    scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
   }));
 
 const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
@@ -110,6 +110,9 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
       ...data,
       pic_id: isAssigned ? data.pic_id : user.id,
       assigner_id: isAssigned ? user.id : null,
+      pic_name: isAssigned
+        ? filteredPics?.find((pic) => pic.id === data.pic_id)?.name
+        : user.name,
     };
 
     toast.promise(mutateAsync(payload), {

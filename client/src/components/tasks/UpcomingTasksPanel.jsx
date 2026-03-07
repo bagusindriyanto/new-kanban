@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { formatTimestamp } from '@/utils/formatTimestamp';
+import { parseFromSQL } from '@/utils/formatTimestamp';
 import { BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -108,7 +108,7 @@ const UpcomingTasksPanel = () => {
                     <p className="text-sm">{picName}</p>
                   </div>
                   <p className="text-xs text-muted-foreground tabular-nums">
-                    {formatTimestamp(task.scheduled_at)}
+                    {parseFromSQL(task.scheduled_at)}
                   </p>
                   <div className="flex justify-between items-center mt-1">
                     <p

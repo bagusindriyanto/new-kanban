@@ -1,19 +1,14 @@
-export const formatTimestamp = (ts) => {
-  if (!ts) return '-';
+import { format, parse } from 'date-fns';
 
-  const timestamp = new Date(ts);
-  const date = new Intl.DateTimeFormat('id-ID', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }).format(timestamp);
+export const formatToSQL = (date) => {
+  if (!date) return null;
 
-  const time = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: false,
-  }).format(timestamp);
+  return format(new Date(date), 'yyyy-MM-dd HH:mm:ss');
+};
 
-  return date + ', ' + time;
+export const parseFromSQL = (sqlDate) => {
+  if (!sqlDate) return '-';
+
+  const parsed = parse(sqlDate, 'yyyy-MM-dd HH:mm:ss', new Date());
+  return format(parsed, 'd/M/yyyy, HH:mm:ss');
 };

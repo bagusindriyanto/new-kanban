@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { formatTimestamp } from '@/utils/formatTimestamp';
+import { formatToSQL, parseFromSQL } from '@/utils/formatTimestamp';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -22,8 +22,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { columns } from '@/config/column';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
-import { CalendarClock, User, Timer, CirclePause } from 'lucide-react';
-import useAuth from '@/stores/authStore';
+import { User, Timer, CirclePause } from 'lucide-react';
 // Urutan Status dipindah ke luar kompoen
 const statusOrder = columns.map((column) => column.id);
 
@@ -48,9 +47,6 @@ const TaskCard = ({ task }) => {
     pic_name,
     assigner_name,
   } = task;
-
-  // State untuk akun yang saat ini aktif
-  const user = useAuth((state) => state.user);
 
   // State untuk form modal
   const setIsUpdateTaskModalOpen = useUpdateTaskModal(
@@ -93,7 +89,7 @@ const TaskCard = ({ task }) => {
 
   // State untuk update status dengan tombol kanan / kiri
   const onMove = (isRight) => {
-    const now = new Date().toISOString();
+    const now = formatToSQL(new Date());
     let todo = timestamp_todo;
     let progress = timestamp_progress;
     let done = timestamp_done;
@@ -199,7 +195,7 @@ const TaskCard = ({ task }) => {
       onPauseToggle(pauseDuration, true);
     } else {
       // Pause: set pause_time ke sekarang di DB
-      const nowISO = new Date().toISOString();
+      const nowISO = formatToSQL(new Date());
       onPauseToggle(0, false, nowISO);
     }
   };
@@ -333,7 +329,7 @@ const TaskCard = ({ task }) => {
           {status === 'todo' && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Dibuat:</p>
-              <p className="tabular-nums">{formatTimestamp(timestamp_todo)}</p>
+              <p className="tabular-nums">{parseFromSQL(timestamp_todo)}</p>
             </div>
           )}
 
@@ -359,7 +355,7 @@ const TaskCard = ({ task }) => {
                 )}
               >
                 <p className="font-medium">Terjadwal:</p>
-                <p className="tabular-nums">{formatTimestamp(scheduled_at)}</p>
+                <p className="tabular-nums">{parseFromSQL(scheduled_at)}</p>
               </div>
             </div>
           )}
@@ -367,32 +363,28 @@ const TaskCard = ({ task }) => {
           {(status === 'on progress' || status === 'done') && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Mulai:</p>
-              <p className="tabular-nums">
-                {formatTimestamp(timestamp_progress)}
-              </p>
+              <p className="tabular-nums">{parseFromSQL(timestamp_progress)}</p>
             </div>
           )}
 
           {status === 'on progress' && isPaused && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Jeda:</p>
-              <p className="tabular-nums">{formatTimestamp(pause_time)}</p>
+              <p className="tabular-nums">{parseFromSQL(pause_time)}</p>
             </div>
           )}
 
           {status === 'done' && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Selesai:</p>
-              <p className="tabular-nums">{formatTimestamp(timestamp_done)}</p>
+              <p className="tabular-nums">{parseFromSQL(timestamp_done)}</p>
             </div>
           )}
 
           {status === 'archived' && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Arsip:</p>
-              <p className="tabular-nums">
-                {formatTimestamp(timestamp_archived)}
-              </p>
+              <p className="tabular-nums">{parseFromSQL(timestamp_archived)}</p>
             </div>
           )}
         </div>

@@ -67,35 +67,7 @@ function handleGet($pdo)
     $stmt->execute($params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $data = array_map(function ($row) {
-      $timestamp_fields = [
-        "timestamp_todo",
-        "timestamp_progress",
-        "timestamp_done",
-        "timestamp_archived",
-        "created_at",
-        "pause_time",
-        "scheduled_at",
-        "updated_at",
-      ];
-
-      foreach ($timestamp_fields as $field) {
-        if (!empty($row[$field])) {
-          // $utcDate = new DateTime($row[$field], new DateTimeZone('UTC'));
-          // $row[$field] = $utcDate->format('c');
-          // Format WIB agar MySQL bisa menampilkan sesuai jam WIB
-          $localeDate = new DateTime(
-            $row[$field],
-            new DateTimeZone("Asia/Jakarta"),
-          );
-          $localeDate->setTimezone(new DateTimeZone("UTC"));
-          $row[$field] = $localeDate->format("c");
-        }
-      }
-      return $row;
-    }, $rows);
-
-    echo json_encode($data, JSON_NUMERIC_CHECK);
+    echo json_encode($rows, JSON_NUMERIC_CHECK);
   } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode([
@@ -249,31 +221,6 @@ function handlePatch($pdo, $input)
       $stmt = $pdo->prepare("SELECT * FROM tasks WHERE id = :id");
       $stmt->execute([":id" => $id]);
       $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-      // daftar kolom datetime yang mau diubah
-      $timestampFields = [
-        "scheduled_at",
-        "timestamp_todo",
-        "timestamp_progress",
-        "timestamp_done",
-        "timestamp_archived",
-        "created_at",
-        "pause_time",
-        "updated_at",
-      ];
-      foreach ($timestampFields as $field) {
-        if (!empty($data[$field])) {
-          // $utcDate = new DateTime($data[$field], new DateTimeZone('UTC'));
-          // $data[$field] = $utcDate->format('c');
-          // Format WIB agar MySQL bisa menampilkan sesuai jam WIB
-          $localeDate = new DateTime(
-            $data[$field],
-            new DateTimeZone("Asia/Jakarta"),
-          );
-          $localeDate->setTimezone(new DateTimeZone("UTC"));
-          $data[$field] = $localeDate->format("c");
-        }
-      }
       http_response_code(201);
       echo json_encode($data, JSON_NUMERIC_CHECK);
     } else {

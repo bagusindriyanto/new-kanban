@@ -67,6 +67,7 @@ import { useFetchTasks } from '@/api/fetchTasks';
 import { ScrollArea } from '../ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
 import useAuth from '@/stores/authStore';
+import { formatToSQL } from '@/utils/formatTimestamp';
 
 const formSchema = z
   .object({
@@ -116,19 +117,18 @@ const formSchema = z
         ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
           data.minute_pause
         : 0,
-    pause_time: data.pause_time ? new Date().toISOString() : null,
-    timestamp_todo: data.timestamp_todo.toISOString(),
+    pause_time: data.pause_time ? formatToSQL(new Date()) : null,
+    timestamp_todo: formatToSQL(data.timestamp_todo),
     timestamp_progress: data.timestamp_progress
-      ? data.timestamp_progress.toISOString()
+      ? formatToSQL(data.timestamp_progress)
       : null,
     timestamp_done: data.timestamp_done
-      ? data.timestamp_done.toISOString()
+      ? formatToSQL(data.timestamp_done)
       : null,
     timestamp_archived: data.timestamp_archived
-      ? data.timestamp_archived.toISOString()
+      ? formatToSQL(data.timestamp_archived)
       : null,
-    scheduled_at: data.is_scheduled ? data.scheduled_at.toISOString() : null,
-    updated_at: new Date().toISOString(),
+    scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
   }));
 
 const UpdateTaskForm = () => {
@@ -211,8 +211,11 @@ const UpdateTaskForm = () => {
     const payload = {
       ...data,
       id: selectedTaskId,
-      assigner_id: isAssigned ? user.id : null,
       pic_id: isAssigned ? data.pic_id : user.id,
+      assigner_id: isAssigned ? user.id : null,
+      pic_name: isAssigned
+        ? filteredPics?.find((pic) => pic.id === data.pic_id)?.name
+        : user.name,
     };
 
     toast.promise(updateTaskMutate(payload), {
