@@ -6,14 +6,6 @@ import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
   Field,
   FieldError,
   FieldGroup,
@@ -24,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { Switch } from '../ui/switch';
@@ -40,10 +31,18 @@ import {
   InputGroupTextarea,
 } from '../ui/input-group';
 import { formatToSQL } from '@/utils/formatTimestamp';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
 
 const formSchema = z
   .object({
-    content: z.string('Mohon pilih salah satu aktivitas.'),
+    content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
     pic_id: z.number().nullish(),
     detail: z
       .string()
@@ -84,9 +83,6 @@ const formSchema = z
   }));
 
 const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
-  // State Buka/Tutup Popover
-  const [activityOpen, setActivityOpen] = useState(false);
-  const [picOpen, setPicOpen] = useState(false);
   // Fetch Data
   const { data: contents } = useFetchActivities();
   const { data: pics } = useFetchPICs();
@@ -144,80 +140,51 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
           <Controller
             name="content"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid} className="col-span-2">
-                <FieldLabel htmlFor="add-task-content" className="gap-0.5">
-                  Aktivitas<span className="text-red-500">*</span>
-                </FieldLabel>
-                <Popover open={activityOpen} onOpenChange={setActivityOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
+            render={({ field, fieldState }) => {
+              const selectedContent = contents?.find(
+                (content) => content.name === field.value,
+              );
+
+              return (
+                <Field data-invalid={fieldState.invalid} className="col-span-2">
+                  <FieldLabel htmlFor="add-task-content" className="gap-0.5">
+                    Aktivitas<span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Combobox
+                    items={contents}
+                    itemToStringLabel={(content) => content.name}
+                    itemToStringValue={(content) => content.name}
+                    value={selectedContent ?? null}
+                    onValueChange={(content) => {
+                      field.onChange(content?.name ?? '');
+                    }}
+                  >
+                    <ComboboxInput
                       id="add-task-content"
                       aria-invalid={fieldState.invalid}
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      <span className="truncate">
-                        {field.value
-                          ? contents?.find(
-                              (content) => content.name === field.value,
-                            )?.name
-                          : 'Pilih aktivitas'}
-                      </span>
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Cari aktivitas..."
-                        className="h-9"
-                      />
-                      <CommandList
-                        onWheel={(e) => {
-                          e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                        }}
-                      >
-                        <CommandEmpty>Aktivitas tidak ditemukan.</CommandEmpty>
-                        <CommandGroup>
-                          {contents?.map((content) => (
-                            <CommandItem
-                              value={content.name}
-                              key={content.id}
-                              onSelect={() => {
-                                form.setValue('content', content.name);
-                                setActivityOpen(false);
-                              }}
-                            >
-                              {content.name}
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  content.name === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+                      placeholder="Pilih aktivitas"
+                      showClear
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>Aktivitas tidak ditemukan.</ComboboxEmpty>
+                      <ComboboxList>
+                        {(content) => (
+                          <ComboboxItem key={content.id} value={content}>
+                            {content.name}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              );
+            }}
           />
           {/* Assigned Section */}
-
-          <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
+          <FieldGroup className="col-span-2 grid grid-cols-2 gap-4 min-h-[68px]">
             <Controller
               name="is_assigned"
               control={form.control}
@@ -248,87 +215,62 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             <Controller
               name="pic_id"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                    Tugaskan ke:{' '}
-                    <span
-                      className={cn('text-red-500', {
-                        hidden: !isAssigned,
-                      })}
-                    >
-                      *
-                    </span>
-                  </FieldLabel>
-                  <Popover open={picOpen} onOpenChange={setPicOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        id="add-task-pic"
-                        className={cn(
-                          'w-full justify-between',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        disabled={!isAssigned}
-                      >
-                        <span className="truncate">
-                          {field.value
-                            ? filteredPics?.find(
-                                (pic) => pic.id === field.value,
-                              )?.name
-                            : 'Pilih PIC'}
-                        </span>
-                        <ChevronsUpDown className="opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="PopoverContent p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Cari PIC..."
-                          className="h-9"
-                        />
-                        <CommandList
-                          onWheel={(e) => {
-                            e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                          }}
-                        >
-                          <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                          <CommandGroup>
-                            {filteredPics?.map((pic) => (
-                              <CommandItem
-                                value={pic.name}
-                                key={pic.id}
-                                onSelect={() => {
-                                  form.setValue('pic_id', pic.id);
-                                  setPicOpen(false);
-                                }}
-                              >
-                                {pic.name}
-                                <Check
-                                  className={cn(
-                                    'ml-auto',
-                                    pic.id === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0',
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </div>
+              render={({ field, fieldState }) => {
+                const selectedPic = filteredPics?.find(
+                  (pic) => pic.id === field.value,
+                );
 
-          <div className="col-span-2 grid grid-cols-2 gap-4 h-[68px]">
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
+                      Tugaskan ke:{' '}
+                      <span
+                        className={cn('text-red-500', {
+                          hidden: !isAssigned,
+                        })}
+                      >
+                        *
+                      </span>
+                    </FieldLabel>
+                    <Combobox
+                      autoHighlight
+                      items={filteredPics}
+                      itemToStringLabel={(pic) => pic.name}
+                      itemToStringValue={(pic) => pic.id}
+                      value={selectedPic ?? null}
+                      onValueChange={(pic) => {
+                        field.onChange(pic?.id ?? null);
+                      }}
+                      disabled={!isAssigned}
+                    >
+                      <ComboboxInput
+                        id="add-task-pic"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="Pilih PIC"
+                        showClear
+                        disabled={!isAssigned}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(pic) => (
+                            <ComboboxItem key={pic.id} value={pic}>
+                              {pic.name}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
+          </FieldGroup>
+
+          <FieldGroup className="col-span-2 grid grid-cols-2 gap-4 min-h-[68px]">
             {/* Appointment Switch */}
             <Controller
               name="is_scheduled"
@@ -375,26 +317,28 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                     </span>
                   </FieldLabel>
                   <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        id="add-task-scheduled-at"
-                        aria-invalid={fieldState.invalid}
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        disabled={!isScheduled}
-                      >
-                        <CalendarIcon className="mr-2 size-4" />
-                        {field.value ? (
-                          format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                            locale: id,
-                          })
-                        ) : (
-                          <span>Pilih tanggal dan waktu</span>
-                        )}
-                      </Button>
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          id="add-task-scheduled-at"
+                          aria-invalid={fieldState.invalid}
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                          disabled={!isScheduled}
+                        />
+                      }
+                    >
+                      <CalendarIcon data-icon="inline-start" />
+                      {field.value ? (
+                        format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                          locale: id,
+                        })
+                      ) : (
+                        <span>Pilih tanggal dan waktu</span>
+                      )}
                     </PopoverTrigger>
                     <PopoverContent side="right" className="w-auto p-0">
                       <Calendar
@@ -433,7 +377,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                 </Field>
               )}
             />
-          </div>
+          </FieldGroup>
         </div>
         {/* Detail */}
         <Controller

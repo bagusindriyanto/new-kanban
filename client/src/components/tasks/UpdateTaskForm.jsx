@@ -1,12 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Check,
-  ChevronsUpDown,
-  Trash2Icon,
-  CalendarIcon,
-  Eye,
-  EyeClosed,
-} from 'lucide-react';
+import { Trash2Icon, CalendarIcon } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -22,20 +15,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
 import { Label } from '@/components/ui/label';
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupText,
   InputGroupTextarea,
 } from '@/components/ui/input-group';
@@ -59,7 +43,6 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { TimePickerDemo } from '../ui/time-picker-demo';
-import { useState } from 'react';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
 import { useUpdateTask } from '@/api/updateTask';
@@ -68,6 +51,14 @@ import { ScrollArea } from '../ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
 import useAuth from '@/stores/authStore';
 import { formatToSQL } from '@/utils/formatTimestamp';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '../ui/combobox';
 
 const formSchema = z
   .object({
@@ -132,9 +123,6 @@ const formSchema = z
   }));
 
 const UpdateTaskForm = () => {
-  // State Buka/Tutup Popover
-  const [activityOpen, setActivityOpen] = useState(false);
-  const [picOpen, setPicOpen] = useState(false);
   // Custom hook untuk logic filter
   const { queryParams } = useTaskFilters();
   // Fetch data
@@ -246,551 +234,502 @@ const UpdateTaskForm = () => {
         <form
           id="update-task"
           onSubmit={form.handleSubmit(onSubmit)}
-          className="p-1"
+          className="p-1 grid grid-cols-6 gap-4"
         >
-          <div className="grid grid-cols-6 gap-4">
-            {/* Activity */}
-            <div className="col-span-6">
-              <Controller
-                name="content"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-content"
-                      className="gap-0.5"
-                    >
-                      Aktivitas<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Popover open={activityOpen} onOpenChange={setActivityOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          id="update-task-content"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          <span className="truncate">
-                            {field.value
-                              ? contents?.find(
-                                  (content) => content.name === field.value,
-                                )?.name
-                              : 'Pilih aktivitas'}
-                          </span>
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Cari aktivitas..."
-                            className="h-9"
-                          />
-                          <CommandList
-                            onWheel={(e) => {
-                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                            }}
-                          >
-                            <CommandEmpty>
-                              Aktivitas tidak ditemukan.
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {contents?.map((content) => (
-                                <CommandItem
-                                  value={content.name}
-                                  key={content.id}
-                                  onSelect={() => {
-                                    form.setValue('content', content.name);
-                                    setActivityOpen(false);
-                                  }}
-                                >
-                                  {content.name}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      content.name === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Status */}
-            <div className="col-span-2">
-              <Controller
-                name="status"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-status"
-                      className="gap-0.5"
-                    >
-                      Status<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      name={field.name}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger
-                        id="update-task-status"
-                        aria-invalid={fieldState.invalid}
-                      >
-                        <SelectValue placeholder="Pilih status task" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Status</SelectLabel>
-                          <SelectItem value="todo">
-                            <span className="w-1 h-3 shrink-0 rounded-full bg-todo-500"></span>
-                            To Do
-                          </SelectItem>
-                          <SelectItem value="on progress">
-                            <span className="w-1 h-3 shrink-0 rounded-full bg-progress-500"></span>
-                            On Progress
-                          </SelectItem>
-                          <SelectItem value="done">
-                            <span className="w-1 h-3 shrink-0 rounded-full bg-done-500"></span>
-                            Done
-                          </SelectItem>
-                          <SelectItem value="archived">
-                            <span className="w-1 h-3 shrink-0 rounded-full bg-archived-500"></span>
-                            Archived
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Minute Pause */}
-            <div className="col-span-2">
-              <Controller
-                name="minute_pause"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="update-task-minute-pause">
-                      Durasi Pause
-                    </FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        id="update-task-minute-pause"
-                        aria-invalid={fieldState.invalid}
-                        type="number"
-                        min="0"
-                        className="text-center"
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupText>Menit</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Pause Time */}
-            <div className="col-span-2">
-              <Controller
-                name="pause_time"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-pause-time"
-                      className="gap-0.5"
-                    >
-                      Aktivitas di Pause?<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <div className="flex justify-center items-center h-9 gap-3">
-                      <Label htmlFor="update-task-pause-time">Tidak</Label>
-                      <Switch
-                        id="update-task-pause-time"
-                        name={field.name}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      <Label htmlFor="update-task-pause-time">Ya</Label>
-                    </div>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Timestamp Todo */}
-            <div className="col-span-3">
-              <Controller
-                name="timestamp_todo"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-timestamp-todo"
-                      className="gap-0.5"
-                    >
-                      Timestamp To Do<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="update-task-timestamp-todo"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 size-4" />
-                          {field.value ? (
-                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                              locale: id,
-                            })
-                          ) : (
-                            <span>Pilih tanggal dan waktu</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="left" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          locale={id}
-                          captionLayout="dropdown"
-                          weekStartsOn={1}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date('2012-01-01'),
-                            after: new Date(),
-                          }}
-                          initialFocus
-                        />
-                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                          <TimePickerDemo
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                          <Button variant="ghost" disabled>
-                            <Trash2Icon />
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Timestamp On Progress */}
-            <div className="col-span-3">
-              <Controller
-                name="timestamp_progress"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-timestamp-progress"
-                      className="gap-0.5"
-                    >
-                      Timestamp On Progress
-                      <span
-                        className={cn('text-red-500', {
-                          hidden: statusInput === 'todo',
-                        })}
-                      >
-                        *
-                      </span>
-                    </FieldLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="update-task-timestamp-progress"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          disabled={statusInput === 'todo'}
-                        >
-                          <CalendarIcon className="mr-2 size-4" />
-                          {field.value ? (
-                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                              locale: id,
-                            })
-                          ) : (
-                            <span>Pilih tanggal dan waktu</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="right" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          locale={id}
-                          captionLayout="dropdown"
-                          weekStartsOn={1}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date('2012-01-01'),
-                            after: new Date(),
-                          }}
-                          initialFocus
-                        />
-                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                          <TimePickerDemo
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                          <Button
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-600"
-                            onClick={() =>
-                              form.setValue('timestamp_progress', undefined)
-                            }
-                          >
-                            <Trash2Icon />
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Timestamp Done */}
-            <div className="col-span-3">
-              <Controller
-                name="timestamp_done"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-timestamp-done"
-                      className="gap-0.5"
-                    >
-                      Timestamp Done
-                      <span
-                        className={cn('text-red-500', {
-                          hidden:
-                            statusInput === 'todo' ||
-                            statusInput === 'on progress',
-                        })}
-                      >
-                        *
-                      </span>
-                    </FieldLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="update-task-timestamp-done"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          disabled={
-                            statusInput === 'todo' ||
-                            statusInput === 'on progress'
-                          }
-                        >
-                          <CalendarIcon className="mr-2 size-4" />
-                          {field.value ? (
-                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                              locale: id,
-                            })
-                          ) : (
-                            <span>Pilih tanggal dan waktu</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="left" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          locale={id}
-                          captionLayout="dropdown"
-                          weekStartsOn={1}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date('2012-01-01'),
-                            after: new Date(),
-                          }}
-                          initialFocus
-                        />
-                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                          <TimePickerDemo
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                          <Button
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-600"
-                            onClick={() =>
-                              form.setValue('timestamp_done', undefined)
-                            }
-                          >
-                            <Trash2Icon />
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Timestamp Archived */}
-            <div className="col-span-3">
-              <Controller
-                name="timestamp_archived"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-timestamp-archived"
-                      className="gap-0.5"
-                    >
-                      Timestamp Archived
-                      <span
-                        className={cn('text-red-500', {
-                          hidden: statusInput !== 'archived',
-                        })}
-                      >
-                        *
-                      </span>
-                    </FieldLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          id="update-task-timestamp-archived"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          disabled={statusInput !== 'archived'}
-                        >
-                          <CalendarIcon className="mr-2 size-4" />
-                          {field.value ? (
-                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                              locale: id,
-                            })
-                          ) : (
-                            <span>Pilih tanggal dan waktu</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="right" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          locale={id}
-                          captionLayout="dropdown"
-                          weekStartsOn={1}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date('2012-01-01'),
-                            after: new Date(),
-                          }}
-                          initialFocus
-                        />
-                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                          <TimePickerDemo
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                          <Button
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-600"
-                            onClick={() =>
-                              form.setValue('timestamp_archived', undefined)
-                            }
-                          >
-                            <Trash2Icon />
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
-              <Controller
-                name="is_assigned"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation="horizontal"
-                    className="mt-6"
+          {/* Activity */}
+          <Controller
+            name="content"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              const selectedContent = contents?.find(
+                (content) => content.name === field.value,
+              );
+
+              return (
+                <Field data-invalid={fieldState.invalid} className="col-span-6">
+                  <FieldLabel htmlFor="update-task-content" className="gap-0.5">
+                    Aktivitas<span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Combobox
+                    items={contents}
+                    itemToStringLabel={(content) => content.name}
+                    itemToStringValue={(content) => content.name}
+                    value={selectedContent ?? null}
+                    onValueChange={(content) => {
+                      field.onChange(content?.name ?? '');
+                    }}
                   >
-                    <Switch
-                      id="add-task-is-assigned"
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <ComboboxInput
+                      id="update-task-content"
                       aria-invalid={fieldState.invalid}
+                      placeholder="Pilih aktivitas"
+                      showClear
                     />
-                    <FieldLabel htmlFor="add-task-is-assigned">
-                      Tugaskan Task?
-                    </FieldLabel>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
+                    <ComboboxContent>
+                      <ComboboxEmpty>Aktivitas tidak ditemukan.</ComboboxEmpty>
+                      <ComboboxList>
+                        {(content) => (
+                          <ComboboxItem key={content.id} value={content}>
+                            {content.name}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              );
+            }}
+          />
+          {/* Status */}
+          <Controller
+            name="status"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-2">
+                <FieldLabel htmlFor="update-task-status" className="gap-0.5">
+                  Status<span className="text-red-500">*</span>
+                </FieldLabel>
+                <Select
+                  name={field.name}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger
+                    id="update-task-status"
+                    aria-invalid={fieldState.invalid}
+                  >
+                    <SelectValue placeholder="Pilih status task" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      <SelectItem value="todo">
+                        <span className="w-1 h-3 shrink-0 rounded-full bg-todo-500"></span>
+                        To Do
+                      </SelectItem>
+                      <SelectItem value="on progress">
+                        <span className="w-1 h-3 shrink-0 rounded-full bg-progress-500"></span>
+                        On Progress
+                      </SelectItem>
+                      <SelectItem value="done">
+                        <span className="w-1 h-3 shrink-0 rounded-full bg-done-500"></span>
+                        Done
+                      </SelectItem>
+                      <SelectItem value="archived">
+                        <span className="w-1 h-3 shrink-0 rounded-full bg-archived-500"></span>
+                        Archived
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
                 )}
-              />
-              {/* PIC */}
-              <Controller
-                name="pic_id"
-                control={form.control}
-                render={({ field, fieldState }) => (
+              </Field>
+            )}
+          />
+          {/* Minute Pause */}
+          <Controller
+            name="minute_pause"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-2">
+                <FieldLabel htmlFor="update-task-minute-pause">
+                  Durasi Pause
+                </FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    {...field}
+                    id="update-task-minute-pause"
+                    aria-invalid={fieldState.invalid}
+                    type="number"
+                    min="0"
+                    className="text-center"
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupText>Menit</InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Pause Time */}
+          <Controller
+            name="pause_time"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-2">
+                <FieldLabel
+                  htmlFor="update-task-pause-time"
+                  className="gap-0.5"
+                >
+                  Aktivitas di Pause?<span className="text-red-500">*</span>
+                </FieldLabel>
+                <div className="flex justify-center items-center h-9 gap-3">
+                  <Label htmlFor="update-task-pause-time">Tidak</Label>
+                  <Switch
+                    id="update-task-pause-time"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <Label htmlFor="update-task-pause-time">Ya</Label>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Timestamp Todo */}
+          <Controller
+            name="timestamp_todo"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-3">
+                <FieldLabel
+                  htmlFor="update-task-timestamp-todo"
+                  className="gap-0.5"
+                >
+                  Timestamp To Do<span className="text-red-500">*</span>
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        id="update-task-timestamp-todo"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      />
+                    }
+                  >
+                    <CalendarIcon data-icon="inline-start" />
+                    {field.value
+                      ? format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                          locale: id,
+                        })
+                      : 'Pilih tanggal dan waktu'}
+                  </PopoverTrigger>
+                  <PopoverContent side="left" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      startMonth={new Date(2011, 12)}
+                      disabled={{
+                        before: new Date('2012-01-01'),
+                        after: new Date(),
+                      }}
+                      initialFocus
+                    />
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                      <Button variant="ghost" disabled>
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Timestamp On Progress */}
+          <Controller
+            name="timestamp_progress"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-3">
+                <FieldLabel
+                  htmlFor="update-task-timestamp-progress"
+                  className="gap-0.5"
+                >
+                  Timestamp On Progress
+                  <span
+                    className={cn('text-red-500', {
+                      hidden: statusInput === 'todo',
+                    })}
+                  >
+                    *
+                  </span>
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        id="update-task-timestamp-progress"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={statusInput === 'todo'}
+                      />
+                    }
+                  >
+                    <CalendarIcon data-icon="inline-start" />
+                    {field.value
+                      ? format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                          locale: id,
+                        })
+                      : 'Pilih tanggal dan waktu'}
+                  </PopoverTrigger>
+                  <PopoverContent side="right" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      startMonth={new Date(2011, 12)}
+                      disabled={{
+                        before: new Date('2012-01-01'),
+                        after: new Date(),
+                      }}
+                      initialFocus
+                    />
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                      <Button
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() =>
+                          form.setValue('timestamp_progress', undefined)
+                        }
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Timestamp Done */}
+          <Controller
+            name="timestamp_done"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-3">
+                <FieldLabel
+                  htmlFor="update-task-timestamp-done"
+                  className="gap-0.5"
+                >
+                  Timestamp Done
+                  <span
+                    className={cn('text-red-500', {
+                      hidden:
+                        statusInput === 'todo' || statusInput === 'on progress',
+                    })}
+                  >
+                    *
+                  </span>
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        id="update-task-timestamp-done"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={
+                          statusInput === 'todo' ||
+                          statusInput === 'on progress'
+                        }
+                      />
+                    }
+                  >
+                    <CalendarIcon data-icon="inline-start" />
+                    {field.value
+                      ? format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                          locale: id,
+                        })
+                      : 'Pilih tanggal dan waktu'}
+                  </PopoverTrigger>
+                  <PopoverContent side="left" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      startMonth={new Date(2011, 12)}
+                      disabled={{
+                        before: new Date('2012-01-01'),
+                        after: new Date(),
+                      }}
+                      initialFocus
+                    />
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                      <Button
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() =>
+                          form.setValue('timestamp_done', undefined)
+                        }
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Timestamp Archived */}
+          <Controller
+            name="timestamp_archived"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-3">
+                <FieldLabel
+                  htmlFor="update-task-timestamp-archived"
+                  className="gap-0.5"
+                >
+                  Timestamp Archived
+                  <span
+                    className={cn('text-red-500', {
+                      hidden: statusInput !== 'archived',
+                    })}
+                  >
+                    *
+                  </span>
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        id="update-task-timestamp-archived"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={statusInput !== 'archived'}
+                      />
+                    }
+                  >
+                    <CalendarIcon data-icon="inline-start" />
+                    {field.value
+                      ? format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                          locale: id,
+                        })
+                      : 'Pilih tanggal dan waktu'}
+                  </PopoverTrigger>
+                  <PopoverContent side="right" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      startMonth={new Date(2011, 12)}
+                      disabled={{
+                        before: new Date('2012-01-01'),
+                        after: new Date(),
+                      }}
+                      initialFocus
+                    />
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                      <Button
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() =>
+                          form.setValue('timestamp_archived', undefined)
+                        }
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          <div className="col-span-6 grid grid-cols-2 gap-4 min-h-[68px]">
+            <Controller
+              name="is_assigned"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                  className="mt-6"
+                >
+                  <Switch
+                    id="update-task-is-assigned"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="update-task-is-assigned">
+                    Tugaskan Task?
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            {/* PIC */}
+            <Controller
+              name="pic_id"
+              control={form.control}
+              render={({ field, fieldState }) => {
+                const selectedPic = filteredPics?.find(
+                  (pic) => pic.id === field.value,
+                );
+
+                return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="update-task-pic" className="gap-0.5">
                       Tugaskan ke:{' '}
@@ -802,122 +741,93 @@ const UpdateTaskForm = () => {
                         *
                       </span>
                     </FieldLabel>
-                    <Popover open={picOpen} onOpenChange={setPicOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          id="update-task-pic"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          disabled={!isAssigned}
-                        >
-                          <span className="truncate">
-                            {field.value
-                              ? filteredPics?.find(
-                                  (pic) => pic.id === field.value,
-                                )?.name
-                              : 'Pilih PIC'}
-                          </span>
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Cari PIC..."
-                            className="h-9"
-                          />
-                          <CommandList
-                            onWheel={(e) => {
-                              e.stopPropagation(); // Cegah event wheel menyebar ke Dialog
-                            }}
-                          >
-                            <CommandEmpty>PIC tidak ditemukan.</CommandEmpty>
-                            <CommandGroup>
-                              {filteredPics?.map((pic) => (
-                                <CommandItem
-                                  value={pic.name}
-                                  key={pic.id}
-                                  onSelect={() => {
-                                    form.setValue('pic_id', pic.id);
-                                    setPicOpen(false);
-                                  }}
-                                >
-                                  {pic.name}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      pic.id === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            <div className="col-span-6 grid grid-cols-2 gap-4 h-[68px]">
-              {/* Appointment Switch */}
-              <Controller
-                name="is_scheduled"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation="horizontal"
-                    className="mt-6"
-                  >
-                    <Switch
-                      id="update-task-is-scheduled"
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <FieldLabel htmlFor="update-task-is-scheduled">
-                      Jadwalkan Task?
-                    </FieldLabel>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-              {/* Appointment Date */}
-              <Controller
-                name="scheduled_at"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-scheduled-at"
-                      className="gap-0.5"
+                    <Combobox
+                      autoHighlight
+                      items={filteredPics}
+                      itemToStringLabel={(pic) => pic.name}
+                      itemToStringValue={(pic) => pic.id}
+                      value={selectedPic ?? null}
+                      onValueChange={(pic) => {
+                        field.onChange(pic?.id ?? null);
+                      }}
+                      disabled={!isAssigned}
                     >
-                      Tanggal & Waktu Jadwal
-                      <span
-                        className={cn('text-red-500', {
-                          hidden: !isScheduled,
-                        })}
-                      >
-                        *
-                      </span>
-                    </FieldLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
+                      <ComboboxInput
+                        id="update-task-pic"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="Pilih PIC"
+                        showClear
+                        disabled={!isAssigned}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(pic) => (
+                            <ComboboxItem key={pic.id} value={pic}>
+                              {pic.name}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
+          </div>
+
+          <div className="col-span-6 grid grid-cols-2 gap-4 min-h-[68px]">
+            {/* Appointment Switch */}
+            <Controller
+              name="is_scheduled"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                  className="mt-6"
+                >
+                  <Switch
+                    id="update-task-is-scheduled"
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FieldLabel htmlFor="update-task-is-scheduled">
+                    Jadwalkan Task?
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            {/* Appointment Date */}
+            <Controller
+              name="scheduled_at"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="update-task-scheduled-at"
+                    className="gap-0.5"
+                  >
+                    Tanggal & Waktu Jadwal
+                    <span
+                      className={cn('text-red-500', {
+                        hidden: !isScheduled,
+                      })}
+                    >
+                      *
+                    </span>
+                  </FieldLabel>
+                  <Popover>
+                    <PopoverTrigger
+                      render={
                         <Button
                           variant="outline"
                           id="update-task-scheduled-at"
@@ -927,85 +837,83 @@ const UpdateTaskForm = () => {
                             !field.value && 'text-muted-foreground',
                           )}
                           disabled={!isScheduled}
-                        >
-                          <CalendarIcon className="mr-2 size-4" />
-                          {field.value ? (
-                            format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                              locale: id,
-                            })
-                          ) : (
-                            <span>Pilih tanggal dan waktu</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="right" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          locale={id}
-                          captionLayout="dropdown"
-                          weekStartsOn={1}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date(),
-                          }}
-                          initialFocus
                         />
-                        <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                          <TimePickerDemo
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                          <Button
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-600"
-                            onClick={() =>
-                              form.setValue('scheduled_at', undefined)
-                            }
-                          >
-                            <Trash2Icon />
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
-            {/* Detail */}
-            <div className="col-span-6">
-              <Controller
-                name="detail"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="update-task-detail">Detail</FieldLabel>
-                    <InputGroup>
-                      <InputGroupTextarea
-                        {...field}
-                        id="update-task-detail"
-                        aria-invalid={fieldState.invalid}
-                        placeholder="Detail task"
-                        className="resize-none"
+                      }
+                    >
+                      <CalendarIcon data-icon="inline-start" />
+                      {field.value ? (
+                        format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                          locale: id,
+                        })
+                      ) : (
+                        <span>Pilih tanggal dan waktu</span>
+                      )}
+                    </PopoverTrigger>
+                    <PopoverContent side="right" className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        locale={id}
+                        captionLayout="dropdown"
+                        weekStartsOn={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        startMonth={new Date(2011, 12)}
+                        disabled={{
+                          before: new Date(),
+                        }}
+                        initialFocus
                       />
-                      <InputGroupAddon align="block-end">
-                        <InputGroupText className="tabular-nums">
-                          {field.value?.length || 0}/100 karakter
-                        </InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </div>
+                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                        <TimePickerDemo
+                          setDate={field.onChange}
+                          date={field.value}
+                        />
+                        <Button
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() =>
+                            form.setValue('scheduled_at', undefined)
+                          }
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
           </div>
+          {/* Detail */}
+          <Controller
+            name="detail"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="col-span-6">
+                <FieldLabel htmlFor="update-task-detail">Detail</FieldLabel>
+                <InputGroup>
+                  <InputGroupTextarea
+                    {...field}
+                    id="update-task-detail"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Detail task"
+                    className="resize-none"
+                  />
+                  <InputGroupAddon align="block-end">
+                    <InputGroupText className="tabular-nums">
+                      {field.value?.length || 0}/100 karakter
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </form>
       </ScrollArea>
       <DialogFooter>
