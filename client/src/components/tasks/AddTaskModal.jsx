@@ -54,16 +54,11 @@ const AddTaskModal = ({
         <AddTaskForm mutateAsync={addTaskMutation} onOpenChange={setOpen} />
         <DialogFooter>
           <DialogClose
-            render={<Button variant="secondary" disabled={isPending} />}
+            render={<Button variant="outline" disabled={isPending} />}
           >
             Batal
           </DialogClose>
-          <Button
-            type="submit"
-            variant="success"
-            form="add-task"
-            disabled={isPending}
-          >
+          <Button type="submit" form="add-task" disabled={isPending}>
             {isPending && <Spinner data-icon="inline-start" />}
             {isPending ? 'Mengirim...' : 'Tambah'}
           </Button>

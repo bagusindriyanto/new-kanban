@@ -24,13 +24,18 @@ const App = () => {
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   useEffect(() => {
-    api
-      .get('/me.php')
-      .then((res) => {
+    const checkUser = async () => {
+      try {
+        const res = await api.get('/me.php');
         setUser(res.data.user);
         setSelectedPicId(res.data.user.id);
-      })
-      .catch(() => clearUser());
+      } catch (err) {
+        console.error(err);
+        clearUser();
+      }
+    };
+
+    checkUser();
   }, [setUser, clearUser, setSelectedPicId]);
 
   return (

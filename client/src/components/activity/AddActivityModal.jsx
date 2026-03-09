@@ -57,16 +57,11 @@ const AddActivityModal = ({
         />
         <DialogFooter>
           <DialogClose
-            render={<Button variant="secondary" disabled={isPending} />}
+            render={<Button variant="outline" disabled={isPending} />}
           >
             Batal
           </DialogClose>
-          <Button
-            type="submit"
-            variant="success"
-            form="add-activity"
-            disabled={isPending}
-          >
+          <Button type="submit" form="add-activity" disabled={isPending}>
             {isPending && <Spinner data-icon="inline-start" />}
             {isPending ? 'Mengirim...' : 'Tambah'}
           </Button>

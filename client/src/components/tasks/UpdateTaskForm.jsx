@@ -164,7 +164,6 @@ const UpdateTaskForm = () => {
       timestamp_archived: task?.timestamp_archived
         ? new Date(task.timestamp_archived)
         : undefined,
-      is_assigned: !!task?.assigner_id,
       is_scheduled: !!task?.scheduled_at,
       scheduled_at: task?.scheduled_at
         ? new Date(task.scheduled_at)
@@ -206,9 +205,7 @@ const UpdateTaskForm = () => {
     };
 
     toast.promise(updateTaskMutate(payload), {
-      loading: () => {
-        return 'Sedang memperbarui task...';
-      },
+      loading: 'Sedang memperbarui task...',
       success: () => {
         form.reset();
         setIsModalOpen(false);
@@ -229,7 +226,7 @@ const UpdateTaskForm = () => {
   // Form
   return (
     <>
-      <ScrollArea className="-mx-4 px-3 max-h-[60vh]">
+      <ScrollArea className="-mx-4 px-4 max-h-[60vh]">
         <form id="update-task" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             {/* Activity */}
@@ -939,17 +936,10 @@ const UpdateTaskForm = () => {
         </form>
       </ScrollArea>
       <DialogFooter>
-        <DialogClose
-          render={<Button variant="secondary" disabled={isPending} />}
-        >
+        <DialogClose render={<Button variant="outline" disabled={isPending} />}>
           Batal
         </DialogClose>
-        <Button
-          type="submit"
-          variant="info"
-          form="update-task"
-          disabled={isPending}
-        >
+        <Button type="submit" form="update-task" disabled={isPending}>
           {isPending && <Spinner data-icon="inline-start" />}
           {isPending ? 'Mengirim...' : 'Edit'}
         </Button>

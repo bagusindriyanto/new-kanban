@@ -113,9 +113,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
     };
 
     toast.promise(mutateAsync(payload), {
-      loading: () => {
-        return 'Sedang menambahkan task...';
-      },
+      loading: 'Sedang menambahkan task...',
       success: () => {
         form.reset();
         onOpenChange(false);

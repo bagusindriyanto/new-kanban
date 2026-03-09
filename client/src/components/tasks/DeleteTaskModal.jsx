@@ -5,6 +5,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
@@ -23,9 +25,7 @@ const DeleteTaskModal = () => {
 
   const onSubmit = () => {
     toast.promise(deleteTaskMutation(selectedTaskId), {
-      loading: () => {
-        return 'Sedang menghapus task...';
-      },
+      loading: 'Sedang menghapus task...',
       success: () => {
         setIsModalOpen(false);
         return 'Task berhasil dihapus.';
@@ -58,23 +58,17 @@ const DeleteTaskModal = () => {
         </AlertDialogHeader>
         {/* Button Modal */}
         <AlertDialogFooter>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onClose}
-            disabled={isPending}
-          >
+          <AlertDialogCancel onClick={onClose} disabled={isPending}>
             Batal
-          </Button>
-          <Button
-            type="submit"
-            variant="danger"
+          </AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
             onClick={onSubmit}
             disabled={isPending}
           >
             {isPending && <Spinner data-icon="inline-start" />}
             {isPending ? 'Menghapus...' : 'Hapus'}
-          </Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
