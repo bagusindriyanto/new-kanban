@@ -72,7 +72,7 @@ const DeleteTaskModal = () => {
             onClick={onSubmit}
             disabled={isPending}
           >
-            {isPending && <Spinner />}
+            {isPending && <Spinner data-icon="inline-start" />}
             {isPending ? 'Menghapus...' : 'Hapus'}
           </Button>
         </AlertDialogFooter>

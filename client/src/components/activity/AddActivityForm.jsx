@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 
 const formSchema = z.object({
-  activity: z.string().trim().min(1, 'Mohon tuliskan nama aktivitas.'),
+  activity: z.string().min(1, 'Mohon tuliskan nama aktivitas.').trim(),
 });
 
 const AddActivityForm = ({ mutateAsync, onOpenChange }) => {

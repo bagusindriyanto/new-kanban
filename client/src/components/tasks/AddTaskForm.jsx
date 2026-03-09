@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Check, ChevronsUpDown, Trash2Icon } from 'lucide-react';
+import { CalendarIcon, Trash2Icon } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -10,6 +10,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSet,
 } from '@/components/ui/field';
 import {
   Popover,
@@ -134,8 +135,8 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
 
   return (
     <form id="add-task" onSubmit={form.handleSubmit(onSubmit)}>
-      <FieldGroup>
-        <div className="grid grid-cols-2 gap-4">
+      <FieldSet>
+        <FieldGroup>
           {/* Activity */}
           <Controller
             name="content"
@@ -146,7 +147,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
               );
 
               return (
-                <Field data-invalid={fieldState.invalid} className="col-span-2">
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="add-task-content" className="gap-0.5">
                     Aktivitas<span className="text-red-500">*</span>
                   </FieldLabel>
@@ -183,228 +184,227 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
               );
             }}
           />
-          {/* Assigned Section */}
-          <FieldGroup className="col-span-2 grid grid-cols-2 gap-4 min-h-[68px]">
-            <Controller
-              name="is_assigned"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  orientation="horizontal"
-                  className="mt-6"
-                >
-                  <Switch
-                    id="add-task-is-assigned"
-                    name={field.name}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    aria-invalid={fieldState.invalid}
-                  />
-                  <FieldLabel htmlFor="add-task-is-assigned">
-                    Tugaskan Task?
-                  </FieldLabel>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+        </FieldGroup>
 
-            {/* PIC Combo Box */}
-            <Controller
-              name="pic_id"
-              control={form.control}
-              render={({ field, fieldState }) => {
-                const selectedPic = filteredPics?.find(
-                  (pic) => pic.id === field.value,
-                );
+        <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+          {/* Assigned Switch */}
+          <Controller
+            name="is_assigned"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field
+                data-invalid={fieldState.invalid}
+                orientation="horizontal"
+                className="mt-6"
+              >
+                <Switch
+                  id="add-task-is-assigned"
+                  name={field.name}
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  aria-invalid={fieldState.invalid}
+                />
+                <FieldLabel htmlFor="add-task-is-assigned">
+                  Tugaskan Task?
+                </FieldLabel>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* PIC Combo Box */}
+          <Controller
+            name="pic_id"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              const selectedPic = filteredPics?.find(
+                (pic) => pic.id === field.value,
+              );
 
-                return (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                      Tugaskan ke:{' '}
-                      <span
-                        className={cn('text-red-500', {
-                          hidden: !isAssigned,
-                        })}
-                      >
-                        *
-                      </span>
-                    </FieldLabel>
-                    <Combobox
-                      autoHighlight
-                      items={filteredPics}
-                      itemToStringLabel={(pic) => pic.name}
-                      itemToStringValue={(pic) => pic.id}
-                      value={selectedPic ?? null}
-                      onValueChange={(pic) => {
-                        field.onChange(pic?.id ?? null);
-                      }}
-                      disabled={!isAssigned}
-                    >
-                      <ComboboxInput
-                        id="add-task-pic"
-                        aria-invalid={fieldState.invalid}
-                        placeholder="Pilih PIC"
-                        showClear
-                        disabled={!isAssigned}
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
-                        <ComboboxList>
-                          {(pic) => (
-                            <ComboboxItem key={pic.id} value={pic}>
-                              {pic.name}
-                            </ComboboxItem>
-                          )}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
-
-          <FieldGroup className="col-span-2 grid grid-cols-2 gap-4 min-h-[68px]">
-            {/* Appointment Switch */}
-            <Controller
-              name="is_scheduled"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  orientation="horizontal"
-                  className="mt-6"
-                >
-                  <Switch
-                    id="add-task-is-scheduled"
-                    name={field.name}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    aria-invalid={fieldState.invalid}
-                  />
-                  <FieldLabel htmlFor="add-task-is-scheduled">
-                    Jadwalkan Task?
-                  </FieldLabel>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            {/* Appointment Date */}
-            <Controller
-              name="scheduled_at"
-              control={form.control}
-              render={({ field, fieldState }) => (
+              return (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel
-                    htmlFor="add-task-scheduled-at"
-                    className="gap-0.5"
-                  >
-                    Tanggal & Waktu Jadwal{' '}
+                  <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
+                    Tugaskan ke:{' '}
                     <span
                       className={cn('text-red-500', {
-                        hidden: !isScheduled,
+                        hidden: !isAssigned,
                       })}
                     >
                       *
                     </span>
                   </FieldLabel>
-                  <Popover>
-                    <PopoverTrigger
-                      render={
-                        <Button
-                          variant="outline"
-                          id="add-task-scheduled-at"
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                          disabled={!isScheduled}
-                        />
-                      }
-                    >
-                      <CalendarIcon data-icon="inline-start" />
-                      {field.value ? (
-                        format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                          locale: id,
-                        })
-                      ) : (
-                        <span>Pilih tanggal dan waktu</span>
-                      )}
-                    </PopoverTrigger>
-                    <PopoverContent side="right" className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        locale={id}
-                        captionLayout="dropdown"
-                        weekStartsOn={1}
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        startMonth={new Date(2011, 12)}
-                        disabled={{
-                          before: new Date(),
-                        }}
-                        initialFocus
-                      />
-                      <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                        <TimePickerDemo
-                          setDate={field.onChange}
-                          date={field.value}
-                        />
-                        <Button
-                          variant="ghost"
-                          className="text-red-500 hover:text-red-600"
-                          onClick={() =>
-                            form.setValue('scheduled_at', undefined)
-                          }
-                        >
-                          <Trash2Icon />
-                        </Button>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                  <Combobox
+                    autoHighlight
+                    items={filteredPics}
+                    itemToStringLabel={(pic) => pic.name}
+                    itemToStringValue={(pic) => pic.id}
+                    value={selectedPic ?? null}
+                    onValueChange={(pic) => {
+                      field.onChange(pic?.id ?? null);
+                    }}
+                    disabled={!isAssigned}
+                  >
+                    <ComboboxInput
+                      id="add-task-pic"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Pilih PIC"
+                      showClear
+                      disabled={!isAssigned}
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
+                      <ComboboxList>
+                        {(pic) => (
+                          <ComboboxItem key={pic.id} value={pic}>
+                            {pic.name}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
-              )}
-            />
-          </FieldGroup>
-        </div>
-        {/* Detail */}
-        <Controller
-          name="detail"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="add-task-detail">Detail</FieldLabel>
-              <InputGroup>
-                <InputGroupTextarea
-                  {...field}
-                  id="add-task-detail"
+              );
+            }}
+          />
+        </FieldGroup>
+
+        <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+          {/* Appointment Switch */}
+          <Controller
+            name="is_scheduled"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field
+                data-invalid={fieldState.invalid}
+                orientation="horizontal"
+                className="mt-6"
+              >
+                <Switch
+                  id="add-task-is-scheduled"
+                  name={field.name}
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
                   aria-invalid={fieldState.invalid}
-                  placeholder="Detail task"
-                  className="resize-none"
                 />
-                <InputGroupAddon align="block-end">
-                  <InputGroupText className="tabular-nums">
-                    {field.value?.length || 0}/100 karakter
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-      </FieldGroup>
+                <FieldLabel htmlFor="add-task-is-scheduled">
+                  Jadwalkan Task?
+                </FieldLabel>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Appointment Date */}
+          <Controller
+            name="scheduled_at"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="add-task-scheduled-at" className="gap-0.5">
+                  Tanggal & Waktu Jadwal{' '}
+                  <span
+                    className={cn('text-red-500', {
+                      hidden: !isScheduled,
+                    })}
+                  >
+                    *
+                  </span>
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        id="add-task-scheduled-at"
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={!isScheduled}
+                      />
+                    }
+                  >
+                    <CalendarIcon data-icon="inline-start" />
+                    {field.value ? (
+                      format(field.value, 'd/M/yyyy, HH:mm:ss', {
+                        locale: id,
+                      })
+                    ) : (
+                      <span>Pilih tanggal dan waktu</span>
+                    )}
+                  </PopoverTrigger>
+                  <PopoverContent side="right" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      locale={id}
+                      captionLayout="dropdown"
+                      weekStartsOn={1}
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      startMonth={new Date(2011, 12)}
+                      disabled={{
+                        before: new Date(),
+                      }}
+                      initialFocus
+                    />
+                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+                      <TimePickerDemo
+                        setDate={field.onChange}
+                        date={field.value}
+                      />
+                      <Button
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => form.setValue('scheduled_at', undefined)}
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
+        {/* Detail */}
+        <FieldGroup>
+          <Controller
+            name="detail"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="add-task-detail">Detail</FieldLabel>
+                <InputGroup>
+                  <InputGroupTextarea
+                    {...field}
+                    id="add-task-detail"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Detail task"
+                    className="resize-none"
+                  />
+                  <InputGroupAddon align="block-end">
+                    <InputGroupText className="tabular-nums">
+                      {field.value?.length || 0}/100 karakter
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
+      </FieldSet>
     </form>
   );
 };
