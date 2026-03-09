@@ -40,16 +40,14 @@ const AppSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              asChild
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              render={<Link to="/" />}
             >
-              <Link to="/">
-                <img src={logo} alt="Kanban App" className="size-7 m-0.5" />
-                <span className="truncate font-semibold tracking-tight text-lg">
-                  Kanban App
-                </span>
-              </Link>
+              <img src={logo} alt="Kanban App" className="size-7 m-0.5" />
+              <span className="truncate font-semibold tracking-tight text-lg">
+                Kanban App
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -62,18 +60,16 @@ const AppSidebar = () => {
               {navMain.map((item) => (
                 <SidebarMenuItem key={item.to}>
                   <SidebarMenuButton
-                    asChild
                     tooltip={item.label}
                     isActive={
                       item.to === '/'
                         ? pathname === '/'
                         : pathname.startsWith(item.to)
                     }
+                    render={<Link to={item.to} />}
                   >
-                    <Link to={item.to}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
+                    <item.icon />
+                    <span>{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -87,18 +83,16 @@ const AppSidebar = () => {
               {navSecondary.map((item) => (
                 <SidebarMenuItem key={item.to}>
                   <SidebarMenuButton
-                    asChild
                     tooltip={item.label}
                     isActive={
                       item.to === '/'
                         ? pathname === '/'
                         : pathname.startsWith(item.to)
                     }
+                    render={<Link to={item.to} />}
                   >
-                    <Link to={item.to}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
+                    <item.icon />
+                    <span>{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

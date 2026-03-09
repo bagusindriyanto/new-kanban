@@ -1009,10 +1009,10 @@ const UpdateTaskForm = () => {
         </form>
       </ScrollArea>
       <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="secondary" disabled={isPending}>
-            Batal
-          </Button>
+        <DialogClose
+          render={<Button variant="secondary" disabled={isPending} />}
+        >
+          Batal
         </DialogClose>
         <Button
           type="submit"

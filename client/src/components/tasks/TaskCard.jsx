@@ -278,26 +278,28 @@ const TaskCard = ({ task }) => {
         </h3>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground -mr-1 -mt-1 shadow-none"
-              disabled={optimistic}
-            >
-              <EllipsisHorizontalIcon className="size-4" />
-            </Button>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-6 shrink-0 text-muted-foreground hover:text-foreground -mr-1 -mt-1 shadow-none"
+                disabled={optimistic}
+              />
+            }
+          >
+            <EllipsisHorizontalIcon className="size-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-36">
+          <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleUpdateTaskModal}>
-              <PencilSquareIcon className="mr-2 size-4" />
+              <PencilSquareIcon />
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleDeleteTaskModal}
               variant="destructive"
             >
-              <TrashIcon className="mr-2 size-4" />
+              <TrashIcon />
               Hapus
             </DropdownMenuItem>
           </DropdownMenuContent>

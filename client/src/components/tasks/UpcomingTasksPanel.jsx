@@ -58,20 +58,18 @@ const UpcomingTasksPanel = () => {
 
   return (
     <Sheet>
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <SheetTrigger asChild>
-            <div className="relative w-fit">
-              <Button variant="outline" size="icon">
-                <BellRing />
-              </Button>
-              {visibleTasks.length > 0 && (
-                <Badge className="absolute -top-1.5 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
-                  {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
-                </Badge>
-              )}
-            </div>
-          </SheetTrigger>
+      <Tooltip>
+        <TooltipTrigger
+          render={<SheetTrigger render={<div className="relative w-fit" />} />}
+        >
+          <Button variant="outline" size="icon">
+            <BellRing />
+          </Button>
+          {visibleTasks.length > 0 && (
+            <Badge className="absolute -top-1.5 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
+              {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
+            </Badge>
+          )}
         </TooltipTrigger>
         <TooltipContent>Task yang Akan Dimulai</TooltipContent>
       </Tooltip>

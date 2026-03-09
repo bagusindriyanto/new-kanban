@@ -147,12 +147,6 @@
   }
 }
 
-/* styles.css */
-.PopoverContent {
-  width: var(--radix-popover-trigger-width);
-  max-height: var(--radix-popover-content-available-height);
-}
-
 @theme {
   --color-todo-400: #ff7073;
   --color-todo-500: #ff4d4f;

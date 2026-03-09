@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 const NotFoundPage = () => {
   return (
@@ -8,9 +8,9 @@ const NotFoundPage = () => {
       <h3 className="text-2xl mb-5">
         Anda tidak diizinkan mengakses halaman ini.
       </h3>
-      <Button asChild>
-        <Link to="/">Kembali ke halaman utama</Link>
-      </Button>
+      <Link to="/" className={buttonVariants}>
+        Kembali ke halaman utama
+      </Link>
     </div>
   );
 };

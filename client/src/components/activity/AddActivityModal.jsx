@@ -9,31 +9,45 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import AddActivityForm from './AddActivityForm';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAddActivity } from '@/api/addActivity';
 import { Layers } from 'lucide-react';
 
-const AddActivityModal = ({ hideButton = false }) => {
-  const [open, setOpen] = useState(false);
+const AddActivityModal = ({
+  open: openProp,
+  onOpenChange: setOpenProp,
+  buttonVariant = 'default',
+  buttonSize = 'default',
+  showButton = true,
+}) => {
+  const [_open, _setOpen] = useState(false);
+  const open = openProp ?? _open;
+  const setOpen = useCallback(
+    (value) => {
+      const openState = typeof value === 'function' ? value(open) : value;
+      if (setOpenProp) {
+        setOpenProp(openState);
+      } else {
+        _setOpen(openState);
+      }
+    },
+    [open, setOpenProp],
+  );
+
   const { mutateAsync: addActivityMutation, isPending } = useAddActivity();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {hideButton ? (
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <Layers />
-            Tambah Aktivitas
-          </DropdownMenuItem>
-        ) : (
-          <Button variant="nav" size="sm">
-            Tambah Aktivitas
-          </Button>
-        )}
-      </DialogTrigger>
-      <DialogContent aria-describedby={undefined}>
+      {showButton && (
+        <DialogTrigger
+          render={<Button variant={buttonVariant} size={buttonSize} />}
+        >
+          <Layers data-icon="inline-start" />
+          Tambah Aktivitas
+        </DialogTrigger>
+      )}
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Tambah Aktivitas</DialogTitle>
         </DialogHeader>
@@ -42,10 +56,10 @@ const AddActivityModal = ({ hideButton = false }) => {
           onOpenChange={setOpen}
         />
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary" disabled={isPending}>
-              Batal
-            </Button>
+          <DialogClose
+            render={<Button variant="secondary" disabled={isPending} />}
+          >
+            Batal
           </DialogClose>
           <Button
             type="submit"
@@ -53,7 +67,7 @@ const AddActivityModal = ({ hideButton = false }) => {
             form="add-activity"
             disabled={isPending}
           >
-            {isPending && <Spinner />}
+            {isPending && <Spinner data-icon="inline-start" />}
             {isPending ? 'Mengirim...' : 'Tambah'}
           </Button>
         </DialogFooter>

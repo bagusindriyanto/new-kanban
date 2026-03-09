@@ -16,17 +16,15 @@ export const FilterCalendar = () => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
-          <CalendarIcon />
-          {range.from && range.to
-            ? range.from.getTime() === range.to.getTime()
-              ? range.from.toLocaleDateString('id')
-              : `${range.from.toLocaleDateString(
-                  'id',
-                )} - ${range.to.toLocaleDateString('id')}`
-            : 'Semua Hari'}
-        </Button>
+      <PopoverTrigger render={<Button variant="outline" size="sm" />}>
+        <CalendarIcon data-icon="inline-start" />
+        {range.from && range.to
+          ? range.from.getTime() === range.to.getTime()
+            ? range.from.toLocaleDateString('id')
+            : `${range.from.toLocaleDateString(
+                'id',
+              )} - ${range.to.toLocaleDateString('id')}`
+          : 'Semua Hari'}
       </PopoverTrigger>
       <PopoverContent className="w-auto overflow-hidden p-0">
         <Calendar
