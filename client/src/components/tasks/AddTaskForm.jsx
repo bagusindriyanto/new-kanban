@@ -150,6 +150,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
                     Aktivitas<span className="text-red-500">*</span>
                   </FieldLabel>
                   <Combobox
+                    autoHighlight
                     items={contents}
                     itemToStringLabel={(content) => content.name}
                     itemToStringValue={(content) => content.name}
