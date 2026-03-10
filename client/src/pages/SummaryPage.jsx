@@ -33,6 +33,7 @@ import BarChartCard from '@/components/dashboard/BarChartCard';
 import useTaskFilters from '@/hooks/useTaskFilters';
 import SiteHeader from '@/components/layout/SiteHeader';
 import { Filter } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const SummaryPage = () => {
   // State
@@ -40,6 +41,14 @@ const SummaryPage = () => {
 
   // Gunakan custom hook untuk logic filter
   const { selectedPicId, setSelectedPicId, queryParams } = useTaskFilters();
+
+  const picsItems = [
+    { label: 'Pilih PIC', value: 'all' },
+    ...(pics?.map((pic) => ({
+      label: pic.name,
+      value: pic.id,
+    })) || []),
+  ];
 
   const selectedPic = pics?.find((pic) => pic.id === selectedPicId) ?? {
     full_name: '-',
@@ -75,19 +84,25 @@ const SummaryPage = () => {
             dataUpdatedAt={dataUpdatedAt}
           />
           {/* Filter PIC */}
-          <Select value={selectedPicId} onValueChange={setSelectedPicId}>
+          <Select
+            items={picsItems}
+            value={selectedPicId}
+            onValueChange={setSelectedPicId}
+          >
             <SelectTrigger className="w-[150px]" size="sm">
               <SelectValue placeholder="Pilih PIC" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>PIC</SelectLabel>
-                <SelectItem className="hidden" value="all" disabled>
-                  Pilih PIC
-                </SelectItem>
-                {pics?.map((pic) => (
-                  <SelectItem value={pic.id} key={pic.id}>
-                    {pic.name}
+                {picsItems.map((item) => (
+                  <SelectItem
+                    key={String(item.value)}
+                    value={item.value}
+                    className={cn(item.value === 'all' && 'hidden')}
+                    disabled={item.value === 'all'}
+                  >
+                    {item.label}
                   </SelectItem>
                 ))}
               </SelectGroup>

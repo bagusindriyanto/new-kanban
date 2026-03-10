@@ -30,7 +30,7 @@ const App = () => {
         setUser(res.data.user);
         setSelectedPicId(res.data.user.id);
       } catch (err) {
-        console.error(err);
+        console.error(err.response?.data?.message);
         clearUser();
       }
     };

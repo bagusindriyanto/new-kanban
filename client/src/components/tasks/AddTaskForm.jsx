@@ -139,49 +139,46 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
           <Controller
             name="content"
             control={form.control}
-            render={({ field, fieldState }) => {
-              const selectedContent = contents?.find(
-                (content) => content.name === field.value,
-              );
-
-              return (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="add-task-content" className="gap-0.5">
-                    Aktivitas<span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Combobox
-                    autoHighlight
-                    items={contents}
-                    itemToStringLabel={(content) => content.name}
-                    itemToStringValue={(content) => content.name}
-                    value={selectedContent ?? null}
-                    onValueChange={(content) => {
-                      field.onChange(content?.name ?? '');
-                    }}
-                  >
-                    <ComboboxInput
-                      id="add-task-content"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Pilih aktivitas"
-                      showClear
-                    />
-                    <ComboboxContent>
-                      <ComboboxEmpty>Aktivitas tidak ditemukan.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(content) => (
-                          <ComboboxItem key={content.id} value={content}>
-                            {content.name}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              );
-            }}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="add-task-content" className="gap-0.5">
+                  Aktivitas<span className="text-red-500">*</span>
+                </FieldLabel>
+                <Combobox
+                  autoHighlight
+                  items={contents}
+                  itemToStringLabel={(content) => content.name}
+                  itemToStringValue={(content) => content.name}
+                  value={
+                    contents?.find((content) => content.name === field.value) ??
+                    null
+                  }
+                  onValueChange={(content) => {
+                    field.onChange(content?.name ?? '');
+                  }}
+                >
+                  <ComboboxInput
+                    id="add-task-content"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Pilih aktivitas"
+                    showClear
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>Aktivitas tidak ditemukan.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(content) => (
+                        <ComboboxItem key={content.id} value={content}>
+                          {content.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
           />
         </FieldGroup>
 
@@ -216,58 +213,54 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
           <Controller
             name="pic_id"
             control={form.control}
-            render={({ field, fieldState }) => {
-              const selectedPic = filteredPics?.find(
-                (pic) => pic.id === field.value,
-              );
-
-              return (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                    Tugaskan ke:{' '}
-                    <span
-                      className={cn('text-red-500', {
-                        hidden: !isAssigned,
-                      })}
-                    >
-                      *
-                    </span>
-                  </FieldLabel>
-                  <Combobox
-                    autoHighlight
-                    items={filteredPics}
-                    itemToStringLabel={(pic) => pic.name}
-                    itemToStringValue={(pic) => pic.id}
-                    value={selectedPic ?? null}
-                    onValueChange={(pic) => {
-                      field.onChange(pic?.id ?? null);
-                    }}
-                    disabled={!isAssigned}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
+                  Tugaskan ke:{' '}
+                  <span
+                    className={cn('text-red-500', {
+                      hidden: !isAssigned,
+                    })}
                   >
-                    <ComboboxInput
-                      id="add-task-pic"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Pilih PIC"
-                      showClear
-                      disabled={!isAssigned}
-                    />
-                    <ComboboxContent>
-                      <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(pic) => (
-                          <ComboboxItem key={pic.id} value={pic}>
-                            {pic.name}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              );
-            }}
+                    *
+                  </span>
+                </FieldLabel>
+                <Combobox
+                  autoHighlight
+                  items={filteredPics}
+                  itemToStringLabel={(pic) => pic.name}
+                  itemToStringValue={(pic) => pic.id}
+                  value={
+                    filteredPics?.find((pic) => pic.id === field.value) ?? null
+                  }
+                  onValueChange={(pic) => {
+                    field.onChange(pic?.id ?? null);
+                  }}
+                  disabled={!isAssigned}
+                >
+                  <ComboboxInput
+                    id="add-task-pic"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Pilih PIC"
+                    showClear
+                    disabled={!isAssigned}
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(pic) => (
+                        <ComboboxItem key={pic.id} value={pic}>
+                          {pic.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
           />
         </FieldGroup>
 

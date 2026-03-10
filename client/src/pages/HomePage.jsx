@@ -31,7 +31,6 @@ const HomePage = () => {
 
   // Error log
   if (fetchTasksError) {
-    console.log('Error Fetch Tasks:');
     console.error(
       fetchTasksError?.response?.data?.error_detail ||
         'Gagal terhubung ke server.',

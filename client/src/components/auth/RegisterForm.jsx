@@ -51,8 +51,8 @@ const formSchema = z
       .refine((val) => /^[0-9]+$/.test(val), {
         error: 'NIK hanya boleh mengandung angka.',
       }),
-    division_id: z.string().min(1, 'Mohon pilih divisi anda.'),
-    role_id: z.string().min(1, 'Mohon pilih jabatan anda.'),
+    division_id: z.number('Mohon pilih divisi anda.'),
+    role_id: z.number('Mohon pilih jabatan anda.'),
     email: z
       .email('Mohon isi email dengan benar.')
       .min(1, 'Mohon isi email anda.'),
@@ -80,8 +80,8 @@ const RegisterForm = () => {
     defaultValues: {
       full_name: '',
       nik: '',
-      division_id: '',
-      role_id: '',
+      division_id: null,
+      role_id: null,
       email: '',
       password: '',
       confirm_password: '',
@@ -198,9 +198,14 @@ const RegisterForm = () => {
                       Divisi<span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
+                      items={divisions}
+                      itemToStringLabel={(division) => division.name}
+                      itemToStringValue={(division) => String(division.id)}
                       name={field.name}
-                      onValueChange={field.onChange}
-                      value={field.value ? String(field.value) : ''}
+                      onValueChange={(division) => field.onChange(division?.id)}
+                      value={divisions?.find(
+                        (division) => division.id === field.value,
+                      )}
                     >
                       <SelectTrigger
                         id="register-division"
@@ -212,10 +217,7 @@ const RegisterForm = () => {
                         <SelectGroup>
                           <SelectLabel>Divisi</SelectLabel>
                           {divisions?.map((division) => (
-                            <SelectItem
-                              key={division.id}
-                              value={String(division.id)}
-                            >
+                            <SelectItem key={division.id} value={division}>
                               {division.name}
                             </SelectItem>
                           ))}
@@ -238,21 +240,25 @@ const RegisterForm = () => {
                       Jabatan<span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
+                      items={roles}
+                      itemToStringValue={(role) => String(role.id)}
                       name={field.name}
-                      onValueChange={field.onChange}
-                      value={field.value ? String(field.value) : ''}
+                      onValueChange={(role) => field.onChange(role?.id)}
+                      value={roles?.find((role) => role.id === field.value)}
                     >
                       <SelectTrigger
                         id="register-role"
                         aria-invalid={fieldState.invalid}
                       >
-                        <SelectValue placeholder="Pilih jabatan" />
+                        <SelectValue placeholder="Pilih jabatan">
+                          {(role) => role?.name}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Jabatan</SelectLabel>
                           {roles?.map((role) => (
-                            <SelectItem key={role.id} value={String(role.id)}>
+                            <SelectItem key={role.id} value={role}>
                               {role.name}
                             </SelectItem>
                           ))}

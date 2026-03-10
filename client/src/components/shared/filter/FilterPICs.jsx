@@ -16,18 +16,29 @@ const FilterPics = () => {
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
+  const items = [
+    { label: 'Semua PIC', value: 'all' },
+    ...(pics?.map((pic) => ({
+      label: pic.name,
+      value: pic.id,
+    })) || []),
+  ];
+
   return (
-    <Select value={selectedPicId} onValueChange={setSelectedPicId}>
+    <Select
+      items={items}
+      value={selectedPicId}
+      onValueChange={(val) => setSelectedPicId(val)}
+    >
       <SelectTrigger className="w-[150px]" size="sm">
         <SelectValue placeholder="Pilih PIC" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>PIC</SelectLabel>
-          <SelectItem value="all">Semua PIC</SelectItem>
-          {pics?.map((pic) => (
-            <SelectItem value={pic.id} key={pic.id}>
-              {pic.name}
+          {items.map((item) => (
+            <SelectItem value={item.value} key={item.value}>
+              {item.label}
             </SelectItem>
           ))}
         </SelectGroup>
