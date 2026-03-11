@@ -1,9 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { Input } from '@/components/ui/input';
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import InputField from '../shared/form/InputField';
 
 const formSchema = z.object({
   activity: z.string().min(1, 'Mohon tuliskan nama aktivitas.').trim(),
@@ -39,24 +38,13 @@ const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
 
   return (
     <form id="add-activity" onSubmit={form.handleSubmit(onSubmit)}>
-      <Controller
+      <InputField
         name="activity"
         control={form.control}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="add-activity-activity" className="gap-0.5">
-              Nama Aktivitas<span className="text-red-500">*</span>
-            </FieldLabel>
-            <Input
-              {...field}
-              id="add-activity-activity"
-              aria-invalid={fieldState.invalid}
-              placeholder="contoh: Meeting, Review, dan sebagainya"
-              autoComplete="off"
-            />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </Field>
-        )}
+        label="Nama Aktivitas"
+        isRequired
+        placeholder="contoh: Meeting, Review, dan sebagainya"
+        autoComplete="off"
       />
     </form>
   );

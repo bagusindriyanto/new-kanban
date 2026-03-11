@@ -14,7 +14,6 @@ import {
   FieldLabel,
   FieldSeparator,
 } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,11 +21,8 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupInput,
 } from '../ui/input-group';
-import { Eye, EyeClosed } from 'lucide-react';
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/api';
 import {
@@ -40,6 +36,8 @@ import {
 } from '../ui/select';
 import { useFetchDivisions } from '@/api/fetchDivisions';
 import { useFetchRoles } from '@/api/fetchRoles';
+import InputField from '../shared/form/InputField';
+import PasswordField from '../shared/form/PasswordField';
 
 const formSchema = z
   .object({
@@ -67,9 +65,6 @@ const formSchema = z
   });
 
 const RegisterForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   // Ambil data divisi dan jabatan
   const { data: divisions } = useFetchDivisions();
   const { data: roles } = useFetchRoles();
@@ -125,42 +120,21 @@ const RegisterForm = () => {
             </FieldSeparator>
             <Field className="grid grid-cols-2 gap-4">
               {/* Nama Lengkap */}
-              <Controller
+              <InputField
                 name="full_name"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    className="col-span-2"
-                  >
-                    <FieldLabel
-                      htmlFor="register-full-name"
-                      className="gap-0.5"
-                    >
-                      Nama Lengkap<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input {...field} id="register-full-name" type="text" />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Nama Lengkap"
+                isRequired
+                placeholder="Masukkan nama lengkap anda"
+                autoComplete="off"
+                className="col-span-2"
               />
               {/* Nama Panggilan */}
-              <Controller
+              <InputField
                 name="name"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-name">
-                      Nama Panggilan
-                    </FieldLabel>
-                    <Input {...field} id="register-name" type="text" />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Nama Panggilan"
+                autoComplete="off"
               />
               {/* NIK */}
               <Controller
@@ -276,90 +250,30 @@ const RegisterForm = () => {
               Informasi Akun
             </FieldSeparator>
             {/* Email */}
-            <Controller
+            <InputField
               name="email"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-email" className="gap-0.5">
-                    Email<span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input {...field} id="register-email" type="email" />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+              label="Email"
+              type="email"
+              isRequired
+              placeholder="Masukkan email anda"
+              autoComplete="off"
             />
             {/* Password */}
-            <Controller
+            <PasswordField
               name="password"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-password" className="gap-0.5">
-                    Kata Sandi<span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <InputGroup>
-                    <InputGroupInput
-                      {...field}
-                      type={showPassword ? 'text' : 'password'}
-                      id="register-password"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
-                    />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeClosed /> : <Eye />}
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                  <FieldDescription>
-                    Kata sandi minimal memiliki 8 karakter.
-                  </FieldDescription>
-                </Field>
-              )}
+              label="Kata Sandi"
+              isRequired
+              placeholder="Masukkan kata sandi anda"
+              description="Kata sandi minimal memiliki 8 karakter."
             />
             {/* Confirm Password */}
-            <Controller
+            <PasswordField
               name="confirm_password"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel
-                    htmlFor="register-confirm-password"
-                    className="gap-0.5"
-                  >
-                    Konfirmasi Kata Sandi<span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <InputGroup>
-                    <InputGroupInput
-                      {...field}
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      id="register-confirm-password"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
-                    />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                      >
-                        {showConfirmPassword ? <EyeClosed /> : <Eye />}
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+              label="Konfirmasi Kata Sandi"
+              isRequired
             />
             <Field>
               <Button type="submit">Daftar</Button>

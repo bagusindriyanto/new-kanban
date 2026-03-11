@@ -1,29 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+import { Field, FieldDescription, FieldGroup } from '@/components/ui/field';
 import { toast } from 'sonner';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from '../ui/input-group';
-import { Eye, EyeClosed } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import useAuth from '@/stores/authStore';
 import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/api';
 import useFilter from '@/stores/filterStore';
+import InputField from '../shared/form/InputField';
+import PasswordField from '../shared/form/PasswordField';
 
 const formSchema = z.object({
   email: z
@@ -74,46 +62,16 @@ const LoginForm = () => {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
-            <Controller
+            <InputField
               name="email"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="login-email">Email</FieldLabel>
-                  <Input {...field} id="login-email" type="text" />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+              label="Email"
+              type="email"
             />
-            <Controller
+            <PasswordField
               name="password"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="login-password">Kata Sandi</FieldLabel>
-                  <InputGroup>
-                    <InputGroupInput
-                      {...field}
-                      type={showPassword ? 'text' : 'password'}
-                      id="login-password"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
-                    />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupButton
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeClosed /> : <Eye />}
-                      </InputGroupButton>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+              label="Kata Sandi"
             />
             <Field>
               <Button type="submit">Login</Button>

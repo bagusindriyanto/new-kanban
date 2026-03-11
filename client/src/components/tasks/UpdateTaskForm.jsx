@@ -60,6 +60,8 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '../ui/combobox';
+import SwitchField from '../shared/form/SwitchField';
+import TextareaField from '../shared/form/TextareaField';
 
 const formSchema = z
   .object({
@@ -365,33 +367,10 @@ const UpdateTaskForm = () => {
                 )}
               />
               {/* Pause Time */}
-              <Controller
+              <SwitchField
                 name="pause_time"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="update-task-pause-time"
-                      className="gap-0.5"
-                    >
-                      Aktivitas di Pause?<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <div className="flex justify-center items-center h-9 gap-3">
-                      <Label htmlFor="update-task-pause-time">Tidak</Label>
-                      <Switch
-                        id="update-task-pause-time"
-                        name={field.name}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      <Label htmlFor="update-task-pause-time">Ya</Label>
-                    </div>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Aktivitas di Pause?"
               />
             </FieldGroup>
 
@@ -438,10 +417,6 @@ const UpdateTaskForm = () => {
                           selected={field.value}
                           onSelect={field.onChange}
                           startMonth={new Date(2011, 12)}
-                          disabled={{
-                            before: new Date('2012-01-01'),
-                            after: new Date(),
-                          }}
                           initialFocus
                         />
                         <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
@@ -707,30 +682,11 @@ const UpdateTaskForm = () => {
 
             <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
               {/* Assigned Switch */}
-              <Controller
+              <SwitchField
                 name="is_assigned"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation="horizontal"
-                    className="mt-6"
-                  >
-                    <Switch
-                      id="update-task-is-assigned"
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <FieldLabel htmlFor="update-task-is-assigned">
-                      Tugaskan Task?
-                    </FieldLabel>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Tugaskan Task?"
+                className="mt-6"
               />
               {/* PIC Combo Box */}
               <Controller
@@ -789,30 +745,11 @@ const UpdateTaskForm = () => {
 
             <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
               {/* Appointment Switch */}
-              <Controller
+              <SwitchField
                 name="is_scheduled"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation="horizontal"
-                    className="mt-6"
-                  >
-                    <Switch
-                      id="update-task-is-scheduled"
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <FieldLabel htmlFor="update-task-is-scheduled">
-                      Jadwalkan Task?
-                    </FieldLabel>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Jadwalkan Task?"
+                className="mt-6"
               />
               {/* Appointment Date */}
               <Controller
@@ -898,34 +835,11 @@ const UpdateTaskForm = () => {
 
             <FieldGroup>
               {/* Detail */}
-              <Controller
+              <TextareaField
                 name="detail"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    className="col-span-6"
-                  >
-                    <FieldLabel htmlFor="update-task-detail">Detail</FieldLabel>
-                    <InputGroup>
-                      <InputGroupTextarea
-                        {...field}
-                        id="update-task-detail"
-                        aria-invalid={fieldState.invalid}
-                        placeholder="Detail task"
-                        className="resize-none"
-                      />
-                      <InputGroupAddon align="block-end">
-                        <InputGroupText className="tabular-nums">
-                          {field.value?.length || 0}/100 karakter
-                        </InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Detail"
+                placeholder="Detail task"
               />
             </FieldGroup>
           </FieldSet>

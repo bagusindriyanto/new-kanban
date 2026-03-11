@@ -40,6 +40,9 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox';
+import TextareaField from '../shared/form/TextareaField';
+import SwitchField from '../shared/form/SwitchField';
+import DateTimeField from '../shared/form/DateTimeField';
 
 const formSchema = z
   .object({
@@ -94,8 +97,12 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      content: '',
+      pic_id: null,
+      detail: '',
       is_scheduled: false,
       is_assigned: false,
+      scheduled_at: undefined,
     },
   });
 
@@ -184,30 +191,11 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
 
         <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
           {/* Assigned Switch */}
-          <Controller
+          <SwitchField
             name="is_assigned"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                orientation="horizontal"
-                className="mt-6"
-              >
-                <Switch
-                  id="add-task-is-assigned"
-                  name={field.name}
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  aria-invalid={fieldState.invalid}
-                />
-                <FieldLabel htmlFor="add-task-is-assigned">
-                  Tugaskan Task?
-                </FieldLabel>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+            label="Tugaskan Task?"
+            className="mt-6"
           />
           {/* PIC Combo Box */}
           <Controller
@@ -266,134 +254,28 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
 
         <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
           {/* Appointment Switch */}
-          <Controller
+          <SwitchField
             name="is_scheduled"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                orientation="horizontal"
-                className="mt-6"
-              >
-                <Switch
-                  id="add-task-is-scheduled"
-                  name={field.name}
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  aria-invalid={fieldState.invalid}
-                />
-                <FieldLabel htmlFor="add-task-is-scheduled">
-                  Jadwalkan Task?
-                </FieldLabel>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+            label="Jadwalkan Task?"
+            className="mt-6"
           />
           {/* Appointment Date */}
-          <Controller
+          <DateTimeField
             name="scheduled_at"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-scheduled-at" className="gap-0.5">
-                  Tanggal & Waktu Jadwal{' '}
-                  <span
-                    className={cn('text-red-500', {
-                      hidden: !isScheduled,
-                    })}
-                  >
-                    *
-                  </span>
-                </FieldLabel>
-                <Popover>
-                  <PopoverTrigger
-                    render={
-                      <Button
-                        variant="outline"
-                        id="add-task-scheduled-at"
-                        aria-invalid={fieldState.invalid}
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        disabled={!isScheduled}
-                      />
-                    }
-                  >
-                    <CalendarIcon data-icon="inline-start" />
-                    {field.value ? (
-                      format(field.value, 'd/M/yyyy, HH:mm:ss', {
-                        locale: id,
-                      })
-                    ) : (
-                      <span>Pilih tanggal dan waktu</span>
-                    )}
-                  </PopoverTrigger>
-                  <PopoverContent side="right" className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      locale={id}
-                      captionLayout="dropdown"
-                      weekStartsOn={1}
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      startMonth={new Date(2011, 12)}
-                      disabled={{
-                        before: new Date(),
-                      }}
-                      initialFocus
-                    />
-                    <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
-                      <TimePickerDemo
-                        setDate={field.onChange}
-                        date={field.value}
-                      />
-                      <Button
-                        variant="ghost"
-                        className="text-red-500 hover:text-red-600"
-                        onClick={() => form.setValue('scheduled_at', undefined)}
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+            label="Tanggal & Waktu Jadwal"
+            isRequired={isScheduled}
+            side="right"
           />
         </FieldGroup>
         {/* Detail */}
         <FieldGroup>
-          <Controller
+          <TextareaField
             name="detail"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-detail">Detail</FieldLabel>
-                <InputGroup>
-                  <InputGroupTextarea
-                    {...field}
-                    id="add-task-detail"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Detail task"
-                    className="resize-none"
-                  />
-                  <InputGroupAddon align="block-end">
-                    <InputGroupText className="tabular-nums">
-                      {field.value?.length || 0}/100 karakter
-                    </InputGroupText>
-                  </InputGroupAddon>
-                </InputGroup>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+            label="Detail"
+            placeholder="Detail task"
           />
         </FieldGroup>
       </FieldSet>
