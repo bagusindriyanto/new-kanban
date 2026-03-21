@@ -12,8 +12,6 @@
   },
   "iconLibrary": "lucide",
   "rtl": false,
-  "menuColor": "default-translucent",
-  "menuAccent": "subtle",
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
@@ -21,6 +19,8 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
+  "menuColor": "default",
+  "menuAccent": "bold",
   "registries": {
     "@shadcnblocks": "https://shadcnblocks.com/r/{name}.json",
     "@fonttrio": "https://www.fonttrio.xyz/r/{name}.json"
