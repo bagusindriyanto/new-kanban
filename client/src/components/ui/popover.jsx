@@ -62,7 +62,7 @@ function PopoverTitle({
   return (
     <PopoverPrimitive.Title
       data-slot="popover-title"
-      className={cn("font-medium", className)}
+      className={cn("font-heading font-medium", className)}
       {...props} />
   );
 }
