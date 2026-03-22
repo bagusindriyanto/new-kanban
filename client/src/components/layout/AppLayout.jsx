@@ -25,8 +25,11 @@ const AppLayout = () => {
   // Global deadline checker
   useDeadlineChecker(tasks);
 
+  const stored = localStorage.getItem('sidebar_state');
+  const defaultOpen = stored !== null ? JSON.parse(stored) : true;
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <SidebarInset>
         <Outlet />

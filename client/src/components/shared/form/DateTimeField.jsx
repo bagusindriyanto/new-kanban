@@ -15,8 +15,71 @@ import { CalendarIcon } from 'lucide-react';
 import React from 'react';
 import { useId } from 'react';
 import { Controller } from 'react-hook-form';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-const DateTimeField = ({ name, control, label, isRequired, side }) => {
+const DateDropdown = ({
+  options,
+  value,
+  onChange,
+  'aria-label': ariaLabel,
+}) => {
+  const handleValueChange = (newValue) => {
+    if (onChange && newValue !== null) {
+      const syntheticEvent = {
+        target: {
+          value: newValue,
+        },
+      };
+
+      onChange(syntheticEvent);
+    }
+  };
+
+  return (
+    <Select
+      items={options}
+      value={String(value)}
+      onValueChange={handleValueChange}
+    >
+      <SelectTrigger aria-label={ariaLabel}>
+        <SelectValue>
+          {options?.find((option) => option.value === value)?.label || ''}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent className="min-w-fit">
+        <SelectGroup>
+          {options?.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={String(option.value)}
+              disabled={option.disabled}
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+};
+
+const DateTimeField = ({
+  name,
+  control,
+  label,
+  required,
+  disabled,
+  side = 'left',
+  disabledDate = 'after',
+  className,
+}) => {
   const id = useId();
 
   return (
@@ -24,10 +87,10 @@ const DateTimeField = ({ name, control, label, isRequired, side }) => {
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <Field data-invalid={fieldState.invalid} className={className}>
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
-            {isRequired && <span className="text-red-500">*</span>}
+            {required && <span className="text-red-500">*</span>}
           </FieldLabel>
           <Popover>
             <PopoverTrigger
@@ -37,10 +100,10 @@ const DateTimeField = ({ name, control, label, isRequired, side }) => {
                   id={id}
                   aria-invalid={fieldState.invalid}
                   className={cn(
-                    'w-full justify-start text-left font-normal',
+                    'w-full justify-start text-left',
                     !field.value && 'text-muted-foreground',
                   )}
-                  disabled={!isRequired}
+                  disabled={disabled}
                 />
               }
             >
@@ -53,26 +116,29 @@ const DateTimeField = ({ name, control, label, isRequired, side }) => {
                 <span>Pilih tanggal dan waktu</span>
               )}
             </PopoverTrigger>
-            <PopoverContent side={side} className="w-auto p-0">
+            <PopoverContent side={side} className="p-0 w-auto">
               <Calendar
                 mode="single"
                 locale={idLocale}
                 captionLayout="dropdown"
+                components={{ Dropdown: DateDropdown }}
+                classNames={{
+                  nav: 'flex items-center w-full absolute top-0 inset-x-0 justify-between pointer-events-none [&>button]:pointer-events-auto',
+                }}
                 weekStartsOn={1}
                 selected={field.value}
                 onSelect={field.onChange}
-                startMonth={new Date(2011, 12)}
                 disabled={{
-                  before: new Date(),
+                  [disabledDate]: new Date(),
                 }}
                 initialFocus
               />
-              <div className="px-3 py-2 flex gap-1 justify-between items-end border-t border-border">
+              <div className="flex gap-1 justify-between items-end px-3 py-2 border-t border-border">
                 <TimePickerDemo setDate={field.onChange} date={field.value} />
                 <Button
                   variant="ghost"
                   className="text-red-500 hover:text-red-600"
-                  onClick={() => form.setValue(name, undefined)}
+                  onClick={() => field.onChange(undefined)}
                 >
                   <Trash2Icon />
                 </Button>

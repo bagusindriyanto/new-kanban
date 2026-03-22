@@ -33,7 +33,7 @@ const FilterPics = () => {
       <SelectTrigger className="w-[150px]" size="sm">
         <SelectValue placeholder="Pilih PIC" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent alignItemWithTrigger={false}>
         <SelectGroup>
           <SelectLabel>PIC</SelectLabel>
           {items.map((item) => (

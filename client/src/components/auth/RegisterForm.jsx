@@ -38,6 +38,7 @@ import { useFetchDivisions } from '@/api/fetchDivisions';
 import { useFetchRoles } from '@/api/fetchRoles';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';
+import SelectField from '../shared/form/SelectField';
 
 const formSchema = z
   .object({
@@ -124,7 +125,7 @@ const RegisterForm = () => {
                 name="full_name"
                 control={form.control}
                 label="Nama Lengkap"
-                isRequired
+                required
                 placeholder="Masukkan nama lengkap anda"
                 autoComplete="off"
                 className="col-span-2"
@@ -163,87 +164,26 @@ const RegisterForm = () => {
                 )}
               />
               {/* Divisi */}
-              <Controller
+              <SelectField
                 name="division_id"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-division" className="gap-0.5">
-                      Divisi<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      items={divisions}
-                      itemToStringLabel={(division) => division.name}
-                      itemToStringValue={(division) => String(division.id)}
-                      name={field.name}
-                      onValueChange={(division) => field.onChange(division?.id)}
-                      value={divisions?.find(
-                        (division) => division.id === field.value,
-                      )}
-                    >
-                      <SelectTrigger
-                        id="register-division"
-                        aria-invalid={fieldState.invalid}
-                      >
-                        <SelectValue placeholder="Pilih divisi" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Divisi</SelectLabel>
-                          {divisions?.map((division) => (
-                            <SelectItem key={division.id} value={division}>
-                              {division.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Divisi"
+                required
+                items={divisions}
+                valueKey="id"
+                labelKey="name"
+                placeholder="Pilih divisi"
               />
               {/* Jabatan */}
-              <Controller
+              <SelectField
                 name="role_id"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-role" className="gap-0.5">
-                      Jabatan<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      items={roles}
-                      itemToStringValue={(role) => String(role.id)}
-                      name={field.name}
-                      onValueChange={(role) => field.onChange(role?.id)}
-                      value={roles?.find((role) => role.id === field.value)}
-                    >
-                      <SelectTrigger
-                        id="register-role"
-                        aria-invalid={fieldState.invalid}
-                      >
-                        <SelectValue placeholder="Pilih jabatan">
-                          {(role) => role?.name}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Jabatan</SelectLabel>
-                          {roles?.map((role) => (
-                            <SelectItem key={role.id} value={role}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Jabatan"
+                required
+                items={roles}
+                valueKey="id"
+                labelKey="name"
+                placeholder="Pilih jabatan"
               />
             </Field>
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
@@ -255,7 +195,7 @@ const RegisterForm = () => {
               control={form.control}
               label="Email"
               type="email"
-              isRequired
+              required
               placeholder="Masukkan email anda"
               autoComplete="off"
             />
@@ -264,7 +204,7 @@ const RegisterForm = () => {
               name="password"
               control={form.control}
               label="Kata Sandi"
-              isRequired
+              required
               placeholder="Masukkan kata sandi anda"
               description="Kata sandi minimal memiliki 8 karakter."
             />
@@ -273,7 +213,7 @@ const RegisterForm = () => {
               name="confirm_password"
               control={form.control}
               label="Konfirmasi Kata Sandi"
-              isRequired
+              required
             />
             <Field>
               <Button type="submit">Daftar</Button>

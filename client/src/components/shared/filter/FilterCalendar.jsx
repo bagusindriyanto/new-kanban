@@ -9,6 +9,60 @@ import { id } from 'date-fns/locale';
 import { startOfDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import useFilter from '@/stores/filterStore';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+const DateDropdown = ({
+  options,
+  value,
+  onChange,
+  'aria-label': ariaLabel,
+}) => {
+  const handleValueChange = (newValue) => {
+    if (onChange && newValue !== null) {
+      const syntheticEvent = {
+        target: {
+          value: newValue,
+        },
+      };
+
+      onChange(syntheticEvent);
+    }
+  };
+
+  return (
+    <Select
+      items={options}
+      value={String(value)}
+      onValueChange={handleValueChange}
+    >
+      <SelectTrigger aria-label={ariaLabel}>
+        <SelectValue>
+          {options?.find((option) => option.value === value)?.label || ''}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent className="max-h-100 min-w-fit">
+        <SelectGroup>
+          {options?.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={String(option.value)}
+              disabled={option.disabled}
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+};
 
 export const FilterCalendar = () => {
   const range = useFilter((state) => state.range);
@@ -26,23 +80,23 @@ export const FilterCalendar = () => {
               )} - ${range.to.toLocaleDateString('id')}`
           : 'Semua Hari'}
       </PopoverTrigger>
-      <PopoverContent className="w-auto overflow-hidden p-0">
+      <PopoverContent className="p-0 w-auto">
         <Calendar
-          className="w-full"
           mode="range"
           locale={id}
           showWeekNumber
           captionLayout="dropdown"
+          components={{ Dropdown: DateDropdown }}
+          classNames={{
+            nav: 'flex items-center w-full absolute top-0 inset-x-0 justify-between pointer-events-none [&>button]:pointer-events-auto',
+          }}
           defaultMonth={range.from}
           weekStartsOn={1}
           selected={range}
           onSelect={setRange}
-          startMonth={new Date(2011, 12)}
-          disabled={(date) =>
-            date > new Date() || date <= new Date('2011-12-31')
-          }
+          disabled={{ after: new Date() }}
         />
-        <div className="p-3 flex gap-3 justify-between items-end border-t border-border">
+        <div className="flex gap-3 justify-between items-end p-3 border-t border-border">
           <Button
             className="flex-1"
             variant="outline"

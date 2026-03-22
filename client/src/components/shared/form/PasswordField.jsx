@@ -18,7 +18,7 @@ const PasswordField = ({
   name,
   control,
   label,
-  isRequired = false,
+  required = false,
   placeholder,
   description,
   className,
@@ -34,7 +34,7 @@ const PasswordField = ({
         <Field data-invalid={fieldState.invalid} className={className}>
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
-            {isRequired && <span className="text-red-500">*</span>}
+            {required && <span className="text-red-500">*</span>}
           </FieldLabel>
           <InputGroup>
             <InputGroupInput

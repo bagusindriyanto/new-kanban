@@ -1,16 +1,13 @@
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from '../ui/field';
-import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import z from 'zod';
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuth from '@/stores/authStore';
@@ -19,12 +16,11 @@ import { toast } from 'sonner';
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupInput,
 } from '../ui/input-group';
-import { Eye } from 'lucide-react';
-import { EyeClosed } from 'lucide-react';
 import { refreshData } from '@/utils/refreshData';
+import InputField from '../shared/form/InputField';
+import PasswordField from '../shared/form/PasswordField';
 
 const formSchema = z.object({
   full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
@@ -44,10 +40,8 @@ const formSchema = z.object({
 const UpdateAccountForm = () => {
   const user = useAuth((state) => state.user);
   const setUser = useAuth((state) => state.setUser);
-  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm({
-    mode: 'onTouched',
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: user.full_name,
@@ -90,47 +84,22 @@ const UpdateAccountForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Pribadi
             </FieldSeparator>
-            <Field className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
-              <Controller
-                control={form.control}
+            <Field className="grid gap-5 lg:grid-cols-2 lg:gap-6">
+              <InputField
                 name="full_name"
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    className="col-span-1 lg:col-span-2"
-                  >
-                    <FieldLabel
-                      htmlFor="settings-account-full-name"
-                      className="gap-0.5"
-                    >
-                      Nama Lengkap<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="settings-account-full-name"
-                      type="text"
-                      {...field}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                control={form.control}
+                label="Nama Lengkap"
+                required
+                placeholder="Masukkan nama lengkap anda"
+                autoComplete="off"
+                className="lg:col-span-2"
               />
               {/* Nama Panggilan */}
-              <Controller
+              <InputField
                 name="name"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="settings-account-name">
-                      Nama Panggilan
-                    </FieldLabel>
-                    <Input {...field} id="settings-account-name" type="text" />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Nama Panggilan"
+                autoComplete="off"
               />
               {/* NIK */}
               <Controller
@@ -165,69 +134,28 @@ const UpdateAccountForm = () => {
             <FieldSeparator className="mt-6 *:data-[slot=field-separator-content]:bg-card">
               Informasi Akun
             </FieldSeparator>
-            <Field className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 mb-6 mt-2">
+            <Field className="grid gap-5 mt-2 mb-6 lg:grid-cols-2 lg:gap-6">
               {/* Email */}
-              <Controller
+              <InputField
                 name="email"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="settings-accounts-email"
-                      className="gap-0.5"
-                    >
-                      Email<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="settings-accounts-email"
-                      type="email"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
+                label="Email"
+                type="email"
+                required
+                placeholder="Masukkan email anda"
+                autoComplete="off"
               />
               {/* Password */}
-              <Controller
+              <PasswordField
                 name="password"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="settings-accounts-password"
-                      className="gap-0.5"
-                    >
-                      Kata Sandi<span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        type={showPassword ? 'text' : 'password'}
-                        id="settings-accounts-password"
-                        aria-invalid={fieldState.invalid}
-                        autoComplete="off"
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupButton
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeClosed /> : <Eye />}
-                        </InputGroupButton>
-                      </InputGroupAddon>
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                    <FieldDescription>
-                      Kata sandi minimal memiliki 8 karakter.
-                    </FieldDescription>
-                  </Field>
-                )}
+                label="Kata Sandi"
+                required
+                placeholder="Masukkan kata sandi anda"
+                description="Kata sandi minimal memiliki 8 karakter."
               />
             </Field>
-            <div className="flex justify-end gap-3 border-t border-border pt-6">
+            <div className="flex gap-3 justify-end pt-6 border-t border-border">
               <Button
                 variant="outline"
                 type="reset"
@@ -239,7 +167,6 @@ const UpdateAccountForm = () => {
                     email: '',
                     password: '',
                   });
-                  setShowPassword(false);
                 }}
               >
                 Reset Form

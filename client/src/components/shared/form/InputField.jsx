@@ -8,7 +8,7 @@ const InputField = ({
   control,
   label,
   type = 'text',
-  isRequired = false,
+  required = false,
   placeholder,
   autoComplete,
   className,
@@ -23,7 +23,7 @@ const InputField = ({
         <Field data-invalid={fieldState.invalid} className={className}>
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
-            {isRequired && <span className="text-red-500">*</span>}
+            {required && <span className="text-red-500">*</span>}
           </FieldLabel>
           <Input
             {...field}

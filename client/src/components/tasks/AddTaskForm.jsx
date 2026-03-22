@@ -1,54 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Trash2Icon } from 'lucide-react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-} from '@/components/ui/field';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { FieldGroup, FieldSet } from '@/components/ui/field';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPICs } from '@/api/fetchPICs';
-import { Switch } from '../ui/switch';
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
-import { Calendar } from '@/components/ui/calendar';
-import { TimePickerDemo } from '../ui/time-picker-demo';
 import useAuth from '@/stores/authStore';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroupTextarea,
-} from '../ui/input-group';
 import { formatToSQL } from '@/utils/formatTimestamp';
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox';
 import TextareaField from '../shared/form/TextareaField';
 import SwitchField from '../shared/form/SwitchField';
 import DateTimeField from '../shared/form/DateTimeField';
+import ComboboxField from '../shared/form/ComboboxField';
 
 const formSchema = z
   .object({
     content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
     pic_id: z.number().nullish(),
-    detail: z
+    detail: z.coerce
       .string()
       .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
       .trim()
@@ -143,49 +111,15 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
       <FieldSet>
         <FieldGroup>
           {/* Activity */}
-          <Controller
+          <ComboboxField
             name="content"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-content" className="gap-0.5">
-                  Aktivitas<span className="text-red-500">*</span>
-                </FieldLabel>
-                <Combobox
-                  autoHighlight
-                  items={contents}
-                  itemToStringLabel={(content) => content.name}
-                  itemToStringValue={(content) => content.name}
-                  value={
-                    contents?.find((content) => content.name === field.value) ??
-                    null
-                  }
-                  onValueChange={(content) => {
-                    field.onChange(content?.name ?? '');
-                  }}
-                >
-                  <ComboboxInput
-                    id="add-task-content"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Pilih aktivitas"
-                    showClear
-                  />
-                  <ComboboxContent>
-                    <ComboboxEmpty>Aktivitas tidak ditemukan.</ComboboxEmpty>
-                    <ComboboxList>
-                      {(content) => (
-                        <ComboboxItem key={content.id} value={content}>
-                          {content.name}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+            label="Aktivitas"
+            required
+            items={contents}
+            valueKey="name"
+            labelKey="name"
+            placeholder="Pilih aktivitas"
           />
         </FieldGroup>
 
@@ -198,57 +132,16 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             className="mt-6"
           />
           {/* PIC Combo Box */}
-          <Controller
+          <ComboboxField
             name="pic_id"
             control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="add-task-pic" className="gap-0.5">
-                  Tugaskan ke:{' '}
-                  <span
-                    className={cn('text-red-500', {
-                      hidden: !isAssigned,
-                    })}
-                  >
-                    *
-                  </span>
-                </FieldLabel>
-                <Combobox
-                  autoHighlight
-                  items={filteredPics}
-                  itemToStringLabel={(pic) => pic.name}
-                  itemToStringValue={(pic) => pic.id}
-                  value={
-                    filteredPics?.find((pic) => pic.id === field.value) ?? null
-                  }
-                  onValueChange={(pic) => {
-                    field.onChange(pic?.id ?? null);
-                  }}
-                  disabled={!isAssigned}
-                >
-                  <ComboboxInput
-                    id="add-task-pic"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Pilih PIC"
-                    showClear
-                    disabled={!isAssigned}
-                  />
-                  <ComboboxContent>
-                    <ComboboxEmpty>PIC tidak ditemukan.</ComboboxEmpty>
-                    <ComboboxList>
-                      {(pic) => (
-                        <ComboboxItem key={pic.id} value={pic}>
-                          {pic.name}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
+            label="Tugaskan ke"
+            required={isAssigned}
+            disabled={!isAssigned}
+            items={filteredPics}
+            valueKey="id"
+            labelKey="name"
+            placeholder="Pilih PIC"
           />
         </FieldGroup>
 
@@ -265,8 +158,10 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
             name="scheduled_at"
             control={form.control}
             label="Tanggal & Waktu Jadwal"
-            isRequired={isScheduled}
+            required={isScheduled}
+            disabled={!isScheduled}
             side="right"
+            disabledDate="before"
           />
         </FieldGroup>
         {/* Detail */}

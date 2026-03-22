@@ -12,7 +12,7 @@ const TextareaField = ({
   name,
   control,
   label,
-  isRequired = false,
+  required = false,
   placeholder,
   className,
 }) => {
@@ -26,7 +26,7 @@ const TextareaField = ({
         <Field data-invalid={fieldState.invalid} className={className}>
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
-            {isRequired && <span className="text-red-500">*</span>}
+            {required && <span className="text-red-500">*</span>}
           </FieldLabel>
           <InputGroup>
             <InputGroupTextarea

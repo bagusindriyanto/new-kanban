@@ -42,7 +42,7 @@ const AddActivityForm = ({ mutateAsync, onOpenChange }) => {
         name="activity"
         control={form.control}
         label="Nama Aktivitas"
-        isRequired
+        required
         placeholder="contoh: Meeting, Review, dan sebagainya"
         autoComplete="off"
       />
