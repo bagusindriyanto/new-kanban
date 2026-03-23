@@ -3,7 +3,7 @@ import SiteHeader from '@/components/layout/SiteHeader';
 
 const SettingsPage = () => {
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex flex-col h-screen">
       <SiteHeader titlePage="Pengaturan" />
       <div className="flex flex-col gap-2 px-5 pt-4 pb-1">
         <h1 className="text-2xl font-bold tracking-tight">Pengaturan Akun</h1>

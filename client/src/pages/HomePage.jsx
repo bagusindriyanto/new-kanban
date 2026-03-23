@@ -44,14 +44,14 @@ const HomePage = () => {
   const isOnline = useIsOnline();
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex flex-col h-screen">
       <SiteHeader titlePage="Kanban Board" />
       {/* Tasks Controls */}
       <div className="flex justify-between px-4 pt-4 pb-1">
-        <h2 className="text-2xl ml-1 font-bold tracking-tight">Tasks</h2>
+        <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
         <TasksControls isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
       </div>
-      <main className="flex flex-1 flex-col p-4 gap-3">
+      <main className="flex flex-col flex-1 gap-3 p-4">
         {/* Main */}
         {isOnline && isFetchTasksLoading && !fetchTasksError && (
           <div className="flex flex-1 justify-center items-center">
@@ -69,7 +69,7 @@ const HomePage = () => {
           !fetchTasksError &&
           isOnline && <EmptyState action={<AddTaskModal />} />}
         {tasks?.length > 0 && !isFetchTasksLoading && (
-          <div className="flex gap-3 flex-1">
+          <div className="flex flex-1 gap-3">
             {columns.map((column) => (
               <StatusColumn
                 key={column.id}

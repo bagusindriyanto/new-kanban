@@ -95,7 +95,7 @@ const UpcomingTasksPanel = () => {
                 <div
                   key={task.id}
                   className={cn(
-                    'p-3 bg-card rounded-lg text-sm border space-y-2',
+                    'p-3 space-y-2 text-sm rounded-lg border bg-card',
                     {
                       'bg-red-50 dark:bg-red-950/30': isUrgent,
                     },
@@ -105,7 +105,7 @@ const UpcomingTasksPanel = () => {
                     <p className="font-medium truncate">{task.content}</p>
                     <p className="text-sm">{picName}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground tabular-nums">
+                  <p className="text-xs tabular-nums text-muted-foreground">
                     {parseFromSQL(task.scheduled_at)}
                   </p>
                   <div className="flex justify-between items-center mt-1">
@@ -118,7 +118,7 @@ const UpcomingTasksPanel = () => {
                       {Math.ceil(diffInMinutes)} menit lagi
                     </p>
                     {isUrgent && (
-                      <div className="shrink-0 size-2 rounded-full bg-red-500 mt-1 animate-pulse"></div>
+                      <div className="mt-1 bg-red-500 rounded-full animate-pulse shrink-0 size-2"></div>
                     )}
                   </div>
                 </div>

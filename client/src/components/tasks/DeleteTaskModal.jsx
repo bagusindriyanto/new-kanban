@@ -7,13 +7,14 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
+  AlertDialogMedia,
 } from '@/components/ui/alert-dialog';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useDeleteTask } from '@/api/deleteTask';
+import { Trash2Icon } from 'lucide-react';
 
 const DeleteTaskModal = () => {
   const isModalOpen = useDeleteTaskModal((state) => state.isModalOpen);
@@ -48,8 +49,11 @@ const DeleteTaskModal = () => {
 
   return (
     <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent size="sm">
         <AlertDialogHeader>
+          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20">
+            <Trash2Icon />
+          </AlertDialogMedia>
           <AlertDialogTitle>Hapus Task?</AlertDialogTitle>
           <AlertDialogDescription>
             Tindakan ini tidak dapat dibatalkan. Tindakan ini akan menghapus

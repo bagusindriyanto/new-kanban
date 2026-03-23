@@ -2,18 +2,18 @@
 export const columns = [
   {
     id: 'todo',
-    title: 'TO DO',
+    title: 'To Do',
   },
   {
     id: 'on progress',
-    title: 'ON PROGRESS',
+    title: 'On Progress',
   },
   {
     id: 'done',
-    title: 'DONE',
+    title: 'Done',
   },
   {
     id: 'archived',
-    title: 'ARCHIVED',
+    title: 'Archived',
   },
 ];

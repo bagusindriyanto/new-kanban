@@ -4,16 +4,16 @@ import { cn } from '@/lib/utils';
 
 const StatusColumn = ({ title, tasks }) => {
   return (
-    <div className="flex flex-1 flex-col rounded-lg overflow-clip shadow-sm border border-border/70">
+    <div className="flex flex-col flex-1 overflow-clip rounded-lg border shadow-sm border-border/70">
       <h2
         className={cn(
-          'text-lg font-semibold p-3 border-b border-border/70 bg-muted/20',
+          'text-lg font-semibold p-3 border-b border-border/70 bg-muted/20 tracking-tight',
           {
-            'text-todo-500': title === 'TO DO',
-            'text-progress-500': title === 'ON PROGRESS',
-            'text-done-500': title === 'DONE',
-            'text-archived-500': title === 'ARCHIVED',
-            'dark:text-archived-400': title === 'ARCHIVED',
+            'text-todo-500': title === 'To Do',
+            'text-progress-500': title === 'On Progress',
+            'text-done-500': title === 'Done',
+            'text-archived-500': title === 'Archived',
+            'dark:text-archived-400': title === 'Archived',
           },
         )}
       >

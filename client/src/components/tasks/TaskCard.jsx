@@ -272,8 +272,8 @@ const TaskCard = ({ task }) => {
       )}
     >
       {/* 1. HEADER: Title & Menu */}
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="font-bold text-base leading-tight text-card-foreground line-clamp-2">
+      <div className="flex gap-3 justify-between items-start">
+        <h3 className="text-base font-bold leading-tight text-card-foreground line-clamp-2">
           {content}
         </h3>
 
@@ -283,7 +283,7 @@ const TaskCard = ({ task }) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-6 shrink-0 text-muted-foreground hover:text-foreground -mr-1 -mt-1 shadow-none"
+                className="-mt-1 -mr-1 shadow-none size-6 shrink-0 text-muted-foreground hover:text-foreground"
                 disabled={optimistic}
               />
             }
@@ -307,13 +307,13 @@ const TaskCard = ({ task }) => {
       </div>
 
       {/* 2. BODY: Description */}
-      {detail && <p className="text-sm line-clamp-2 leading-snug">{detail}</p>}
+      {detail && <p className="text-sm leading-snug line-clamp-2">{detail}</p>}
 
       {/* 3. ASSIGNEE & METADATA */}
       <div className="flex flex-col gap-2 mt-1">
         {/* Assignee Row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-1 items-center text-xs text-muted-foreground">
             <User className="size-3.5" />
             <span className="font-medium text-foreground">
               {pic_name || '-'}
@@ -339,8 +339,8 @@ const TaskCard = ({ task }) => {
             <div className="relative mt-1">
               {isUrgent && (
                 <span className="absolute -right-1.5 -top-0.5 z-10 flex size-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex size-2 rounded-full bg-red-500"></span>
+                  <span className="inline-flex absolute w-full h-full bg-red-400 rounded-full opacity-75 animate-ping"></span>
+                  <span className="inline-flex relative bg-red-500 rounded-full size-2"></span>
                 </span>
               )}
               <div
@@ -393,12 +393,12 @@ const TaskCard = ({ task }) => {
       </div>
 
       {/* 4. FOOTER: Controls & Schedule */}
-      <div className="mt-1 flex items-center justify-between gap-2">
+      <div className="flex gap-2 justify-between items-center mt-1">
         <div className="flex items-center">
           {status === 'on progress' && (totalPause > 0 || isPaused) && (
             <div
               className={cn(
-                'flex items-center gap-1 text-[11px] text-destructive',
+                'flex gap-1 items-center text-[11px] text-destructive',
                 isPaused ? 'font-medium animate-pulse' : '',
               )}
             >
@@ -408,11 +408,11 @@ const TaskCard = ({ task }) => {
           )}
           {(status === 'done' || status === 'archived') && (
             <div className="flex items-center gap-2 text-[11px]">
-              <span className="font-medium flex items-center gap-1">
+              <span className="flex gap-1 items-center font-medium">
                 <Timer className="size-4.5" /> {minute_activity || 0}m
               </span>
               {totalPause > 0 && (
-                <span className="opacity-70 flex items-center gap-1 text-muted-foreground">
+                <span className="flex gap-1 items-center opacity-70 text-muted-foreground">
                   <CirclePause className="size-4" /> {totalPause}m
                 </span>
               )}
@@ -421,7 +421,7 @@ const TaskCard = ({ task }) => {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-1">
+        <div className="flex gap-1 items-center">
           <Button
             onClick={() => onMove(false)}
             variant="outline"

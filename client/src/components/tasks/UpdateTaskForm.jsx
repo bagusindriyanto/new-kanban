@@ -134,7 +134,7 @@ const UpdateTaskForm = () => {
         ? new Date(task.timestamp_archived)
         : undefined,
       is_scheduled: !!task?.scheduled_at,
-      is_assigned: !!task?.assigner_id,
+      is_assigned: false,
       scheduled_at: task?.scheduled_at
         ? new Date(task.scheduled_at)
         : undefined,
@@ -167,7 +167,11 @@ const UpdateTaskForm = () => {
     const payload = {
       ...data,
       id: selectedTaskId,
-      pic_id: isAssigned ? data.pic_id : user.id,
+      pic_id: isAssigned
+        ? data.pic_id
+        : task?.assigner_id === user.id
+          ? user.id
+          : task?.assigner_id,
       assigner_id: isAssigned ? user.id : null,
       pic_name: isAssigned
         ? filteredPics?.find((pic) => pic.id === data.pic_id)?.name
@@ -280,27 +284,29 @@ const UpdateTaskForm = () => {
               />
             </FieldGroup>
 
-            <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
-              {/* Assigned Switch */}
-              <SwitchField
-                name="is_assigned"
-                control={form.control}
-                label="Tugaskan Task?"
-                className="mt-6"
-              />
-              {/* PIC Combo Box */}
-              <ComboboxField
-                name="pic_id"
-                control={form.control}
-                label="Tugaskan ke"
-                required={isAssigned}
-                disabled={!isAssigned}
-                items={filteredPics}
-                valueKey="id"
-                labelKey="name"
-                placeholder="Pilih PIC"
-              />
-            </FieldGroup>
+            {task?.assigner_id === user.id && (
+              <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+                {/* Assigned Switch */}
+                <SwitchField
+                  name="is_assigned"
+                  control={form.control}
+                  label="Tugaskan Task?"
+                  className="mt-6"
+                />
+                {/* PIC Combo Box */}
+                <ComboboxField
+                  name="pic_id"
+                  control={form.control}
+                  label="Tugaskan ke"
+                  required={isAssigned}
+                  disabled={!isAssigned}
+                  items={filteredPics}
+                  valueKey="id"
+                  labelKey="name"
+                  placeholder="Pilih PIC"
+                />
+              </FieldGroup>
+            )}
 
             <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
               {/* Appointment Switch */}
