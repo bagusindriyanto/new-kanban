@@ -97,14 +97,14 @@ function handlePost($pdo, $input)
     $scheduled_at = $input["scheduled_at"] ?? null;
     $timestamp_todo = $input["timestamp_todo"];
     $timestamp_progress = null;
+    $timestamp_pending = null;
     $timestamp_done = null;
-    $timestamp_archived = null;
     $minute_pause = 0;
     $minute_activity = 0;
     $pause_time = null;
 
     $sql =
-      "INSERT INTO tasks (pic_id, assigner_id, content, detail, status, scheduled_at, timestamp_todo, timestamp_progress, timestamp_done, timestamp_archived, minute_pause, minute_activity, pause_time) VALUES (:pic_id, :assigner_id, :content, :detail, :status, :scheduled_at, :timestamp_todo, :timestamp_progress, :timestamp_done, :timestamp_archived, :minute_pause, :minute_activity, :pause_time)";
+      "INSERT INTO tasks (pic_id, assigner_id, content, detail, status, scheduled_at, timestamp_todo, timestamp_progress, timestamp_pending, timestamp_done, minute_pause, minute_activity, pause_time) VALUES (:pic_id, :assigner_id, :content, :detail, :status, :scheduled_at, :timestamp_todo, :timestamp_progress, :timestamp_pending, :timestamp_done, :minute_pause, :minute_activity, :pause_time)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
       ":pic_id" => $pic_id,
@@ -115,8 +115,8 @@ function handlePost($pdo, $input)
       ":scheduled_at" => $scheduled_at,
       ":timestamp_todo" => $timestamp_todo,
       ":timestamp_progress" => $timestamp_progress,
+      ":timestamp_pending" => $timestamp_pending,
       ":timestamp_done" => $timestamp_done,
-      ":timestamp_archived" => $timestamp_archived,
       ":minute_pause" => $minute_pause,
       ":minute_activity" => $minute_activity,
       ":pause_time" => $pause_time,
@@ -133,8 +133,8 @@ function handlePost($pdo, $input)
         "scheduled_at" => $scheduled_at,
         "timestamp_todo" => $timestamp_todo,
         "timestamp_progress" => $timestamp_progress,
+        "timestamp_pending" => $timestamp_pending,
         "timestamp_done" => $timestamp_done,
-        "timestamp_archived" => $timestamp_archived,
         "minute_pause" => $minute_pause,
         "minute_activity" => $minute_activity,
         "pause_time" => $pause_time,
@@ -165,15 +165,15 @@ function handlePatch($pdo, $input)
   try {
     $id = intval($_GET["id"]);
     $pic_id = $input["pic_id"];
-    $assigner_id = $input["assigner_id"] ?? null;
+    // $assigner_id = $input["assigner_id"] ?? null;
     $content = trim($input["content"]) ?? "";
     $detail = trim($input["detail"]) ?? "";
     $status = $input["status"] ?? null;
     $scheduled_at = $input["scheduled_at"] ?? null;
     $timestamp_todo = $input["timestamp_todo"] ?? null;
     $timestamp_progress = $input["timestamp_progress"] ?? null;
+    $timestamp_pending = $input["timestamp_pending"] ?? null;
     $timestamp_done = $input["timestamp_done"] ?? null;
-    $timestamp_archived = $input["timestamp_archived"] ?? null;
     $minute_pause = $input["minute_pause"] ?? 0;
     $minute_activity = $input["minute_activity"] ?? 0;
     $pause_time = $input["pause_time"] ?? null;
@@ -181,15 +181,15 @@ function handlePatch($pdo, $input)
 
     $fields = [
       "pic_id = ?",
-      "assigner_id = ?",
+      // "assigner_id = ?",
       "content = ?",
       "detail = ?",
       "status = ?",
       "scheduled_at = ?",
       "timestamp_todo = ?",
       "timestamp_progress = ?",
+      "timestamp_pending = ?",
       "timestamp_done = ?",
-      "timestamp_archived = ?",
       "minute_pause = ?",
       "minute_activity = ?",
       "pause_time = ?",
@@ -197,15 +197,15 @@ function handlePatch($pdo, $input)
     ];
     $params = [
       $pic_id,
-      $assigner_id,
+      // $assigner_id,
       $content,
       $detail,
       $status,
       $scheduled_at,
       $timestamp_todo,
       $timestamp_progress,
+      $timestamp_pending,
       $timestamp_done,
-      $timestamp_archived,
       $minute_pause,
       $minute_activity,
       $pause_time,

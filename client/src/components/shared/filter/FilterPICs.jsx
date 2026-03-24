@@ -1,4 +1,4 @@
-import { useFetchPICs } from '@/api/fetchPICs';
+import { useFetchPics } from '@/api/fetchPics';
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
 import useFilter from '@/stores/filterStore';
 
 const FilterPics = () => {
-  const { data: pics } = useFetchPICs();
+  const { data: pics } = useFetchPics();
 
   const selectedPicId = useFilter((state) => state.selectedPicId);
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);

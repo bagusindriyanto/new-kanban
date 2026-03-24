@@ -21,7 +21,7 @@ import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
-import { useFetchPICs } from '@/api/fetchPICs';
+import { useFetchPics } from '@/api/fetchPics';
 import { useFetchSummary } from '@/api/fetchSummary';
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils';
 
 const SummaryPage = () => {
   // State
-  const { data: pics, error: fetchPICsError } = useFetchPICs();
+  const { data: pics, error: fetchPicsError } = useFetchPics();
 
   // Gunakan custom hook untuk logic filter
   const { selectedPicId, setSelectedPicId, queryParams } = useTaskFilters();
@@ -64,7 +64,7 @@ const SummaryPage = () => {
   // Ambil pesan error
   const errorMessage =
     fetchSummaryError?.response?.data?.message ||
-    fetchPICsError?.response?.data?.message ||
+    fetchPicsError?.response?.data?.message ||
     null;
 
   // Cek status online/offline
@@ -112,7 +112,7 @@ const SummaryPage = () => {
       </div>
       {/* Main */}
       <main className="grid flex-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-6">
-        {(fetchSummaryError || fetchPICsError || !isOnline) && (
+        {(fetchSummaryError || fetchPicsError || !isOnline) && (
           <ErrorBanner
             isOnline={isOnline}
             errorMessage={errorMessage}
@@ -157,11 +157,11 @@ const SummaryPage = () => {
               <Badge className="text-orange-700 bg-orange-300 dark:bg-orange-700 dark:text-orange-300">
                 On Progress: {data?.summary?.on_progress_count ?? 0}
               </Badge>
+              <Badge className="bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+                Pending: {data?.summary?.pending_count ?? 0}
+              </Badge>
               <Badge className="text-green-700 bg-green-300 dark:bg-green-700 dark:text-green-300">
                 Done: {data?.summary?.done_count ?? 0}
-              </Badge>
-              <Badge className="bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
-                Archived: {data?.summary?.archived_count ?? 0}
               </Badge>
             </div>
           </CardContent>

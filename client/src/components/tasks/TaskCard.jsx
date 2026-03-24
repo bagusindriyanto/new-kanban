@@ -31,8 +31,8 @@ const TaskCard = ({ task, overlay }) => {
     detail,
     timestamp_todo,
     timestamp_progress,
+    timestamp_pending,
     timestamp_done,
-    timestamp_archived,
     minute_pause,
     minute_activity,
     pause_time,
@@ -73,7 +73,7 @@ const TaskCard = ({ task, overlay }) => {
   const { ref: draggableRef, isDragSource } = useDraggable({
     id: id,
     data: { task },
-    disabled: optimistic || status === 'archived' || !!pause_time,
+    disabled: optimistic || !!pause_time,
   });
 
   // Fungsi buka form modal
@@ -183,12 +183,12 @@ const TaskCard = ({ task, overlay }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'group flex flex-col gap-2 rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
         {
-          'border-l-4 border-l-todo-500': status === 'todo',
-          'border-l-4 border-l-progress-500': status === 'on progress',
-          'border-l-4 border-l-done-500': status === 'done',
-          'border-l-4 border-l-archived-500': status === 'archived',
+          'bg-todo-card border-todo-border': status === 'todo',
+          'bg-progress-card border-progress-border': status === 'on progress',
+          'bg-pending-card border-pending-border': status === 'pending',
+          'bg-done-card border-done-border': status === 'done',
           'animate-pulse pointer-events-none': optimistic,
           'opacity-40': isDragSource && !overlay,
         },
@@ -255,7 +255,7 @@ const TaskCard = ({ task, overlay }) => {
             </div>
           )}
 
-          {(status === 'on progress' || status === 'done') && (
+          {status !== 'todo' && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Mulai:</p>
               <p className="tabular-nums">{parseFromSQL(timestamp_progress)}</p>
@@ -269,17 +269,17 @@ const TaskCard = ({ task, overlay }) => {
             </div>
           )}
 
+          {status === 'pending' && (
+            <div className="flex gap-1 justify-between">
+              <p className="font-medium">Pending:</p>
+              <p className="tabular-nums">{parseFromSQL(timestamp_pending)}</p>
+            </div>
+          )}
+
           {status === 'done' && (
             <div className="flex gap-1 justify-between">
               <p className="font-medium">Selesai:</p>
               <p className="tabular-nums">{parseFromSQL(timestamp_done)}</p>
-            </div>
-          )}
-
-          {status === 'archived' && (
-            <div className="flex gap-1 justify-between">
-              <p className="font-medium">Arsip:</p>
-              <p className="tabular-nums">{parseFromSQL(timestamp_archived)}</p>
             </div>
           )}
         </div>
@@ -300,7 +300,7 @@ const TaskCard = ({ task, overlay }) => {
             </div>
           )}
 
-          {(status === 'done' || status === 'archived') && (
+          {(status === 'pending' || status === 'done') && (
             <div className="flex items-center gap-2 text-[11px]">
               <span className="flex gap-1 items-center font-medium">
                 <Timer className="size-4.5" /> {minute_activity || 0}m

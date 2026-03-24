@@ -10,7 +10,7 @@ import useFilter from '@/stores/filterStore';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 
 import { useFetchActivities } from '@/api/fetchActivities';
-import { useFetchPICs } from '@/api/fetchPICs';
+import { useFetchPics } from '@/api/fetchPics';
 import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { ScrollArea } from '../ui/scroll-area';
@@ -28,15 +28,15 @@ import NumberInputField from '../shared/form/NumberInputField';
 const statusItems = [
   { value: 'todo', label: 'To Do' },
   { value: 'on progress', label: 'On Progress' },
+  { value: 'pending', label: 'Pending' },
   { value: 'done', label: 'Done' },
-  { value: 'archived', label: 'Archived' },
 ];
 
 const formSchema = z
   .object({
-    content: z.string().min(1, 'Aktivitas harus dipilih.'),
-    pic_id: z.number().nullish(),
-    status: z.enum(['todo', 'on progress', 'done', 'archived'], {
+    content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
+    pic_id: z.number('Mohon pilih PIC.'),
+    status: z.enum(['todo', 'on progress', 'pending', 'done'], {
       error: 'Status harus dipilih.',
     }),
     minute_pause: z.number().nonnegative('Durasi pause harus 0 atau lebih.'),
@@ -48,10 +48,9 @@ const formSchema = z
       .optional(),
     timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
     timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
+    timestamp_pending: z.date('Mohon isi tanggal dan waktu.').nullish(),
     timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
-    timestamp_archived: z.date('Mohon isi tanggal dan waktu.').nullish(),
     is_scheduled: z.boolean(),
-    is_assigned: z.boolean(),
     scheduled_at: z.date().nullish(),
   })
   .superRefine((data, ctx) => {
@@ -62,31 +61,25 @@ const formSchema = z
         path: ['scheduled_at'],
       });
     }
-    if (data.is_assigned && !data.pic_id) {
-      ctx.addIssue({
-        code: 'no_pic_id',
-        message: 'Mohon pilih PIC.',
-        path: ['pic_id'],
-      });
-    }
   })
   .transform((data) => ({
     ...data,
     minute_activity:
-      data.timestamp_progress && data.timestamp_done
-        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
-          data.minute_pause
+      data.timestamp_progress && data.timestamp_pending
+        ? Math.floor(
+            (data.timestamp_pending - data.timestamp_progress) / 60000,
+          ) - data.minute_pause
         : 0,
     pause_time: data.pause_time ? formatToSQL(new Date()) : null,
     timestamp_todo: formatToSQL(data.timestamp_todo),
     timestamp_progress: data.timestamp_progress
       ? formatToSQL(data.timestamp_progress)
       : null,
+    timestamp_pending: data.timestamp_pending
+      ? formatToSQL(data.timestamp_pending)
+      : null,
     timestamp_done: data.timestamp_done
       ? formatToSQL(data.timestamp_done)
-      : null,
-    timestamp_archived: data.timestamp_archived
-      ? formatToSQL(data.timestamp_archived)
       : null,
     scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
   }));
@@ -96,7 +89,7 @@ const UpdateTaskForm = () => {
   const { queryParams } = useTaskFilters();
   // Fetch data
   const { data: contents } = useFetchActivities();
-  const { data: pics } = useFetchPICs();
+  const { data: pics } = useFetchPics();
   const { data: tasks } = useFetchTasks(queryParams);
 
   const user = useAuth((state) => state.user);
@@ -117,6 +110,7 @@ const UpdateTaskForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: task?.content ?? '',
+      pic_id: task?.pic_id ?? null,
       status: task?.status ?? undefined,
       minute_pause: task?.minute_pause ?? 0,
       pause_time: !!task?.pause_time,
@@ -127,14 +121,13 @@ const UpdateTaskForm = () => {
       timestamp_progress: task?.timestamp_progress
         ? new Date(task.timestamp_progress)
         : undefined,
+      timestamp_pending: task?.timestamp_pending
+        ? new Date(task.timestamp_pending)
+        : undefined,
       timestamp_done: task?.timestamp_done
         ? new Date(task.timestamp_done)
         : undefined,
-      timestamp_archived: task?.timestamp_archived
-        ? new Date(task.timestamp_archived)
-        : undefined,
       is_scheduled: !!task?.scheduled_at,
-      is_assigned: false,
       scheduled_at: task?.scheduled_at
         ? new Date(task.scheduled_at)
         : undefined,
@@ -144,21 +137,20 @@ const UpdateTaskForm = () => {
   // Cek input status untuk disable timestamp
   const statusInput = form.watch('status');
   const isScheduled = form.watch('is_scheduled');
-  const isAssigned = form.watch('is_assigned');
 
   // Reset value timestamp
   switch (statusInput) {
     case 'todo':
       form.setValue('timestamp_progress', undefined);
+      form.setValue('timestamp_pending', undefined);
       form.setValue('timestamp_done', undefined);
-      form.setValue('timestamp_archived', undefined);
       break;
     case 'on progress':
+      form.setValue('timestamp_pending', undefined);
       form.setValue('timestamp_done', undefined);
-      form.setValue('timestamp_archived', undefined);
       break;
-    case 'done':
-      form.setValue('timestamp_archived', undefined);
+    case 'pending':
+      form.setValue('timestamp_done', undefined);
       break;
   }
 
@@ -167,15 +159,7 @@ const UpdateTaskForm = () => {
     const payload = {
       ...data,
       id: selectedTaskId,
-      pic_id: isAssigned
-        ? data.pic_id
-        : task?.assigner_id === user.id
-          ? user.id
-          : task?.assigner_id,
-      assigner_id: isAssigned ? user.id : null,
-      pic_name: isAssigned
-        ? filteredPics?.find((pic) => pic.id === data.pic_id)?.name
-        : user.name,
+      pic_name: pics?.find((pic) => pic.id === data.pic_id)?.name,
     };
 
     toast.promise(updateTaskMutate(payload), {
@@ -203,8 +187,8 @@ const UpdateTaskForm = () => {
       <ScrollArea className="-mx-4 px-4 max-h-[60vh]">
         <form id="update-task" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
-            {/* Activity */}
-            <FieldGroup>
+            <FieldGroup className="grid grid-cols-2 gap-4">
+              {/* Activity */}
               <ComboboxField
                 name="content"
                 control={form.control}
@@ -214,6 +198,17 @@ const UpdateTaskForm = () => {
                 valueKey="name"
                 labelKey="name"
                 placeholder="Pilih aktivitas"
+              />
+              {/* PIC Combo Box */}
+              <ComboboxField
+                name="pic_id"
+                control={form.control}
+                label="PIC"
+                required
+                items={pics}
+                valueKey="id"
+                labelKey="name"
+                placeholder="Pilih PIC"
               />
             </FieldGroup>
 
@@ -261,11 +256,11 @@ const UpdateTaskForm = () => {
                 disabled={statusInput === 'todo'}
                 side="right"
               />
-              {/* Timestamp Done */}
+              {/* Timestamp Pending */}
               <DateTimeField
-                name="timestamp_done"
+                name="timestamp_pending"
                 control={form.control}
-                label="Timestamp Done"
+                label="Timestamp Pending"
                 required={
                   statusInput !== 'todo' && statusInput !== 'on progress'
                 }
@@ -273,40 +268,16 @@ const UpdateTaskForm = () => {
                   statusInput === 'todo' || statusInput === 'on progress'
                 }
               />
-              {/* Timestamp Archived */}
+              {/* Timestamp Done */}
               <DateTimeField
-                name="timestamp_archived"
+                name="timestamp_done"
                 control={form.control}
-                label="Timestamp Archived"
-                required={statusInput === 'archived'}
-                disabled={statusInput !== 'archived'}
+                label="Timestamp Done"
+                required={statusInput === 'done'}
+                disabled={statusInput !== 'done'}
                 side="right"
               />
             </FieldGroup>
-
-            {task?.assigner_id === user.id && (
-              <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
-                {/* Assigned Switch */}
-                <SwitchField
-                  name="is_assigned"
-                  control={form.control}
-                  label="Tugaskan Task?"
-                  className="mt-6"
-                />
-                {/* PIC Combo Box */}
-                <ComboboxField
-                  name="pic_id"
-                  control={form.control}
-                  label="Tugaskan ke"
-                  required={isAssigned}
-                  disabled={!isAssigned}
-                  items={filteredPics}
-                  valueKey="id"
-                  labelKey="name"
-                  placeholder="Pilih PIC"
-                />
-              </FieldGroup>
-            )}
 
             <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
               {/* Appointment Switch */}

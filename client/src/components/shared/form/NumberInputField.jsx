@@ -26,7 +26,11 @@ const NumberInputField = ({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className={className}>
+        <Field
+          data-invalid={fieldState.invalid}
+          className={className}
+          data-disabled={disabled}
+        >
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
             {required && <span className="text-red-500">*</span>}

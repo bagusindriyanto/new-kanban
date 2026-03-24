@@ -9,6 +9,7 @@ const SwitchField = ({
   orientation = 'horizontal',
   label,
   className,
+  disabled,
 }) => {
   const id = useId();
 
@@ -21,6 +22,7 @@ const SwitchField = ({
           data-invalid={fieldState.invalid}
           orientation={orientation}
           className={className}
+          data-disabled={disabled}
         >
           <Switch
             id={id}
@@ -28,6 +30,7 @@ const SwitchField = ({
             checked={field.value}
             onCheckedChange={field.onChange}
             aria-invalid={fieldState.invalid}
+            disabled={disabled}
           />
           <FieldLabel htmlFor={id}>{label}</FieldLabel>
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

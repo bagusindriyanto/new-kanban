@@ -12,6 +12,7 @@ const InputField = ({
   placeholder,
   autoComplete,
   className,
+  disabled,
 }) => {
   const id = useId();
 
@@ -20,7 +21,11 @@ const InputField = ({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className={className}>
+        <Field
+          data-invalid={fieldState.invalid}
+          className={className}
+          data-disabled={disabled}
+        >
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
             {required && <span className="text-red-500">*</span>}
@@ -32,6 +37,7 @@ const InputField = ({
             aria-invalid={fieldState.invalid}
             placeholder={placeholder}
             autoComplete={autoComplete}
+            disabled={disabled}
           />
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
         </Field>

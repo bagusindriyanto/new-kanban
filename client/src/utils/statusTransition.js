@@ -21,8 +21,8 @@ export const computeStatusTransition = (task, newStatus) => {
 
   const now = formatToSQL(new Date());
   let progress = task.timestamp_progress;
+  let pending = task.timestamp_pending;
   let done = task.timestamp_done;
-  let archived = task.timestamp_archived;
   let pause = task.pause_time || null;
   let mnt_activity = task.minute_activity || 0;
   let mnt_pause = task.minute_pause || 0;
@@ -35,15 +35,15 @@ export const computeStatusTransition = (task, newStatus) => {
         case 'on progress':
           progress = now;
           break;
-        case 'done':
-          done = now;
+        case 'pending':
+          pending = now;
           if (progress) {
             const diff = new Date(now) - new Date(progress);
             mnt_activity = Math.floor(diff / 60000) - mnt_pause;
           }
           break;
-        case 'archived':
-          archived = now;
+        case 'done':
+          done = now;
           break;
       }
     }
@@ -56,11 +56,11 @@ export const computeStatusTransition = (task, newStatus) => {
           mnt_pause = 0;
           break;
         case 'on progress':
-          done = null;
+          pending = null;
           mnt_activity = 0;
           break;
-        case 'done':
-          archived = null;
+        case 'pending':
+          done = null;
           break;
       }
     }
@@ -70,8 +70,8 @@ export const computeStatusTransition = (task, newStatus) => {
     ...task,
     status: newStatus,
     timestamp_progress: progress,
+    timestamp_pending: pending,
     timestamp_done: done,
-    timestamp_archived: archived,
     minute_activity: mnt_activity,
     minute_pause: mnt_pause,
     pause_time: pause,

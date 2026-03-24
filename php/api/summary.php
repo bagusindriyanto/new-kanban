@@ -28,7 +28,7 @@ function activityMinutesExpr(string $alias = ''): string
           WHEN {$prefix}pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, NOW()) - {$prefix}minute_pause
           ELSE TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, {$prefix}pause_time) - {$prefix}minute_pause
         END
-      WHEN {$prefix}status IN ('done', 'archived') THEN
+      WHEN {$prefix}status IN ('pending', 'done) THEN
         {$prefix}minute_activity
       ELSE 0
     END";
@@ -80,8 +80,8 @@ function querySummary(PDO $pdo, string $where, array $params): array
   $sql = "
     SELECT
       COUNT(CASE WHEN status = 'on progress' THEN 1 END) AS on_progress_count,
+      COUNT(CASE WHEN status = 'pending'     THEN 1 END) AS pending_count,
       COUNT(CASE WHEN status = 'done'        THEN 1 END) AS done_count,
-      COUNT(CASE WHEN status = 'archived'    THEN 1 END) AS archived_count,
       SUM({$activityExpr}) AS total_activity_minutes
     FROM tasks
     {$where}
@@ -128,7 +128,7 @@ function queryTableSummary(PDO $pdo, string $where, array $params): array
               WHEN pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW()) - minute_pause
               ELSE TIMESTAMPDIFF(MINUTE, timestamp_progress, pause_time) - minute_pause
             END
-          WHEN status IN ('done', 'archived') THEN
+          WHEN status IN ('pending', 'done') THEN
             minute_activity
           ELSE NULL
         END
@@ -194,8 +194,8 @@ function handleGet(PDO $pdo): void
         "summary" => [
           "todo_count"             => 0,
           "on_progress_count"      => 0,
+          "pending_count"         => 0,
           "done_count"             => 0,
-          "archived_count"         => 0,
           "total_count"            => 0,
           "total_activity_minutes" => 0,
           "total_working_minutes"  => 0,
@@ -225,8 +225,8 @@ function handleGet(PDO $pdo): void
     $totalWorkingMin     = $workingSummary['total_working_minutes'] ?? 0;
 
     $totalCount = ($summary['on_progress_count'] ?? 0)
-      + ($summary['done_count']        ?? 0)
-      + ($summary['archived_count']    ?? 0)
+      + ($summary['pending_count']    ?? 0)
+      + ($summary['done_count']       ?? 0)
       + $todoCount;
 
     $percentage = $totalWorkingMin > 0

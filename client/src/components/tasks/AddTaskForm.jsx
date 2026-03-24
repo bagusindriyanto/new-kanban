@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
 import { useFetchActivities } from '@/api/fetchActivities';
-import { useFetchPICs } from '@/api/fetchPICs';
+import { useFetchPics } from '@/api/fetchPics';
 import useAuth from '@/stores/authStore';
 import { formatToSQL } from '@/utils/formatTimestamp';
 import TextareaField from '../shared/form/TextareaField';
@@ -46,8 +46,8 @@ const formSchema = z
     status: 'todo',
     timestamp_todo: formatToSQL(new Date()),
     timestamp_progress: null,
+    timestamp_pending: null,
     timestamp_done: null,
-    timestamp_archived: null,
     minute_pause: 0,
     minute_activity: 0,
     pause_time: null,
@@ -57,7 +57,7 @@ const formSchema = z
 const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   // Fetch Data
   const { data: contents } = useFetchActivities();
-  const { data: pics } = useFetchPICs();
+  const { data: pics } = useFetchPics();
 
   const user = useAuth((state) => state.user);
   const filteredPics = pics?.filter((pic) => pic.id !== user.id);

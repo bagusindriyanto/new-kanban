@@ -9,11 +9,11 @@ export const columns = [
     title: 'On Progress',
   },
   {
-    id: 'done',
-    title: 'Done',
+    id: 'pending',
+    title: 'Pending',
   },
   {
-    id: 'archived',
-    title: 'Archived',
+    id: 'done',
+    title: 'Done',
   },
 ];

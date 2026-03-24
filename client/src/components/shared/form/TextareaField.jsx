@@ -12,7 +12,8 @@ const TextareaField = ({
   name,
   control,
   label,
-  required = false,
+  required,
+  disabled,
   placeholder,
   className,
 }) => {
@@ -23,7 +24,11 @@ const TextareaField = ({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className={className}>
+        <Field
+          data-invalid={fieldState.invalid}
+          className={className}
+          data-disabled={disabled}
+        >
           <FieldLabel htmlFor={id} className="gap-0.5">
             {label}
             {required && <span className="text-red-500">*</span>}
@@ -35,6 +40,7 @@ const TextareaField = ({
               aria-invalid={fieldState.invalid}
               placeholder={placeholder}
               className="resize-none"
+              disabled={disabled}
             />
             <InputGroupAddon align="block-end">
               <InputGroupText className="tabular-nums">

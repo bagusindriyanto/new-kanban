@@ -60,6 +60,22 @@
   --color-success-foreground: var(--success-foreground);
   --color-success: var(--success);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-todo-foreground: var(--todo-foreground);
+  --color-todo: var(--todo);
+  --color-todo-card: var(--todo-card);
+  --color-todo-border: var(--todo-border);
+  --color-progress-foreground: var(--progress-foreground);
+  --color-progress: var(--progress);
+  --color-progress-card: var(--progress-card);
+  --color-progress-border: var(--progress-border);
+  --color-pending-foreground: var(--pending-foreground);
+  --color-pending: var(--pending);
+  --color-pending-card: var(--pending-card);
+  --color-pending-border: var(--pending-border);
+  --color-done-foreground: var(--done-foreground);
+  --color-done: var(--done);
+  --color-done-card: var(--done-card);
+  --color-done-border: var(--done-border);
   --font-heading: var(--font-inter);
   --font-body: var(--font-inter);
   --font-mono: var(--font-geist-mono);
@@ -114,6 +130,22 @@
   --warning-foreground: var(--color-yellow-900);
   --invert: var(--color-zinc-900);
   --invert-foreground: var(--color-zinc-50);
+  --todo: #fcebeb;
+  --todo-foreground: #791f1f;
+  --todo-card: #ffffff;
+  --todo-border: #f0baba;
+  --progress: #e6f1fb;
+  --progress-foreground: #0c447c;
+  --progress-card: #ffffff;
+  --progress-border: #aad0f2;
+  --pending: #faeeda;
+  --pending-foreground: #633806;
+  --pending-card: #ffffff;
+  --pending-border: #f5c070;
+  --done: #eaf3de;
+  --done-foreground: #27500a;
+  --done-card: #ffffff;
+  --done-border: #b8d990;
 }
 
 .dark {
@@ -162,6 +194,22 @@
   --warning-foreground: var(--color-yellow-600);
   --invert: var(--color-zinc-700);
   --invert-foreground: var(--color-zinc-50);
+  --todo: #2a1414;
+  --todo-foreground: #f09595;
+  --todo-card: #1e1010;
+  --todo-border: #5a2020;
+  --progress: #0d1e30;
+  --progress-foreground: #85b7eb;
+  --progress-card: #081526;
+  --progress-border: #1a3d60;
+  --pending: #261a06;
+  --pending-foreground: #ef9f27;
+  --pending-card: #1a1004;
+  --pending-border: #4a3008;
+  --done: #101c08;
+  --done-foreground: #97c459;
+  --done-card: #0a1404;
+  --done-border: #264010;
 }
 
 @layer base {
@@ -194,24 +242,4 @@
   pre {
     font-family: var(--font-mono);
   }
-}
-
-@theme {
-  --color-todo-400: #ff7073;
-  --color-todo-500: #ff4d4f;
-  --color-todo-600: #f43235;
-
-  --color-progress-400: #fb9c37;
-  --color-progress-500: #fa8c16;
-  --color-progress-600: #d6740b;
-
-  --color-done-400: #65e326;
-  --color-done-500: #52c41a;
-  --color-done-600: #44a215;
-
-  --color-archived-400: #a3a3a3;
-  --color-archived-500: #8c8c8c;
-  --color-archived-600: #7a7a7a;
-
-  --color-nav: #001529;
 }
