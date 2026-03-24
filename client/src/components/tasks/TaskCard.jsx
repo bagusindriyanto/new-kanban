@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { formatToSQL, parseFromSQL } from '@/utils/formatTimestamp';
 import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
   PauseIcon,
   PlayIcon,
   EllipsisHorizontalIcon,
@@ -19,19 +17,15 @@ import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
 import { memo, useEffect, useRef, useState } from 'react';
-import { columns } from '@/config/column';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 import { User, Timer, CirclePause } from 'lucide-react';
-// Urutan Status dipindah ke luar kompoen
-const statusOrder = columns.map((column) => column.id);
+import { useDraggable } from '@dnd-kit/react';
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, overlay }) => {
   // Destructure isi props
   const {
     id,
-    pic_id,
-    assigner_id,
     status,
     content,
     detail,
@@ -75,6 +69,13 @@ const TaskCard = ({ task }) => {
     },
   });
 
+  // Drag and drop hook
+  const { ref: draggableRef, isDragSource } = useDraggable({
+    id: id,
+    data: { task },
+    disabled: optimistic || status === 'archived' || !!pause_time,
+  });
+
   // Fungsi buka form modal
   const handleUpdateTaskModal = () => {
     setIsUpdateTaskModalOpen(true);
@@ -87,77 +88,8 @@ const TaskCard = ({ task }) => {
     setSelectedTaskId(id);
   };
 
-  // State untuk update status dengan tombol kanan / kiri
-  const onMove = (isRight) => {
-    const now = formatToSQL(new Date());
-    let todo = timestamp_todo;
-    let progress = timestamp_progress;
-    let done = timestamp_done;
-    let archived = timestamp_archived;
-    let pause = pause_time || null;
-    let mnt_activity = minute_activity || 0;
-    let mnt_pause = minute_pause || 0;
-    let newStatus = null;
-    const currentIndex = statusOrder.indexOf(status);
-    if (isRight) {
-      if (currentIndex < statusOrder.length - 1) {
-        newStatus = statusOrder[currentIndex + 1];
-        switch (newStatus) {
-          case 'on progress':
-            progress = now;
-            break;
-          case 'done':
-            done = now;
-            if (timestamp_progress) {
-              const diff = new Date(now) - new Date(timestamp_progress);
-              mnt_activity = Math.floor(diff / 60000) - mnt_pause;
-            }
-            break;
-          case 'archived':
-            archived = now;
-            break;
-        }
-      } else return;
-    } else {
-      if (currentIndex > 0) {
-        newStatus = statusOrder[currentIndex - 1];
-        switch (newStatus) {
-          case 'todo':
-            progress = null;
-            pause = null;
-            mnt_pause = 0;
-            break;
-          case 'on progress':
-            done = null;
-            mnt_activity = 0;
-            break;
-          case 'done':
-            archived = null;
-            break;
-        }
-      } else return;
-    }
-    const data = {
-      pic_id,
-      assigner_id,
-      status: newStatus,
-      content,
-      detail,
-      timestamp_todo: todo,
-      timestamp_progress: progress,
-      timestamp_done: done,
-      timestamp_archived: archived,
-      minute_activity: mnt_activity,
-      minute_pause: mnt_pause,
-      pause_time: pause,
-      scheduled_at,
-    };
-    updateTaskMutate({ ...data, id });
-  };
-
   // State untuk hitung durasi pause
-  const isPausedInitial = pause_time ? true : false;
-  const [isPaused, setIsPaused] = useState(isPausedInitial);
+  const [isPaused, setIsPaused] = useState(!!pause_time);
   const [currentPauseMinutes, setCurrentPauseMinutes] = useState(0);
   const pauseStartRef = useRef(null);
   const intervalRef = useRef(null);
@@ -219,22 +151,11 @@ const TaskCard = ({ task }) => {
       updatedPauseTime = newPauseTime;
     }
 
-    const data = {
-      pic_id,
-      assigner_id,
-      status,
-      content,
-      detail,
-      timestamp_todo,
-      timestamp_progress,
-      timestamp_done,
-      timestamp_archived,
-      minute_activity,
+    updateTaskMutate({
+      ...task,
       minute_pause: updatedMinutePause,
       pause_time: updatedPauseTime,
-      scheduled_at,
-    };
-    updateTaskMutate({ ...data, id });
+    });
     setIsPaused(!resetPauseTime);
   };
 
@@ -260,6 +181,7 @@ const TaskCard = ({ task }) => {
 
   return (
     <div
+      ref={draggableRef}
       className={cn(
         'group flex flex-col gap-2 rounded-lg border bg-card p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
         {
@@ -268,43 +190,14 @@ const TaskCard = ({ task }) => {
           'border-l-4 border-l-done-500': status === 'done',
           'border-l-4 border-l-archived-500': status === 'archived',
           'animate-pulse pointer-events-none': optimistic,
+          'opacity-40': isDragSource && !overlay,
         },
       )}
     >
-      {/* 1. HEADER: Title & Menu */}
-      <div className="flex gap-3 justify-between items-start">
-        <h3 className="text-base font-bold leading-tight text-card-foreground line-clamp-2">
-          {content}
-        </h3>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="-mt-1 -mr-1 shadow-none size-6 shrink-0 text-muted-foreground hover:text-foreground"
-                disabled={optimistic}
-              />
-            }
-          >
-            <EllipsisHorizontalIcon className="size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleUpdateTaskModal}>
-              <PencilSquareIcon />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDeleteTaskModal}
-              variant="destructive"
-            >
-              <TrashIcon />
-              Hapus
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      {/* 1. HEADER: Title */}
+      <h3 className="text-base font-bold leading-tight text-card-foreground line-clamp-2">
+        {content}
+      </h3>
 
       {/* 2. BODY: Description */}
       {detail && <p className="text-sm leading-snug line-clamp-2">{detail}</p>}
@@ -319,7 +212,7 @@ const TaskCard = ({ task }) => {
               {pic_name || '-'}
             </span>
           </div>
-          {assigner_id && (
+          {assigner_name && (
             <span className="text-[10px] text-muted-foreground/70">
               oleh {assigner_name}
             </span>
@@ -406,6 +299,7 @@ const TaskCard = ({ task }) => {
               <span>{totalPause}m</span>
             </div>
           )}
+
           {(status === 'done' || status === 'archived') && (
             <div className="flex items-center gap-2 text-[11px]">
               <span className="flex gap-1 items-center font-medium">
@@ -422,20 +316,6 @@ const TaskCard = ({ task }) => {
 
         {/* Action Controls */}
         <div className="flex gap-1 items-center">
-          <Button
-            onClick={() => onMove(false)}
-            variant="outline"
-            size="icon-xs"
-            disabled={
-              status === 'todo' ||
-              status === 'archived' ||
-              isPaused ||
-              optimistic
-            }
-          >
-            <ArrowLeftIcon />
-          </Button>
-
           {status === 'on progress' && (
             <Button
               onClick={togglePause}
@@ -448,12 +328,21 @@ const TaskCard = ({ task }) => {
           )}
 
           <Button
-            onClick={() => onMove(true)}
+            onClick={handleUpdateTaskModal}
             variant="outline"
             size="icon-xs"
-            disabled={status === 'archived' || isPaused || optimistic}
+            disabled={optimistic}
           >
-            <ArrowRightIcon />
+            <PencilSquareIcon />
+          </Button>
+
+          <Button
+            onClick={handleDeleteTaskModal}
+            variant="outline"
+            size="icon-xs"
+            disabled={optimistic}
+          >
+            <TrashIcon />
           </Button>
         </div>
       </div>

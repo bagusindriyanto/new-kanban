@@ -12,6 +12,7 @@
   "homepage": "/kanban",
   "dependencies": {
     "@base-ui/react": "^1.2.0",
+    "@dnd-kit/react": "^0.3.2",
     "@fontsource-variable/geist-mono": "^5.2.7",
     "@fontsource-variable/inter": "^5.2.8",
     "@heroicons/react": "^2.2.0",

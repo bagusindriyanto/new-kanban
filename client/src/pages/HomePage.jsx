@@ -16,6 +16,14 @@ import useTaskFilters from '@/hooks/useTaskFilters';
 import SiteHeader from '@/components/layout/SiteHeader';
 import AddTaskModal from '@/components/tasks/AddTaskModal';
 
+// Drag and drop
+import { DragDropProvider } from '@dnd-kit/react';
+import { useUpdateTask } from '@/api/updateTask';
+import { computeStatusTransition } from '@/utils/statusTransition';
+import { toast } from 'sonner';
+import { DragOverlay } from '@dnd-kit/react';
+import TaskCard from '@/components/tasks/TaskCard';
+
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter
   const { queryParams } = useTaskFilters();
@@ -28,6 +36,45 @@ const HomePage = () => {
     isFetching,
     dataUpdatedAt,
   } = useFetchTasks(queryParams);
+
+  // Mutation untuk drag and drop
+  const { mutate: updateTaskMutate } = useUpdateTask({
+    mutationConfig: {
+      onError: (err) => {
+        toast.error(
+          err.response?.data?.message ||
+            err.message ||
+            'Gagal memperbarui task.',
+          {
+            description: err.response?.data?.error_detail || null,
+          },
+        );
+      },
+    },
+  });
+
+  // Handle drag end untuk update status
+  const handleDragEnd = (event) => {
+    if (event.canceled) return;
+
+    const { source, target } = event.operation;
+
+    if (!source || !target) return;
+
+    // target.id = column status id (e.g. "todo", "on progress")
+    const newStatus = target.id;
+    const task = source.data?.task;
+
+    if (!task) return;
+
+    // Jangan update jika drop di kolom yang sama
+    if (task.status === newStatus) return;
+
+    const data = computeStatusTransition(task, newStatus);
+    if (!data) return;
+
+    updateTaskMutate(data);
+  };
 
   // Error log
   if (fetchTasksError) {
@@ -69,15 +116,25 @@ const HomePage = () => {
           !fetchTasksError &&
           isOnline && <EmptyState action={<AddTaskModal />} />}
         {tasks?.length > 0 && !isFetchTasksLoading && (
-          <div className="flex flex-1 gap-3">
-            {columns.map((column) => (
-              <StatusColumn
-                key={column.id}
-                title={column.title}
-                tasks={tasks?.filter((task) => task.status === column.id)}
-              />
-            ))}
-          </div>
+          <DragDropProvider onDragEnd={handleDragEnd}>
+            <div className="flex flex-1 gap-3">
+              {columns.map((column) => (
+                <StatusColumn
+                  key={column.id}
+                  columnId={column.id}
+                  title={column.title}
+                  tasks={tasks?.filter((task) => task.status === column.id)}
+                />
+              ))}
+            </div>
+            <DragOverlay>
+              {(source) => {
+                const task = source.data?.task;
+                if (!task) return null;
+                return <TaskCard task={task} overlay />;
+              }}
+            </DragOverlay>
+          </DragDropProvider>
         )}
       </main>
       {/* Modal untuk update task */}

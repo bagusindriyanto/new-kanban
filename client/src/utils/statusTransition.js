@@ -1,0 +1,79 @@
+import { formatToSQL } from './formatTimestamp';
+import { columns } from '@/config/column';
+
+const statusOrder = columns.map((column) => column.id);
+
+/**
+ * Menghitung data transisi status task.
+ * Digunakan oleh onMove (arrow buttons) dan drag-and-drop.
+ *
+ * @param {Object} task - Task yang akan diubah statusnya
+ * @param {string} newStatus - Status tujuan
+ * @returns {Object|null} - Data update, atau null jika transisi tidak valid
+ */
+export const computeStatusTransition = (task, newStatus) => {
+  if (newStatus === task.status) return null;
+
+  const currentIndex = statusOrder.indexOf(task.status);
+  const newIndex = statusOrder.indexOf(newStatus);
+
+  if (currentIndex === -1 || newIndex === -1) return null;
+
+  const now = formatToSQL(new Date());
+  let progress = task.timestamp_progress;
+  let done = task.timestamp_done;
+  let archived = task.timestamp_archived;
+  let pause = task.pause_time || null;
+  let mnt_activity = task.minute_activity || 0;
+  let mnt_pause = task.minute_pause || 0;
+
+  const isForward = newIndex > currentIndex;
+
+  if (isForward) {
+    for (let i = currentIndex + 1; i <= newIndex; i++) {
+      switch (statusOrder[i]) {
+        case 'on progress':
+          progress = now;
+          break;
+        case 'done':
+          done = now;
+          if (progress) {
+            const diff = new Date(now) - new Date(progress);
+            mnt_activity = Math.floor(diff / 60000) - mnt_pause;
+          }
+          break;
+        case 'archived':
+          archived = now;
+          break;
+      }
+    }
+  } else {
+    for (let i = currentIndex - 1; i >= newIndex; i--) {
+      switch (statusOrder[i]) {
+        case 'todo':
+          progress = null;
+          pause = null;
+          mnt_pause = 0;
+          break;
+        case 'on progress':
+          done = null;
+          mnt_activity = 0;
+          break;
+        case 'done':
+          archived = null;
+          break;
+      }
+    }
+  }
+
+  return {
+    ...task,
+    status: newStatus,
+    timestamp_progress: progress,
+    timestamp_done: done,
+    timestamp_archived: archived,
+    minute_activity: mnt_activity,
+    minute_pause: mnt_pause,
+    pause_time: pause,
+  };
+};
