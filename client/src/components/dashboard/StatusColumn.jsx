@@ -15,8 +15,10 @@ const StatusColumn = ({ title, columnId, tasks }) => {
   const virtualizer = useVirtualizer({
     count: tasks?.length || 0,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 10,
+    estimateSize: () => 100 + 12,
     overscan: 2,
+    paddingStart: 12,
+    paddingEnd: 12,
   });
 
   // Gabungkan droppable ref dan scroll ref
@@ -32,6 +34,8 @@ const StatusColumn = ({ title, columnId, tasks }) => {
     },
     [droppableRef],
   );
+
+  const virtualItems = virtualizer.getVirtualItems();
 
   return (
     <div
@@ -70,12 +74,15 @@ const StatusColumn = ({ title, columnId, tasks }) => {
       >
         <div
           style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
+            paddingTop: virtualItems.length > 0 ? virtualItems[0].start : 0,
+            paddingBottom:
+              virtualItems.length > 0
+                ? virtualizer.getTotalSize() -
+                  virtualItems[virtualItems.length - 1].end
+                : 0,
           }}
         >
-          {virtualizer.getVirtualItems().map((virtualItem) => {
+          {virtualItems.map((virtualItem) => {
             const task = tasks[virtualItem.index];
             return (
               <div
@@ -83,13 +90,10 @@ const StatusColumn = ({ title, columnId, tasks }) => {
                 data-index={virtualItem.index}
                 ref={virtualizer.measureElement}
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  transform: `translateY(${virtualItem.start}px)`,
+                  marginBottom:
+                    virtualItem.index === virtualItems.length - 1 ? 0 : 12,
                 }}
-                className="px-3 pt-3"
+                className="px-3"
               >
                 <TaskCard task={task} />
               </div>
