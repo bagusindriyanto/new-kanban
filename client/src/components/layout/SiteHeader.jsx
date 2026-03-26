@@ -6,15 +6,12 @@ import UpcomingTasksPanel from '../tasks/UpcomingTasksPanel';
 const SiteHeader = ({ titlePage = 'Kanban App', children }) => {
   return (
     <header className="flex px-4 h-16 shrink-0 justify-between items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b">
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2 items-center">
         <SidebarTrigger className="-ml-1" />
-        <Separator
-          orientation="vertical"
-          className="mr-2 data-[orientation=vertical]:h-6"
-        />
+        <Separator orientation="vertical" className="mr-2" />
         <span className="text-sm font-medium tracking-tight">{titlePage}</span>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2 items-center">
         {children}
         <UpcomingTasksPanel />
         <ModeToggle />

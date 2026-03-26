@@ -1,25 +1,14 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { formatToSQL, parseFromSQL } from '@/utils/formatTimestamp';
-import {
-  PauseIcon,
-  PlayIcon,
-  EllipsisHorizontalIcon,
-} from '@heroicons/react/24/solid';
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
-import { memo, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
-import { User, Timer, CirclePause } from 'lucide-react';
+import { User, Timer, CirclePause, SquarePen, Trash2 } from 'lucide-react';
 import { useDraggable } from '@dnd-kit/react';
 
 const TaskCard = ({ task, overlay }) => {
@@ -183,7 +172,7 @@ const TaskCard = ({ task, overlay }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-all hover:shadow-md relative overflow-hidden',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-all hover:shadow-md select-none cursor-grab',
         {
           'bg-todo-card border-todo-border': status === 'todo',
           'bg-progress-card border-progress-border': status === 'on progress',
@@ -333,7 +322,7 @@ const TaskCard = ({ task, overlay }) => {
             size="icon-xs"
             disabled={optimistic}
           >
-            <PencilSquareIcon />
+            <SquarePen />
           </Button>
 
           <Button
@@ -342,7 +331,7 @@ const TaskCard = ({ task, overlay }) => {
             size="icon-xs"
             disabled={optimistic}
           >
-            <TrashIcon />
+            <Trash2 />
           </Button>
         </div>
       </div>
@@ -350,15 +339,4 @@ const TaskCard = ({ task, overlay }) => {
   );
 };
 
-export default memo(TaskCard, (prevProps, nextProps) => {
-  return (
-    prevProps.task.status === nextProps.task.status &&
-    prevProps.task.optimistic === nextProps.task.optimistic &&
-    prevProps.task.minute_pause === nextProps.task.minute_pause &&
-    prevProps.task.pause_time === nextProps.task.pause_time &&
-    prevProps.task.content === nextProps.task.content &&
-    prevProps.task.detail === nextProps.task.detail &&
-    prevProps.task.pic_id === nextProps.task.pic_id &&
-    prevProps.task.scheduled_at === nextProps.task.scheduled_at
-  );
-});
+export default TaskCard;

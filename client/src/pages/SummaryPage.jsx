@@ -151,16 +151,16 @@ const SummaryPage = () => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-1.5">
-              <Badge className="text-red-700 bg-red-300 dark:bg-red-700 dark:text-red-300">
+              <Badge className="border text-todo-foreground bg-todo border-todo-border">
                 To Do: {data?.summary?.todo_count ?? 0}
               </Badge>
-              <Badge className="text-orange-700 bg-orange-300 dark:bg-orange-700 dark:text-orange-300">
+              <Badge className="border text-progress-foreground bg-progress border-progress-border">
                 On Progress: {data?.summary?.on_progress_count ?? 0}
               </Badge>
-              <Badge className="bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+              <Badge className="border text-pending-foreground bg-pending border-pending-border">
                 Pending: {data?.summary?.pending_count ?? 0}
               </Badge>
-              <Badge className="text-green-700 bg-green-300 dark:bg-green-700 dark:text-green-300">
+              <Badge className="border text-done-foreground bg-done border-done-border">
                 Done: {data?.summary?.done_count ?? 0}
               </Badge>
             </div>

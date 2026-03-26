@@ -28,7 +28,7 @@ function activityMinutesExpr(string $alias = ''): string
           WHEN {$prefix}pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, NOW()) - {$prefix}minute_pause
           ELSE TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, {$prefix}pause_time) - {$prefix}minute_pause
         END
-      WHEN {$prefix}status IN ('pending', 'done) THEN
+      WHEN {$prefix}status IN ('pending', 'done') THEN
         {$prefix}minute_activity
       ELSE 0
     END";

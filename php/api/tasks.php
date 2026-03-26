@@ -177,7 +177,6 @@ function handlePatch($pdo, $input)
     $minute_pause = $input["minute_pause"] ?? 0;
     $minute_activity = $input["minute_activity"] ?? 0;
     $pause_time = $input["pause_time"] ?? null;
-    $updated_at = $input["updated_at"];
 
     $fields = [
       "pic_id = ?",
@@ -193,7 +192,6 @@ function handlePatch($pdo, $input)
       "minute_pause = ?",
       "minute_activity = ?",
       "pause_time = ?",
-      "updated_at = ?",
     ];
     $params = [
       $pic_id,
@@ -209,7 +207,6 @@ function handlePatch($pdo, $input)
       $minute_pause,
       $minute_activity,
       $pause_time,
-      $updated_at,
       $id,
     ];
     $sql = "UPDATE tasks SET " . implode(", ", $fields) . " WHERE id = ?";
