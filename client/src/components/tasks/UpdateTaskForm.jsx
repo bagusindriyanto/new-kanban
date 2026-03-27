@@ -15,7 +15,6 @@ import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { ScrollArea } from '../ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
-import useAuth from '@/stores/authStore';
 import { formatToSQL } from '@/utils/formatTimestamp';
 
 import SwitchField from '../shared/form/SwitchField';
@@ -91,9 +90,6 @@ const UpdateTaskForm = () => {
   const { data: contents } = useFetchActivities();
   const { data: pics } = useFetchPics();
   const { data: tasks } = useFetchTasks(queryParams);
-
-  const user = useAuth((state) => state.user);
-  const filteredPics = pics?.filter((pic) => pic.id !== user.id);
 
   // State untuk tasks yang dipilih
   const selectedTaskId = useFilter((state) => state.selectedTaskId);

@@ -28,8 +28,6 @@ const StatusColumn = ({ title, columnId, tasks }) => {
 
       if (typeof droppableRef === 'function') {
         droppableRef(node);
-      } else if (droppableRef) {
-        droppableRef.current = node;
       }
     },
     [droppableRef],
@@ -90,8 +88,7 @@ const StatusColumn = ({ title, columnId, tasks }) => {
                 data-index={virtualItem.index}
                 ref={virtualizer.measureElement}
                 style={{
-                  marginBottom:
-                    virtualItem.index === virtualItems.length - 1 ? 0 : 12,
+                  marginBottom: virtualItem.index === tasks.length - 1 ? 0 : 12,
                 }}
                 className="px-3"
               >

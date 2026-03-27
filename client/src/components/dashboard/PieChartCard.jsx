@@ -31,7 +31,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const PieChartCard = ({ data = [] }) => {
+const EMPTY_DATA = [];
+
+const PieChartCard = ({ data = EMPTY_DATA }) => {
   const [limit, setLimit] = useState(5);
   const { chartData, chartConfig } = usePieChartData(data, limit);
 

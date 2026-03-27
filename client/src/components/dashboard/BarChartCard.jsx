@@ -29,7 +29,9 @@ import {
 } from '@/components/ui/empty';
 import { Ban } from 'lucide-react';
 
-const BarChartCard = ({ data = [] }) => {
+const EMPTY_DATA = [];
+
+const BarChartCard = ({ data = EMPTY_DATA }) => {
   return (
     <Card className="w-full md:col-span-2 xl:col-span-3">
       <CardHeader>
