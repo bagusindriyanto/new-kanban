@@ -83,8 +83,8 @@ const UpcomingTasksPanel = () => {
             Menampilkan task yang akan dimulai dalam 30 menit ke depan.
           </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="max-h-[calc(100dvh-134px)]">
-          <div className="px-4 space-y-3">
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="px-4 space-y-3 pb-4">
             {visibleTasks.map((task) => {
               const diffInMinutes =
                 (new Date(task.scheduled_at) - new Date()) / 60000;
@@ -102,8 +102,10 @@ const UpcomingTasksPanel = () => {
                   )}
                 >
                   <div className="flex justify-between items-start">
-                    <p className="font-medium truncate">{task.content}</p>
-                    <p className="text-sm">{picName}</p>
+                    <h3 className="text-base font-bold leading-tight line-clamp-2">
+                      {task.content}
+                    </h3>
+                    <p className="text-sm font-semibold">{picName}</p>
                   </div>
                   <p className="text-xs tabular-nums text-muted-foreground">
                     {parseFromSQL(task.scheduled_at)}

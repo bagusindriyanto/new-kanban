@@ -45,7 +45,7 @@ const AppSidebar = () => {
               render={<Link to="/" />}
             >
               <img src={logo} alt="Kanban App" className="size-7 m-0.5" />
-              <span className="truncate font-semibold tracking-tight text-lg">
+              <span className="truncate font-semibold font-heading tracking-tight text-lg">
                 Kanban App
               </span>
             </SidebarMenuButton>

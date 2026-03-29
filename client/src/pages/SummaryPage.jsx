@@ -123,7 +123,7 @@ const SummaryPage = () => {
           <CardContent className="my-auto">
             {/* Content Section */}
             <div className="flex gap-6 items-center">
-              <div className="flex justify-center items-center p-1 rounded-full border shadow-md size-24 shrink-0 border-border bg-accent text-muted-foreground">
+              <div className="flex justify-center items-center p-1 rounded-full border shadow-md size-24 shrink-0 border-border text-muted-foreground">
                 <UserRound className="size-full" />
               </div>
               {/* Judul (Title Text) */}

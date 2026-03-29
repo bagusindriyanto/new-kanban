@@ -88,12 +88,16 @@ const TaskCard = ({ task, className }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md select-none cursor-grab',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-shadow duration-300 hover:shadow-md select-none cursor-grab',
         {
-          'bg-todo-card border-todo-border': status === 'todo',
-          'bg-progress-card border-progress-border': status === 'on progress',
-          'bg-pending-card border-pending-border': status === 'pending',
-          'bg-done-card border-done-border': status === 'done',
+          'bg-todo-card border-todo-border dark:hover:shadow-todo-border/50':
+            status === 'todo',
+          'bg-progress-card border-progress-border dark:hover:shadow-progress-border/50':
+            status === 'on progress',
+          'bg-pending-card border-pending-border dark:hover:shadow-pending-border/50':
+            status === 'pending',
+          'bg-done-card border-done-border dark:hover:shadow-done-border/50':
+            status === 'done',
           'animate-pulse pointer-events-none': optimistic,
           'opacity-40': isDragSource,
         },
