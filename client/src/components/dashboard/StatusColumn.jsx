@@ -15,11 +15,9 @@ const StatusColumn = ({ title, columnId, tasks }) => {
   const virtualizer = useVirtualizer({
     count: tasks?.length || 0,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 100 + 12,
-    overscan: 2,
-    paddingStart: 12,
-    paddingEnd: 12,
+    estimateSize: () => 100,
   });
+  const virtualItems = virtualizer.getVirtualItems();
 
   // Gabungkan droppable ref dan scroll ref
   const mergedRef = useCallback(
@@ -33,12 +31,10 @@ const StatusColumn = ({ title, columnId, tasks }) => {
     [droppableRef],
   );
 
-  const virtualItems = virtualizer.getVirtualItems();
-
   return (
     <div
       className={cn(
-        'flex flex-col min-h-0 h-full rounded-lg border shadow-sm border-border/70',
+        'flex flex-col min-h-0 h-full rounded-lg border shadow-sm border-border/70 overflow-clip',
         {
           'bg-todo': title === 'To Do',
           'bg-progress': title === 'On Progress',
@@ -71,31 +67,31 @@ const StatusColumn = ({ title, columnId, tasks }) => {
         )}
       >
         <div
+          className="relative w-full"
           style={{
-            paddingTop: virtualItems.length > 0 ? virtualItems[0].start : 0,
-            paddingBottom:
-              virtualItems.length > 0
-                ? virtualizer.getTotalSize() -
-                  virtualItems[virtualItems.length - 1].end
-                : 0,
+            height: `${virtualizer.getTotalSize()}px`,
           }}
         >
-          {virtualItems.map((virtualItem) => {
-            const task = tasks[virtualItem.index];
-            return (
-              <div
-                key={task.id}
-                data-index={virtualItem.index}
-                ref={virtualizer.measureElement}
-                style={{
-                  marginBottom: virtualItem.index === tasks.length - 1 ? 0 : 12,
-                }}
-                className="px-3"
-              >
-                <TaskCard task={task} />
-              </div>
-            );
-          })}
+          <div
+            className="absolute top-0 left-0 w-full space-y-3 first:pt-2 last:pb-3"
+            style={{
+              transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
+            }}
+          >
+            {virtualItems.map((virtualItem) => {
+              const task = tasks[virtualItem.index];
+              return (
+                <div
+                  key={task.id}
+                  data-index={virtualItem.index}
+                  ref={virtualizer.measureElement}
+                  className="px-3"
+                >
+                  <TaskCard task={task} />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

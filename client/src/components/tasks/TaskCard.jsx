@@ -11,7 +11,7 @@ import { useUrgencyCheck } from './useUrgencyCheck';
 import TaskTimestamps from './TaskTimestamps';
 import TaskActions from './TaskActions';
 
-const TaskCard = ({ task, overlay }) => {
+const TaskCard = ({ task, className }) => {
   const {
     id,
     status,
@@ -88,15 +88,16 @@ const TaskCard = ({ task, overlay }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-all hover:shadow-md select-none cursor-grab',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md select-none cursor-grab',
         {
           'bg-todo-card border-todo-border': status === 'todo',
           'bg-progress-card border-progress-border': status === 'on progress',
           'bg-pending-card border-pending-border': status === 'pending',
           'bg-done-card border-done-border': status === 'done',
           'animate-pulse pointer-events-none': optimistic,
-          'opacity-40': isDragSource && !overlay,
+          'opacity-40': isDragSource,
         },
+        className,
       )}
     >
       {/* Header: Title */}

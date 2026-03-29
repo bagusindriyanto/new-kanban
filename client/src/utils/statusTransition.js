@@ -75,5 +75,6 @@ export const computeStatusTransition = (task, newStatus) => {
     minute_activity: mnt_activity,
     minute_pause: mnt_pause,
     pause_time: pause,
+    updated_at: now,
   };
 };

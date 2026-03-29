@@ -81,6 +81,7 @@ const formSchema = z
       ? formatToSQL(data.timestamp_done)
       : null,
     scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
+    updated_at: formatToSQL(new Date()),
   }));
 
 const UpdateTaskForm = () => {

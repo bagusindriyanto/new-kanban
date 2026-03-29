@@ -131,7 +131,12 @@ const HomePage = () => {
               {(source) => {
                 const task = source.data?.task;
                 if (!task) return null;
-                return <TaskCard task={task} overlay />;
+                return (
+                  <TaskCard
+                    task={task}
+                    className="scale-105 rotate-1 opacity-100"
+                  />
+                );
               }}
             </DragOverlay>
           </DragDropProvider>

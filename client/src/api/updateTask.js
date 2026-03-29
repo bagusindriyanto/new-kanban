@@ -27,15 +27,17 @@ export const useUpdateTask = (params = {}) => {
 
         queryClient.setQueryData(
           queryKey,
-          oldTasks.map((task) =>
-            task.id === updatedTask.id
-              ? {
-                  ...task,
-                  ...updatedTask,
-                  optimistic: true,
-                }
-              : task,
-          ),
+          oldTasks
+            .map((task) =>
+              task.id === updatedTask.id
+                ? {
+                    ...task,
+                    ...updatedTask,
+                    optimistic: true,
+                  }
+                : task,
+            )
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)),
         );
       });
 
