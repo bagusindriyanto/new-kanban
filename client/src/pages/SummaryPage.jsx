@@ -74,7 +74,7 @@ const SummaryPage = () => {
     <div className="flex flex-col min-h-screen">
       <SiteHeader titlePage="Ringkasan" />
       {/* Filter */}
-      <div className="flex justify-between px-4 pt-4 pb-1">
+      <div className="flex justify-between px-4 pt-4">
         <h2 className="ml-1 text-2xl font-bold tracking-tight">Ringkasan</h2>
         <div className="flex gap-2 items-center">
           <RefreshToggle

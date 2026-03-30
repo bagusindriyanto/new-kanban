@@ -94,7 +94,7 @@ const HomePage = () => {
     <div className="flex flex-col h-screen">
       <SiteHeader titlePage="Kanban Board" />
       {/* Tasks Controls */}
-      <div className="flex justify-between px-4 pt-4 pb-1">
+      <div className="flex justify-between px-4 pt-4">
         <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
         <TasksControls isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
       </div>
