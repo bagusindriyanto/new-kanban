@@ -39,6 +39,7 @@ import { useFetchRoles } from '@/api/fetchRoles';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';
 import SelectField from '../shared/form/SelectField';
+import AvatarUpload from '../shared/form/AvatarUpload';
 
 const formSchema = z
   .object({
@@ -119,6 +120,8 @@ const RegisterForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Pribadi
             </FieldSeparator>
+            {/* Avatar */}
+            <AvatarUpload />
             <Field className="grid grid-cols-2 gap-4">
               {/* Nama Lengkap */}
               <InputField

@@ -33,7 +33,7 @@ export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
       </ItemMedia>
       <ItemContent>
         <ItemTitle className="text-destructive">
-          {!isOnline ? 'Kamu Sedang Offline' : 'Terjadi Kesalahan'}
+          {!isOnline ? 'Anda Sedang Offline' : 'Terjadi Kesalahan'}
         </ItemTitle>
         <ItemDescription className="text-destructive/90">
           {!isOnline
@@ -67,7 +67,7 @@ export const ErrorFull = ({ isOnline, errorMessage }) => {
           )}
         </EmptyMedia>
         <EmptyTitle className="text-destructive">
-          {!isOnline ? 'Kamu Sedang Offline' : 'Terjadi Kesalahan'}
+          {!isOnline ? 'Anda Sedang Offline' : 'Terjadi Kesalahan'}
         </EmptyTitle>
         <EmptyDescription className="text-destructive/90">
           {!isOnline
