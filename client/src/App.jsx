@@ -10,7 +10,7 @@ import ChangelogPage from './pages/ChangelogPage';
 import SettingsPage from './pages/SettingsPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 
-import useAuth from './stores/authStore';
+import useAuthStore from './stores/authStore';
 import { useEffect } from 'react';
 import { api } from './lib/api';
 import GuestRoute from './routes/GuestRoute';
@@ -20,7 +20,7 @@ import { Toaster } from './components/ui/sonner';
 import useFilter from './stores/filterStore';
 
 const App = () => {
-  const { setUser, clearUser } = useAuth();
+  const { setUser, clearUser } = useAuthStore();
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   useEffect(() => {

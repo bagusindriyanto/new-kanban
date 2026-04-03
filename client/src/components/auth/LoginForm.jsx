@@ -5,8 +5,7 @@ import { toast } from 'sonner';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import useAuth from '@/stores/authStore';
+import useAuthStore from '@/stores/authStore';
 import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/api';
 import useFilter from '@/stores/filterStore';
@@ -21,8 +20,6 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,7 +28,7 @@ const LoginForm = () => {
     },
   });
 
-  const setUser = useAuth((state) => state.setUser);
+  const setUser = useAuthStore((state) => state.setUser);
   const navigate = useNavigate();
 
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
@@ -57,7 +54,9 @@ const LoginForm = () => {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Selamat Datang!</CardTitle>
+        <CardTitle className="text-xl tracking-tight">
+          Selamat Datang!
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>

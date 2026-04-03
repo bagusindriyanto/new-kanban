@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
-import useAuth from '@/stores/authStore';
+import useAuthStore from '@/stores/authStore';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { EllipsisVertical } from 'lucide-react';
 import { LogOut } from 'lucide-react';
@@ -27,7 +27,7 @@ function getAvatarColor(name) {
 }
 
 const AccountMenu = () => {
-  const { user, clearUser } = useAuth();
+  const { user, clearUser } = useAuthStore();
   const navigate = useNavigate();
 
   const avatarColor = useMemo(

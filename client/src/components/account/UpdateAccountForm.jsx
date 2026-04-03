@@ -10,7 +10,7 @@ import { Button } from '../ui/button';
 import z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useAuth from '@/stores/authStore';
+import useAuthStore from '@/stores/authStore';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import {
@@ -38,8 +38,8 @@ const formSchema = z.object({
 });
 
 const UpdateAccountForm = () => {
-  const user = useAuth((state) => state.user);
-  const setUser = useAuth((state) => state.setUser);
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const form = useForm({
     resolver: zodResolver(formSchema),

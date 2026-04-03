@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
 import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPics } from '@/api/fetchPics';
-import useAuth from '@/stores/authStore';
+import useAuthStore from '@/stores/authStore';
 import { formatToSQL } from '@/utils/formatTimestamp';
 import TextareaField from '../shared/form/TextareaField';
 import SwitchField from '../shared/form/SwitchField';
@@ -59,7 +59,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const { data: contents } = useFetchActivities();
   const { data: pics } = useFetchPics();
 
-  const user = useAuth((state) => state.user);
+  const user = useAuthStore((state) => state.user);
   const filteredPics = pics?.filter((pic) => pic.id !== user.id);
 
   const form = useForm({

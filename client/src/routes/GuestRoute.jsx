@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from 'react-router';
-import useAuth from '@/stores/authStore';
+import useAuthStore from '@/stores/authStore';
 import LoadingPage from '@/pages/LoadingPage';
 
 const GuestRoute = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useAuthStore();
 
   if (isLoading) return <LoadingPage />;
   if (user) return <Navigate to="/" replace />;

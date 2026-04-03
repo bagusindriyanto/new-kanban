@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const useAuth = create((set) => ({
+const useAuthStore = create((set) => ({
   user: null, // { id, name, role }
   isLoading: true, // untuk cek session saat pertama buka app
 
@@ -8,4 +8,4 @@ const useAuth = create((set) => ({
   clearUser: () => set({ user: null, isLoading: false }),
 }));
 
-export default useAuth;
+export default useAuthStore;
