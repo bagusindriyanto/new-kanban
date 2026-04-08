@@ -9,7 +9,7 @@ import { MinusIcon, PlusIcon } from 'lucide-react';
 const NumberFieldContext = createContext(null);
 
 const numberFieldGroupVariants = cva(
-  'relative flex w-full justify-between border border-input data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus-within:has-aria-invalid:border-destructive focus-within:has-aria-invalid:ring-destructive/20 dark:focus-within:has-aria-invalid:ring-destructive/40 rounded-md bg-transparent dark:bg-input/30 shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-3',
+  'relative flex w-full justify-between border border-transparent data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus-within:has-aria-invalid:border-destructive focus-within:has-aria-invalid:ring-destructive/20 dark:focus-within:has-aria-invalid:ring-destructive/40 rounded-3xl bg-input/50 shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-3 dark:aria-invalid:border-destructive/50 dark:ring-foreground/10',
   {
     variants: {
       size: {
@@ -110,7 +110,7 @@ function NumberFieldDecrement({
     <NumberFieldPrimitive.Decrement
       className={cn(
         numberFieldButtonVariants({ size }),
-        'rounded-s-md border-e-0',
+        'rounded-s-3xl border-e-0',
         className,
       )}
       data-slot="number-field-decrement"
@@ -139,7 +139,7 @@ function NumberFieldIncrement({
     <NumberFieldPrimitive.Increment
       className={cn(
         numberFieldButtonVariants({ size }),
-        'rounded-e-md border-s-0',
+        'rounded-e-3xl border-s-0',
         className,
       )}
       data-slot="number-field-increment"

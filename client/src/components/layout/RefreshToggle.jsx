@@ -15,7 +15,7 @@ export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
       <TooltipTrigger
         render={
           <Button
-            variant="outline"
+            variant="secondary"
             size="icon-sm"
             onClick={refreshData}
             disabled={isFetching}

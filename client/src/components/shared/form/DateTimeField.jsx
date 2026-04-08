@@ -100,7 +100,7 @@ const DateTimeField = ({
             <PopoverTrigger
               render={
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   id={id}
                   aria-invalid={fieldState.invalid}
                   className={cn(

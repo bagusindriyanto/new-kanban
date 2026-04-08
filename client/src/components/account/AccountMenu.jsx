@@ -59,10 +59,10 @@ const AccountMenu = () => {
               />
             }
           >
-            <Avatar className="size-8 rounded-lg">
+            <Avatar className="size-8">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback
-                className="size-8 rounded-lg text-white"
+                className="size-8 text-white"
                 style={{ backgroundColor: avatarColor }}
               >
                 {user.name?.charAt(0).toUpperCase() ?? 'U'}
@@ -79,16 +79,16 @@ const AccountMenu = () => {
             <EllipsisVertical className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="min-w-56 rounded-lg"
+            className="min-w-56"
             side="right"
             align="end"
             sideOffset={4}
           >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar className="size-8 rounded-lg">
+              <Avatar className="size-8">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback
-                  className="size-8 rounded-lg text-white"
+                  className="size-8 text-white"
                   style={{ backgroundColor: avatarColor }}
                 >
                   {user.name?.charAt(0).toUpperCase() ?? 'U'}

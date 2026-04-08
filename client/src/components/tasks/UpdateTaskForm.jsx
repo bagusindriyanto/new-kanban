@@ -226,7 +226,7 @@ const UpdateTaskForm = () => {
                 name="minute_pause"
                 control={form.control}
                 label="Durasi Pause"
-                min={0}
+                min={-1}
               />
               {/* Pause Time */}
               <SwitchField

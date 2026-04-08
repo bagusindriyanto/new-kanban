@@ -39,16 +39,12 @@ const AppSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              render={<Link to="/" />}
-            >
+            <div className="flex items-center gap-2 transition-[padding] group-data-[state=expanded]:px-2 group-data-[state=expanded]:py-1">
               <img src={logo} alt="Kanban App" className="size-7 m-0.5" />
               <span className="truncate font-semibold font-heading tracking-tight text-lg">
                 Kanban App
               </span>
-            </SidebarMenuButton>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

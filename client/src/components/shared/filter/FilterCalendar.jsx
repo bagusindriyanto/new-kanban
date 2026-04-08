@@ -70,7 +70,7 @@ export const FilterCalendar = () => {
 
   return (
     <Popover>
-      <PopoverTrigger render={<Button variant="outline" size="sm" />}>
+      <PopoverTrigger render={<Button variant="secondary" size="sm" />}>
         <CalendarIcon data-icon="inline-start" />
         {range.from && range.to
           ? range.from.getTime() === range.to.getTime()
