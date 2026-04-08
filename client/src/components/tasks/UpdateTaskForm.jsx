@@ -181,7 +181,7 @@ const UpdateTaskForm = () => {
   // Form
   return (
     <>
-      <ScrollArea className="-mx-4 px-4 max-h-[60vh]">
+      <div className="max-h-[60vh] overflow-y-auto -mx-4 px-4">
         <form id="update-task" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldGroup className="grid grid-cols-2 gap-4">
@@ -226,7 +226,7 @@ const UpdateTaskForm = () => {
                 name="minute_pause"
                 control={form.control}
                 label="Durasi Pause"
-                min={-1}
+                min={0}
               />
               {/* Pause Time */}
               <SwitchField
@@ -307,7 +307,7 @@ const UpdateTaskForm = () => {
             </FieldGroup>
           </FieldSet>
         </form>
-      </ScrollArea>
+      </div>
       <DialogFooter>
         <DialogClose render={<Button variant="outline" disabled={isPending} />}>
           Batal

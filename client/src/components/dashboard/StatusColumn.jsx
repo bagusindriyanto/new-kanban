@@ -57,9 +57,6 @@ const StatusColumn = ({ title, columnId, tasks }) => {
         ref={mergedRef}
         className={cn(
           'flex-1 overflow-y-auto transition-colors duration-200 rounded-b-lg',
-          '[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-none [&::-webkit-scrollbar-thumb]:relative',
-          '[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300',
-          'dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500',
           {
             'bg-primary/5 dark:bg-primary/10 ring-2 ring-inset ring-primary/30':
               isDropTarget,
