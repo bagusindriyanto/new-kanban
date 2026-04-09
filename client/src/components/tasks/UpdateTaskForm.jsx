@@ -181,7 +181,7 @@ const UpdateTaskForm = () => {
   // Form
   return (
     <>
-      <div className="max-h-[60vh] overflow-y-auto -mx-4 px-4">
+      <div className="max-h-[60vh] overflow-y-auto -mx-4 px-4 pb-2">
         <form id="update-task" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldGroup className="grid grid-cols-2 gap-4">

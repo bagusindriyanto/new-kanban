@@ -9,7 +9,8 @@ const useFilter = create((set) => ({
   setSelectedTaskId: (taskId) => set({ selectedTaskId: taskId }),
 
   range: { from: startOfDay(new Date()), to: startOfDay(new Date()) },
-  setRange: ({ from, to }) => set({ range: { from, to } }),
+  setRange: (newRange) =>
+    set({ range: { from: newRange?.from, to: newRange?.to } }),
 }));
 
 export default useFilter;

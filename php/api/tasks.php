@@ -37,7 +37,7 @@ function handleGet($pdo)
   try {
     $pic_id = $_GET['pic_id'] ?? null;
     $from_date = $_GET['from_date'] ?? null;
-    $to_date = $_GET['to_date'] ?? null;
+    $to_date = $_GET['to_date'] ?? $from_date;
 
     $sql = "SELECT t.*,
         p.name as pic_name,

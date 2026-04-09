@@ -68,21 +68,24 @@ export const FilterCalendar = () => {
   const range = useFilter((state) => state.range);
   const setRange = useFilter((state) => state.setRange);
 
+  const dateLabel = range?.from
+    ? range?.to
+      ? range.from.getTime() === range.to.getTime()
+        ? range?.from.toLocaleDateString('id')
+        : `${range?.from.toLocaleDateString('id')} - ${range?.to.toLocaleDateString('id')}`
+      : range?.from.toLocaleDateString('id')
+    : 'Semua Hari';
+
   return (
     <Popover>
       <PopoverTrigger render={<Button variant="secondary" size="sm" />}>
         <CalendarIcon data-icon="inline-start" />
-        {range.from && range.to
-          ? range.from.getTime() === range.to.getTime()
-            ? range.from.toLocaleDateString('id')
-            : `${range.from.toLocaleDateString(
-                'id',
-              )} - ${range.to.toLocaleDateString('id')}`
-          : 'Semua Hari'}
+        {dateLabel}
       </PopoverTrigger>
       <PopoverContent className="p-0 w-auto">
         <Calendar
           mode="range"
+          resetOnSelect
           locale={id}
           showWeekNumber
           captionLayout="dropdown"
