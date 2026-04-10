@@ -82,7 +82,7 @@ export const FilterCalendar = () => {
         <CalendarIcon data-icon="inline-start" />
         {dateLabel}
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-auto">
+      <PopoverContent align="end" className="p-0 w-auto">
         <Calendar
           mode="range"
           resetOnSelect
@@ -102,7 +102,11 @@ export const FilterCalendar = () => {
         <div className="flex gap-3 justify-between items-end p-3 border-t border-border">
           <Button
             className="flex-1"
-            variant="outline"
+            variant={
+              range?.from?.getTime() === startOfDay(new Date()).getTime()
+                ? 'default'
+                : 'outline'
+            }
             onClick={() =>
               setRange({
                 from: startOfDay(new Date()),
@@ -114,8 +118,8 @@ export const FilterCalendar = () => {
           </Button>
           <Button
             className="flex-1"
-            variant="outline"
-            onClick={() => setRange({ from: null, to: null })}
+            variant={!range?.from && !range?.to ? 'default' : 'outline'}
+            onClick={() => setRange({ from: undefined, to: undefined })}
           >
             Semua Hari
           </Button>
