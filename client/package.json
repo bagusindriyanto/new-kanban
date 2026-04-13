@@ -15,7 +15,7 @@
     "@dnd-kit/react": "^0.3.2",
     "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@fontsource-variable/geist": "^5.2.8",
-    "@fontsource-variable/roboto-mono": "^5.2.8",
+    "@fontsource-variable/geist-mono": "^5.2.7",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.1",
     "@tailwindcss/vite": "^4.1.12",

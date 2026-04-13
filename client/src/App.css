@@ -3,7 +3,7 @@
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/bricolage-grotesque';
 @import '@fontsource-variable/geist';
-@import '@fontsource-variable/roboto-mono';
+@import '@fontsource-variable/geist-mono';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -79,10 +79,10 @@
   --color-done-border: var(--done-border);
   --font-heading: var(--font-bricolage-grotesque);
   --font-body: var(--font-geist);
-  --font-mono: var(--font-roboto-mono);
+  --font-mono: var(--font-geist-mono);
   --font-bricolage-grotesque: Bricolage Grotesque Variable;
   --font-geist: Geist Variable;
-  --font-roboto-mono: Roboto Mono Variable;
+  --font-geist-mono: Geist Mono Variable;
 }
 
 :root {
@@ -271,4 +271,8 @@
   pre {
     font-family: var(--font-mono);
   }
+}
+
+.rdp-range_start.rdp-range_end::after {
+  display: none;
 }
