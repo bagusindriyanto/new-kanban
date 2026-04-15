@@ -11,15 +11,17 @@ export const addActivity = async (data) => {
 export const useAddActivity = (params = {}) => {
   return useMutation({
     mutationFn: addActivity,
-    ...params.mutationConfig,
-    onSuccess: (data, variables, onMutateResult, context) => {
+    onSettled: (data, error, variables, onMutateResult, context) => {
       queryClient.invalidateQueries({ queryKey: fetchActivitiesQueryKey() });
-      params.mutationConfig?.onSuccess?.(
+
+      params.mutationConfig?.onSettled?.(
         data,
+        error,
         variables,
         onMutateResult,
-        context
+        context,
       );
     },
+    ...params.mutationConfig,
   });
 };
