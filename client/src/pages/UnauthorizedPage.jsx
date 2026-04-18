@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { buttonVariants } from '@/components/ui/button';
 
-const NotFoundPage = () => {
+const UnauthorizedPage = () => {
   return (
     <div className="flex flex-col justify-center items-center h-screen">
       <h1 className="mb-4 text-7xl font-extrabold">Oops!</h1>
@@ -15,4 +15,4 @@ const NotFoundPage = () => {
   );
 };
 
-export default NotFoundPage;
+export default UnauthorizedPage;
