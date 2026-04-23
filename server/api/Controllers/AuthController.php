@@ -286,14 +286,18 @@ class AuthController extends BaseController
             $stmt->execute([$userId]);
 
             // Insert new refresh token
+            // Calculate expires_at in PHP — MySQL doesn't support
+            // named placeholders inside INTERVAL expressions.
+            $expiresAt = date('Y-m-d H:i:s', time() + $ttl);
+
             $stmt = $this->db->prepare(
                 'INSERT INTO refresh_tokens (user_id, token, expires_at)
-                 VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL :ttl SECOND))'
+                 VALUES (:user_id, :token, :expires_at)'
             );
             $stmt->execute([
-                ':user_id' => $userId,
-                ':token'   => $token,
-                ':ttl'     => $ttl,
+                ':user_id'    => $userId,
+                ':token'      => $token,
+                ':expires_at' => $expiresAt,
             ]);
         } catch (PDOException $e) {
             // Non-critical — login can still succeed without storing refresh token

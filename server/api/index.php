@@ -84,14 +84,17 @@ $allRoles = 'rbac:Admin,Manager,Supervisor,Staff';
 $router->add('GET',    '/tasks', [TaskController::class, 'index'],   ['auth', $allRoles]);
 $router->add('POST',   '/tasks', [TaskController::class, 'store'],   ['auth', $allRoles]);
 $router->add('PATCH',  '/tasks', [TaskController::class, 'update'],  ['auth', $allRoles]);
-$router->add('DELETE', '/tasks', [TaskController::class, 'destroy'], ['auth', 'rbac:Admin,Manager']);
+// $router->add('DELETE', '/tasks', [TaskController::class, 'destroy'], ['auth', 'rbac:Admin,Manager']);
+$router->add('DELETE', '/tasks', [TaskController::class, 'destroy'], ['auth', $allRoles]);
 
 // PIC routes
 $router->add('GET', '/pics', [PicController::class, 'index'], ['auth', $allRoles]);
 
 // Division & Role management (Admin only)
-$router->add('POST', '/divisions', [DivisionController::class, 'store'], ['auth', 'rbac:Admin']);
-$router->add('POST', '/roles',    [RoleController::class, 'store'],     ['auth', 'rbac:Admin']);
+// $router->add('POST', '/divisions', [DivisionController::class, 'store'], ['auth', 'rbac:Admin']);
+$router->add('POST', '/divisions', [DivisionController::class, 'store'], ['auth', $allRoles]);
+// $router->add('POST', '/roles',    [RoleController::class, 'store'],     ['auth', 'rbac:Admin']);
+$router->add('POST', '/roles',    [RoleController::class, 'store'],     ['auth', $allRoles]);
 
 // Activity routes
 $router->add('GET',  '/activities', [ActivityController::class, 'index'], ['auth', $allRoles]);

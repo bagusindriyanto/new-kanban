@@ -19,7 +19,7 @@ return [
 
     // JWT
     'jwt' => [
-        'secret'      => 'your-super-secret-key-change-this-in-production',
+        'secret'      => '9f3a1c7b8e2d4f6a9c0b1e3d5f7a8c2b4d6e9f0a1c3b5d7e9f2a4c6e8b0d1f3',
         'access_ttl'  => 900,      // 15 minutes
         'refresh_ttl' => 604800,   // 7 days
         'algorithm'   => 'SHA256',

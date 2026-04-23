@@ -146,6 +146,17 @@ class Request
             return $_SERVER[$special];
         }
 
+        // Fallback: use apache_request_headers() / getallheaders()
+        // This covers CGI/FastCGI setups where $_SERVER may not have the header
+        if (function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            foreach ($headers as $headerName => $value) {
+                if (strcasecmp($headerName, $name) === 0) {
+                    return $value;
+                }
+            }
+        }
+
         return null;
     }
 
