@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { EllipsisVertical } from 'lucide-react';
 import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
-import { api } from '@/lib/api';
+import { api, getRefreshToken } from '@/lib/api';
 import { useNavigate } from 'react-router';
 
 function getAvatarColor(name) {
@@ -36,15 +36,18 @@ const AccountMenu = () => {
   );
 
   const handleLogout = () => {
-    toast.promise(api.post('/logout.php'), {
-      loading: 'Sedang memproses logout...',
-      success: () => {
-        clearUser();
-        navigate('/login');
-        return 'Logout berhasil.';
+    toast.promise(
+      api.post('/auth/logout', { refresh_token: getRefreshToken() }),
+      {
+        loading: 'Sedang memproses logout...',
+        success: () => {
+          clearUser();
+          navigate('/login');
+          return 'Logout berhasil.';
+        },
+        error: (err) => err.response?.data?.message || 'Logout gagal.',
       },
-      error: (err) => err.response?.data?.message || 'Logout gagal.',
-    });
+    );
   };
 
   return (

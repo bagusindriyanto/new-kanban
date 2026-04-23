@@ -28,16 +28,16 @@ const LoginForm = () => {
     },
   });
 
-  const setUser = useAuthStore((state) => state.setUser);
+  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   const onSubmit = (data) => {
-    toast.promise(api.post('/login.php', data), {
+    toast.promise(api.post('/auth/login', data), {
       loading: 'Sedang memproses login...',
       success: (res) => {
-        setUser(res.data.user);
+        login(res.data.user, res.data.access_token, res.data.refresh_token);
         setSelectedPicId(res.data.user.id);
         navigate('/');
         return `Selamat datang, ${res.data.user.name}!`;

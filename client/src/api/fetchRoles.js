@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
 export const fetchRoles = async () => {
-  const response = await api.get('/roles.php');
+  const response = await api.get('/roles');
   return response.data;
 };
 

@@ -12,7 +12,7 @@ import UnauthorizedPage from './pages/UnauthorizedPage';
 
 import useAuthStore from './stores/authStore';
 import { useEffect } from 'react';
-import { api } from './lib/api';
+import { api, getAccessToken } from './lib/api';
 import GuestRoute from './routes/GuestRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
@@ -25,8 +25,14 @@ const App = () => {
 
   useEffect(() => {
     const checkUser = async () => {
+      const token = getAccessToken();
+      if (!token) {
+        clearUser();
+        return;
+      }
+
       try {
-        const res = await api.get('/me.php');
+        const res = await api.get('/auth/me');
         setUser(res.data.user);
         setSelectedPicId(res.data.user.id);
       } catch (err) {

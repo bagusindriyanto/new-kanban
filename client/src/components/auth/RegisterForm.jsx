@@ -88,7 +88,7 @@ const RegisterForm = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    toast.promise(api.post('/register.php', data), {
+    toast.promise(api.post('/auth/register', data), {
       loading: 'Sedang membuat akun...',
       success: () => {
         navigate('/login');

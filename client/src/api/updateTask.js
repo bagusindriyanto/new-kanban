@@ -4,7 +4,7 @@ import { queryClient } from '@/lib/react-query';
 import { fetchTasksQueryKey } from './fetchTasks';
 
 export const updateTask = async (data) => {
-  const response = await api.patch(`/tasks.php?id=${data.id}`, data);
+  const response = await api.patch(`/tasks?id=${data.id}`, data);
   return response.data;
 };
 

@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
 export const fetchPics = async () => {
-  const response = await api.get('/pics.php');
+  const response = await api.get('/pics');
   return response.data;
 };
 

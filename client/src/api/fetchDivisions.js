@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
 export const fetchDivisions = async () => {
-  const response = await api.get('/divisions.php');
+  const response = await api.get('/divisions');
   return response.data;
 };
 

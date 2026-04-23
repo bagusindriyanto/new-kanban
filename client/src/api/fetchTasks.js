@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
 export const fetchTasks = async (filters = {}) => {
-  const response = await api.get('/tasks.php', {
+  const response = await api.get('/tasks', {
     params: filters,
   });
   return response.data;
