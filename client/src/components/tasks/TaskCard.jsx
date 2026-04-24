@@ -10,10 +10,12 @@ import { usePauseTimer } from './usePauseTimer';
 import { useUrgencyCheck } from './useUrgencyCheck';
 import TaskTimestamps from './TaskTimestamps';
 import TaskActions from './TaskActions';
+import { useRole } from '@/hooks/useRole';
 
 const TaskCard = ({ task, className }) => {
   const {
     id,
+    pic_id,
     status,
     content,
     detail,
@@ -38,6 +40,9 @@ const TaskCard = ({ task, className }) => {
   );
   const setSelectedTaskId = useFilter((state) => state.setSelectedTaskId);
 
+  const { isOwner } = useRole();
+  const canModify = isOwner(pic_id);
+
   // Mutation
   const { mutate: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
@@ -58,7 +63,7 @@ const TaskCard = ({ task, className }) => {
   const { ref: draggableRef, isDragSource } = useDraggable({
     id: id,
     data: { task },
-    disabled: optimistic || !!pause_time,
+    disabled: optimistic || !!pause_time || !canModify,
   });
 
   // Custom hooks
@@ -88,17 +93,20 @@ const TaskCard = ({ task, className }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition duration-300 hover:shadow-md hover:-translate-y-1 select-none cursor-grab outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition duration-300 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
         {
-          'bg-todo-card border-todo-border dark:hover:shadow-todo-border/50':
+          'hover:shadow-md hover:-translate-y-1 select-none cursor-grab':
+            canModify,
+          'bg-todo-card border-todo-border shadow-todo-border/50':
             status === 'todo',
-          'bg-progress-card border-progress-border dark:hover:shadow-progress-border/50':
+          'bg-progress-card border-progress-border shadow-progress-border/50':
             status === 'on progress',
-          'bg-pending-card border-pending-border dark:hover:shadow-pending-border/50':
+          'bg-pending-card border-pending-border shadow-pending-border/50':
             status === 'pending',
-          'bg-done-card border-done-border dark:hover:shadow-done-border/50':
+          'bg-done-card border-done-border shadow-done-border/50':
             status === 'done',
           'animate-pulse pointer-events-none': optimistic,
+          'cursor-not-allowed': !canModify,
           'opacity-40': isDragSource,
         },
         className,
@@ -152,6 +160,7 @@ const TaskCard = ({ task, className }) => {
         togglePause={togglePause}
         onEdit={handleUpdateTaskModal}
         onDelete={handleDeleteTaskModal}
+        canModify={canModify}
       />
     </div>
   );

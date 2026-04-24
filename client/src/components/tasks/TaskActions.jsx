@@ -16,6 +16,7 @@ const TaskActions = ({
   togglePause,
   onEdit,
   onDelete,
+  canModify,
 }) => {
   return (
     <div className="flex gap-2 justify-between items-center mt-1">
@@ -48,36 +49,38 @@ const TaskActions = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-1 items-center">
-        {status === 'on progress' && (
+      {canModify && (
+        <div className="flex gap-1 items-center">
+          {status === 'on progress' && (
+            <Button
+              onClick={togglePause}
+              variant={isPaused ? 'destructive' : 'outline'}
+              size="icon-xs"
+              disabled={optimistic}
+            >
+              {isPaused ? <PlayIcon /> : <PauseIcon />}
+            </Button>
+          )}
+
           <Button
-            onClick={togglePause}
-            variant={isPaused ? 'destructive' : 'outline'}
+            onClick={onEdit}
+            variant="outline"
             size="icon-xs"
             disabled={optimistic}
           >
-            {isPaused ? <PlayIcon /> : <PauseIcon />}
+            <SquarePen />
           </Button>
-        )}
 
-        <Button
-          onClick={onEdit}
-          variant="outline"
-          size="icon-xs"
-          disabled={optimistic}
-        >
-          <SquarePen />
-        </Button>
-
-        <Button
-          onClick={onDelete}
-          variant="outline"
-          size="icon-xs"
-          disabled={optimistic}
-        >
-          <Trash2 />
-        </Button>
-      </div>
+          <Button
+            onClick={onDelete}
+            variant="outline"
+            size="icon-xs"
+            disabled={optimistic}
+          >
+            <Trash2 />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

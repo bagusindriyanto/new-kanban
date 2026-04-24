@@ -60,7 +60,12 @@ const UpcomingTasksPanel = () => {
     <Sheet>
       <Tooltip>
         <TooltipTrigger
-          render={<SheetTrigger render={<div className="relative w-fit" />} />}
+          render={
+            <SheetTrigger
+              nativeButton={false}
+              render={<div className="relative w-fit" />}
+            />
+          }
         >
           <Button variant="outline" size="icon">
             <BellRing />

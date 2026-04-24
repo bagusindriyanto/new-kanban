@@ -109,7 +109,7 @@ api.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null);
       clearTokens();
-      window.location.href = '/login';
+      window.location.href = '/kanban/login';
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

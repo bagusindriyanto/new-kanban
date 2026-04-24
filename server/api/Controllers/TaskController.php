@@ -146,10 +146,14 @@ class TaskController extends BaseController
             $this->error('ID diperlukan.');
         }
 
+        $id = intval($id);
+
+        // Cek kepemilikan: hanya pemilik task (atau Admin/Manager) yang boleh edit
+        $this->assertOwner($id);
+
         $input = $this->request->getBody();
 
         try {
-            $id             = intval($id);
             $picId          = $input['pic_id'];
             $content        = isset($input['content']) ? trim($input['content']) : '';
             $detail         = isset($input['detail']) ? trim($input['detail']) : '';
@@ -226,8 +230,12 @@ class TaskController extends BaseController
             $this->error('ID diperlukan.');
         }
 
+        $id = intval($id);
+
+        // Cek kepemilikan: hanya pemilik task (atau Admin/Manager) yang boleh hapus
+        $this->assertOwner($id);
+
         try {
-            $id   = intval($id);
             $stmt = $this->db->prepare('DELETE FROM tasks WHERE id = :id');
 
             if (!$stmt->execute([':id' => $id])) {
