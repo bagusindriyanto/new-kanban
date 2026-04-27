@@ -27,7 +27,6 @@ import NumberInputField from '../shared/form/NumberInputField';
 const statusItems = [
   { value: 'todo', label: 'To Do' },
   { value: 'on progress', label: 'On Progress' },
-  { value: 'pending', label: 'Pending' },
   { value: 'done', label: 'Done' },
 ];
 
@@ -35,7 +34,7 @@ const formSchema = z
   .object({
     content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
     pic_id: z.number('Mohon pilih PIC.'),
-    status: z.enum(['todo', 'on progress', 'pending', 'done'], {
+    status: z.enum(['todo', 'on progress', 'done'], {
       error: 'Status harus dipilih.',
     }),
     minute_pause: z.number().nonnegative('Durasi pause harus 0 atau lebih.'),
@@ -47,7 +46,6 @@ const formSchema = z
       .optional(),
     timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
     timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
-    timestamp_pending: z.date('Mohon isi tanggal dan waktu.').nullish(),
     timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
     is_scheduled: z.boolean(),
     scheduled_at: z.date().nullish(),
@@ -64,18 +62,14 @@ const formSchema = z
   .transform((data) => ({
     ...data,
     minute_activity:
-      data.timestamp_progress && data.timestamp_pending
-        ? Math.floor(
-            (data.timestamp_pending - data.timestamp_progress) / 60000,
-          ) - data.minute_pause
+      data.timestamp_progress && data.timestamp_done
+        ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
+          data.minute_pause
         : 0,
     pause_time: data.pause_time ? formatToSQL(new Date()) : null,
     timestamp_todo: formatToSQL(data.timestamp_todo),
     timestamp_progress: data.timestamp_progress
       ? formatToSQL(data.timestamp_progress)
-      : null,
-    timestamp_pending: data.timestamp_pending
-      ? formatToSQL(data.timestamp_pending)
       : null,
     timestamp_done: data.timestamp_done
       ? formatToSQL(data.timestamp_done)
@@ -118,9 +112,6 @@ const UpdateTaskForm = () => {
       timestamp_progress: task?.timestamp_progress
         ? new Date(task.timestamp_progress)
         : undefined,
-      timestamp_pending: task?.timestamp_pending
-        ? new Date(task.timestamp_pending)
-        : undefined,
       timestamp_done: task?.timestamp_done
         ? new Date(task.timestamp_done)
         : undefined,
@@ -139,14 +130,9 @@ const UpdateTaskForm = () => {
   switch (statusInput) {
     case 'todo':
       form.setValue('timestamp_progress', undefined);
-      form.setValue('timestamp_pending', undefined);
       form.setValue('timestamp_done', undefined);
       break;
     case 'on progress':
-      form.setValue('timestamp_pending', undefined);
-      form.setValue('timestamp_done', undefined);
-      break;
-    case 'pending':
       form.setValue('timestamp_done', undefined);
       break;
   }
@@ -252,18 +238,6 @@ const UpdateTaskForm = () => {
                 required={statusInput !== 'todo'}
                 disabled={statusInput === 'todo'}
                 side="right"
-              />
-              {/* Timestamp Pending */}
-              <DateTimeField
-                name="timestamp_pending"
-                control={form.control}
-                label="Timestamp Pending"
-                required={
-                  statusInput !== 'todo' && statusInput !== 'on progress'
-                }
-                disabled={
-                  statusInput === 'todo' || statusInput === 'on progress'
-                }
               />
               {/* Timestamp Done */}
               <DateTimeField

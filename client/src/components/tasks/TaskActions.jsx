@@ -34,7 +34,7 @@ const TaskActions = ({
           </div>
         )}
 
-        {(status === 'pending' || status === 'done') && (
+        {status === 'done' && (
           <div className="flex items-center gap-2 text-[11px]">
             <span className="flex gap-1 items-center font-medium">
               <Timer className="size-4.5" /> {minute_activity || 0}m

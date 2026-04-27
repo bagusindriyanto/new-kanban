@@ -117,7 +117,7 @@ const HomePage = () => {
           isOnline && <EmptyState action={<AddTaskModal />} />}
         {tasks?.length > 0 && !isFetchTasksLoading && (
           <DragDropProvider onDragEnd={handleDragEnd}>
-            <div className="grid flex-1 min-h-0 grid-cols-4 gap-3">
+            <div className="grid flex-1 min-h-0 grid-cols-3 gap-4">
               {columns.map((column) => (
                 <StatusColumn
                   key={column.id}

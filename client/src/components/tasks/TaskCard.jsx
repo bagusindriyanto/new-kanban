@@ -21,7 +21,6 @@ const TaskCard = ({ task, className }) => {
     detail,
     timestamp_todo,
     timestamp_progress,
-    timestamp_pending,
     timestamp_done,
     minute_activity,
     pause_time,
@@ -100,8 +99,6 @@ const TaskCard = ({ task, className }) => {
             status === 'todo',
           'bg-progress-card border-progress-border shadow-progress-border/50':
             status === 'on progress',
-          'bg-pending-card border-pending-border shadow-pending-border/50':
-            status === 'pending',
           'bg-done-card border-done-border shadow-done-border/50':
             status === 'done',
           'animate-pulse pointer-events-none': optimistic,
@@ -139,7 +136,6 @@ const TaskCard = ({ task, className }) => {
           status={status}
           timestamp_todo={timestamp_todo}
           timestamp_progress={timestamp_progress}
-          timestamp_pending={timestamp_pending}
           timestamp_done={timestamp_done}
           pause_time={pause_time}
           scheduled_at={scheduled_at}

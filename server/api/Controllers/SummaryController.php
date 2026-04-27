@@ -37,7 +37,6 @@ class SummaryController extends BaseController
                     'summary' => [
                         'todo_count'             => 0,
                         'on_progress_count'      => 0,
-                        'pending_count'          => 0,
                         'done_count'             => 0,
                         'total_count'            => 0,
                         'total_activity_minutes' => 0,
@@ -51,10 +50,14 @@ class SummaryController extends BaseController
 
             // Build filters for each table
             list($taskWhere, $taskParams) = $this->buildFilters(
-                $_GET, 'timestamp_progress', 'pic_id'
+                $_GET,
+                'timestamp_progress',
+                'pic_id'
             );
             list($workWhere, $workParams) = $this->buildFilters(
-                $_GET, 'date', 'pic_id'
+                $_GET,
+                'date',
+                'pic_id'
             );
             $chartParams = array_merge($taskParams);
 
@@ -71,7 +74,6 @@ class SummaryController extends BaseController
             $totalWorkingMin  = $workingSummary['total_working_minutes'] ?? 0;
 
             $totalCount = ($summary['on_progress_count'] ?? 0)
-                + ($summary['pending_count'] ?? 0)
                 + ($summary['done_count'] ?? 0)
                 + $todoCount;
 
@@ -95,7 +97,6 @@ class SummaryController extends BaseController
                 'table_summary' => $tableSummary,
                 'chart_summary' => $chartSummary,
             ]);
-
         } catch (PDOException $e) {
             $this->error('Gagal mengambil data.', 500, $e->getMessage());
         }
@@ -117,7 +118,7 @@ class SummaryController extends BaseController
                   WHEN {$prefix}pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, NOW()) - {$prefix}minute_pause
                   ELSE TIMESTAMPDIFF(MINUTE, {$prefix}timestamp_progress, {$prefix}pause_time) - {$prefix}minute_pause
                 END
-              WHEN {$prefix}status IN ('pending', 'done') THEN
+              WHEN {$prefix}status = 'done' THEN
                 {$prefix}minute_activity
               ELSE 0
             END";
@@ -188,7 +189,6 @@ class SummaryController extends BaseController
         $sql = "
             SELECT
               COUNT(CASE WHEN status = 'on progress' THEN 1 END) AS on_progress_count,
-              COUNT(CASE WHEN status = 'pending'     THEN 1 END) AS pending_count,
               COUNT(CASE WHEN status = 'done'        THEN 1 END) AS done_count,
               SUM({$activityExpr}) AS total_activity_minutes
             FROM tasks
@@ -253,7 +253,7 @@ class SummaryController extends BaseController
                       WHEN pause_time IS NULL THEN TIMESTAMPDIFF(MINUTE, timestamp_progress, NOW()) - minute_pause
                       ELSE TIMESTAMPDIFF(MINUTE, timestamp_progress, pause_time) - minute_pause
                     END
-                  WHEN status IN ('pending', 'done') THEN
+                  WHEN status = 'done' THEN
                     minute_activity
                   ELSE NULL
                 END

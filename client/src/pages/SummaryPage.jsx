@@ -157,9 +157,6 @@ const SummaryPage = () => {
               <Badge className="border text-progress-foreground bg-progress border-progress-border">
                 On Progress: {data?.summary?.on_progress_count ?? 0}
               </Badge>
-              <Badge className="border text-pending-foreground bg-pending border-pending-border">
-                Pending: {data?.summary?.pending_count ?? 0}
-              </Badge>
               <Badge className="border text-done-foreground bg-done border-done-border">
                 Done: {data?.summary?.done_count ?? 0}
               </Badge>

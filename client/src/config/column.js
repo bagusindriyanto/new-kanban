@@ -9,10 +9,6 @@ export const columns = [
     title: 'On Progress',
   },
   {
-    id: 'pending',
-    title: 'Pending',
-  },
-  {
     id: 'done',
     title: 'Done',
   },

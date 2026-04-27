@@ -53,7 +53,6 @@ class TaskController extends BaseController
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $this->json($rows);
-
         } catch (PDOException $e) {
             $this->error('Gagal mengambil data.', 500, $e->getMessage());
         }
@@ -81,7 +80,6 @@ class TaskController extends BaseController
             $scheduledAt    = $input['scheduled_at'] ?? null;
             $timestampTodo  = $input['timestamp_todo'];
             $timestampProg  = null;
-            $timestampPend  = null;
             $timestampDone  = null;
             $minutePause    = 0;
             $minuteActivity = 0;
@@ -89,10 +87,10 @@ class TaskController extends BaseController
 
             $sql = "INSERT INTO tasks
                     (pic_id, assigner_id, content, detail, status, scheduled_at,
-                     timestamp_todo, timestamp_progress, timestamp_pending, timestamp_done,
+                     timestamp_todo, timestamp_progress, timestamp_done,
                      minute_pause, minute_activity, pause_time)
                     VALUES (:pic_id, :assigner_id, :content, :detail, :status, :scheduled_at,
-                            :timestamp_todo, :timestamp_progress, :timestamp_pending, :timestamp_done,
+                            :timestamp_todo, :timestamp_progress, :timestamp_done,
                             :minute_pause, :minute_activity, :pause_time)";
 
             $stmt = $this->db->prepare($sql);
@@ -105,7 +103,6 @@ class TaskController extends BaseController
                 ':scheduled_at'       => $scheduledAt,
                 ':timestamp_todo'     => $timestampTodo,
                 ':timestamp_progress' => $timestampProg,
-                ':timestamp_pending'  => $timestampPend,
                 ':timestamp_done'     => $timestampDone,
                 ':minute_pause'       => $minutePause,
                 ':minute_activity'    => $minuteActivity,
@@ -122,13 +119,11 @@ class TaskController extends BaseController
                 'scheduled_at'       => $scheduledAt,
                 'timestamp_todo'     => $timestampTodo,
                 'timestamp_progress' => $timestampProg,
-                'timestamp_pending'  => $timestampPend,
                 'timestamp_done'     => $timestampDone,
                 'minute_pause'       => $minutePause,
                 'minute_activity'    => $minuteActivity,
                 'pause_time'         => $pauseTime,
             ], 201);
-
         } catch (PDOException $e) {
             $this->error('Gagal menambahkan task.', 500, $e->getMessage());
         }
@@ -161,7 +156,6 @@ class TaskController extends BaseController
             $scheduledAt    = $input['scheduled_at'] ?? null;
             $timestampTodo  = $input['timestamp_todo'] ?? null;
             $timestampProg  = $input['timestamp_progress'] ?? null;
-            $timestampPend  = $input['timestamp_pending'] ?? null;
             $timestampDone  = $input['timestamp_done'] ?? null;
             $minutePause    = $input['minute_pause'] ?? 0;
             $minuteActivity = $input['minute_activity'] ?? 0;
@@ -175,7 +169,6 @@ class TaskController extends BaseController
                 'scheduled_at = ?',
                 'timestamp_todo = ?',
                 'timestamp_progress = ?',
-                'timestamp_pending = ?',
                 'timestamp_done = ?',
                 'minute_pause = ?',
                 'minute_activity = ?',
@@ -189,7 +182,6 @@ class TaskController extends BaseController
                 $scheduledAt,
                 $timestampTodo,
                 $timestampProg,
-                $timestampPend,
                 $timestampDone,
                 $minutePause,
                 $minuteActivity,
@@ -212,7 +204,6 @@ class TaskController extends BaseController
                     404
                 );
             }
-
         } catch (PDOException $e) {
             $this->error('Gagal memperbarui task.', 500, $e->getMessage());
         }
@@ -250,7 +241,6 @@ class TaskController extends BaseController
                     404
                 );
             }
-
         } catch (PDOException $e) {
             $this->error('Gagal menghapus task.', 500, $e->getMessage());
         }

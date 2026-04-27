@@ -46,7 +46,6 @@ const formSchema = z
     status: 'todo',
     timestamp_todo: formatToSQL(new Date()),
     timestamp_progress: null,
-    timestamp_pending: null,
     timestamp_done: null,
     minute_pause: 0,
     minute_activity: 0,

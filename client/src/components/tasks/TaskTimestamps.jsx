@@ -9,7 +9,6 @@ const TaskTimestamps = ({
   status,
   timestamp_todo,
   timestamp_progress,
-  timestamp_pending,
   timestamp_done,
   pause_time,
   scheduled_at,
@@ -64,13 +63,6 @@ const TaskTimestamps = ({
         <div className="flex gap-1 justify-between">
           <p className="font-medium">Jeda:</p>
           <p className="tabular-nums">{parseFromSQL(pause_time)}</p>
-        </div>
-      )}
-
-      {status === 'pending' && (
-        <div className="flex gap-1 justify-between">
-          <p className="font-medium">Pending:</p>
-          <p className="tabular-nums">{parseFromSQL(timestamp_pending)}</p>
         </div>
       )}
 

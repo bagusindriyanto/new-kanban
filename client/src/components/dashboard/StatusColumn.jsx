@@ -38,7 +38,6 @@ const StatusColumn = ({ title, columnId, tasks }) => {
         {
           'bg-todo': title === 'To Do',
           'bg-progress': title === 'On Progress',
-          'bg-pending': title === 'Pending',
           'bg-done': title === 'Done',
         },
       )}
@@ -47,7 +46,6 @@ const StatusColumn = ({ title, columnId, tasks }) => {
         className={cn('text-lg font-semibold p-3 tracking-tight', {
           'text-todo-foreground': title === 'To Do',
           'text-progress-foreground': title === 'On Progress',
-          'text-pending-foreground': title === 'Pending',
           'text-done-foreground': title === 'Done',
         })}
       >
