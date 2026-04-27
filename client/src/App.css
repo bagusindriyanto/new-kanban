@@ -132,10 +132,10 @@
   --todo-foreground: #791f1f;
   --todo-card: #ffffff;
   --todo-border: #f0baba;
-  --progress: #e6f1fb;
-  --progress-foreground: #0c447c;
+  --progress: #faeeda;
+  --progress-foreground: #633806;
   --progress-card: #ffffff;
-  --progress-border: #aad0f2;
+  --progress-border: #f5c070;
   --done: #eaf3de;
   --done-foreground: #27500a;
   --done-card: #ffffff;
@@ -192,10 +192,10 @@
   --todo-foreground: #f09595;
   --todo-card: #1e1010;
   --todo-border: #5a2020;
-  --progress: #0d1e30;
-  --progress-foreground: #85b7eb;
-  --progress-card: #081526;
-  --progress-border: #1a3d60;
+  --progress: #261a06;
+  --progress-foreground: #ef9f27;
+  --progress-card: #1a1004;
+  --progress-border: #4a3008;
   --done: #101c08;
   --done-foreground: #97c459;
   --done-card: #0a1404;
