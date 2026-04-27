@@ -93,10 +93,9 @@ const TaskCard = ({ task, className }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition duration-300 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm select-none transition duration-300 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
         {
-          'hover:shadow-md hover:-translate-y-1 select-none cursor-grab':
-            canModify,
+          'hover:shadow-md hover:-translate-y-1 cursor-grab': canModify,
           'bg-todo-card border-todo-border shadow-todo-border/50':
             status === 'todo',
           'bg-progress-card border-progress-border shadow-progress-border/50':
