@@ -221,7 +221,7 @@ const RegisterForm = () => {
             <Field>
               <Button type="submit">Daftar</Button>
               <FieldDescription className="text-center">
-                Sudah memiliki akun? <Link to="/login">Sign in di sini</Link>
+                Sudah memiliki akun? <Link to="/login">Login di sini</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
