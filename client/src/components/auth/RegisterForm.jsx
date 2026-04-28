@@ -120,8 +120,6 @@ const RegisterForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Pribadi
             </FieldSeparator>
-            {/* Avatar */}
-            <AvatarUpload />
             <Field className="grid grid-cols-2 gap-4">
               {/* Nama Lengkap */}
               <InputField
@@ -138,6 +136,7 @@ const RegisterForm = () => {
                 name="name"
                 control={form.control}
                 label="Nama Panggilan"
+                placeholder="Masukkan nama panggilan anda"
                 autoComplete="off"
               />
               {/* NIK */}
@@ -156,6 +155,7 @@ const RegisterForm = () => {
                       <InputGroupInput
                         {...field}
                         id="register-nik"
+                        placeholder="1234"
                         type="text"
                         inputMode="numeric"
                       />

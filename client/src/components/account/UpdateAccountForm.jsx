@@ -25,7 +25,7 @@ import PasswordField from '../shared/form/PasswordField';
 const formSchema = z.object({
   full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
   name: z.string().optional(),
-  nik: z
+  nik: z.coerce
     .string()
     .min(1, 'Mohon isi NIK anda.')
     .refine((val) => /^[0-9]+$/.test(val), {
