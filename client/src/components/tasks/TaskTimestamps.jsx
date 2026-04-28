@@ -17,7 +17,7 @@ const TaskTimestamps = ({
   diffInMinutes,
 }) => {
   return (
-    <div className="text-[11px] text-muted-foreground border-t border-border pt-1 grid grid-cols-2 items-center gap-4">
+    <div className="text-[11px] text-muted-foreground border-t border-border pt-1">
       {status === 'todo' && (
         <div className="flex gap-1 justify-between">
           <p className="font-medium">Dibuat:</p>
@@ -26,16 +26,16 @@ const TaskTimestamps = ({
       )}
 
       {status === 'todo' && scheduled_at && (
-        <div className="relative">
+        <div className="relative mt-1">
           {isUrgent && (
-            <span className="absolute -right-1 -top-0.5 z-10 flex size-2">
+            <span className="absolute -right-1.5 -top-0.5 z-10 flex size-2">
               <span className="inline-flex absolute w-full h-full bg-red-400 rounded-full opacity-75 animate-ping"></span>
               <span className="inline-flex relative bg-red-500 rounded-full size-2"></span>
             </span>
           )}
           <div
             className={cn(
-              'flex gap-1 justify-between rounded-md px-1 py-0.5 font-medium border transition-colors',
+              'flex gap-1 justify-between rounded-md px-1 -mx-1 py-0.5 font-medium border transition-colors',
               {
                 'border-red-200 bg-red-50 text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400':
                   isUrgent,
