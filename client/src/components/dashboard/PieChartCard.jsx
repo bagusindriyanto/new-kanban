@@ -26,12 +26,19 @@ import { Pie, PieChart } from 'recharts';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 
 const EMPTY_DATA = [];
+
+const items = [
+  { label: 'Top 3', value: 3 },
+  { label: 'Top 5', value: 5 },
+  { label: 'Top 10', value: 10 },
+];
 
 const PieChartCard = ({ data = EMPTY_DATA }) => {
   const [limit, setLimit] = useState(5);
@@ -45,14 +52,18 @@ const PieChartCard = ({ data = EMPTY_DATA }) => {
           Menampilkan proporsi setiap aktivitas.
         </CardDescription>
         <CardAction>
-          <Select value={limit} onValueChange={setLimit}>
+          <Select items={items} value={limit} onValueChange={setLimit}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={3}>Top 3</SelectItem>
-              <SelectItem value={5}>Top 5</SelectItem>
-              <SelectItem value={10}>Top 10</SelectItem>
+            <SelectContent alignItemWithTrigger={false} align="end">
+              <SelectGroup>
+                {items.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </CardAction>
