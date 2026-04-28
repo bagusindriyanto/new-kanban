@@ -261,6 +261,15 @@
   }
 }
 
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .rdp-range_start.rdp-range_end::after {
   display: none;
 }
