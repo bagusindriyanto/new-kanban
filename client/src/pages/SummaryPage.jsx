@@ -7,21 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-// Komponen Filter
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
-import { useFetchPics } from '@/api/fetchPics';
 import { useFetchSummary } from '@/api/fetchSummary';
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -29,29 +18,16 @@ import { ErrorBanner } from '@/components/shared/ErrorState';
 import PieChartCard from '@/components/dashboard/PieChartCard';
 import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/dashboard/BarChartCard';
-import useTaskFilters from '@/hooks/useTaskFilters';
 import SiteHeader from '@/components/layout/SiteHeader';
-import { cn } from '@/lib/utils';
+import useFilter from '@/stores/filterStore';
+import { format } from 'date-fns';
 
 const SummaryPage = () => {
-  // State
-  const { data: pics, error: fetchPicsError } = useFetchPics();
+  const range = useFilter((state) => state.range);
 
-  // Gunakan custom hook untuk logic filter
-  const { selectedPicId, setSelectedPicId, queryParams } = useTaskFilters();
-
-  const picsItems = [
-    { label: 'Pilih PIC', value: 'all' },
-    ...(pics?.map((pic) => ({
-      label: pic.name,
-      value: pic.id,
-    })) || []),
-  ];
-
-  const selectedPic = pics?.find((pic) => pic.id === selectedPicId) ?? {
-    full_name: '-',
-    nik: null,
-    alias: ' ',
+  const queryParams = {
+    from_date: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
+    to_date: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined,
   };
 
   const {
@@ -62,10 +38,7 @@ const SummaryPage = () => {
   } = useFetchSummary(queryParams);
 
   // Ambil pesan error
-  const errorMessage =
-    fetchSummaryError?.response?.data?.message ||
-    fetchPicsError?.response?.data?.message ||
-    null;
+  const errorMessage = fetchSummaryError?.response?.data?.message || null;
 
   // Cek status online/offline
   const isOnline = useIsOnline();
@@ -81,66 +54,20 @@ const SummaryPage = () => {
             isFetching={isFetching}
             dataUpdatedAt={dataUpdatedAt}
           />
-          {/* Filter PIC */}
-          <Select
-            items={picsItems}
-            value={selectedPicId}
-            onValueChange={setSelectedPicId}
-          >
-            <SelectTrigger className="w-[150px]" size="sm">
-              <SelectValue placeholder="Pilih PIC" />
-            </SelectTrigger>
-            <SelectContent alignItemWithTrigger={false}>
-              <SelectGroup>
-                <SelectLabel>PIC</SelectLabel>
-                {picsItems.map((item) => (
-                  <SelectItem
-                    key={String(item.value)}
-                    value={item.value}
-                    className={cn(item.value === 'all' && 'hidden')}
-                    disabled={item.value === 'all'}
-                  >
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
           {/* Filter Tanggal */}
           <FilterCalendar />
         </div>
       </div>
       {/* Main */}
       <main className="grid flex-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-6">
-        {(fetchSummaryError || fetchPicsError || !isOnline) && (
+        {(fetchSummaryError || !isOnline) && (
           <ErrorBanner
             isOnline={isOnline}
             errorMessage={errorMessage}
             className="md:col-span-4 xl:col-span-6"
           />
         )}
-        <Card className="border-none xl:col-span-2 bg-linear-to-t from-primary/10 to-card">
-          <CardContent className="my-auto">
-            {/* Content Section */}
-            <div className="flex gap-6 items-center">
-              <div className="flex justify-center items-center p-1 rounded-full border shadow-md size-24 shrink-0 border-border text-muted-foreground">
-                <UserRound className="size-full" />
-              </div>
-              {/* Judul (Title Text) */}
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold tracking-tight">
-                  {selectedPic.full_name}
-                </h2>
-                {/* Badge ID (Tambahan Opsional) */}
-                <Badge className="text-blue-700 bg-blue-50 dark:bg-blue-950 dark:text-blue-300">
-                  <IdCardLanyard data-icon="inline-start" />
-                  {selectedPic.nik ? `MGM ${selectedPic.nik}` : '-'}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-none xl:col-span-2 bg-linear-to-t from-primary/10 to-card">
+        <Card className="border-none xl:col-span-3 bg-linear-to-t from-primary/10 to-card">
           <CardHeader>
             <CardDescription>Total Aktivitas</CardDescription>
             {/* <div className="flex justify-between items-center"> */}
@@ -163,7 +90,7 @@ const SummaryPage = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-none md:col-span-2 bg-linear-to-t from-primary/10 to-card">
+        <Card className="border-none xl:col-span-3 bg-linear-to-t from-primary/10 to-card">
           <CardHeader>
             <CardDescription>Operational Time</CardDescription>
             <div className="flex justify-between items-center">
@@ -197,10 +124,7 @@ const SummaryPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable
-              columns={columns}
-              data={data?.table_summary || []}
-            ></DataTable>
+            <DataTable columns={columns} data={data?.table_summary || []} />
           </CardContent>
         </Card>
         {/* Bar Chart */}

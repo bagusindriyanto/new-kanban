@@ -35,7 +35,7 @@ export function DataTable({ columns, data }) {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [pagination, setPagination] = useState({
     pageIndex: 0, //initial page index
-    pageSize: 30, //default page size
+    pageSize: 10, //default page size
   });
 
   const table = useReactTable({
@@ -123,15 +123,15 @@ export function DataTable({ columns, data }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end gap-x-6 mt-4">
-        <div className="flex w-fit items-center justify-center text-sm font-medium">
+      <div className="flex gap-x-6 justify-end items-center mt-4">
+        <div className="flex justify-center items-center text-sm font-medium w-fit">
           Halaman{' '}
           {table.getPageCount() === 0
             ? 0
             : table.getState().pagination.pageIndex + 1}{' '}
           dari {table.getPageCount()}
         </div>
-        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+        <div className="flex gap-2 items-center ml-auto lg:ml-0">
           <Button
             variant="outline"
             className="size-8"

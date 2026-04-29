@@ -23,47 +23,47 @@ class SummaryController extends BaseController
         try {
             $fromDate = $this->request->query('from_date');
             $toDate   = $this->request->query('to_date');
-            $picId    = $this->request->query('pic_id');
+            // $picId    = $this->request->query('pic_id');
 
             // Early return for missing / "all" pic_id
-            if (!$picId || $picId === 'all') {
-                $this->json([
-                    'status'  => 'success',
-                    'filter'  => [
-                        'from_date' => $fromDate,
-                        'to_date'   => $toDate,
-                        'pic_id'    => $picId,
-                    ],
-                    'summary' => [
-                        'todo_count'             => 0,
-                        'on_progress_count'      => 0,
-                        'done_count'             => 0,
-                        'total_count'            => 0,
-                        'total_activity_minutes' => 0,
-                        'total_working_minutes'  => 0,
-                        'percentage'             => 0,
-                    ],
-                    'table_summary' => [],
-                    'chart_summary' => [],
-                ]);
-            }
+            // if (!$picId || $picId === 'all') {
+            //     $this->json([
+            //         'status'  => 'success',
+            //         'filter'  => [
+            //             'from_date' => $fromDate,
+            //             'to_date'   => $toDate,
+            //             'pic_id'    => $picId,
+            //         ],
+            //         'summary' => [
+            //             'todo_count'             => 0,
+            //             'on_progress_count'      => 0,
+            //             'done_count'             => 0,
+            //             'total_count'            => 0,
+            //             'total_activity_minutes' => 0,
+            //             'total_working_minutes'  => 0,
+            //             'percentage'             => 0,
+            //         ],
+            //         'table_summary' => [],
+            //         'chart_summary' => [],
+            //     ]);
+            // }
 
             // Build filters for each table
             list($taskWhere, $taskParams) = $this->buildFilters(
                 $_GET,
                 'timestamp_progress',
-                'pic_id'
+                // 'pic_id'
             );
             list($workWhere, $workParams) = $this->buildFilters(
                 $_GET,
                 'date',
-                'pic_id'
+                // 'pic_id'
             );
             $chartParams = array_merge($taskParams);
 
             // Run queries
             $summary        = $this->querySummary($taskWhere, $taskParams);
-            $todoSummary    = $this->queryTodoCount($picId);
+            $todoSummary    = $this->queryTodoCount();
             $workingSummary = $this->queryWorkingMinutes($workWhere, $workParams);
             $tableSummary   = $this->queryTableSummary($taskWhere, $taskParams);
             $chartSummary   = $this->queryChartSummary($chartParams);
@@ -86,7 +86,7 @@ class SummaryController extends BaseController
                 'filter'        => [
                     'from_date' => $fromDate,
                     'to_date'   => $toDate,
-                    'pic_id'    => $picId,
+                    // 'pic_id'    => $picId,
                 ],
                 'summary'       => array_merge($summary, [
                     'todo_count'            => $todoCount,
@@ -129,17 +129,16 @@ class SummaryController extends BaseController
     /**
      * @param array  $get
      * @param string $dateCol
-     * @param string $picCol
      * @return array [whereString, params]
      */
-    private function buildFilters(array $get, $dateCol, $picCol)
+    private function buildFilters(array $get, $dateCol)
     {
         $conditions = [];
         $params     = [];
 
         $fromDate = $get['from_date'] ?? null;
         $toDate   = $get['to_date'] ?? null;
-        $picId    = $get['pic_id'] ?? null;
+        // $picId    = $get['pic_id'] ?? null;
 
         if ($fromDate && $toDate) {
             $conditions[]         = "{$dateCol} BETWEEN :from_date AND :to_date";
@@ -147,10 +146,10 @@ class SummaryController extends BaseController
             $params[':to_date']   = $toDate . ' 23:59:59';
         }
 
-        if ($picId) {
-            $conditions[]       = "{$picCol} = :pic_id";
-            $params[':pic_id']  = $picId;
-        }
+        // if ($picId) {
+        //     $conditions[]       = "{$picCol} = :pic_id";
+        //     $params[':pic_id']  = $picId;
+        // }
 
         $where = $conditions
             ? 'WHERE ' . implode(' AND ', $conditions)
@@ -199,17 +198,16 @@ class SummaryController extends BaseController
     }
 
     /**
-     * @param string $picId
      * @return array
      */
-    private function queryTodoCount($picId)
+    private function queryTodoCount()
     {
         $sql = "
             SELECT COUNT(id) AS todo_count
             FROM tasks
-            WHERE status = 'todo' AND pic_id = :pic_id
+            WHERE status = 'todo'
         ";
-        $result = $this->query($sql, [':pic_id' => $picId]);
+        $result = $this->query($sql, []);
         return $result ?: [];
     }
 
@@ -289,10 +287,11 @@ class SummaryController extends BaseController
                 t.pic_id,
                 SUM({$activityExpr}) AS total_activity_minutes
               FROM tasks t
-              WHERE t.pic_id = :pic_id
               GROUP BY DATE(t.timestamp_progress), t.pic_id
             )
             SELECT
+              A.pic_id,
+              C.name,
               A.tgl                          AS date,
               A.total_activity_minutes       AS activity_minute,
               IFNULL(B.working_minute, 0)    AS working_minute
@@ -300,6 +299,8 @@ class SummaryController extends BaseController
             LEFT JOIN work_time B
               ON A.tgl = DATE(B.date)
               AND A.pic_id = B.pic_id
+            LEFT JOIN pics C
+              ON A.pic_id = C.id
             {$outerWhere}
             ORDER BY A.tgl
         ";
