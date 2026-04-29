@@ -150,6 +150,7 @@ class TaskController extends BaseController
 
         try {
             $picId          = $input['pic_id'];
+            $assignerId     = $input['assigner_id'] ?? null;
             $content        = isset($input['content']) ? trim($input['content']) : '';
             $detail         = isset($input['detail']) ? trim($input['detail']) : '';
             $status         = $input['status'] ?? null;
@@ -163,6 +164,7 @@ class TaskController extends BaseController
 
             $fields = [
                 'pic_id = ?',
+                'assigner_id = ?',
                 'content = ?',
                 'detail = ?',
                 'status = ?',
@@ -176,6 +178,7 @@ class TaskController extends BaseController
             ];
             $params = [
                 $picId,
+                $assignerId,
                 $content,
                 $detail,
                 $status,

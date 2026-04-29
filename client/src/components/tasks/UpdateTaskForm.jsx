@@ -23,6 +23,7 @@ import ComboboxField from '../shared/form/ComboboxField';
 import SelectField from '../shared/form/SelectField';
 import DateTimeField from '../shared/form/DateTimeField';
 import NumberInputField from '../shared/form/NumberInputField';
+import useAuthStore from '@/stores/authStore';
 
 const statusItems = [
   { value: 'todo', label: 'To Do' },
@@ -96,6 +97,9 @@ const UpdateTaskForm = () => {
   // Close Modal
   const setIsModalOpen = useUpdateTaskModal((state) => state.setIsModalOpen);
 
+  // State user yang login saat ini
+  const user = useAuthStore((state) => state.user);
+
   // Set nilai awal form
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -142,6 +146,7 @@ const UpdateTaskForm = () => {
     const payload = {
       ...data,
       id: selectedTaskId,
+      assigner_id: data.pic_id === user.id ? null : user.id,
       pic_name: pics?.find((pic) => pic.id === data.pic_id)?.name,
     };
 
