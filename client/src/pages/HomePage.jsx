@@ -23,6 +23,7 @@ import { computeStatusTransition } from '@/utils/statusTransition';
 import { toast } from 'sonner';
 import { DragOverlay } from '@dnd-kit/react';
 import TaskCard from '@/components/tasks/TaskCard';
+import BoardStatsColumn from '@/components/dashboard/BoardStatsColumn';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter
@@ -98,7 +99,7 @@ const HomePage = () => {
         <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
         <TasksControls isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
       </div>
-      <main className="flex-1 min-h-0 flex flex-col p-4">
+      <main className="flex flex-col flex-1 p-4 min-h-0">
         {/* Main */}
         {isOnline && isFetchTasksLoading && !fetchTasksError && (
           <div className="flex flex-1 justify-center items-center">
@@ -117,7 +118,7 @@ const HomePage = () => {
           isOnline && <EmptyState action={<AddTaskModal />} />}
         {tasks?.length > 0 && !isFetchTasksLoading && (
           <DragDropProvider onDragEnd={handleDragEnd}>
-            <div className="grid flex-1 min-h-0 grid-cols-3 gap-4">
+            <div className="grid flex-1 grid-cols-4 gap-3 min-h-0">
               {columns.map((column) => (
                 <StatusColumn
                   key={column.id}
@@ -126,6 +127,7 @@ const HomePage = () => {
                   tasks={tasks?.filter((task) => task.status === column.id)}
                 />
               ))}
+              <BoardStatsColumn tasks={tasks} />
             </div>
             <DragOverlay>
               {(source) => {
@@ -134,7 +136,7 @@ const HomePage = () => {
                 return (
                   <TaskCard
                     task={task}
-                    className="scale-105 rotate-1 opacity-100"
+                    className="opacity-100 scale-105 rotate-1"
                   />
                 );
               }}

@@ -34,7 +34,7 @@ const StatusColumn = ({ title, columnId, tasks }) => {
   return (
     <div
       className={cn(
-        'flex flex-col min-h-0 h-full rounded-lg border shadow-sm border-border/70 overflow-clip',
+        'flex flex-col min-h-0 h-full rounded-xl border shadow-sm border-border/70 overflow-clip',
         {
           'bg-todo': title === 'To Do',
           'bg-progress': title === 'On Progress',
@@ -54,9 +54,9 @@ const StatusColumn = ({ title, columnId, tasks }) => {
       <div
         ref={mergedRef}
         className={cn(
-          'flex-1 overflow-y-auto transition-colors duration-200 rounded-b-lg',
+          'overflow-y-auto flex-1 rounded-b-lg transition-colors duration-200',
           {
-            'bg-primary/5 dark:bg-primary/10 ring-2 ring-inset ring-primary/30':
+            'ring-2 ring-inset bg-primary/5 dark:bg-primary/10 ring-primary/30':
               isDropTarget,
           },
         )}
@@ -68,7 +68,7 @@ const StatusColumn = ({ title, columnId, tasks }) => {
           }}
         >
           <div
-            className="absolute top-0 left-0 w-full space-y-3 first:pt-2 last:pb-3"
+            className="absolute top-0 left-0 space-y-3 w-full first:pt-2 last:pb-3"
             style={{
               transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
             }}
