@@ -11,7 +11,7 @@ const SettingsPage = () => {
           Kelola informasi akun dan pribadi anda.
         </p>
       </div>
-      <main className="flex-1 p-4">
+      <main className="flex-1 px-6 py-4">
         <UpdateAccountForm />
       </main>
     </div>

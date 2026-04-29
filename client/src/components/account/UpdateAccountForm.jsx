@@ -99,6 +99,7 @@ const UpdateAccountForm = () => {
                 name="name"
                 control={form.control}
                 label="Nama Panggilan"
+                placeholder="Masukkan nama panggilan anda"
                 autoComplete="off"
               />
               {/* NIK */}
@@ -122,6 +123,7 @@ const UpdateAccountForm = () => {
                         id="settings-account-nik"
                         type="text"
                         inputMode="numeric"
+                        placeholder="1234"
                       />
                     </InputGroup>
                     {fieldState.invalid && (
@@ -155,19 +157,19 @@ const UpdateAccountForm = () => {
                 description="Kata sandi minimal memiliki 8 karakter."
               />
             </Field>
-            <div className="flex gap-3 justify-end pt-6 border-t border-border">
+            <div className="flex gap-2 justify-end pt-6 border-t border-border">
               <Button
                 variant="outline"
                 type="reset"
-                onClick={() => {
+                onClick={() =>
                   form.reset({
                     full_name: '',
                     name: '',
                     nik: '',
                     email: '',
                     password: '',
-                  });
-                }}
+                  })
+                }
               >
                 Reset Form
               </Button>

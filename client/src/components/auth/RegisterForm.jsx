@@ -107,7 +107,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="mx-auto w-full max-w-xl">
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Buat Akun Baru</CardTitle>
         <CardDescription>

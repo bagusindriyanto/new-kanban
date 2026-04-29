@@ -52,7 +52,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="mx-auto w-full max-w-sm">
       <CardHeader className="text-center">
         <CardTitle className="text-xl tracking-tight">
           Selamat Datang!

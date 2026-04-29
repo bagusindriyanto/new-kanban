@@ -16,6 +16,7 @@ import { api, getAccessToken } from './lib/api';
 import GuestRoute from './routes/GuestRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
+import EntryLayout from './components/layout/EntryLayout';
 import { Toaster } from './components/ui/sonner';
 import useFilter from './stores/filterStore';
 
@@ -48,8 +49,10 @@ const App = () => {
     <>
       <Routes>
         <Route element={<GuestRoute />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route element={<EntryLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
         </Route>
         <Route
           element={
