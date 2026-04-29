@@ -127,7 +127,7 @@ const HomePage = () => {
                   tasks={tasks?.filter((task) => task.status === column.id)}
                 />
               ))}
-              <BoardStatsColumn tasks={tasks} />
+              <BoardStatsColumn />
             </div>
             <DragOverlay>
               {(source) => {

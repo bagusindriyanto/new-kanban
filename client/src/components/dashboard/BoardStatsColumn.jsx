@@ -10,6 +10,7 @@ import { ChartContainer } from '../ui/chart';
 import { useFetchTasks } from '@/api/fetchTasks';
 import useAuthStore from '@/stores/authStore';
 import { format } from 'date-fns';
+import { SlidingNumber } from '../shared/SlidingNumber';
 
 const BoardStatsColumn = () => {
   const user = useAuthStore((state) => state.user);
@@ -45,18 +46,15 @@ const BoardStatsColumn = () => {
   const progress = totalCount > 0 ? doneCount / totalCount : 0;
   const progressLabel = new Intl.NumberFormat('id-ID', {
     style: 'percent',
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 1,
   }).format(progress);
 
   return (
-    <div className="flex flex-col h-full min-h-0 rounded-xl border shadow-sm border-border/70 bg-card">
+    <div className="flex flex-col h-full min-h-0 rounded-xl border shadow-xs border-border/70 bg-card select-none">
       <h2 className="p-3 text-lg font-semibold tracking-tight text-card-foreground">
         Statistik Hari Ini
       </h2>
-      <ChartContainer
-        config={chartConfig}
-        className="flex-1 mx-auto aspect-square"
-      >
+      <ChartContainer config={chartConfig} className="flex-1">
         <RadialBarChart
           data={chartData}
           startAngle={90}
@@ -106,40 +104,40 @@ const BoardStatsColumn = () => {
         </RadialBarChart>
       </ChartContainer>
       <div className="grid grid-cols-2 gap-2 p-3">
-        <div className="flex flex-col gap-1 p-3 rounded-lg border border-todo-border bg-todo">
+        <div className="flex flex-col gap-2 p-3 rounded-lg border border-todo-border bg-todo">
           <div className="flex items-center gap-1.5 text-xs font-medium text-todo-foreground">
             <CircleDot className="size-3.5" />
             To Do
           </div>
           <span className="text-2xl font-bold tracking-tight text-todo-foreground">
-            {todoCount}
+            <SlidingNumber value={todoCount} />
           </span>
         </div>
-        <div className="flex flex-col gap-1 p-3 rounded-lg border border-progress-border bg-progress">
+        <div className="flex flex-col gap-2 p-3 rounded-lg border border-progress-border bg-progress">
           <div className="flex items-center gap-1.5 text-xs font-medium text-progress-foreground">
             <Loader className="size-3.5" />
             On Progress
           </div>
           <span className="text-2xl font-bold tracking-tight text-progress-foreground">
-            {onProgressCount}
+            <SlidingNumber value={onProgressCount} />
           </span>
         </div>
-        <div className="flex flex-col gap-1 p-3 rounded-lg border border-done-border bg-done">
+        <div className="flex flex-col gap-2 p-3 rounded-lg border border-done-border bg-done">
           <div className="flex items-center gap-1.5 text-xs font-medium text-done-foreground">
             <CircleCheckBig className="size-3.5" />
             Done
           </div>
           <span className="text-2xl font-bold tracking-tight text-done-foreground">
-            {doneCount}
+            <SlidingNumber value={doneCount} />
           </span>
         </div>
-        <div className="flex flex-col gap-1 p-3 rounded-lg border border-info/50 bg-info/10">
+        <div className="flex flex-col gap-2 p-3 rounded-lg border border-info/50 bg-info/10">
           <div className="flex items-center gap-1.5 text-xs font-medium text-info-foreground">
             <LayoutList className="size-3.5" />
             Total
           </div>
           <span className="text-2xl font-bold tracking-tight text-info-foreground">
-            {totalCount}
+            <SlidingNumber value={totalCount} />
           </span>
         </div>
       </div>
