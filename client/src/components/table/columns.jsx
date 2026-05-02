@@ -3,6 +3,23 @@ import { Button } from '@/components/ui/button';
 
 export const columns = [
   {
+    accessorKey: 'pic_name',
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      return (
+        <Button
+          className="w-full"
+          variant="ghost"
+          onClick={() => column.toggleSorting(isSorted === 'asc')}
+        >
+          PIC
+          {isSorted === 'asc' && <ArrowUp className="ml-0.5 size-4" />}
+          {isSorted === 'desc' && <ArrowDown className="ml-0.5 size-4" />}
+        </Button>
+      );
+    },
+  },
+  {
     accessorKey: 'content',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
@@ -38,7 +55,9 @@ export const columns = [
     cell: ({ row }) => {
       const total_minutes = row.getValue('total_minutes');
       const formatted = total_minutes + ' menit';
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="text-right font-medium tabular-nums">{formatted}</div>
+      );
     },
   },
   {
@@ -59,7 +78,11 @@ export const columns = [
     },
     cell: ({ row }) => {
       const activity_count = row.getValue('activity_count');
-      return <div className="text-right font-medium">{activity_count}</div>;
+      return (
+        <div className="text-right font-medium tabular-nums">
+          {activity_count}
+        </div>
+      );
     },
   },
   {
@@ -81,7 +104,9 @@ export const columns = [
     cell: ({ row }) => {
       const avg_minutes = parseFloat(row.getValue('avg_minutes')).toFixed(1);
       const formatted = avg_minutes + ' menit';
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="text-right font-medium tabular-nums">{formatted}</div>
+      );
     },
   },
 ];
