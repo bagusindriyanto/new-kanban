@@ -4,7 +4,7 @@ const TOKEN_KEY = 'kanban_access_token';
 const REFRESH_TOKEN_KEY = 'kanban_refresh_token';
 
 export const api = axios.create({
-  baseURL: 'http://localhost/kanban/api',
+  baseURL: 'http://localhost/kanban/api-v2',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -55,7 +55,12 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (!response.data.success) {
+      return Promise.reject(response.data);
+    }
+    return response.data;
+  },
   async (error) => {
     const originalRequest = error.config;
 
@@ -65,7 +70,11 @@ api.interceptors.response.use(
       originalRequest.url?.includes('/auth/register') ||
       originalRequest.url?.includes('/auth/refresh');
 
-    if (error.response?.status !== 401 || originalRequest._retry || isAuthEndpoint) {
+    if (
+      error.response?.status !== 401 ||
+      originalRequest._retry ||
+      isAuthEndpoint
+    ) {
       return Promise.reject(error);
     }
 
@@ -84,22 +93,18 @@ api.interceptors.response.use(
     originalRequest._retry = true;
     isRefreshing = true;
 
-    const refreshToken = getRefreshToken();
-
-    if (!refreshToken) {
-      isRefreshing = false;
-      clearTokens();
-      return Promise.reject(error);
-    }
-
     try {
-      const { data } = await axios.post(
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        throw new Error('Refresh token tidak ditemukan.');
+      }
+      const res = await axios.post(
         `${api.defaults.baseURL}/auth/refresh`,
         { refresh_token: refreshToken },
         { headers: { 'Content-Type': 'application/json' } },
       );
 
-      const newAccessToken = data.access_token;
+      const newAccessToken = res.data.data.access_token;
       setTokens(newAccessToken, null);
 
       processQueue(null, newAccessToken);
