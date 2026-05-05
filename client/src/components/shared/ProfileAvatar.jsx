@@ -1,14 +1,16 @@
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
-function getAvatarColor(name) {
+const getAvatarColor = (name) => {
+  if (!name) return 'hsl(0, 0%, 60%)';
+
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
   const hue = ((hash % 360) + 360) % 360;
   return `hsl(${hue}, 60%, 45%)`;
-}
+};
 
 const ProfileAvatar = ({ profile, className }) => {
   const avatarColor = getAvatarColor(profile.name ?? 'User');

@@ -2,11 +2,14 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
 export const fetchSummary = async (filters = {}) => {
-  const response = await api.get('/summary', { params: filters });
+  const response = await api.get('/dashboard/stats', { params: filters });
   return response.data;
 };
 
-export const fetchSummaryQueryKey = (filters = {}) => ['summary', filters];
+export const fetchSummaryQueryKey = (filters = {}) => [
+  'dashboard-stats',
+  filters,
+];
 
 const fetchSummaryQueryOptions = (filters = {}) => {
   return queryOptions({

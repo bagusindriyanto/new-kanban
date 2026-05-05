@@ -1,4 +1,4 @@
-import { UserRound, IdCardLanyard } from 'lucide-react';
+import UserStatsCard from '@/components/dashboard/UserStatsCard';
 import {
   Card,
   CardContent,
@@ -37,6 +37,8 @@ const SummaryPage = () => {
     dataUpdatedAt,
   } = useFetchSummary(queryParams);
 
+  console.log(data);
+
   // Ambil pesan error
   const errorMessage = fetchSummaryError?.response?.data?.message || null;
 
@@ -48,7 +50,12 @@ const SummaryPage = () => {
       <SiteHeader titlePage="Ringkasan" />
       {/* Filter */}
       <div className="flex justify-between px-4 pt-4">
-        <h2 className="ml-1 text-2xl font-bold tracking-tight">Ringkasan</h2>
+        <div className="ml-1">
+          <h2 className="text-2xl font-bold tracking-tight">
+            Performance Dashboard
+          </h2>
+          <p className="text-muted-foreground">{data?.division ?? '-'}</p>
+        </div>
         <div className="flex gap-2 items-center">
           <RefreshToggle
             isFetching={isFetching}
@@ -72,20 +79,20 @@ const SummaryPage = () => {
             <CardDescription>Total Aktivitas</CardDescription>
             {/* <div className="flex justify-between items-center"> */}
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary?.total_count ?? 0} Aktivitas
+              {data?.summary?.total_tasks ?? 0} Aktivitas
             </CardTitle>
             {/* </div> */}
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-1.5">
               <Badge className="border text-todo-foreground bg-todo border-todo-border">
-                To Do: {data?.summary?.todo_count ?? 0}
+                To Do: {data?.summary?.todo ?? 0}
               </Badge>
               <Badge className="border text-progress-foreground bg-progress border-progress-border">
-                On Progress: {data?.summary?.on_progress_count ?? 0}
+                On Progress: {data?.summary?.on_progress ?? 0}
               </Badge>
               <Badge className="border text-done-foreground bg-done border-done-border">
-                Done: {data?.summary?.done_count ?? 0}
+                Done: {data?.summary?.done ?? 0}
               </Badge>
             </div>
           </CardContent>
@@ -95,42 +102,49 @@ const SummaryPage = () => {
             <CardDescription>Operational Time</CardDescription>
             <div className="flex justify-between items-center">
               <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {((data?.summary?.percentage ?? 0) * 100).toFixed(2)}%
+                {100}%
               </CardTitle>
               <div className="flex flex-col items-end gap-1.5 text-sm">
                 <div className="font-medium">
                   Lama Aktivitas:{' '}
-                  <span className="text-muted-foreground">
-                    {data?.summary?.total_activity_minutes ?? 0} menit
-                  </span>
+                  <span className="text-muted-foreground">{0} menit</span>
                 </div>
                 <div className="font-medium">
                   Lama Bekerja:{' '}
-                  <span className="text-muted-foreground">
-                    {data?.summary?.total_working_minutes ?? 0} menit
-                  </span>
+                  <span className="text-muted-foreground">{0} menit</span>
                 </div>
               </div>
             </div>
           </CardHeader>
         </Card>
+        {/* User Stats */}
+        {data?.users && data.users.length > 0 && (
+          <section className="md:col-span-2 xl:col-span-6">
+            <h3 className="mb-3 text-lg font-semibold tracking-tight">
+              Statistik Per Anggota
+            </h3>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {data.users.map((user, index) => (
+                <UserStatsCard key={user.full_name ?? index} user={user} />
+              ))}
+            </div>
+          </section>
+        )}
         {/* Table */}
-        <Card className="md:col-span-2 xl:col-span-3 xl:row-span-2">
-          <CardHeader>
-            <CardTitle>Tabel Aktivitas</CardTitle>
-            <CardDescription>
-              Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
-              rata-rata durasi setiap aktivitas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <DataTable columns={columns} data={data?.table_summary || []} />
-          </CardContent>
-        </Card>
+        <section className="md:col-span-2 xl:col-span-6">
+          <h3 className="mb-3 text-lg font-semibold tracking-tight">
+            Tabel Aktivitas
+          </h3>
+          <p className="text-muted-foreground">
+            Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
+            rata-rata durasi setiap aktivitas.
+          </p>
+          <DataTable columns={columns} data={[]} />
+        </section>
         {/* Bar Chart */}
-        <BarChartCard data={data?.chart_summary} />
+        <BarChartCard data={[]} />
         {/* Pie Chart */}
-        <PieChartCard data={data?.table_summary} />
+        <PieChartCard data={[]} />
       </main>
     </div>
   );
