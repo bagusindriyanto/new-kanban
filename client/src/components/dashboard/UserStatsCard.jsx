@@ -2,6 +2,7 @@ import { CircleCheckBig, CircleDot, LayoutList, Loader } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import ProfileAvatar from '../shared/ProfileAvatar';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 const statItems = [
   {
@@ -34,7 +35,7 @@ const statItems = [
   },
 ];
 
-const UserStatsCard = ({ user }) => {
+const UserStatsCard = ({ user, className }) => {
   // Calculate completion percentage
   const todo = user.todo ?? 0;
   const onProgress = user.on_progress ?? 0;
@@ -48,7 +49,12 @@ const UserStatsCard = ({ user }) => {
   const completion = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
-    <Card className="overflow-hidden p-4 shadow-none bg-linear-to-b from-card to-muted/30">
+    <Card
+      className={cn(
+        'overflow-hidden p-4 shadow-sm bg-linear-to-b from-card to-muted/30',
+        className,
+      )}
+    >
       {/* Avatar & Name — centered */}
       <div className="flex flex-col gap-2 items-center pt-2">
         <ProfileAvatar profile={user} className="text-lg size-14" />

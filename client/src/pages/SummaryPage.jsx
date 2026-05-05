@@ -37,8 +37,6 @@ const SummaryPage = () => {
     dataUpdatedAt,
   } = useFetchSummary(queryParams);
 
-  console.log(data);
-
   // Ambil pesan error
   const errorMessage = fetchSummaryError?.response?.data?.message || null;
 
@@ -123,9 +121,13 @@ const SummaryPage = () => {
             <h3 className="mb-3 text-lg font-semibold tracking-tight">
               Statistik Per Anggota
             </h3>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-              {data.users.map((user, index) => (
-                <UserStatsCard key={user.full_name ?? index} user={user} />
+            <div className="flex flex-wrap justify-center gap-3">
+              {data.users.map((user) => (
+                <UserStatsCard
+                  key={user.full_name}
+                  user={user}
+                  className="flex-1 min-w-[200px] max-w-[280px]"
+                />
               ))}
             </div>
           </section>
