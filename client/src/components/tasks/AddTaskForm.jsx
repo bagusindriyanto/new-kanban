@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
-import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPics } from '@/api/fetchPics';
 import useAuthStore from '@/stores/authStore';
 import { formatToSQL } from '@/utils/formatTimestamp';
@@ -11,6 +10,11 @@ import TextareaField from '../shared/form/TextareaField';
 import SwitchField from '../shared/form/SwitchField';
 import DateTimeField from '../shared/form/DateTimeField';
 import ComboboxField from '../shared/form/ComboboxField';
+import ActivityCombobox from '../activity/ActivityCombobox';
+import { useAddTask } from '@/api/addTask';
+import { DialogClose, DialogFooter } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Spinner } from '../ui/spinner';
 
 const formSchema = z
   .object({
@@ -53,10 +57,10 @@ const formSchema = z
     scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
   }));
 
-const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
+const AddTaskForm = ({ onOpenChange }) => {
   // Fetch Data
-  const { data: contents } = useFetchActivities();
   const { data: pics } = useFetchPics();
+  const { mutateAsync: addTaskMutation, isPending } = useAddTask();
 
   const user = useAuthStore((state) => state.user);
   const filteredPics = pics?.filter((pic) => pic.id !== user.pic_id);
@@ -86,7 +90,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
         : user.name,
     };
 
-    toast.promise(mutateAsync(payload), {
+    toast.promise(addTaskMutation(payload), {
       loading: 'Sedang menambahkan task...',
       success: () => {
         form.reset();
@@ -106,74 +110,76 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   };
 
   return (
-    <form id="add-task" onSubmit={form.handleSubmit(onSubmit)}>
-      <FieldSet>
-        <FieldGroup>
-          {/* Activity */}
-          <ComboboxField
-            name="content"
-            control={form.control}
-            label="Aktivitas"
-            required
-            items={contents}
-            valueKey="name"
-            labelKey="name"
-            placeholder="Pilih aktivitas"
-          />
-        </FieldGroup>
+    <>
+      <form id="add-task" onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldSet>
+          <FieldGroup>
+            {/* Activity */}
+            <ActivityCombobox control={form.control} />
+          </FieldGroup>
 
-        <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
-          {/* Assigned Switch */}
-          <SwitchField
-            name="is_assigned"
-            control={form.control}
-            label="Tugaskan Task?"
-            className="mt-6"
-          />
-          {/* PIC Combo Box */}
-          <ComboboxField
-            name="pic_id"
-            control={form.control}
-            label="Tugaskan ke"
-            required={isAssigned}
-            disabled={!isAssigned}
-            items={filteredPics}
-            valueKey="id"
-            labelKey="name"
-            placeholder="Pilih PIC"
-          />
-        </FieldGroup>
+          <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+            {/* Assigned Switch */}
+            <SwitchField
+              name="is_assigned"
+              control={form.control}
+              label="Tugaskan Task?"
+              className="mt-6"
+            />
+            {/* PIC Combo Box */}
+            <ComboboxField
+              name="pic_id"
+              control={form.control}
+              label="Tugaskan ke"
+              required={isAssigned}
+              disabled={!isAssigned}
+              items={filteredPics}
+              valueKey="id"
+              labelKey="name"
+              placeholder="Pilih PIC"
+            />
+          </FieldGroup>
 
-        <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
-          {/* Appointment Switch */}
-          <SwitchField
-            name="is_scheduled"
-            control={form.control}
-            label="Jadwalkan Task?"
-            className="mt-6"
-          />
-          {/* Appointment Date */}
-          <DateTimeField
-            name="scheduled_at"
-            control={form.control}
-            label="Tanggal & Waktu Jadwal"
-            required={isScheduled}
-            disabled={!isScheduled}
-            side="right"
-            disabledDate="before"
-          />
-        </FieldGroup>
-        {/* Detail */}
-        <FieldGroup>
-          <TextareaField
-            name="detail"
-            control={form.control}
-            label="Detail"
-            placeholder="Detail task"
-          />
-        </FieldGroup>
-      </FieldSet>
-    </form>
+          <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+            {/* Appointment Switch */}
+            <SwitchField
+              name="is_scheduled"
+              control={form.control}
+              label="Jadwalkan Task?"
+              className="mt-6"
+            />
+            {/* Appointment Date */}
+            <DateTimeField
+              name="scheduled_at"
+              control={form.control}
+              label="Tanggal & Waktu Jadwal"
+              required={isScheduled}
+              disabled={!isScheduled}
+              side="right"
+              disabledDate="before"
+            />
+          </FieldGroup>
+          {/* Detail */}
+          <FieldGroup>
+            <TextareaField
+              name="detail"
+              control={form.control}
+              label="Detail"
+              placeholder="Detail task"
+            />
+          </FieldGroup>
+        </FieldSet>
+      </form>
+      <DialogFooter>
+        <DialogClose render={<Button variant="outline" disabled={isPending} />}>
+          Batal
+        </DialogClose>
+        <Button type="submit" form="add-task" disabled={isPending}>
+          {isPending && <Spinner data-icon="inline-start" />}
+          {isPending ? 'Menambahkan...' : 'Tambah'}
+        </Button>
+      </DialogFooter>
+    </>
   );
 };
 

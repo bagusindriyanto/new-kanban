@@ -13,9 +13,9 @@ const UpdateTaskModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent aria-describedby={undefined}>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Task</DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
         <UpdateTaskForm />
       </DialogContent>

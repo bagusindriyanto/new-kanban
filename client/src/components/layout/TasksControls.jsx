@@ -1,7 +1,7 @@
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
 import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
 import FilterPics from '@/components/shared/filter/FilterPics';
-import AddItemsDropdown from './AddItemsDropdown';
+import AddTaskModal from '../tasks/AddTaskModal';
 
 const TasksControls = ({ isFetching, dataUpdatedAt }) => {
   return (
@@ -9,7 +9,7 @@ const TasksControls = ({ isFetching, dataUpdatedAt }) => {
       <RefreshToggle isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
       <FilterPics />
       <FilterCalendar />
-      <AddItemsDropdown />
+      <AddTaskModal />
     </div>
   );
 };

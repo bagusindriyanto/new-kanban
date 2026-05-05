@@ -9,11 +9,9 @@ import { Spinner } from '@/components/ui/spinner';
 import useFilter from '@/stores/filterStore';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 
-import { useFetchActivities } from '@/api/fetchActivities';
 import { useFetchPics } from '@/api/fetchPics';
 import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
-import { ScrollArea } from '../ui/scroll-area';
 import useTaskFilters from '@/hooks/useTaskFilters';
 import { formatToSQL } from '@/utils/formatTimestamp';
 
@@ -24,6 +22,7 @@ import SelectField from '../shared/form/SelectField';
 import DateTimeField from '../shared/form/DateTimeField';
 import NumberInputField from '../shared/form/NumberInputField';
 import useAuthStore from '@/stores/authStore';
+import ActivityCombobox from '../activity/ActivityCombobox';
 
 const statusItems = [
   { value: 'todo', label: 'To Do' },
@@ -83,7 +82,6 @@ const UpdateTaskForm = () => {
   // Custom hook untuk logic filter
   const { queryParams } = useTaskFilters();
   // Fetch data
-  const { data: contents } = useFetchActivities();
   const { data: pics } = useFetchPics();
   const { data: tasks } = useFetchTasks(queryParams);
 
@@ -177,16 +175,7 @@ const UpdateTaskForm = () => {
           <FieldSet>
             <FieldGroup className="grid grid-cols-2 gap-4">
               {/* Activity */}
-              <ComboboxField
-                name="content"
-                control={form.control}
-                label="Aktivitas"
-                required
-                items={contents}
-                valueKey="name"
-                labelKey="name"
-                placeholder="Pilih aktivitas"
-              />
+              <ActivityCombobox control={form.control} />
               {/* PIC Combo Box */}
               <ComboboxField
                 name="pic_id"
@@ -293,7 +282,7 @@ const UpdateTaskForm = () => {
         </DialogClose>
         <Button type="submit" form="update-task" disabled={isPending}>
           {isPending && <Spinner data-icon="inline-start" />}
-          {isPending ? 'Mengirim...' : 'Edit'}
+          {isPending ? 'Memperbarui...' : 'Edit'}
         </Button>
       </DialogFooter>
     </>
