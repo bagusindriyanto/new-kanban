@@ -25,21 +25,14 @@ import {
 } from '../ui/input-group';
 import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/api';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 import { useFetchDivisions } from '@/api/fetchDivisions';
 import { useFetchRoles } from '@/api/fetchRoles';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';
 import SelectField from '../shared/form/SelectField';
 import AvatarUpload from '../shared/form/AvatarUpload';
+import useAuthStore from '@/stores/authStore';
+import useFilter from '@/stores/filterStore';
 
 const formSchema = z
   .object({
@@ -85,16 +78,21 @@ const RegisterForm = () => {
     },
   });
 
+  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
+
+  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   const onSubmit = (data) => {
     toast.promise(api.post('/auth/register', data), {
       loading: 'Sedang membuat akun...',
-      success: () => {
-        navigate('/login');
+      success: (res) => {
+        login(res.data.user, res.data.access_token, res.data.refresh_token);
+        setSelectedPicId(res.data.user.pic_id);
+        navigate('/');
         return {
           message: 'Berhasil membuat akun!',
-          description: 'Silahkan login dengan akun yang anda daftarkan.',
+          description: `Selamat datang, ${res.data.user.name}!`,
         };
       },
       error: (err) => {
