@@ -4,7 +4,7 @@ import { queryClient } from '@/lib/react-query';
 import { fetchTasksQueryKey } from './fetchTasks';
 
 export const deleteTask = async (taskId) => {
-  const response = await api.delete(`/tasks?id=${taskId}`);
+  const response = await api.delete(`/tasks/${taskId}`);
   return response.data;
 };
 

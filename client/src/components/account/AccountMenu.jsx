@@ -1,10 +1,7 @@
-import { useMemo } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
@@ -16,24 +13,11 @@ import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, getRefreshToken } from '@/lib/api';
 import { useNavigate } from 'react-router';
-
-function getAvatarColor(name) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue = ((hash % 360) + 360) % 360;
-  return `hsl(${hue}, 60%, 45%)`;
-}
+import ProfileAvatar from '../shared/ProfileAvatar';
 
 const AccountMenu = () => {
   const { user, clearUser } = useAuthStore();
   const navigate = useNavigate();
-
-  const avatarColor = useMemo(
-    () => getAvatarColor(user.name ?? 'User'),
-    [user.name],
-  );
 
   const handleLogout = () => {
     toast.promise(
@@ -62,15 +46,7 @@ const AccountMenu = () => {
               />
             }
           >
-            <Avatar className="size-8">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback
-                className="size-8 text-white"
-                style={{ backgroundColor: avatarColor }}
-              >
-                {user.name?.charAt(0).toUpperCase() ?? 'U'}
-              </AvatarFallback>
-            </Avatar>
+            <ProfileAvatar profile={user} className="size-8" />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">
                 {user.name ?? 'User'}
@@ -88,15 +64,7 @@ const AccountMenu = () => {
             sideOffset={4}
           >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar className="size-8">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback
-                  className="size-8 text-white"
-                  style={{ backgroundColor: avatarColor }}
-                >
-                  {user.name?.charAt(0).toUpperCase() ?? 'U'}
-                </AvatarFallback>
-              </Avatar>
+              <ProfileAvatar profile={user} className="size-8" />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {user.name ?? 'User'}

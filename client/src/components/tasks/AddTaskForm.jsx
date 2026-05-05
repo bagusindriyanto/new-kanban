@@ -59,7 +59,7 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const { data: pics } = useFetchPics();
 
   const user = useAuthStore((state) => state.user);
-  const filteredPics = pics?.filter((pic) => pic.id !== user.id);
+  const filteredPics = pics?.filter((pic) => pic.id !== user.pic_id);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -79,8 +79,8 @@ const AddTaskForm = ({ mutateAsync, onOpenChange }) => {
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      pic_id: isAssigned ? data.pic_id : user.id,
-      assigner_id: isAssigned ? user.id : null,
+      pic_id: isAssigned ? data.pic_id : user.pic_id,
+      assigner_id: isAssigned ? user.pic_id : null,
       pic_name: isAssigned
         ? filteredPics?.find((pic) => pic.id === data.pic_id)?.name
         : user.name,

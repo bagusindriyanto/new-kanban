@@ -3,12 +3,21 @@ import AuroraDreamBackground from './AuroraDream';
 import CosmicDustBackground from './CosmicDust';
 
 const AnimatedBackground = ({ children }) => {
-  const { theme } = useTheme();
-  if (theme === 'light') {
-    return <AuroraDreamBackground>{children}</AuroraDreamBackground>;
-  } else if (theme === 'dark') {
+  const { resolvedTheme } = useTheme();
+
+  // resolvedTheme otomatis resolve "system" → "light"/"dark"
+  // Fallback ke system preference saat hydration (resolvedTheme masih undefined)
+  const effective =
+    resolvedTheme ??
+    (window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light');
+
+  if (effective === 'dark') {
     return <CosmicDustBackground>{children}</CosmicDustBackground>;
   }
+
+  return <AuroraDreamBackground>{children}</AuroraDreamBackground>;
 };
 
 export default AnimatedBackground;

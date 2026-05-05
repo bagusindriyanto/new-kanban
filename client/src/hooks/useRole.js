@@ -5,11 +5,11 @@ export const useRole = () => {
 
   return {
     role: user?.role,
-    picId: user?.id,
+    picId: user?.pic_id,
     isAdmin: user?.role === 'Admin',
     isManager: user?.role === 'Manager',
     isAdminOrManager: ['Admin', 'Manager'].includes(user?.role),
-    isOwner: (taskPicId) => user?.id === taskPicId,
+    isOwner: (taskPicId) => user?.pic_id === taskPicId,
     hasRole: (...roles) => roles.includes(user?.role),
   };
 };

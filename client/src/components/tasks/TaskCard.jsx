@@ -58,17 +58,17 @@ const TaskCard = ({ task, className }) => {
     },
   });
 
-  // Drag and drop
-  const { ref: draggableRef, isDragSource } = useDraggable({
-    id: id,
-    data: { task },
-    disabled: optimistic || !!pause_time || !canModify,
-  });
-
   // Custom hooks
   const { isPaused, totalPause, togglePause } = usePauseTimer({
     task,
     updateTaskMutate,
+  });
+
+  // Drag and drop
+  const { ref: draggableRef, isDragSource } = useDraggable({
+    id: id,
+    data: { task },
+    disabled: optimistic || isPaused || !canModify,
   });
 
   const { isUrgent, diffInMinutes } = useUrgencyCheck({
@@ -92,9 +92,10 @@ const TaskCard = ({ task, className }) => {
     <div
       ref={draggableRef}
       className={cn(
-        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm select-none transition duration-300 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
+        'flex flex-col gap-2 rounded-lg border p-3 shadow-sm select-none transition duration-300 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 cursor-default',
         {
-          'hover:shadow-md hover:-translate-y-1 cursor-grab': canModify,
+          'hover:shadow-md hover:-translate-y-1 cursor-grab':
+            canModify && !isPaused,
           'bg-todo-card border-todo-border shadow-todo-border/50':
             status === 'todo',
           'bg-progress-card border-progress-border shadow-progress-border/50':

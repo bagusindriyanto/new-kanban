@@ -53,7 +53,7 @@ const UpdateAccountForm = () => {
   });
 
   const onSubmit = (data) => {
-    toast.promise(api.patch('/users', data), {
+    toast.promise(api.put('/account', data), {
       loading: 'Sedang memperbarui akun...',
       success: (res) => {
         refreshData();

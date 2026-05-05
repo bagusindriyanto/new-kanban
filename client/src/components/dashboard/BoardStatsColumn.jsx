@@ -7,22 +7,9 @@ import {
   RadialBarChart,
 } from 'recharts';
 import { ChartContainer } from '../ui/chart';
-import { useFetchTasks } from '@/api/fetchTasks';
-import useAuthStore from '@/stores/authStore';
-import { format } from 'date-fns';
 import { SlidingNumber } from '../shared/SlidingNumber';
 
-const BoardStatsColumn = () => {
-  const user = useAuthStore((state) => state.user);
-
-  const queryParams = {
-    pic_id: user.id,
-    from_date: format(new Date(), 'yyyy-MM-dd'),
-    to_date: format(new Date(), 'yyyy-MM-dd'),
-  };
-
-  const { data: tasks } = useFetchTasks(queryParams);
-
+const BoardStatsColumn = ({ tasks }) => {
   const todoCount = tasks?.filter((task) => task.status === 'todo').length || 0;
   const onProgressCount =
     tasks?.filter((task) => task.status === 'on progress').length || 0;
@@ -52,7 +39,7 @@ const BoardStatsColumn = () => {
   return (
     <div className="flex flex-col h-full min-h-0 rounded-xl border shadow-xs border-border/70 bg-card select-none">
       <h2 className="p-3 text-lg font-semibold tracking-tight text-card-foreground">
-        Statistik Hari Ini
+        Statistik
       </h2>
       <ChartContainer config={chartConfig} className="flex-1">
         <RadialBarChart
