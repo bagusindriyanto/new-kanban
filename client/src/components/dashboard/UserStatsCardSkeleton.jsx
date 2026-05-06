@@ -37,7 +37,24 @@ const UserStatsCardSkeleton = ({ className }) => {
         ))}
 
         {/* Completion row skeleton */}
-        <div className="flex items-center justify-between py-1.5">
+        <div className="flex items-center justify-between pt-1.5">
+          <Skeleton className="h-3.5 w-20 rounded-md" />
+          <Skeleton className="h-3.5 w-8 rounded-md" />
+        </div>
+      </div>
+
+      <Separator />
+      {/* Operational Time skeleton */}
+      <div className="flex flex-col gap-1.5 pt-1.5">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-3.5 w-20 rounded-md" />
+          <Skeleton className="h-3.5 w-8 rounded-md" />
+        </div>
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-3.5 w-20 rounded-md" />
+          <Skeleton className="h-3.5 w-8 rounded-md" />
+        </div>
+        <div className="flex items-center justify-between pt-1.5">
           <Skeleton className="h-3.5 w-20 rounded-md" />
           <Skeleton className="h-3.5 w-8 rounded-md" />
         </div>

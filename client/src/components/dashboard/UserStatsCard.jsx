@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import ProfileAvatar from '../shared/ProfileAvatar';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { formatDuration } from '@/utils/formatDuration';
 
 const statItems = [
   {
@@ -48,6 +49,11 @@ const UserStatsCard = ({ user, className }) => {
   const donePercent = total > 0 ? Math.round((done / total) * 100) : 0;
   const completion = total > 0 ? Math.round((done / total) * 100) : 0;
 
+  const effectiveMinute = user.total_effective_minute ?? 0;
+  const workingMinute = user.total_working_minute ?? 0;
+  const effectivePercent =
+    workingMinute > 0 ? Math.round((effectiveMinute / workingMinute) * 100) : 0;
+
   return (
     <Card
       className={cn(
@@ -86,9 +92,9 @@ const UserStatsCard = ({ user, className }) => {
       </div>
 
       {/* Stats List */}
-      <div className="flex flex-col gap-0">
+      <div className="flex flex-col gap-1.5">
         {statItems.map(({ key, label, textClass, dotClass }) => (
-          <div key={key} className="flex items-center justify-between py-1.5">
+          <div key={key} className="flex items-center justify-between">
             <div className="flex gap-2 items-center text-sm text-muted-foreground">
               <span className={`size-1.5 rounded-full ${dotClass}`} />
               {label}
@@ -100,10 +106,31 @@ const UserStatsCard = ({ user, className }) => {
         ))}
 
         {/* Completion row */}
-        <div className="flex items-center justify-between py-1.5">
+        <div className="flex items-center justify-between pt-1.5">
           <span className="text-sm text-muted-foreground">Completion</span>
-          <span className="text-sm font-bold tabular-nums text-primary">
-            {completion}%
+          <span className="text-sm font-bold tabular-nums">{completion}%</span>
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-1.5 pb-1.5">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">Lama Aktivitas</p>
+          <span className="text-sm font-bold tabular-nums text-muted-foreground">
+            {formatDuration(effectiveMinute)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">Lama Bekerja</p>
+          <span className="text-sm font-bold tabular-nums text-muted-foreground">
+            {formatDuration(workingMinute)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between pt-1.5">
+          <p className="text-sm text-muted-foreground">Operational Time</p>
+          <span className="text-sm font-bold tabular-nums">
+            {effectivePercent}%
           </span>
         </div>
       </div>

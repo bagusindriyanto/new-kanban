@@ -145,9 +145,9 @@ const SummaryPage = () => {
           </Card>
         </div>
         {/* User Stats */}
-        <section>
+        <section className="my-6">
           <h3 className="mb-3 text-lg font-semibold tracking-tight">
-            Statistik Per Anggota
+            Statistik Per PIC
           </h3>
           <div className="flex flex-wrap gap-3 justify-center">
             {isLoading
@@ -182,7 +182,7 @@ const SummaryPage = () => {
         {/* Bar Chart */}
         <BarChartCard pics={chartData?.pics || []} />
         {/* Pie Chart */}
-        <PieChartCard data={[]} />
+        {/* <PieChartCard data={[]} /> */}
       </main>
     </div>
   );
