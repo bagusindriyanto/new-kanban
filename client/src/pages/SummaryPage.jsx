@@ -45,7 +45,7 @@ const SummaryPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SiteHeader titlePage="Ringkasan" />
+      <SiteHeader titlePage="Performance" />
       {/* Filter */}
       <div className="flex justify-between px-4 pt-4">
         <div className="ml-1">
@@ -121,7 +121,7 @@ const SummaryPage = () => {
             <h3 className="mb-3 text-lg font-semibold tracking-tight">
               Statistik Per Anggota
             </h3>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap gap-3 justify-center">
               {data.users.map((user) => (
                 <UserStatsCard
                   key={user.full_name}

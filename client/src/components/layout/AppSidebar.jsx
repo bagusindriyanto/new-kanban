@@ -23,7 +23,7 @@ import {
 
 const navMain = [
   { to: '/', label: 'Kanban Board', icon: SquareKanban },
-  { to: '/summary', label: 'Ringkasan', icon: ChartNoAxesCombined },
+  { to: '/performance', label: 'Performance', icon: ChartNoAxesCombined },
 ];
 
 const navSecondary = [
@@ -41,7 +41,7 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <div className="flex items-center gap-2 transition-[padding] group-data-[state=expanded]:px-2 group-data-[state=expanded]:py-1">
               <img src={logo} alt="Kanban App" className="size-7 m-0.5" />
-              <span className="truncate font-semibold font-heading tracking-tight text-lg">
+              <span className="text-lg font-semibold tracking-tight truncate font-heading">
                 Kanban App
               </span>
             </div>
