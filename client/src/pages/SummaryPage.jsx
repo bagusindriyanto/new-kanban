@@ -22,7 +22,8 @@ import BarChartCard from '@/components/dashboard/BarChartCard';
 import SiteHeader from '@/components/layout/SiteHeader';
 import useFilter from '@/stores/filterStore';
 import { format } from 'date-fns';
-import { useFetchTableSummary } from '@/api/fetchTableSummary';
+import { useFetchTableData } from '@/api/fetchTableData';
+import { useFetchChartData } from '@/api/fetchChartData';
 
 const SummaryPage = () => {
   const range = useFilter((state) => state.range);
@@ -40,13 +41,15 @@ const SummaryPage = () => {
     dataUpdatedAt,
   } = useFetchStats(queryParams);
 
-  const { data: tableData, error: fetchTableSummaryError } =
-    useFetchTableSummary(queryParams);
+  const { data: tableData, error: fetchTableDataError } =
+    useFetchTableData(queryParams);
+
+  const { data: chartData } = useFetchChartData(queryParams);
 
   // Ambil pesan error
   const errorMessage =
     fetchStatsError?.response?.data?.message ||
-    fetchTableSummaryError?.response?.data?.message ||
+    fetchTableDataError?.response?.data?.message ||
     null;
 
   // Cek status online/offline

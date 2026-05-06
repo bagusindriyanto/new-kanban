@@ -3,7 +3,7 @@ import { fetchActivitiesQueryKey } from '@/api/fetchActivities';
 import { fetchPicsQueryKey } from '@/api/fetchPics';
 import { fetchTasksQueryKey } from '@/api/fetchTasks';
 import { fetchStatsQueryKey } from '@/api/fetchStats';
-import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
+import { fetchTableDataQueryKey } from '@/api/fetchTableData';
 
 export const refreshData = () => {
   const queryKeys = [
@@ -11,7 +11,7 @@ export const refreshData = () => {
     fetchPicsQueryKey(),
     fetchTasksQueryKey(),
     fetchStatsQueryKey(),
-    fetchTableSummaryQueryKey(),
+    fetchTableDataQueryKey(),
   ];
   queryKeys.forEach((key) => {
     queryClient.invalidateQueries({ queryKey: key });

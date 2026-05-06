@@ -1,6 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { fetchStatsQueryKey } from '@/api/fetchStats';
+import { fetchTableDataQueryKey } from '@/api/fetchTableData';
+import { fetchChartDataQueryKey } from '@/api/fetchChartData';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +27,10 @@ export const queryClient = new QueryClient({
       onSuccess: () => {
         // Invalidate data summary
         queryClient.invalidateQueries({ queryKey: fetchStatsQueryKey() });
+        // Invalidate data table
+        queryClient.invalidateQueries({ queryKey: fetchTableDataQueryKey() });
+        // Invalidate data chart
+        queryClient.invalidateQueries({ queryKey: fetchChartDataQueryKey() });
       },
     },
   },
