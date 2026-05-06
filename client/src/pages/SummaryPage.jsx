@@ -1,4 +1,5 @@
 import UserStatsCard from '@/components/dashboard/UserStatsCard';
+import UserStatsCardSkeleton from '@/components/dashboard/UserStatsCardSkeleton';
 import {
   Card,
   CardContent,
@@ -116,22 +117,27 @@ const SummaryPage = () => {
           </CardHeader>
         </Card>
         {/* User Stats */}
-        {data?.users && data.users.length > 0 && (
-          <section className="md:col-span-2 xl:col-span-6">
-            <h3 className="mb-3 text-lg font-semibold tracking-tight">
-              Statistik Per Anggota
-            </h3>
-            <div className="flex flex-wrap gap-3 justify-center">
-              {data.users.map((user) => (
-                <UserStatsCard
-                  key={user.full_name}
-                  user={user}
-                  className="flex-1 min-w-[200px] max-w-[280px]"
-                />
-              ))}
-            </div>
-          </section>
-        )}
+        <section className="md:col-span-2 xl:col-span-6">
+          <h3 className="mb-3 text-lg font-semibold tracking-tight">
+            Statistik Per Anggota
+          </h3>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {isFetching
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <UserStatsCardSkeleton
+                    key={i}
+                    className="flex-1 min-w-[200px] max-w-[280px]"
+                  />
+                ))
+              : data?.users?.map((user) => (
+                  <UserStatsCard
+                    key={user.full_name}
+                    user={user}
+                    className="flex-1 min-w-[200px] max-w-[280px]"
+                  />
+                ))}
+          </div>
+        </section>
         {/* Table */}
         <section className="md:col-span-2 xl:col-span-6">
           <h3 className="mb-3 text-lg font-semibold tracking-tight">
