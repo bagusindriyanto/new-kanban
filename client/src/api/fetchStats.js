@@ -1,27 +1,27 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 
-export const fetchSummary = async (filters = {}) => {
+export const fetchStats = async (filters = {}) => {
   const response = await api.get('/dashboard/stats', { params: filters });
   return response.data;
 };
 
-export const fetchSummaryQueryKey = (filters = {}) => [
+export const fetchStatsQueryKey = (filters = {}) => [
   'dashboard-stats',
   filters,
 ];
 
-const fetchSummaryQueryOptions = (filters = {}) => {
+const fetchStatsQueryOptions = (filters = {}) => {
   return queryOptions({
-    queryKey: fetchSummaryQueryKey(filters),
-    queryFn: () => fetchSummary(filters),
+    queryKey: fetchStatsQueryKey(filters),
+    queryFn: () => fetchStats(filters),
     placeholderData: (previousData) => previousData,
   });
 };
 
-export const useFetchSummary = (filters = {}, params = {}) => {
+export const useFetchStats = (filters = {}, params = {}) => {
   return useQuery({
-    ...fetchSummaryQueryOptions(filters),
+    ...fetchStatsQueryOptions(filters),
     ...params.queryConfig,
   });
 };

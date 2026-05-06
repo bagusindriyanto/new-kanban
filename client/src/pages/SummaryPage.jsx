@@ -12,7 +12,7 @@ import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
 // Data Table
 import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
-import { useFetchSummary } from '@/api/fetchSummary';
+import { useFetchStats } from '@/api/fetchStats';
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import { ErrorBanner } from '@/components/shared/ErrorState';
@@ -34,18 +34,18 @@ const SummaryPage = () => {
 
   const {
     data,
-    error: fetchSummaryError,
+    error: fetchStatsError,
     isLoading,
     isFetching,
     dataUpdatedAt,
-  } = useFetchSummary(queryParams);
+  } = useFetchStats(queryParams);
 
   const { data: tableData, error: fetchTableSummaryError } =
     useFetchTableSummary(queryParams);
 
   // Ambil pesan error
   const errorMessage =
-    fetchSummaryError?.response?.data?.message ||
+    fetchStatsError?.response?.data?.message ||
     fetchTableSummaryError?.response?.data?.message ||
     null;
 
@@ -74,7 +74,7 @@ const SummaryPage = () => {
       </div>
       {/* Main */}
       <main className="grid flex-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-6">
-        {(fetchSummaryError || !isOnline) && (
+        {(fetchStatsError || !isOnline) && (
           <ErrorBanner
             isOnline={isOnline}
             errorMessage={errorMessage}

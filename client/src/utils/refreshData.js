@@ -2,7 +2,7 @@ import { queryClient } from '@/lib/react-query';
 import { fetchActivitiesQueryKey } from '@/api/fetchActivities';
 import { fetchPicsQueryKey } from '@/api/fetchPics';
 import { fetchTasksQueryKey } from '@/api/fetchTasks';
-import { fetchSummaryQueryKey } from '@/api/fetchSummary';
+import { fetchStatsQueryKey } from '@/api/fetchStats';
 import { fetchTableSummaryQueryKey } from '@/api/fetchTableSummary';
 
 export const refreshData = () => {
@@ -10,7 +10,7 @@ export const refreshData = () => {
     fetchActivitiesQueryKey(),
     fetchPicsQueryKey(),
     fetchTasksQueryKey(),
-    fetchSummaryQueryKey(),
+    fetchStatsQueryKey(),
     fetchTableSummaryQueryKey(),
   ];
   queryKeys.forEach((key) => {
