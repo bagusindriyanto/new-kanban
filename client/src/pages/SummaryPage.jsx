@@ -22,6 +22,7 @@ import BarChartCard from '@/components/dashboard/BarChartCard';
 import SiteHeader from '@/components/layout/SiteHeader';
 import useFilter from '@/stores/filterStore';
 import { format } from 'date-fns';
+import { useFetchTableSummary } from '@/api/fetchTableSummary';
 
 const SummaryPage = () => {
   const range = useFilter((state) => state.range);
@@ -34,12 +35,19 @@ const SummaryPage = () => {
   const {
     data,
     error: fetchSummaryError,
+    isLoading,
     isFetching,
     dataUpdatedAt,
   } = useFetchSummary(queryParams);
 
+  const { data: tableData, error: fetchTableSummaryError } =
+    useFetchTableSummary(queryParams);
+
   // Ambil pesan error
-  const errorMessage = fetchSummaryError?.response?.data?.message || null;
+  const errorMessage =
+    fetchSummaryError?.response?.data?.message ||
+    fetchTableSummaryError?.response?.data?.message ||
+    null;
 
   // Cek status online/offline
   const isOnline = useIsOnline();
@@ -122,7 +130,7 @@ const SummaryPage = () => {
             Statistik Per Anggota
           </h3>
           <div className="flex flex-wrap gap-3 justify-center">
-            {isFetching
+            {isLoading
               ? Array.from({ length: 5 }).map((_, i) => (
                   <UserStatsCardSkeleton
                     key={i}
@@ -139,16 +147,18 @@ const SummaryPage = () => {
           </div>
         </section>
         {/* Table */}
-        <section className="md:col-span-2 xl:col-span-6">
-          <h3 className="mb-3 text-lg font-semibold tracking-tight">
-            Tabel Aktivitas
-          </h3>
-          <p className="text-muted-foreground">
-            Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
-            rata-rata durasi setiap aktivitas.
-          </p>
-          <DataTable columns={columns} data={[]} />
-        </section>
+        <Card className="md:col-span-2 xl:col-span-3 xl:row-span-2">
+          <CardHeader>
+            <CardTitle>Tabel Aktivitas</CardTitle>
+            <CardDescription>
+              Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
+              rata-rata durasi setiap aktivitas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={columns} data={tableData?.rows || []} />
+          </CardContent>
+        </Card>
         {/* Bar Chart */}
         <BarChartCard data={[]} />
         {/* Pie Chart */}

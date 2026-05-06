@@ -54,8 +54,8 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const total_minutes = row.getValue('total_minutes');
-      const formatted = formatDuration(total_minutes);
+      const totalMinutes = row.getValue('total_minutes');
+      const formatted = formatDuration(totalMinutes);
       return (
         <div className="font-medium tabular-nums text-right">{formatted}</div>
       );
@@ -78,11 +78,9 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const activity_count = row.getValue('activity_count');
+      const totalTasks = row.getValue('total_tasks');
       return (
-        <div className="font-medium tabular-nums text-right">
-          {activity_count}
-        </div>
+        <div className="font-medium tabular-nums text-right">{totalTasks}</div>
       );
     },
   },
@@ -103,8 +101,8 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const avg_minutes = Math.round(row.getValue('avg_minutes'));
-      const formatted = formatDuration(avg_minutes);
+      const avgMinutes = Math.round(row.getValue('avg_minutes'));
+      const formatted = formatDuration(avgMinutes);
       return (
         <div className="font-medium tabular-nums text-right">{formatted}</div>
       );
