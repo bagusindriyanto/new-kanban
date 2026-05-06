@@ -9,29 +9,29 @@ const statItems = [
     key: 'todo',
     label: 'To Do',
     icon: CircleDot,
-    textClass: 'text-rose-500',
-    dotClass: 'bg-rose-500',
+    textClass: 'text-todo-accent',
+    dotClass: 'bg-todo-accent',
   },
   {
     key: 'on_progress',
     label: 'On Progress',
     icon: Loader,
-    textClass: 'text-amber-500',
-    dotClass: 'bg-amber-500',
+    textClass: 'text-progress-accent',
+    dotClass: 'bg-progress-accent',
   },
   {
     key: 'done',
     label: 'Done',
     icon: CircleCheckBig,
-    textClass: 'text-emerald-500',
-    dotClass: 'bg-emerald-500',
+    textClass: 'text-done-accent',
+    dotClass: 'bg-done-accent',
   },
   {
     key: 'total',
     label: 'Total',
     icon: LayoutList,
-    textClass: 'text-blue-500',
-    dotClass: 'bg-blue-500',
+    textClass: 'text-total-accent',
+    dotClass: 'bg-total-accent',
   },
 ];
 
@@ -59,9 +59,9 @@ const UserStatsCard = ({ user, className }) => {
       <div className="flex flex-col gap-2 items-center pt-2">
         <ProfileAvatar profile={user} className="text-lg size-14" />
         <div className="mt-1 text-center">
-          <h3 className="text-sm font-semibold leading-tight truncate max-w-[180px]">
+          <p className="text-sm font-semibold leading-tight truncate max-w-[180px]">
             {user.full_name}
-          </h3>
+          </p>
         </div>
       </div>
 
@@ -71,15 +71,15 @@ const UserStatsCard = ({ user, className }) => {
       <div className="overflow-hidden w-full h-2 rounded-full bg-muted">
         <div className="flex w-full h-full">
           <div
-            className="h-full bg-rose-500 transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
+            className="h-full bg-todo-accent transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
             style={{ width: `${todoPercent}%` }}
           />
           <div
-            className="h-full bg-amber-500 transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
+            className="h-full bg-progress-accent transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
             style={{ width: `${onProgressPercent}%` }}
           />
           <div
-            className="h-full bg-emerald-500 transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
+            className="h-full bg-done-accent transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
             style={{ width: `${donePercent}%` }}
           />
         </div>

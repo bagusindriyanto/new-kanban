@@ -45,7 +45,7 @@ const PieChartCard = ({ data = EMPTY_DATA }) => {
   const { chartData, chartConfig } = usePieChartData(data, limit);
 
   return (
-    <Card className="md:col-span-2 xl:col-span-3">
+    <Card>
       <CardHeader>
         <CardTitle>Proporsi Aktivitas</CardTitle>
         <CardDescription>
@@ -97,9 +97,9 @@ const PieChartCard = ({ data = EMPTY_DATA }) => {
                           }}
                         />
                         {chartConfig[name]?.label || name}
-                        <div className="text-foreground ml-auto flex items-baseline gap-1 font-medium tabular-nums">
+                        <div className="flex gap-1 items-baseline ml-auto font-medium tabular-nums text-foreground">
                           {value}
-                          <span className="text-muted-foreground font-normal">
+                          <span className="font-normal text-muted-foreground">
                             menit
                           </span>
                         </div>

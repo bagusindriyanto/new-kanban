@@ -44,12 +44,14 @@ const SummaryPage = () => {
   const { data: tableData, error: fetchTableDataError } =
     useFetchTableData(queryParams);
 
-  const { data: chartData } = useFetchChartData(queryParams);
+  const { data: chartData, error: fetchChartDataError } =
+    useFetchChartData(queryParams);
 
   // Ambil pesan error
   const errorMessage =
     fetchStatsError?.response?.data?.message ||
     fetchTableDataError?.response?.data?.message ||
+    fetchChartDataError?.response?.data?.message ||
     null;
 
   // Cek status online/offline
@@ -59,7 +61,7 @@ const SummaryPage = () => {
     <div className="flex flex-col min-h-screen">
       <SiteHeader titlePage="Performance" />
       {/* Filter */}
-      <div className="flex justify-between px-4 pt-4">
+      <div className="flex justify-between p-4 border-b">
         <div className="ml-1">
           <h2 className="text-2xl font-bold tracking-tight">
             Performance Dashboard
@@ -76,59 +78,74 @@ const SummaryPage = () => {
         </div>
       </div>
       {/* Main */}
-      <main className="grid flex-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-6">
+      <main className="flex flex-col flex-1 gap-3 p-4">
         {(fetchStatsError || !isOnline) && (
-          <ErrorBanner
-            isOnline={isOnline}
-            errorMessage={errorMessage}
-            className="md:col-span-4 xl:col-span-6"
-          />
+          <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
         )}
-        <Card className="border-none xl:col-span-3 bg-linear-to-t from-primary/10 to-card">
-          <CardHeader>
-            <CardDescription>Total Aktivitas</CardDescription>
-            {/* <div className="flex justify-between items-center"> */}
-            <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {data?.summary?.total_tasks ?? 0} Aktivitas
-            </CardTitle>
-            {/* </div> */}
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-1.5">
-              <Badge className="border text-todo-foreground bg-todo border-todo-border">
-                To Do: {data?.summary?.todo ?? 0}
-              </Badge>
-              <Badge className="border text-progress-foreground bg-progress border-progress-border">
-                On Progress: {data?.summary?.on_progress ?? 0}
-              </Badge>
-              <Badge className="border text-done-foreground bg-done border-done-border">
-                Done: {data?.summary?.done ?? 0}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-none xl:col-span-3 bg-linear-to-t from-primary/10 to-card">
-          <CardHeader>
-            <CardDescription>Operational Time</CardDescription>
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {100}%
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <Card
+            size="sm"
+            className="border-none bg-linear-150 from-card to-todo-accent/30"
+          >
+            <CardHeader>
+              <CardTitle className="text-muted-foreground">
+                Total To Do
               </CardTitle>
-              <div className="flex flex-col items-end gap-1.5 text-sm">
-                <div className="font-medium">
-                  Lama Aktivitas:{' '}
-                  <span className="text-muted-foreground">{0} menit</span>
-                </div>
-                <div className="font-medium">
-                  Lama Bekerja:{' '}
-                  <span className="text-muted-foreground">{0} menit</span>
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold">
+                {data?.summary?.todo ?? 0}
+              </p>
+            </CardContent>
+          </Card>
+          <Card
+            size="sm"
+            className="border-none bg-linear-150 from-card to-progress-accent/30"
+          >
+            <CardHeader>
+              <CardTitle className="text-muted-foreground">
+                Total On Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold">
+                {data?.summary?.on_progress ?? 0}
+              </p>
+            </CardContent>
+          </Card>
+          <Card
+            size="sm"
+            className="border-none bg-linear-150 from-card to-done-accent/30"
+          >
+            <CardHeader>
+              <CardTitle className="text-muted-foreground">
+                Total Done
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold">
+                {data?.summary?.done ?? 0}
+              </p>
+            </CardContent>
+          </Card>
+          <Card
+            size="sm"
+            className="border-none bg-linear-150 from-card to-total-accent/30"
+          >
+            <CardHeader>
+              <CardTitle className="text-muted-foreground">
+                Total Tasks
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold">
+                {data?.summary?.total_tasks ?? 0}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
         {/* User Stats */}
-        <section className="md:col-span-2 xl:col-span-6">
+        <section>
           <h3 className="mb-3 text-lg font-semibold tracking-tight">
             Statistik Per Anggota
           </h3>
@@ -150,7 +167,7 @@ const SummaryPage = () => {
           </div>
         </section>
         {/* Table */}
-        <Card className="md:col-span-2 xl:col-span-3 xl:row-span-2">
+        <Card>
           <CardHeader>
             <CardTitle>Tabel Aktivitas</CardTitle>
             <CardDescription>
@@ -163,7 +180,7 @@ const SummaryPage = () => {
           </CardContent>
         </Card>
         {/* Bar Chart */}
-        <BarChartCard data={[]} />
+        <BarChartCard pics={chartData?.pics || []} />
         {/* Pie Chart */}
         <PieChartCard data={[]} />
       </main>

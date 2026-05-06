@@ -118,12 +118,12 @@ const BoardStatsColumn = ({ tasks }) => {
             <SlidingNumber value={doneCount} />
           </span>
         </div>
-        <div className="flex flex-col gap-2 justify-between p-3 rounded-lg border border-info/50 bg-info/10">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-info-foreground">
+        <div className="flex flex-col gap-2 justify-between p-3 rounded-lg border border-total-border bg-total">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-total-foreground">
             <LayoutList className="size-3.5" />
             Total
           </div>
-          <span className="text-2xl font-bold tracking-tight text-info-foreground">
+          <span className="text-2xl font-bold tracking-tight text-total-foreground">
             <SlidingNumber value={totalCount} />
           </span>
         </div>

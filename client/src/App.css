@@ -65,14 +65,21 @@
   --color-todo: var(--todo);
   --color-todo-card: var(--todo-card);
   --color-todo-border: var(--todo-border);
+  --color-todo-accent: var(--todo-accent);
   --color-progress-foreground: var(--progress-foreground);
   --color-progress: var(--progress);
   --color-progress-card: var(--progress-card);
   --color-progress-border: var(--progress-border);
+  --color-progress-accent: var(--progress-accent);
   --color-done-foreground: var(--done-foreground);
   --color-done: var(--done);
   --color-done-card: var(--done-card);
   --color-done-border: var(--done-border);
+  --color-done-accent: var(--done-accent);
+  --color-total: var(--total);
+  --color-total-foreground: var(--total-foreground);
+  --color-total-border: var(--total-border);
+  --color-total-accent: var(--total-accent);
   --font-heading: var(--font-bricolage-grotesque);
   --font-body: var(--font-geist);
   --font-mono: var(--font-geist-mono);
@@ -128,18 +135,25 @@
   --warning-foreground: var(--color-yellow-900);
   --invert: var(--color-zinc-900);
   --invert-foreground: var(--color-zinc-50);
-  --todo: #fcebeb;
-  --todo-foreground: #791f1f;
+  --todo: oklch(0.95 0.03 25);
+  --todo-foreground: oklch(0.35 0.12 25);
   --todo-card: #ffffff;
-  --todo-border: #f0baba;
-  --progress: #faeeda;
-  --progress-foreground: #633806;
+  --todo-border: oklch(0.82 0.08 25);
+  --todo-accent: oklch(0.63 0.22 25);
+  --progress: oklch(0.96 0.04 80);
+  --progress-foreground: oklch(0.38 0.1 60);
   --progress-card: #ffffff;
-  --progress-border: #f5c070;
-  --done: #eaf3de;
-  --done-foreground: #27500a;
+  --progress-border: oklch(0.82 0.1 75);
+  --progress-accent: oklch(0.7 0.17 65);
+  --done: oklch(0.96 0.04 145);
+  --done-foreground: oklch(0.35 0.1 145);
   --done-card: #ffffff;
-  --done-border: #b8d990;
+  --done-border: oklch(0.82 0.08 145);
+  --done-accent: oklch(0.62 0.19 150);
+  --total: oklch(0.96 0.03 260);
+  --total-foreground: oklch(0.35 0.1 260);
+  --total-border: oklch(0.82 0.08 260);
+  --total-accent: oklch(0.58 0.2 260);
 }
 
 .dark {
@@ -188,18 +202,25 @@
   --warning-foreground: var(--color-yellow-600);
   --invert: var(--color-zinc-700);
   --invert-foreground: var(--color-zinc-50);
-  --todo: #2a1414;
-  --todo-foreground: #f09595;
-  --todo-card: #1e1010;
-  --todo-border: #5a2020;
-  --progress: #261a06;
-  --progress-foreground: #ef9f27;
-  --progress-card: #1a1004;
-  --progress-border: #4a3008;
-  --done: #101c08;
-  --done-foreground: #97c459;
-  --done-card: #0a1404;
-  --done-border: #264010;
+  --todo: oklch(0.22 0.05 20);
+  --todo-foreground: oklch(0.8 0.1 20);
+  --todo-card: oklch(0.18 0.03 20);
+  --todo-border: oklch(0.38 0.1 20);
+  --todo-accent: oklch(0.65 0.2 22);
+  --progress: oklch(0.23 0.05 75);
+  --progress-foreground: oklch(0.82 0.1 70);
+  --progress-card: oklch(0.19 0.03 75);
+  --progress-border: oklch(0.4 0.12 70);
+  --progress-accent: oklch(0.72 0.16 68);
+  --done: oklch(0.22 0.05 145);
+  --done-foreground: oklch(0.8 0.08 150);
+  --done-card: oklch(0.18 0.03 145);
+  --done-border: oklch(0.38 0.1 145);
+  --done-accent: oklch(0.65 0.18 150);
+  --total: oklch(0.22 0.04 260);
+  --total-foreground: oklch(0.8 0.08 260);
+  --total-border: oklch(0.38 0.1 260);
+  --total-accent: oklch(0.62 0.18 260);
 }
 
 @layer base {

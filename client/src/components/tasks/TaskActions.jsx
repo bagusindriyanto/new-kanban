@@ -26,23 +26,23 @@ const TaskActions = ({
         {status === 'on progress' && (totalPause > 0 || isPaused) && (
           <div
             className={cn(
-              'flex gap-1 items-center text-[11px] text-destructive',
+              'flex gap-1 items-center tabular-nums text-[11px] text-destructive',
               isPaused ? 'font-medium animate-pulse' : '',
             )}
           >
             <CirclePause className="size-4" />
-            <span>{totalPause}m</span>
+            <span>{formatDuration(totalPause)}</span>
           </div>
         )}
 
         {status === 'done' && (
           <div className="flex items-center gap-2 text-[11px]">
-            <span className="flex gap-1 items-center font-medium">
+            <span className="flex gap-1 items-center font-medium tabular-nums">
               <Timer className="size-4.5" />{' '}
               {formatDuration(minute_activity || 0)}
             </span>
             {totalPause > 0 && (
-              <span className="flex gap-1 items-center opacity-70 text-muted-foreground">
+              <span className="flex gap-1 items-center tabular-nums opacity-70 text-muted-foreground">
                 <CirclePause className="size-4" /> {formatDuration(totalPause)}
               </span>
             )}
