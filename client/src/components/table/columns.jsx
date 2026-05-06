@@ -1,5 +1,6 @@
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { formatDuration } from '@/utils/formatDuration';
 
 export const columns = [
   {
@@ -54,14 +55,14 @@ export const columns = [
     },
     cell: ({ row }) => {
       const total_minutes = row.getValue('total_minutes');
-      const formatted = total_minutes + ' menit';
+      const formatted = formatDuration(total_minutes);
       return (
-        <div className="text-right font-medium tabular-nums">{formatted}</div>
+        <div className="font-medium tabular-nums text-right">{formatted}</div>
       );
     },
   },
   {
-    accessorKey: 'activity_count',
+    accessorKey: 'total_tasks',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return (
@@ -79,7 +80,7 @@ export const columns = [
     cell: ({ row }) => {
       const activity_count = row.getValue('activity_count');
       return (
-        <div className="text-right font-medium tabular-nums">
+        <div className="font-medium tabular-nums text-right">
           {activity_count}
         </div>
       );
@@ -102,10 +103,10 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const avg_minutes = parseFloat(row.getValue('avg_minutes')).toFixed(1);
-      const formatted = avg_minutes + ' menit';
+      const avg_minutes = Math.round(row.getValue('avg_minutes'));
+      const formatted = formatDuration(avg_minutes);
       return (
-        <div className="text-right font-medium tabular-nums">{formatted}</div>
+        <div className="font-medium tabular-nums text-right">{formatted}</div>
       );
     },
   },

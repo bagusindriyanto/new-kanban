@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
 import { Timer, CirclePause, SquarePen, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatDuration } from '@/utils/formatDuration';
 
 /**
  * Renders the footer section of a TaskCard,
@@ -37,11 +38,12 @@ const TaskActions = ({
         {status === 'done' && (
           <div className="flex items-center gap-2 text-[11px]">
             <span className="flex gap-1 items-center font-medium">
-              <Timer className="size-4.5" /> {minute_activity || 0}m
+              <Timer className="size-4.5" />{' '}
+              {formatDuration(minute_activity || 0)}
             </span>
             {totalPause > 0 && (
               <span className="flex gap-1 items-center opacity-70 text-muted-foreground">
-                <CirclePause className="size-4" /> {totalPause}m
+                <CirclePause className="size-4" /> {formatDuration(totalPause)}
               </span>
             )}
           </div>
