@@ -8,7 +8,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 
-const EmptyState = ({ title, description, action }) => {
+const EmptyState = ({ title, description }) => {
   return (
     <Empty>
       <EmptyHeader>
@@ -18,10 +18,9 @@ const EmptyState = ({ title, description, action }) => {
         <EmptyTitle>{title || 'Tidak Ada Task'}</EmptyTitle>
         <EmptyDescription>
           {description ||
-            'Anda belum menambahkan task. Klik tombol di bawah ini untuk mulai membuat daftar aktivitasmu.'}
+            'Anda belum menambahkan task. Klik tombol Tambah Task untuk mulai membuat daftar aktivitasmu.'}
         </EmptyDescription>
       </EmptyHeader>
-      <EmptyContent>{action}</EmptyContent>
     </Empty>
   );
 };

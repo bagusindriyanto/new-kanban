@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { FieldGroup, FieldSet } from '@/components/ui/field';
+import { FieldGroup, FieldSeparator, FieldSet } from '@/components/ui/field';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import useFilter from '@/stores/filterStore';
@@ -131,11 +131,16 @@ const UpdateTaskForm = () => {
   // Reset value timestamp
   switch (statusInput) {
     case 'todo':
+      form.setValue('pause_time', false);
+      form.setValue('minute_pause', 0);
       form.setValue('timestamp_progress', undefined);
       form.setValue('timestamp_done', undefined);
       break;
     case 'on progress':
       form.setValue('timestamp_done', undefined);
+      break;
+    case 'done':
+      form.setValue('pause_time', false);
       break;
   }
 
@@ -173,6 +178,9 @@ const UpdateTaskForm = () => {
       <div className="max-h-[60vh] overflow-y-auto -mx-4 px-4 pb-2">
         <form id="update-task" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-1">
+              Aktivitas & PIC
+            </FieldSeparator>
             <FieldGroup className="grid grid-cols-2 gap-4">
               {/* Activity */}
               <ActivityCombobox control={form.control} />
@@ -188,8 +196,30 @@ const UpdateTaskForm = () => {
                 placeholder="Pilih PIC"
               />
             </FieldGroup>
-
-            <FieldGroup className="grid grid-cols-3 gap-4">
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
+              Kondisi Pause
+            </FieldSeparator>
+            <FieldGroup className="grid grid-cols-2 gap-4">
+              {/* Pause Time */}
+              <SwitchField
+                name="pause_time"
+                control={form.control}
+                label="Pause aktivitas sekarang?"
+                disabled={statusInput !== 'on progress'}
+              />
+              {/* Minute Pause */}
+              <NumberInputField
+                name="minute_pause"
+                control={form.control}
+                label="Durasi Pause (menit)"
+                min={0}
+                disabled={statusInput === 'todo'}
+              />
+            </FieldGroup>
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
+              Status & Waktu
+            </FieldSeparator>
+            <FieldGroup className="grid grid-cols-2 gap-4">
               {/* Status */}
               <SelectField
                 name="status"
@@ -201,28 +231,13 @@ const UpdateTaskForm = () => {
                 labelKey="label"
                 placeholder="Pilih status task"
               />
-              {/* Minute Pause */}
-              <NumberInputField
-                name="minute_pause"
-                control={form.control}
-                label="Durasi Pause"
-                min={0}
-              />
-              {/* Pause Time */}
-              <SwitchField
-                name="pause_time"
-                control={form.control}
-                label="Aktivitas di Pause?"
-              />
-            </FieldGroup>
-
-            <FieldGroup className="grid grid-cols-2 gap-4">
               {/* Timestamp Todo */}
               <DateTimeField
                 name="timestamp_todo"
                 control={form.control}
                 label="Timestamp To Do"
                 required
+                side="right"
               />
               {/* Timestamp On Progress */}
               <DateTimeField
@@ -231,7 +246,6 @@ const UpdateTaskForm = () => {
                 label="Timestamp On Progress"
                 required={statusInput !== 'todo'}
                 disabled={statusInput === 'todo'}
-                side="right"
               />
               {/* Timestamp Done */}
               <DateTimeField
@@ -243,14 +257,15 @@ const UpdateTaskForm = () => {
                 side="right"
               />
             </FieldGroup>
-
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
+              Jadwal
+            </FieldSeparator>
             <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
               {/* Appointment Switch */}
               <SwitchField
                 name="is_scheduled"
                 control={form.control}
                 label="Jadwalkan Task?"
-                className="mt-6"
               />
               {/* Appointment Date */}
               <DateTimeField
@@ -263,7 +278,9 @@ const UpdateTaskForm = () => {
                 disabledDate="before"
               />
             </FieldGroup>
-
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
+              Detail
+            </FieldSeparator>
             <FieldGroup>
               {/* Detail */}
               <TextareaField

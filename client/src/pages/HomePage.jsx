@@ -14,7 +14,6 @@ import EmptyState from '@/components/shared/EmptyState';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import useTaskFilters from '@/hooks/useTaskFilters';
 import SiteHeader from '@/components/layout/SiteHeader';
-import AddTaskModal from '@/components/tasks/AddTaskModal';
 
 // Drag and drop
 import { DragDropProvider } from '@dnd-kit/react';
@@ -115,7 +114,7 @@ const HomePage = () => {
         {tasks?.length === 0 &&
           !isFetchTasksLoading &&
           !fetchTasksError &&
-          isOnline && <EmptyState action={<AddTaskModal />} />}
+          isOnline && <EmptyState />}
         {tasks?.length > 0 && !isFetchTasksLoading && (
           <DragDropProvider onDragEnd={handleDragEnd}>
             <div className="grid flex-1 grid-cols-4 gap-3 min-h-0">
