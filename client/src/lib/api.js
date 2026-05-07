@@ -4,7 +4,7 @@ const TOKEN_KEY = 'kanban_access_token';
 const REFRESH_TOKEN_KEY = 'kanban_refresh_token';
 
 export const api = axios.create({
-  baseURL: 'http://localhost/kanban/api-v2',
+  baseURL: 'http://localhost/kanban/api',
   headers: {
     'Content-Type': 'application/json',
   },
