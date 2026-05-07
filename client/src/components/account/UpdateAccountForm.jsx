@@ -151,9 +151,9 @@ const UpdateAccountForm = () => {
               <PasswordField
                 name="password"
                 control={form.control}
-                label="Kata Sandi"
+                label="Kata Sandi Baru"
                 required
-                placeholder="Masukkan kata sandi anda"
+                placeholder="Masukkan kata sandi yang baru"
                 description="Kata sandi minimal memiliki 8 karakter."
               />
             </Field>
