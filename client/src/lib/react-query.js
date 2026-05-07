@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import { fetchStatsQueryKey } from '@/api/fetchStats';
 import { fetchTableDataQueryKey } from '@/api/fetchTableData';
 import { fetchChartDataQueryKey } from '@/api/fetchChartData';
+import { fetchUpcomingTasksQueryKey } from '@/api/fetchUpcomingTasks';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,10 @@ export const queryClient = new QueryClient({
         queryClient.invalidateQueries({ queryKey: fetchTableDataQueryKey() });
         // Invalidate data chart
         queryClient.invalidateQueries({ queryKey: fetchChartDataQueryKey() });
+        // Invalidate data upcoming tasks
+        queryClient.invalidateQueries({
+          queryKey: fetchUpcomingTasksQueryKey(),
+        });
       },
     },
   },

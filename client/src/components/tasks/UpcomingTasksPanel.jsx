@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { parseFromSQL } from '@/utils/formatTimestamp';
 import { BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,43 +17,61 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useFetchTasks } from '@/api/fetchTasks';
-import useTaskFilters from '@/hooks/useTaskFilters';
+import { useUrgencyCheck } from './useUrgencyCheck';
+import useDeadlineChecker from '@/hooks/useDeadlineChecker';
+import { useFetchUpcomingTasks } from '@/api/fetchUpcomingTasks';
+
+const UpcomingTaskCard = ({ task }) => {
+  const { isUrgent, diffInMinutes } = useUrgencyCheck({
+    status: task.status,
+    scheduled_at: task.scheduled_at,
+  });
+  const picName = task.pic_name;
+
+  return (
+    <div
+      key={task.id}
+      className={cn('p-3 space-y-2 text-sm rounded-lg border bg-card', {
+        'bg-red-50 dark:bg-red-950/30': isUrgent,
+      })}
+    >
+      <div className="flex justify-between items-start">
+        <h3 className="text-base font-bold leading-tight line-clamp-2">
+          {task.content}
+        </h3>
+        <p className="text-sm font-semibold">{picName}</p>
+      </div>
+      <p className="text-xs tabular-nums text-muted-foreground">
+        {parseFromSQL(task.scheduled_at)}
+      </p>
+      <div className="flex justify-between items-center mt-1">
+        <p
+          className={cn('text-xs font-semibold', {
+            'text-red-600 dark:text-red-400': isUrgent,
+            'text-blue-600 dark:text-blue-400': !isUrgent,
+          })}
+        >
+          {Math.ceil(diffInMinutes)} menit lagi
+        </p>
+        {isUrgent && (
+          <div className="mt-1 bg-red-500 rounded-full animate-pulse shrink-0 size-2"></div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const UpcomingTasksPanel = () => {
-  const [visibleTasks, setVisibleTasks] = useState([]);
-  const [localTick, setLocalTick] = useState(0);
+  const { data: upcomingTasks } = useFetchUpcomingTasks();
 
-  const { queryParams } = useTaskFilters();
-  const { data: tasks } = useFetchTasks(queryParams);
+  const visibleTasks = upcomingTasks
+    ?.filter((task) => {
+      const diffInMinutes = (new Date(task.scheduled_at) - new Date()) / 60000;
+      return diffInMinutes > 0 && diffInMinutes <= 30;
+    })
+    .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
 
-  useEffect(() => {
-    // Tick local timer every minute
-    const tickInterval = setInterval(() => {
-      setLocalTick((prev) => prev + 1);
-    }, 60000);
-    return () => clearInterval(tickInterval);
-  }, []);
-
-  useEffect(() => {
-    if (!tasks || tasks.length === 0) {
-      setVisibleTasks([]);
-      return;
-    }
-
-    const upcoming = tasks
-      .filter((task) => {
-        if (task.status !== 'todo' || !task.scheduled_at) return false;
-
-        const diffInMinutes =
-          (new Date(task.scheduled_at) - new Date()) / 60000;
-
-        return diffInMinutes > 0 && diffInMinutes <= 30;
-      })
-      .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
-
-    setVisibleTasks(upcoming);
-  }, [tasks, localTick]);
+  useDeadlineChecker(upcomingTasks);
 
   return (
     <Sheet>
@@ -70,18 +87,15 @@ const UpcomingTasksPanel = () => {
           <Button variant="outline" size="icon">
             <BellRing />
           </Button>
-          {visibleTasks.length > 0 && (
-            <Badge className="absolute -top-1.5 -right-2 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
+          {visibleTasks && visibleTasks?.length > 0 && (
+            <Badge className="absolute -top-1 -right-1 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
               {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
             </Badge>
           )}
         </TooltipTrigger>
         <TooltipContent>Task yang Akan Dimulai</TooltipContent>
       </Tooltip>
-      <SheetContent
-        className="flex flex-col"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
+      <SheetContent>
         <SheetHeader>
           <SheetTitle>Task yang Akan Dimulai</SheetTitle>
           <SheetDescription>
@@ -90,47 +104,9 @@ const UpcomingTasksPanel = () => {
         </SheetHeader>
         <ScrollArea className="flex-1 min-h-0">
           <div className="px-4 space-y-3 pb-4">
-            {visibleTasks.map((task) => {
-              const diffInMinutes =
-                (new Date(task.scheduled_at) - new Date()) / 60000;
-              const isUrgent = diffInMinutes <= 15;
-              const picName = task.pic_name || '-';
-
-              return (
-                <div
-                  key={task.id}
-                  className={cn(
-                    'p-3 space-y-2 text-sm rounded-lg border bg-card',
-                    {
-                      'bg-red-50 dark:bg-red-950/30': isUrgent,
-                    },
-                  )}
-                >
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-base font-bold leading-tight line-clamp-2">
-                      {task.content}
-                    </h3>
-                    <p className="text-sm font-semibold">{picName}</p>
-                  </div>
-                  <p className="text-xs tabular-nums text-muted-foreground">
-                    {parseFromSQL(task.scheduled_at)}
-                  </p>
-                  <div className="flex justify-between items-center mt-1">
-                    <p
-                      className={cn('text-xs font-semibold', {
-                        'text-red-600 dark:text-red-400': isUrgent,
-                        'text-blue-600 dark:text-blue-400': !isUrgent,
-                      })}
-                    >
-                      {Math.ceil(diffInMinutes)} menit lagi
-                    </p>
-                    {isUrgent && (
-                      <div className="mt-1 bg-red-500 rounded-full animate-pulse shrink-0 size-2"></div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            {visibleTasks?.map((task) => (
+              <UpcomingTaskCard key={task.id} task={task} />
+            ))}
           </div>
         </ScrollArea>
       </SheetContent>

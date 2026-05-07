@@ -22,7 +22,7 @@ export function useUrgencyCheck({ status, scheduled_at, optimistic }) {
     };
 
     checkUrgency();
-    const urgentTimer = setInterval(checkUrgency, 60000);
+    const urgentTimer = setInterval(checkUrgency, 15000);
     return () => clearInterval(urgentTimer);
   }, [status, scheduled_at, optimistic]);
 
