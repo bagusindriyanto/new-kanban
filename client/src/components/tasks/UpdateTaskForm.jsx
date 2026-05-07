@@ -197,26 +197,6 @@ const UpdateTaskForm = () => {
               />
             </FieldGroup>
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
-              Kondisi Pause
-            </FieldSeparator>
-            <FieldGroup className="grid grid-cols-2 gap-4">
-              {/* Pause Time */}
-              <SwitchField
-                name="pause_time"
-                control={form.control}
-                label="Pause aktivitas sekarang?"
-                disabled={statusInput !== 'on progress'}
-              />
-              {/* Minute Pause */}
-              <NumberInputField
-                name="minute_pause"
-                control={form.control}
-                label="Durasi Pause (menit)"
-                min={0}
-                disabled={statusInput === 'todo'}
-              />
-            </FieldGroup>
-            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
               Status & Waktu
             </FieldSeparator>
             <FieldGroup className="grid grid-cols-2 gap-4">
@@ -255,6 +235,26 @@ const UpdateTaskForm = () => {
                 required={statusInput === 'done'}
                 disabled={statusInput !== 'done'}
                 side="right"
+              />
+            </FieldGroup>
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">
+              Kondisi Pause
+            </FieldSeparator>
+            <FieldGroup className="grid grid-cols-2 gap-4">
+              {/* Pause Time */}
+              <SwitchField
+                name="pause_time"
+                control={form.control}
+                label="Pause aktivitas sekarang?"
+                disabled={statusInput !== 'on progress'}
+              />
+              {/* Minute Pause */}
+              <NumberInputField
+                name="minute_pause"
+                control={form.control}
+                label="Durasi Pause (menit)"
+                min={0}
+                disabled={statusInput === 'todo'}
               />
             </FieldGroup>
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card mt-2">

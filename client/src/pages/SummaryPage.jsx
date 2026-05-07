@@ -93,7 +93,7 @@ const SummaryPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-semibold">
+              <p className="text-2xl font-semibold tabular-nums">
                 {data?.summary?.todo ?? 0}
               </p>
             </CardContent>
@@ -108,7 +108,7 @@ const SummaryPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-semibold">
+              <p className="text-2xl font-semibold tabular-nums">
                 {data?.summary?.on_progress ?? 0}
               </p>
             </CardContent>
@@ -123,7 +123,7 @@ const SummaryPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-semibold">
+              <p className="text-2xl font-semibold tabular-nums">
                 {data?.summary?.done ?? 0}
               </p>
             </CardContent>
@@ -134,11 +134,11 @@ const SummaryPage = () => {
           >
             <CardHeader>
               <CardTitle className="text-muted-foreground">
-                Total Tasks
+                Total Aktivitas
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-semibold">
+              <p className="text-2xl font-semibold tabular-nums">
                 {data?.summary?.total_tasks ?? 0}
               </p>
             </CardContent>

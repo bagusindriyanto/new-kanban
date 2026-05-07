@@ -12,7 +12,6 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { useId } from 'react';
 import { Controller } from 'react-hook-form';
-import { Loader2 } from 'lucide-react';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '../ui/spinner';
@@ -100,7 +99,7 @@ const ActivityCombobox = ({ control, className }) => {
                       ) : (
                         <>
                           <Plus data-icon="inline-start" />
-                          Tambah Aktivitas
+                          Tambahkan Aktivitas
                         </>
                       )}
                     </Button>
