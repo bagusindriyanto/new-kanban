@@ -89,62 +89,64 @@ const HomePage = () => {
   const isOnline = useIsOnline();
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* Tasks Controls */}
-      <div className="flex justify-between px-4 pt-4">
-        <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
-        <TasksControls dataUpdatedAt={dataUpdatedAt} />
-      </div>
-      <main className="flex flex-col flex-1 p-4 min-h-0">
-        {/* Main */}
-        {isOnline && isFetchTasksLoading && !fetchTasksError && (
-          <div className="flex flex-1 justify-center items-center">
-            <Spinner className="size-10" />
-          </div>
-        )}
-        {tasks?.length > 0 && (fetchTasksError || !isOnline) && (
-          <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
-        )}
-        {tasks?.length === 0 && (fetchTasksError || !isOnline) && (
-          <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
-        )}
-        {tasks?.length === 0 &&
-          !isFetchTasksLoading &&
-          !fetchTasksError &&
-          isOnline && <EmptyState />}
-        {tasks?.length > 0 && !isFetchTasksLoading && (
-          <DragDropProvider onDragEnd={handleDragEnd}>
-            <div className="grid flex-1 grid-cols-4 gap-3 min-h-0">
-              {columns.map((column) => (
-                <StatusColumn
-                  key={column.id}
-                  columnId={column.id}
-                  title={column.title}
-                  tasks={tasks?.filter((task) => task.status === column.id)}
-                />
-              ))}
-              <BoardStatsColumn tasks={tasks || []} />
+    <section className="flex-1 relative">
+      <div className="absolute inset-0 flex flex-col">
+        {/* Tasks Controls */}
+        <div className="flex justify-between px-4 pt-4">
+          <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
+          <TasksControls dataUpdatedAt={dataUpdatedAt} />
+        </div>
+        <div className="flex flex-col flex-1 min-h-0 p-4">
+          {/* Main */}
+          {isOnline && isFetchTasksLoading && !fetchTasksError && (
+            <div className="flex justify-center items-center">
+              <Spinner className="size-10" />
             </div>
-            <DragOverlay>
-              {(source) => {
-                const task = source.data?.task;
-                if (!task) return null;
-                return (
-                  <TaskCard
-                    task={task}
-                    className="opacity-100 scale-105 rotate-1"
+          )}
+          {tasks?.length > 0 && (fetchTasksError || !isOnline) && (
+            <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
+          )}
+          {tasks?.length === 0 && (fetchTasksError || !isOnline) && (
+            <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
+          )}
+          {tasks?.length === 0 &&
+            !isFetchTasksLoading &&
+            !fetchTasksError &&
+            isOnline && <EmptyState />}
+          {tasks?.length > 0 && !isFetchTasksLoading && (
+            <DragDropProvider onDragEnd={handleDragEnd}>
+              <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
+                {columns.map((column) => (
+                  <StatusColumn
+                    key={column.id}
+                    columnId={column.id}
+                    title={column.title}
+                    tasks={tasks?.filter((task) => task.status === column.id)}
                   />
-                );
-              }}
-            </DragOverlay>
-          </DragDropProvider>
-        )}
-      </main>
-      {/* Modal untuk update task */}
-      <UpdateTaskModal />
-      {/* Modal untuk hapus task */}
-      <DeleteTaskModal />
-    </div>
+                ))}
+                <BoardStatsColumn tasks={tasks || []} />
+              </div>
+              <DragOverlay>
+                {(source) => {
+                  const task = source.data?.task;
+                  if (!task) return null;
+                  return (
+                    <TaskCard
+                      task={task}
+                      className="opacity-100 scale-105 rotate-1"
+                    />
+                  );
+                }}
+              </DragOverlay>
+            </DragDropProvider>
+          )}
+        </div>
+        {/* Modal untuk update task */}
+        <UpdateTaskModal />
+        {/* Modal untuk hapus task */}
+        <DeleteTaskModal />
+      </div>
+    </section>
   );
 };
 
