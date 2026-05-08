@@ -1,4 +1,4 @@
-import { queryClient } from '@/lib/react-query';
+import { queryClient } from '@/lib/queryClient';
 
 export const refreshData = () => {
   queryClient.invalidateQueries();

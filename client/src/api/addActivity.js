@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../lib/api';
-import { queryClient } from '@/lib/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { fetchActivitiesQueryKey } from './fetchActivities';
 
 export const addActivity = async (data) => {

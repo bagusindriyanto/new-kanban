@@ -3,7 +3,7 @@ import { SidebarTrigger } from '../ui/sidebar';
 import ModeToggle from './ModeToggle';
 import UpcomingTasksPanel from '../tasks/UpcomingTasksPanel';
 
-const SiteHeader = ({ titlePage = 'Kanban App', children }) => {
+const SiteHeader = ({ titlePage = 'Kanban App' }) => {
   return (
     <header className="flex px-4 h-14 shrink-0 justify-between items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b">
       <div className="flex gap-2 items-center">
@@ -12,7 +12,6 @@ const SiteHeader = ({ titlePage = 'Kanban App', children }) => {
         <span className="text-sm font-medium tracking-tight">{titlePage}</span>
       </div>
       <div className="flex gap-2 items-center">
-        {children}
         <UpcomingTasksPanel />
         <ModeToggle />
       </div>
