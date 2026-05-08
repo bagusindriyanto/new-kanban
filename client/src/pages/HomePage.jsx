@@ -33,7 +33,6 @@ const HomePage = () => {
     data: tasks,
     isLoading: isFetchTasksLoading,
     error: fetchTasksError,
-    isFetching,
     dataUpdatedAt,
   } = useFetchTasks(queryParams);
 
@@ -96,7 +95,7 @@ const HomePage = () => {
       {/* Tasks Controls */}
       <div className="flex justify-between px-4 pt-4">
         <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
-        <TasksControls isFetching={isFetching} dataUpdatedAt={dataUpdatedAt} />
+        <TasksControls dataUpdatedAt={dataUpdatedAt} />
       </div>
       <main className="flex flex-col flex-1 p-4 min-h-0">
         {/* Main */}

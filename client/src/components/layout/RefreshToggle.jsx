@@ -8,8 +8,11 @@ import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { refreshData } from '@/utils/refreshData';
 import { format } from 'date-fns';
+import { useIsFetching } from '@tanstack/react-query';
 
-export const RefreshToggle = ({ isFetching, dataUpdatedAt }) => {
+export const RefreshToggle = ({ dataUpdatedAt }) => {
+  const isFetching = useIsFetching();
+
   return (
     <Tooltip>
       <TooltipTrigger

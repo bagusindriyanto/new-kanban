@@ -37,7 +37,6 @@ const SummaryPage = () => {
     data,
     error: fetchStatsError,
     isLoading,
-    isFetching,
     dataUpdatedAt,
   } = useFetchStats(queryParams);
 
@@ -69,10 +68,7 @@ const SummaryPage = () => {
           <p className="text-muted-foreground">{data?.division ?? '-'}</p>
         </div>
         <div className="flex gap-2 items-center">
-          <RefreshToggle
-            isFetching={isFetching}
-            dataUpdatedAt={dataUpdatedAt}
-          />
+          <RefreshToggle dataUpdatedAt={dataUpdatedAt} />
           {/* Filter Tanggal */}
           <FilterCalendar />
         </div>
