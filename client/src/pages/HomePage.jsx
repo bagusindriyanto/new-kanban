@@ -13,7 +13,6 @@ import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
 import EmptyState from '@/components/shared/EmptyState';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import useTaskFilters from '@/hooks/useTaskFilters';
-import SiteHeader from '@/components/layout/SiteHeader';
 
 // Drag and drop
 import { DragDropProvider } from '@dnd-kit/react';
@@ -91,7 +90,6 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <SiteHeader titlePage="Kanban Board" />
       {/* Tasks Controls */}
       <div className="flex justify-between px-4 pt-4">
         <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>

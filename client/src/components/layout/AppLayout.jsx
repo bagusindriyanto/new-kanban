@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
+import SiteHeader from './SiteHeader';
 
 const AppLayout = () => {
   const stored = localStorage.getItem('sidebar_state');
@@ -10,6 +11,7 @@ const AppLayout = () => {
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <SidebarInset>
+        <SiteHeader />
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

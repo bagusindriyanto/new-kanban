@@ -19,7 +19,6 @@ import { ErrorBanner } from '@/components/shared/ErrorState';
 import PieChartCard from '@/components/dashboard/PieChartCard';
 import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/dashboard/BarChartCard';
-import SiteHeader from '@/components/layout/SiteHeader';
 import useFilter from '@/stores/filterStore';
 import { format } from 'date-fns';
 import { useFetchTableData } from '@/api/fetchTableData';
@@ -58,7 +57,6 @@ const SummaryPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SiteHeader titlePage="Performance" />
       {/* Filter */}
       <div className="flex justify-between p-4 border-b">
         <div className="ml-1">

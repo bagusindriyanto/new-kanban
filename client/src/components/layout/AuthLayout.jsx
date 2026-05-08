@@ -2,7 +2,7 @@ import logo from '@/assets/logo.png';
 import AnimatedBackground from '@/components/background/AnimatedBackground';
 import { Outlet } from 'react-router';
 
-const EntryLayout = () => {
+const AuthLayout = () => {
   return (
     <AnimatedBackground>
       <div className="flex justify-center items-center p-6 min-h-svh md:p-10">
@@ -20,4 +20,4 @@ const EntryLayout = () => {
   );
 };
 
-export default EntryLayout;
+export default AuthLayout;
