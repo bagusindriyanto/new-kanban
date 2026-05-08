@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 const MAX_VISIBLE = 3; // tampil semua jika ≤ 3, elipsis jika > 3
 
@@ -36,6 +37,8 @@ const AppBreadcrumb = () => {
       };
     });
 
+  if (!crumbs?.length) return null;
+
   // Tidak perlu elipsis
   if (crumbs.length <= MAX_VISIBLE) {
     return (
@@ -50,7 +53,9 @@ const AppBreadcrumb = () => {
                   {isLast ? (
                     <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                   ) : (
-                    <BreadcrumbLink render={<Link to={crumb.path} />} />
+                    <BreadcrumbLink render={<Link to={crumb.path} />}>
+                      {crumb.label}
+                    </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
               </Fragment>
@@ -81,7 +86,11 @@ const AppBreadcrumb = () => {
         {/* Elipsis dengan dropdown isi crumb yang tersembunyi */}
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger render={<BreadcrumbEllipsis />} />
+            <DropdownMenuTrigger
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <BreadcrumbEllipsis />
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuGroup>
                 {hidden.map((crumb) => (
