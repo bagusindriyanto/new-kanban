@@ -11,7 +11,7 @@ import TasksControls from '@/components/layout/TasksControls';
 import { useFetchTasks } from '@/api/fetchTasks';
 import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
 import EmptyState from '@/components/shared/EmptyState';
-import { useIsOnline } from '@/hooks/useIsOnline';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import useTaskFilters from '@/hooks/useTaskFilters';
 
 // Drag and drop
@@ -86,7 +86,7 @@ const HomePage = () => {
   const errorMessage = fetchTasksError?.response?.data?.message || null;
 
   // Cek status online/offline
-  const isOnline = useIsOnline();
+  const isOnline = useOnlineStatus();
 
   return (
     <section className="flex-1 relative">

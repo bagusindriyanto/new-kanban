@@ -14,7 +14,7 @@ import { DataTable } from '@/components/table/data-table';
 import { columns } from '@/components/table/columns';
 import { useFetchStats } from '@/api/fetchStats';
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
-import { useIsOnline } from '@/hooks/useIsOnline';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { ErrorBanner } from '@/components/shared/ErrorState';
 import PieChartCard from '@/components/dashboard/PieChartCard';
 import { Badge } from '@/components/ui/badge';
@@ -53,7 +53,7 @@ const SummaryPage = () => {
     null;
 
   // Cek status online/offline
-  const isOnline = useIsOnline();
+  const isOnline = useOnlineStatus();
 
   return (
     <div className="flex flex-col min-h-screen">
