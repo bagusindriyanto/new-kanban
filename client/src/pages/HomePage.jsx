@@ -99,7 +99,7 @@ const HomePage = () => {
         <div className="flex flex-col flex-1 min-h-0 p-4">
           {/* Main */}
           {isOnline && isFetchTasksLoading && !fetchTasksError && (
-            <div className="flex justify-center items-center">
+            <div className="flex flex-1 justify-center items-center">
               <Spinner className="size-10" />
             </div>
           )}

@@ -9,9 +9,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
-// Data Table
-import { DataTable } from '@/components/table/data-table';
-import { columns } from '@/components/table/columns';
 import { useFetchStats } from '@/api/fetchStats';
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -23,6 +20,7 @@ import useFilter from '@/stores/filterStore';
 import { format } from 'date-fns';
 import { useFetchTableData } from '@/api/fetchTableData';
 import { useFetchChartData } from '@/api/fetchChartData';
+import DataTableCard from '@/components/dashboard/DataTableCard';
 
 const SummaryPage = () => {
   const range = useFilter((state) => state.range);
@@ -161,20 +159,9 @@ const SummaryPage = () => {
           </div>
         </section>
         {/* Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Tabel Aktivitas</CardTitle>
-            <CardDescription>
-              Menampilkan jenis aktivitas, total durasi, jumlah aktivitas, serta
-              rata-rata durasi setiap aktivitas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <DataTable columns={columns} data={tableData?.rows || []} />
-          </CardContent>
-        </Card>
+        <DataTableCard data={tableData?.rows} />
         {/* Bar Chart */}
-        <BarChartCard pics={chartData?.pics || []} />
+        <BarChartCard pics={chartData?.pics} />
         {/* Pie Chart */}
         {/* <PieChartCard data={[]} /> */}
       </main>
