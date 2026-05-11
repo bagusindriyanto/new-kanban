@@ -1,5 +1,4 @@
-// import { utils, writeFileXLSX } from 'xlsx';
-import { utils, writeFileXLSX } from 'xlsx-js-style';
+// xlsx-js-style is imported dynamically inside the exportFile function.
 import {
   Card,
   CardAction,
@@ -17,15 +16,16 @@ import { format } from 'date-fns';
 const EMPTY_DATA = [];
 
 const DataTableCard = ({ data = EMPTY_DATA }) => {
-  const exportFile = () => {
+  const exportFile = async () => {
+    const { utils, writeFile } = await import('xlsx-js-style');
     // 1. Create sheet with data starting from row 3 (A3)
     const excelData = data.map((row, i) => ({
       No: i + 1,
       PIC: row.pic_name,
       Aktivitas: row.content,
-      'Total Durasi': row.total_minutes,
+      'Total Durasi (menit)': row.total_minutes,
       Jumlah: row.total_tasks,
-      'Rata-rata Durasi': row.avg_minutes,
+      'Rata-rata Durasi (menit)': row.avg_minutes,
     }));
 
     const ws = utils.json_to_sheet(excelData, { origin: 'A3' });
@@ -54,10 +54,11 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
       // Row index 2 is A3 (the table header)
       for (let C = range.s.c; C <= range.e.c; ++C) {
         const cellAddress = utils.encode_cell({ r: R, c: C });
-        if (!ws[cellAddress]) continue; // Skip empty cells
 
-        // Initialize style object if it doesn't exist
-        if (!ws[cellAddress].s) ws[cellAddress].s = {};
+        // If cell doesn't exist (e.g. empty data), create it so we can style it
+        if (!ws[cellAddress]) {
+          ws[cellAddress] = { t: 's', v: '', s: {} };
+        }
 
         // Apply borders to all table cells
         ws[cellAddress].s.border = {
@@ -90,10 +91,7 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
 
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');
-    writeFileXLSX(
-      wb,
-      `data-aktivitas_${format(new Date(), 'yyyy-MM-dd')}.xlsx`,
-    );
+    writeFile(wb, `data-aktivitas_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
   };
 
   return (

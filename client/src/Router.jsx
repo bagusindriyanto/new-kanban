@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router';
+import { lazy, Suspense } from 'react';
 
 import GuestRoute from './routes/GuestRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -8,21 +9,19 @@ import AppLayout from './components/layout/AppLayout';
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import HomePage from './pages/HomePage';
-import SummaryPage from './pages/SummaryPage';
-import ChangelogPage from './pages/ChangelogPage';
-import SettingsPage from './pages/SettingsPage';
+import LoadingPage from './pages/LoadingPage';
 
 import NotFoundPage from './pages/NotFoundPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 
-// const SummaryPage = lazy(() => import('@/pages/SummaryPage'));
-// const ChangelogPage = lazy(() => import('@/pages/ChangelogPage'));
-// const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const SummaryPage = lazy(() => import('./pages/SummaryPage'));
+const ChangelogPage = lazy(() => import('./pages/ChangelogPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
-// const Lazy = ({ children }) => (
-//   <Suspense fallback={<LoadingPage />}>{children}</Suspense>
-// );
+const Lazy = ({ children }) => (
+  <Suspense fallback={<LoadingPage />}>{children}</Suspense>
+);
 
 export const router = createBrowserRouter(
   [
@@ -58,22 +57,38 @@ export const router = createBrowserRouter(
           children: [
             {
               index: true,
-              element: <HomePage />,
+              element: (
+                <Lazy>
+                  <HomePage />
+                </Lazy>
+              ),
               handle: { breadcrumb: 'Kanban Board' },
             },
             {
               path: 'performance',
-              element: <SummaryPage />,
+              element: (
+                <Lazy>
+                  <SummaryPage />
+                </Lazy>
+              ),
               handle: { breadcrumb: 'Performance' },
             },
             {
               path: 'changelog',
-              element: <ChangelogPage />,
+              element: (
+                <Lazy>
+                  <ChangelogPage />
+                </Lazy>
+              ),
               handle: { breadcrumb: 'Changelog' },
             },
             {
               path: 'settings',
-              element: <SettingsPage />,
+              element: (
+                <Lazy>
+                  <SettingsPage />
+                </Lazy>
+              ),
               handle: { breadcrumb: 'Pengaturan' },
             },
           ],
