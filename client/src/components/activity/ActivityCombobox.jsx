@@ -73,7 +73,7 @@ const ActivityCombobox = ({ control, className }) => {
               <ComboboxInput
                 id={id}
                 aria-invalid={fieldState.invalid}
-                placeholder="Pilih aktivitas"
+                placeholder="Cari atau buat aktivitas"
                 disabled={isLoading}
                 showClear
               />
