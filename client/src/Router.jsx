@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router';
-import { lazy, Suspense } from 'react';
+// import { lazy, Suspense } from 'react';
 
 import GuestRoute from './routes/GuestRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -9,19 +9,24 @@ import AppLayout from './components/layout/AppLayout';
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import LoadingPage from './pages/LoadingPage';
+
+import HomePage from './pages/HomePage';
+import SummaryPage from './pages/SummaryPage';
+import ChangelogPage from './pages/ChangelogPage';
+import SettingsPage from './pages/SettingsPage';
 
 import NotFoundPage from './pages/NotFoundPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
-const SummaryPage = lazy(() => import('./pages/SummaryPage'));
-const ChangelogPage = lazy(() => import('./pages/ChangelogPage'));
-const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+// import LoadingPage from './pages/LoadingPage';
+// const HomePage = lazy(() => import('./pages/HomePage'));
+// const SummaryPage = lazy(() => import('./pages/SummaryPage'));
+// const ChangelogPage = lazy(() => import('./pages/ChangelogPage'));
+// const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
-const Lazy = ({ children }) => (
-  <Suspense fallback={<LoadingPage />}>{children}</Suspense>
-);
+// const Lazy = ({ children }) => (
+//   <Suspense fallback={<LoadingPage />}>{children}</Suspense>
+// );
 
 export const router = createBrowserRouter(
   [
@@ -57,38 +62,22 @@ export const router = createBrowserRouter(
           children: [
             {
               index: true,
-              element: (
-                <Lazy>
-                  <HomePage />
-                </Lazy>
-              ),
+              element: <HomePage />,
               handle: { breadcrumb: 'Kanban Board' },
             },
             {
               path: 'performance',
-              element: (
-                <Lazy>
-                  <SummaryPage />
-                </Lazy>
-              ),
+              element: <SummaryPage />,
               handle: { breadcrumb: 'Performance' },
             },
             {
               path: 'changelog',
-              element: (
-                <Lazy>
-                  <ChangelogPage />
-                </Lazy>
-              ),
+              element: <ChangelogPage />,
               handle: { breadcrumb: 'Changelog' },
             },
             {
               path: 'settings',
-              element: (
-                <Lazy>
-                  <SettingsPage />
-                </Lazy>
-              ),
+              element: <SettingsPage />,
               handle: { breadcrumb: 'Pengaturan' },
             },
           ],
