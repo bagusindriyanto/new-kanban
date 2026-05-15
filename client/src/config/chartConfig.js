@@ -1,11 +1,11 @@
 // Chart Lama Aktivitas vs Waktu Bekerja
 export const chartConfig = {
-  activity_minute: {
+  total_minutes: {
     label: 'Aktivitas',
     color: 'var(--chart-1)',
   },
-  working_minute: {
+  working_minutes: {
     label: 'Waktu Kerja',
-    color: 'var(--chart-3)',
+    color: 'var(--chart-2)',
   },
 };
