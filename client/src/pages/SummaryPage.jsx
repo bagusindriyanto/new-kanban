@@ -141,19 +141,19 @@ const SummaryPage = () => {
           <h3 className="mb-3 text-lg font-semibold tracking-tight">
             Statistik Per PIC
           </h3>
-          <div className="flex flex-wrap gap-3 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center">
             {isLoading
               ? Array.from({ length: 5 }).map((_, i) => (
                   <UserStatsCardSkeleton
                     key={i}
-                    className="flex-1 min-w-[200px] max-w-[280px]"
+                    className="w-[calc((100%-4*16px)/5)]"
                   />
                 ))
               : data?.users?.map((user) => (
                   <UserStatsCard
                     key={user.full_name}
                     user={user}
-                    className="flex-1 min-w-[200px] max-w-[280px]"
+                    className="w-[calc((100%-4*16px)/5)]"
                   />
                 ))}
           </div>
