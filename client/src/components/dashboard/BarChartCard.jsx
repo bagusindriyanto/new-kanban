@@ -1,8 +1,6 @@
-import { useMemo, useState } from 'react';
 import { formatDuration } from '@/utils/formatDuration';
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -42,33 +40,20 @@ import {
 
 const EMPTY_PICS = [];
 
+const EmptyChartItem = () => {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Ban />
+        </EmptyMedia>
+        <EmptyTitle>Tidak Ada Aktivitas</EmptyTitle>
+      </EmptyHeader>
+    </Empty>
+  );
+};
+
 const BarChartCard = ({ pics = EMPTY_PICS }) => {
-  // Default ke PIC pertama
-  const [selectedPicId, setSelectedPicId] = useState(null);
-
-  // Build items untuk Select dropdown
-  const picItems = useMemo(() => {
-    return pics.map((pic) => ({
-      label: pic.pic_name,
-      value: pic.pic_id,
-    }));
-  }, [pics]);
-
-  // Auto-select PIC pertama jika belum ada yang dipilih
-  const activePicId = selectedPicId ?? pics[0]?.pic_id ?? null;
-
-  // Ambil rows dari PIC yang aktif, lalu map ke format chartConfig
-  const chartData = useMemo(() => {
-    const pic = pics.find((p) => p.pic_id === activePicId);
-    if (!pic) return [];
-
-    return pic.rows.map((row) => ({
-      date: row.date,
-      activity_minute: row.total_minutes,
-      working_minute: row.working_minute,
-    }));
-  }, [pics, activePicId]);
-
   return (
     <Card>
       <CardHeader>
@@ -76,120 +61,97 @@ const BarChartCard = ({ pics = EMPTY_PICS }) => {
         <CardDescription>
           Perbandingan lama aktivitas dengan lama bekerja.
         </CardDescription>
-        {picItems.length > 0 && (
-          <CardAction>
-            <Select
-              items={picItems}
-              value={activePicId}
-              onValueChange={setSelectedPicId}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent alignItemWithTrigger={false} align="end">
-                <SelectGroup>
-                  {picItems.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </CardAction>
-        )}
       </CardHeader>
-      <CardContent className="flex-1">
-        {chartData.length === 0 ? (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <Ban />
-              </EmptyMedia>
-              <EmptyTitle>Tidak Ada Aktivitas</EmptyTitle>
-            </EmptyHeader>
-          </Empty>
+      <CardContent className="flex-1 space-y-4">
+        {pics.length === 0 ? (
+          <EmptyChartItem />
         ) : (
-          <ChartContainer config={chartConfig} className="w-full max-h-96">
-            <BarChart accessibilityLayer data={chartData} margin={{ top: 18 }}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString('id', {
-                    month: 'short',
-                    day: 'numeric',
-                  });
-                }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickCount={5}
-                tickFormatter={(value) => formatDuration(value)}
-                tick={{ style: { fontVariantNumeric: 'tabular-nums' } }}
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={(value) => {
+          pics.map(({ pic_id, pic_name, rows }, index) => (
+            <div key={pic_id} className="space-y-2">
+              <h2>
+                {index + 1}. {pic_name}
+              </h2>
+              <ChartContainer config={chartConfig} className="w-full max-h-30">
+                <BarChart accessibilityLayer data={rows} margin={{ top: 18 }}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value) => {
                       const date = new Date(value);
-                      return date.toLocaleDateString('id');
+                      return date.toLocaleDateString('id', {
+                        month: 'short',
+                        day: 'numeric',
+                      });
                     }}
-                    className="w-[180px]"
-                    formatter={(value, name) => (
-                      <>
-                        <div
-                          className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-                          style={{
-                            '--color-bg': `var(--color-${name})`,
-                          }}
-                        />
-                        {chartConfig[name]?.label || name}
-                        <div className="text-muted-foreground ml-auto flex items-baseline gap-0.5 font-medium tabular-nums">
-                          {formatDuration(value)}
-                        </div>
-                      </>
-                    )}
                   />
-                }
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar
-                dataKey="activity_minute"
-                fill="var(--color-activity_minute)"
-                radius={4}
-              >
-                <LabelList
-                  position="top"
-                  offset={8}
-                  className="fill-foreground"
-                  fontSize={12}
-                  formatter={(value) => formatDuration(value)}
-                  style={{ fontVariantNumeric: 'tabular-nums' }}
-                />
-              </Bar>
-              <Bar
-                dataKey="working_minute"
-                fill="var(--color-working_minute)"
-                radius={4}
-              >
-                <LabelList
-                  position="top"
-                  offset={8}
-                  className="fill-foreground"
-                  fontSize={12}
-                  formatter={(value) => formatDuration(value)}
-                  style={{ fontVariantNumeric: 'tabular-nums' }}
-                />
-              </Bar>
-            </BarChart>
-          </ChartContainer>
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickCount={5}
+                    tickFormatter={(value) => formatDuration(value)}
+                    tick={{ style: { fontVariantNumeric: 'tabular-nums' } }}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString('id');
+                        }}
+                        className="w-[180px]"
+                        formatter={(value, name) => (
+                          <>
+                            <div
+                              className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
+                              style={{
+                                '--color-bg': `var(--color-${name})`,
+                              }}
+                            />
+                            {chartConfig[name]?.label || name}
+                            <div className="text-muted-foreground ml-auto flex items-baseline gap-0.5 font-medium tabular-nums">
+                              {formatDuration(value)}
+                            </div>
+                          </>
+                        )}
+                      />
+                    }
+                  />
+                  <Bar
+                    dataKey="total_minutes"
+                    fill="var(--color-total_minutes)"
+                    radius={4}
+                  >
+                    <LabelList
+                      position="top"
+                      offset={8}
+                      className="fill-foreground"
+                      fontSize={12}
+                      formatter={(value) => formatDuration(value)}
+                      style={{ fontVariantNumeric: 'tabular-nums' }}
+                    />
+                  </Bar>
+                  <Bar
+                    dataKey="working_minute"
+                    fill="var(--color-working_minute)"
+                    radius={4}
+                  >
+                    <LabelList
+                      position="top"
+                      offset={8}
+                      className="fill-foreground"
+                      fontSize={12}
+                      formatter={(value) => formatDuration(value)}
+                      style={{ fontVariantNumeric: 'tabular-nums' }}
+                    />
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </div>
+          ))
         )}
       </CardContent>
     </Card>
