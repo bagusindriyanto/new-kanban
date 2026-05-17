@@ -7,13 +7,13 @@ import {
 } from '../ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
 import useAuthStore from '@/stores/authStore';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { EllipsisVertical } from 'lucide-react';
 import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, getRefreshToken } from '@/lib/api';
 import { useNavigate } from 'react-router';
 import ProfileAvatar from '../shared/ProfileAvatar';
+import { queryClient } from '@/lib/queryClient';
 
 const AccountMenu = () => {
   const { user, clearUser } = useAuthStore();
@@ -26,6 +26,7 @@ const AccountMenu = () => {
         loading: 'Sedang memproses logout...',
         success: () => {
           clearUser();
+          queryClient.clear();
           navigate('/login');
           return 'Logout berhasil.';
         },
