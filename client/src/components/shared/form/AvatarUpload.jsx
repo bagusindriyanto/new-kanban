@@ -3,7 +3,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { CircleAlertIcon, UserIcon, XIcon } from 'lucide-react';
+import { CircleAlertIcon, UserIcon, PencilIcon, XIcon } from 'lucide-react';
 
 function AvatarUpload({
   maxSize = 2 * 1024 * 1024, // 2MB
@@ -74,13 +74,26 @@ function AvatarUpload({
           )}
         </div>
 
+        {/* Edit Button - only show when default avatar is present */}
+        {defaultAvatar && !currentFile && (
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={openFileDialog}
+            className="absolute inset-e-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
+            aria-label="Change avatar"
+          >
+            <PencilIcon className="size-3.5" />
+          </Button>
+        )}
+
         {/* Remove Button - only show when file is uploaded */}
         {currentFile && (
           <Button
             size="icon"
             variant="outline"
             onClick={handleRemove}
-            className="absolute end-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
+            className="absolute inset-e-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
             aria-label="Remove avatar"
           >
             <XIcon className="size-3.5" />
@@ -91,7 +104,11 @@ function AvatarUpload({
       {/* Upload Instructions */}
       <div className="space-y-0.5 text-center">
         <p className="text-sm font-medium">
-          {currentFile ? 'Foto profil ditambahkan' : 'Unggah Foto Profil'}
+          {currentFile
+            ? 'Foto profil ditambahkan'
+            : defaultAvatar
+              ? 'Ubah Foto Profil'
+              : 'Unggah Foto Profil'}
         </p>
         <p className="text-muted-foreground text-xs">
           PNG, JPG maksimal {formatBytes(maxSize)}

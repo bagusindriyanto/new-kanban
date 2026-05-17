@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { BASE_URL } from '@/lib/api';
 
 const getAvatarColor = (name) => {
   if (!name) return 'hsl(0, 0%, 60%)';
@@ -14,9 +15,11 @@ const getAvatarColor = (name) => {
 
 const ProfileAvatar = ({ profile, className }) => {
   const avatarColor = getAvatarColor(profile.name ?? 'User');
+  const avatarUrl = profile.avatar ? `${BASE_URL}/${profile.avatar}` : null;
+
   return (
     <Avatar className={className}>
-      <AvatarImage src={profile.avatar} alt={profile.name} />
+      <AvatarImage src={avatarUrl} alt={profile.name} />
       <AvatarFallback
         className={cn('text-white', className)}
         style={{ backgroundColor: avatarColor }}

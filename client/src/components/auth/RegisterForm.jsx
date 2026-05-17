@@ -44,6 +44,7 @@ const formSchema = z
       .refine((val) => /^[0-9]+$/.test(val), {
         error: 'NIK hanya boleh mengandung angka.',
       }),
+    avatar: z.instanceof(File).optional(),
     division_id: z.number('Mohon pilih divisi anda.'),
     role_id: z.number('Mohon pilih jabatan anda.'),
     email: z
@@ -84,7 +85,14 @@ const RegisterForm = () => {
   const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
 
   const onSubmit = (data) => {
-    toast.promise(api.post('/auth/register', data), {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+
+    toast.promise(api.post('/auth/register', formData), {
       loading: 'Sedang membuat akun...',
       success: (res) => {
         login(res.data.user, res.data.access_token, res.data.refresh_token);
@@ -118,6 +126,13 @@ const RegisterForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Pribadi
             </FieldSeparator>
+            {/* Avatar */}
+            <AvatarUpload
+              name="avatar"
+              onFileChange={(fileWrapper) =>
+                form.setValue('avatar', fileWrapper?.file || null)
+              }
+            />
             <Field className="grid grid-cols-2 gap-4">
               {/* Nama Lengkap */}
               <InputField

@@ -21,6 +21,8 @@ import {
 import { refreshData } from '@/utils/refreshData';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';
+import AvatarUpload from '../shared/form/AvatarUpload';
+import { BASE_URL } from '@/lib/api';
 
 const formSchema = z.object({
   full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
@@ -31,6 +33,7 @@ const formSchema = z.object({
     .refine((val) => /^[0-9]+$/.test(val), {
       error: 'NIK hanya boleh mengandung angka.',
     }),
+  avatar: z.instanceof(File).optional(),
   email: z
     .email('Mohon isi email dengan benar.')
     .min(1, 'Mohon isi email anda.'),
@@ -40,6 +43,7 @@ const formSchema = z.object({
 const UpdateAccountForm = () => {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
+  const defaultAvatar = user.avatar ? `${BASE_URL}/${user.avatar}` : null;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -53,7 +57,14 @@ const UpdateAccountForm = () => {
   });
 
   const onSubmit = (data) => {
-    toast.promise(api.put('/account', data), {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+
+    toast.promise(api.post('/account', formData), {
       loading: 'Sedang memperbarui akun...',
       success: (res) => {
         refreshData();
@@ -62,6 +73,7 @@ const UpdateAccountForm = () => {
           full_name: '',
           name: '',
           nik: '',
+          avatar: null,
           email: '',
           password: '',
         });
@@ -84,6 +96,14 @@ const UpdateAccountForm = () => {
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Informasi Pribadi
             </FieldSeparator>
+            {/* Avatar */}
+            <AvatarUpload
+              name="avatar"
+              defaultAvatar={defaultAvatar}
+              onFileChange={(fileWrapper) =>
+                form.setValue('avatar', fileWrapper?.file || null)
+              }
+            />
             <Field className="grid gap-5 lg:grid-cols-2 lg:gap-6">
               <InputField
                 name="full_name"
