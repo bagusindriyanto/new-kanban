@@ -4,13 +4,13 @@ import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
 import useFilter from '@/stores/filterStore';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
-import { User } from 'lucide-react';
 import { useDraggable } from '@dnd-kit/react';
 import { usePauseTimer } from './usePauseTimer';
 import { useUrgencyCheck } from './useUrgencyCheck';
 import TaskTimestamps from './TaskTimestamps';
 import TaskActions from './TaskActions';
 import { useRole } from '@/hooks/useRole';
+import ProfileAvatar from '../shared/ProfileAvatar';
 
 const TaskCard = ({ task, className }) => {
   const {
@@ -120,8 +120,8 @@ const TaskCard = ({ task, className }) => {
       {/* Assignee & Metadata */}
       <div className="flex flex-col gap-2 mt-1">
         <div className="flex justify-between items-center">
-          <div className="flex gap-1 items-center text-xs text-muted-foreground">
-            <User className="size-3.5" />
+          <div className="flex gap-2 items-center text-xs text-muted-foreground">
+            <ProfileAvatar profile={task} size="sm" />
             <span className="font-medium text-foreground">
               {pic_name || '-'}
             </span>

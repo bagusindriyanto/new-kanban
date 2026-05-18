@@ -63,7 +63,7 @@ const UserStatsCard = ({ user, className }) => {
     >
       {/* Avatar & Name — centered */}
       <div className="flex flex-col gap-2 items-center pt-2">
-        <ProfileAvatar profile={user} className="text-lg size-14" />
+        <ProfileAvatar profile={user} size="xl" />
         <div className="mt-1 text-center">
           <p className="text-sm font-semibold leading-tight truncate max-w-[180px]">
             {user.full_name}

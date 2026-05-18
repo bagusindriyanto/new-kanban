@@ -22,7 +22,7 @@ import { refreshData } from '@/utils/refreshData';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';
 import AvatarUpload from '../shared/form/AvatarUpload';
-import { BASE_URL } from '@/lib/api';
+import { getAvatarURL } from '@/utils/getAvatarURL';
 
 const formSchema = z.object({
   full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
@@ -43,7 +43,7 @@ const formSchema = z.object({
 const UpdateAccountForm = () => {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  const defaultAvatar = user.avatar ? `${BASE_URL}/${user.avatar}` : null;
+  const defaultAvatar = getAvatarURL(user.avatar);
 
   const form = useForm({
     resolver: zodResolver(formSchema),

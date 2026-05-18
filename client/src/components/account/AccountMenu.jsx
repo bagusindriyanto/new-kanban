@@ -47,7 +47,7 @@ const AccountMenu = () => {
               />
             }
           >
-            <ProfileAvatar profile={user} className="size-8" />
+            <ProfileAvatar profile={user} />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">
                 {user.name ?? 'User'}
@@ -65,7 +65,7 @@ const AccountMenu = () => {
             sideOffset={4}
           >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <ProfileAvatar profile={user} className="size-8" />
+              <ProfileAvatar profile={user} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {user.name ?? 'User'}

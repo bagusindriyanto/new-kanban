@@ -151,6 +151,7 @@ const UpdateTaskForm = () => {
       id: selectedTaskId,
       assigner_id: data.pic_id === user.pic_id ? null : user.pic_id,
       pic_name: pics?.find((pic) => pic.id === data.pic_id)?.name,
+      pic_avatar: pics?.find((pic) => pic.id === data.pic_id)?.avatar,
     };
 
     toast.promise(updateTaskMutate(payload), {
