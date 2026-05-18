@@ -7,21 +7,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
-import { chartConfig } from '@/config/chartConfig';
-import {
+  EvilBarChart,
   Bar,
-  BarChart,
-  CartesianGrid,
-  LabelList,
   XAxis,
   YAxis,
-} from 'recharts';
+  Grid,
+} from '@/components/evilcharts/charts/bar-chart';
 import {
   Empty,
   EmptyHeader,
@@ -29,16 +20,45 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Ban } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { ChartTooltip, ChartTooltipContent } from '../evilcharts/ui/tooltip';
+import { ChartBackground } from '../evilcharts/ui/background';
 
-const EMPTY_PICS = [];
+const getChartConfig = (name) => {
+  if (!name) {
+    return {
+      total_minutes: {
+        label: 'Aktivitas',
+        colors: { light: ['hsl(0, 0%, 60%)'], dark: ['hsl(0, 0%, 60%)'] },
+      },
+      working_minutes: {
+        label: 'Waktu Kerja',
+        colors: { light: ['hsl(0, 0%, 60%)'], dark: ['hsl(0, 0%, 60%)'] },
+      },
+    };
+  }
+
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = ((hash % 360) + 360) % 360;
+  return {
+    total_minutes: {
+      label: 'Aktivitas',
+      colors: {
+        light: [`hsl(${hue}, 70%, 65%)`],
+        dark: [`hsl(${hue}, 70%, 65%)`],
+      },
+    },
+    working_minutes: {
+      label: 'Waktu Kerja',
+      colors: {
+        light: [`hsl(${hue}, 70%, 35%)`],
+        dark: [`hsl(${hue}, 70%, 35%)`],
+      },
+    },
+  };
+};
 
 const EmptyChartItem = () => {
   return (
@@ -53,7 +73,10 @@ const EmptyChartItem = () => {
   );
 };
 
-const BarChartCard = ({ pics = EMPTY_PICS }) => {
+const BarChartCard = ({ data }) => {
+  const maxMinutes = data?.max_minutes || 8 * 60;
+  const ticks = Array.from({ length: 5 }).map((_, i) => (i * maxMinutes) / 4);
+
   return (
     <Card>
       <CardHeader>
@@ -63,93 +86,67 @@ const BarChartCard = ({ pics = EMPTY_PICS }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
-        {pics.length === 0 ? (
+        {data?.pics.length === 0 ? (
           <EmptyChartItem />
         ) : (
-          pics.map(({ pic_id, pic_name, rows }, index) => (
+          data?.pics.map(({ pic_id, pic_name, rows }) => (
             <div key={pic_id} className="space-y-2">
-              <h2>
-                {index + 1}. {pic_name}
-              </h2>
-              <ChartContainer config={chartConfig} className="w-full max-h-30">
-                <BarChart accessibilityLayer data={rows} margin={{ top: 18 }}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString('id', {
-                        month: 'short',
-                        day: 'numeric',
-                      });
-                    }}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickCount={5}
-                    tickFormatter={(value) => formatDuration(value)}
-                    tick={{ style: { fontVariantNumeric: 'tabular-nums' } }}
-                  />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        labelFormatter={(value) => {
-                          const date = new Date(value);
-                          return date.toLocaleDateString('id');
-                        }}
-                        className="w-[180px]"
-                        formatter={(value, name) => (
-                          <>
-                            <div
-                              className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-(--color-bg)"
-                              style={{
-                                '--color-bg': `var(--color-${name})`,
-                              }}
-                            />
-                            {chartConfig[name]?.label || name}
-                            <div className="text-muted-foreground ml-auto flex items-baseline gap-0.5 font-medium tabular-nums">
-                              {formatDuration(value)}
-                            </div>
-                          </>
-                        )}
-                      />
-                    }
-                  />
-                  <Bar
-                    dataKey="total_minutes"
-                    fill="var(--color-total_minutes)"
-                    radius={4}
-                  >
-                    <LabelList
-                      position="top"
-                      offset={8}
-                      className="fill-foreground"
-                      fontSize={12}
-                      formatter={(value) => formatDuration(value)}
-                      style={{ fontVariantNumeric: 'tabular-nums' }}
+              <h2 className="font-semibold tracking-tight">{pic_name}</h2>
+              <EvilBarChart
+                data={rows}
+                config={getChartConfig(pic_name)}
+                className="w-full h-full max-h-50 p-4"
+              >
+                <ChartBackground variant="grid" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value) => {
+                    const date = new Date(value);
+                    return date.toLocaleDateString('id', {
+                      month: 'short',
+                      day: 'numeric',
+                    });
+                  }}
+                  tick={{
+                    fontSize: 10,
+                  }}
+                />
+                <YAxis
+                  ticks={ticks}
+                  tickFormatter={(value) => formatDuration(value)}
+                  tick={{
+                    style: { fontVariantNumeric: 'tabular-nums' },
+                    fontSize: 10,
+                  }}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value) => {
+                        const date = new Date(value);
+                        return date.toLocaleDateString('id');
+                      }}
+                      formatter={(value, name) => (
+                        <div className="flex flex-1 items-center gap-2">
+                          <div
+                            className="size-2.5 shrink-0 rounded-[2px]"
+                            style={{
+                              background: 'var(--color-total_minutes-0)',
+                            }}
+                          />
+                          <span className="flex-1">{name}</span>
+                          <span className="text-muted-foreground font-medium tabular-nums">
+                            {formatDuration(value)}
+                          </span>
+                        </div>
+                      )}
                     />
-                  </Bar>
-                  <Bar
-                    dataKey="working_minute"
-                    fill="var(--color-working_minute)"
-                    radius={4}
-                  >
-                    <LabelList
-                      position="top"
-                      offset={8}
-                      className="fill-foreground"
-                      fontSize={12}
-                      formatter={(value) => formatDuration(value)}
-                      style={{ fontVariantNumeric: 'tabular-nums' }}
-                    />
-                  </Bar>
-                </BarChart>
-              </ChartContainer>
+                  }
+                />
+                <Bar dataKey="total_minutes" variant="default" />
+                <Bar dataKey="working_minute" variant="default" />
+              </EvilBarChart>
             </div>
           ))
         )}

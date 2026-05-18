@@ -161,7 +161,7 @@ const SummaryPage = () => {
         {/* Table */}
         <DataTableCard data={tableData?.rows} />
         {/* Bar Chart */}
-        <BarChartCard pics={chartData?.pics} />
+        <BarChartCard data={chartData} />
         {/* Pie Chart */}
         {/* <PieChartCard data={[]} /> */}
       </main>
