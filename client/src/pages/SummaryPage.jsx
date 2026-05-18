@@ -70,7 +70,7 @@ const SummaryPage = () => {
         </div>
       </div>
       {/* Main */}
-      <main className="flex flex-col flex-1 gap-3 p-4">
+      <main className="flex flex-col flex-1 gap-4 p-4">
         {(fetchStatsError || !isOnline) && (
           <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
         )}

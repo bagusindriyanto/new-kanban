@@ -28,7 +28,7 @@ const getChartConfig = (name) => {
     return {
       total_minutes: {
         label: 'Aktivitas',
-        colors: { light: ['hsl(0, 0%, 60%)'], dark: ['hsl(0, 0%, 60%)'] },
+        colors: { light: ['hsl(0, 0%, 40%)'], dark: ['hsl(0, 0%, 40%)'] },
       },
       working_minutes: {
         label: 'Waktu Kerja',
@@ -46,15 +46,15 @@ const getChartConfig = (name) => {
     total_minutes: {
       label: 'Aktivitas',
       colors: {
-        light: [`hsl(${hue}, 70%, 65%)`],
-        dark: [`hsl(${hue}, 70%, 65%)`],
+        light: [`hsl(${hue}, 70%, 40%)`],
+        dark: [`hsl(${hue}, 70%, 40%)`],
       },
     },
     working_minutes: {
       label: 'Waktu Kerja',
       colors: {
-        light: [`hsl(${hue}, 70%, 35%)`],
-        dark: [`hsl(${hue}, 70%, 35%)`],
+        light: [`hsl(${hue}, 70%, 60%)`],
+        dark: [`hsl(${hue}, 70%, 60%)`],
       },
     },
   };
@@ -74,7 +74,7 @@ const EmptyChartItem = () => {
 };
 
 const BarChartCard = ({ data }) => {
-  const maxMinutes = data?.max_minutes || 8 * 60;
+  const maxMinutes = data?.max_minutes || 2 * 60;
   const ticks = Array.from({ length: 5 }).map((_, i) => (i * maxMinutes) / 4);
 
   return (
@@ -132,7 +132,7 @@ const BarChartCard = ({ data }) => {
                           <div
                             className="size-2.5 shrink-0 rounded-[2px]"
                             style={{
-                              background: 'var(--color-total_minutes-0)',
+                              background: `var(--color-${name}-0)`,
                             }}
                           />
                           <span className="flex-1">{name}</span>
@@ -145,7 +145,7 @@ const BarChartCard = ({ data }) => {
                   }
                 />
                 <Bar dataKey="total_minutes" variant="default" />
-                <Bar dataKey="working_minute" variant="default" />
+                <Bar dataKey="working_minutes" variant="default" />
               </EvilBarChart>
             </div>
           ))
