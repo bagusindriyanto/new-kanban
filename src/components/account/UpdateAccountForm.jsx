@@ -177,7 +177,7 @@ const UpdateAccountForm = () => {
                 description="Kata sandi minimal memiliki 8 karakter."
               />
             </Field>
-            <div className="flex gap-2 justify-end pt-6 border-t border-border">
+            <div className="flex gap-2 justify-end pt-6 border-t">
               <Button
                 variant="outline"
                 type="reset"

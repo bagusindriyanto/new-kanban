@@ -137,7 +137,7 @@ const DateTimeField = ({
                 }}
                 initialFocus
               />
-              <div className="flex gap-1 justify-between items-end px-3 py-2 border-t border-border">
+              <div className="flex gap-1 justify-between items-end px-3 py-2 border-t">
                 <TimePickerDemo setDate={field.onChange} date={field.value} />
                 <Button
                   variant="ghost"

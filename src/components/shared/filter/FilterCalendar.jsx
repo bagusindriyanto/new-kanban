@@ -99,7 +99,7 @@ export const FilterCalendar = () => {
           onSelect={setRange}
           disabled={{ after: new Date() }}
         />
-        <div className="flex gap-3 justify-between items-end p-3 border-t border-border">
+        <div className="flex gap-3 justify-between items-end p-3 border-t">
           <Button
             className="flex-1"
             variant={

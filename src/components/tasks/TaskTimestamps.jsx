@@ -17,7 +17,7 @@ const TaskTimestamps = ({
   diffInMinutes,
 }) => {
   return (
-    <div className="text-[11px] text-muted-foreground border-t border-border pt-1">
+    <div className="text-[11px] text-muted-foreground border-t pt-1">
       {status === 'todo' && (
         <div className="flex gap-1 justify-between">
           <p className="font-medium">Dibuat:</p>
