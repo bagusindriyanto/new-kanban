@@ -1,5 +1,5 @@
-import { BASE_URL } from '@/lib/api';
-
 export const getAvatarURL = (avatarPath) => {
-  return avatarPath ? `${BASE_URL}/${avatarPath}` : null;
+  return avatarPath
+    ? `${import.meta.env.VITE_API_BASE_URL}/${avatarPath}`
+    : null;
 };

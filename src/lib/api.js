@@ -2,10 +2,9 @@ import axios from 'axios';
 
 const TOKEN_KEY = 'kanban_access_token';
 const REFRESH_TOKEN_KEY = 'kanban_refresh_token';
-export const BASE_URL = 'http://localhost/kanban/api';
 
 export const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 // ─── Token helpers ───────────────────────────────────────────
