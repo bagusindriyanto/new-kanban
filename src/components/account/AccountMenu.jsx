@@ -7,8 +7,7 @@ import {
 } from '../ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar';
 import useAuthStore from '@/stores/authStore';
-import { EllipsisVertical } from 'lucide-react';
-import { LogOut } from 'lucide-react';
+import { EllipsisVerticalIcon, LogOutIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, getRefreshToken } from '@/lib/axios';
 import { useNavigate } from 'react-router';
@@ -56,7 +55,7 @@ const AccountMenu = () => {
                 {user.role ?? '-'}
               </span>
             </div>
-            <EllipsisVertical className="ml-auto size-4" />
+            <EllipsisVerticalIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="min-w-56"
@@ -77,7 +76,7 @@ const AccountMenu = () => {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} variant="destructive">
-              <LogOut />
+              <LogOutIcon />
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -1,6 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
-import { Timer, CirclePause, SquarePen, Trash2 } from 'lucide-react';
+import {
+  TimerIcon,
+  CirclePauseIcon,
+  SquarePenIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/utils/formatDuration';
 
@@ -30,7 +35,7 @@ const TaskActions = ({
               isPaused ? 'font-medium animate-pulse' : '',
             )}
           >
-            <CirclePause className="size-4" />
+            <CirclePauseIcon className="size-4" />
             <span>{formatDuration(totalPause)}</span>
           </div>
         )}
@@ -38,12 +43,13 @@ const TaskActions = ({
         {status === 'done' && (
           <div className="flex items-center gap-2 text-[11px]">
             <span className="flex gap-1 items-center font-medium tabular-nums">
-              <Timer className="size-4.5" />{' '}
+              <TimerIcon className="size-4.5" />{' '}
               {formatDuration(minute_activity || 0)}
             </span>
             {totalPause > 0 && (
               <span className="flex gap-1 items-center tabular-nums opacity-70 text-muted-foreground">
-                <CirclePause className="size-4" /> {formatDuration(totalPause)}
+                <CirclePauseIcon className="size-4" />{' '}
+                {formatDuration(totalPause)}
               </span>
             )}
           </div>
@@ -70,7 +76,7 @@ const TaskActions = ({
             size="icon-xs"
             disabled={optimistic}
           >
-            <SquarePen />
+            <SquarePenIcon />
           </Button>
 
           <Button
@@ -79,7 +85,7 @@ const TaskActions = ({
             size="icon-xs"
             disabled={optimistic}
           >
-            <Trash2 />
+            <Trash2Icon />
           </Button>
         </div>
       )}

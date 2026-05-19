@@ -8,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import AddTaskForm from './AddTaskForm';
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 
 const AddTaskModal = () => {
   const [open, setOpen] = useState(false);
@@ -16,7 +16,7 @@ const AddTaskModal = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button />}>
-        <Plus data-icon="inline-start" />
+        <PlusIcon data-icon="inline-start" />
         Tambah Task
       </DialogTrigger>
       <DialogContent>

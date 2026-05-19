@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/input-group';
 import { useState, useId } from 'react';
 import { Controller } from 'react-hook-form';
-import { Eye, EyeClosed } from 'lucide-react';
+import { EyeIcon, EyeClosedIcon } from 'lucide-react';
 
 const PasswordField = ({
   name,
@@ -46,7 +46,7 @@ const PasswordField = ({
             />
             <InputGroupAddon align="inline-end">
               <InputGroupButton onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <EyeClosed /> : <Eye />}
+                {showPassword ? <EyeClosedIcon /> : <EyeIcon />}
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>

@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '../ui/button';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUpIcon } from 'lucide-react';
 
 const timelineData = [
   {
@@ -279,7 +279,7 @@ const Timeline = () => {
       </div>
       <div className="mx-auto max-w-7xl mt-12 flex justify-center">
         <Button variant="link">
-          <ArrowUp />
+          <ArrowUpIcon />
           <a href="#top">Kembali ke atas</a>
         </Button>
       </div>

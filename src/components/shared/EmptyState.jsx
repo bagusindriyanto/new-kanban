@@ -1,4 +1,4 @@
-import { ClipboardCheck } from 'lucide-react';
+import { ClipboardCheckIcon } from 'lucide-react';
 import {
   Empty,
   EmptyContent,
@@ -13,7 +13,7 @@ const EmptyState = () => {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <ClipboardCheck />
+          <ClipboardCheckIcon />
         </EmptyMedia>
         <EmptyTitle>Tidak Ada Task</EmptyTitle>
         <EmptyDescription>

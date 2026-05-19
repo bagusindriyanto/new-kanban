@@ -19,7 +19,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { Ban } from 'lucide-react';
+import { BanIcon } from 'lucide-react';
 import { ChartTooltip, ChartTooltipContent } from '../evilcharts/ui/tooltip';
 import { ChartBackground } from '../evilcharts/ui/background';
 
@@ -65,7 +65,7 @@ const EmptyChartItem = () => {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <Ban />
+          <BanIcon />
         </EmptyMedia>
         <EmptyTitle>Tidak Ada Aktivitas</EmptyTitle>
       </EmptyHeader>

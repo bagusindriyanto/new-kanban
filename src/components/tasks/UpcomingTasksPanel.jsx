@@ -1,5 +1,5 @@
 import { parseFromSQL } from '@/utils/formatTimestamp';
-import { BellRing } from 'lucide-react';
+import { BellRingIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -85,7 +85,7 @@ const UpcomingTasksPanel = () => {
           }
         >
           <Button variant="outline" size="icon">
-            <BellRing />
+            <BellRingIcon />
           </Button>
           {visibleTasks && visibleTasks?.length > 0 && (
             <Badge className="absolute -top-1 -right-1 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">

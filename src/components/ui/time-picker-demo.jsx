@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Clock } from 'lucide-react';
+import { ClockIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { TimePickerInput } from './time-picker-input';
 
@@ -11,7 +11,7 @@ export function TimePickerDemo({ date, setDate }) {
   return (
     <div className="flex items-end gap-1">
       <div className="flex h-9 ml-2 mr-1 items-center">
-        <Clock className="h-4 w-4" />
+        <ClockIcon className="h-4 w-4" />
       </div>
       <div className="grid gap-1 text-center">
         <Label htmlFor="hours" className="text-xs m-auto">

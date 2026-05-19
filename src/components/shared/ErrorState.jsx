@@ -1,4 +1,4 @@
-import { RotateCw, WifiOff, ServerOff } from 'lucide-react';
+import { RotateCwIcon, WifiOffIcon, ServerOffIcon } from 'lucide-react';
 import {
   Item,
   ItemActions,
@@ -26,9 +26,9 @@ export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
     <Item className={cn('bg-destructive/15', className)} variant="muted">
       <ItemMedia variant="icon">
         {!isOnline ? (
-          <WifiOff className="text-destructive" />
+          <WifiOffIcon className="text-destructive" />
         ) : (
-          <ServerOff className="text-destructive" />
+          <ServerOffIcon className="text-destructive" />
         )}
       </ItemMedia>
       <ItemContent>
@@ -47,7 +47,7 @@ export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
           size="sm"
           variant="outline"
         >
-          <RotateCw />
+          <RotateCwIcon />
           Refresh Halaman
         </Button>
       </ItemActions>
@@ -61,9 +61,9 @@ export const ErrorFull = ({ isOnline, errorMessage }) => {
       <EmptyHeader>
         <EmptyMedia variant="icon">
           {!isOnline ? (
-            <WifiOff className="text-destructive" />
+            <WifiOffIcon className="text-destructive" />
           ) : (
-            <ServerOff className="text-destructive" />
+            <ServerOffIcon className="text-destructive" />
           )}
         </EmptyMedia>
         <EmptyTitle className="text-destructive">
@@ -77,7 +77,7 @@ export const ErrorFull = ({ isOnline, errorMessage }) => {
       </EmptyHeader>
       <EmptyContent>
         <Button onClick={() => window.location.reload(false)} variant="outline">
-          <RotateCw />
+          <RotateCwIcon />
           Refresh Halaman
         </Button>
       </EmptyContent>

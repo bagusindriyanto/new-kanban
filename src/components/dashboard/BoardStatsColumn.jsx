@@ -1,4 +1,9 @@
-import { CircleCheckBig, CircleDot, LayoutList, Loader } from 'lucide-react';
+import {
+  CircleCheckBigIcon,
+  CircleDotIcon,
+  LayoutListIcon,
+  LoaderIcon,
+} from 'lucide-react';
 import {
   Label,
   PolarGrid,
@@ -93,7 +98,7 @@ const BoardStatsColumn = ({ tasks }) => {
       <div className="grid grid-cols-2 gap-2 p-3">
         <div className="flex flex-col gap-2 justify-between p-3 rounded-lg border border-todo-border bg-todo">
           <div className="flex items-center gap-1.5 text-xs font-medium text-todo-foreground">
-            <CircleDot className="size-3.5" />
+            <CircleDotIcon className="size-3.5" />
             To Do
           </div>
           <span className="text-2xl font-bold tracking-tight text-todo-foreground">
@@ -102,7 +107,7 @@ const BoardStatsColumn = ({ tasks }) => {
         </div>
         <div className="flex flex-col gap-2 justify-between p-3 rounded-lg border border-progress-border bg-progress">
           <div className="flex items-center gap-1.5 text-xs font-medium text-progress-foreground">
-            <Loader className="size-3.5" />
+            <LoaderIcon className="size-3.5" />
             On Progress
           </div>
           <span className="text-2xl font-bold tracking-tight text-progress-foreground">
@@ -111,7 +116,7 @@ const BoardStatsColumn = ({ tasks }) => {
         </div>
         <div className="flex flex-col gap-2 justify-between p-3 rounded-lg border border-done-border bg-done">
           <div className="flex items-center gap-1.5 text-xs font-medium text-done-foreground">
-            <CircleCheckBig className="size-3.5" />
+            <CircleCheckBigIcon className="size-3.5" />
             Done
           </div>
           <span className="text-2xl font-bold tracking-tight text-done-foreground">
@@ -120,7 +125,7 @@ const BoardStatsColumn = ({ tasks }) => {
         </div>
         <div className="flex flex-col gap-2 justify-between p-3 rounded-lg border border-total-border bg-total">
           <div className="flex items-center gap-1.5 text-xs font-medium text-total-foreground">
-            <LayoutList className="size-3.5" />
+            <LayoutListIcon className="size-3.5" />
             Total
           </div>
           <span className="text-2xl font-bold tracking-tight text-total-foreground">

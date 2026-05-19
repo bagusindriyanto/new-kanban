@@ -1,4 +1,3 @@
-import { CircleCheckBig, CircleDot, LayoutList, Loader } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import ProfileAvatar from '../shared/ProfileAvatar';
 import { Separator } from '@/components/ui/separator';
@@ -9,28 +8,24 @@ const statItems = [
   {
     key: 'todo',
     label: 'To Do',
-    icon: CircleDot,
     textClass: 'text-todo-accent',
     dotClass: 'bg-todo-accent',
   },
   {
     key: 'on_progress',
     label: 'On Progress',
-    icon: Loader,
     textClass: 'text-progress-accent',
     dotClass: 'bg-progress-accent',
   },
   {
     key: 'done',
     label: 'Done',
-    icon: CircleCheckBig,
     textClass: 'text-done-accent',
     dotClass: 'bg-done-accent',
   },
   {
     key: 'total',
     label: 'Total',
-    icon: LayoutList,
     textClass: 'text-total-accent',
     dotClass: 'bg-total-accent',
   },

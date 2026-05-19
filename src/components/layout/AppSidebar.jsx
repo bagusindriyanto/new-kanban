@@ -15,20 +15,20 @@ import {
 import AccountMenu from '../account/AccountMenu';
 import logo from '@/assets/logo.png';
 import {
-  SquareKanban,
-  ChartNoAxesCombined,
-  HelpCircle,
-  User,
+  SquareKanbanIcon,
+  ChartNoAxesCombinedIcon,
+  HelpCircleIcon,
+  UserIcon,
 } from 'lucide-react';
 
 const navMain = [
-  { to: '/', label: 'Kanban Board', icon: SquareKanban },
-  { to: '/performance', label: 'Performance', icon: ChartNoAxesCombined },
+  { to: '/', label: 'Kanban Board', icon: SquareKanbanIcon },
+  { to: '/performance', label: 'Performance', icon: ChartNoAxesCombinedIcon },
 ];
 
 const navSecondary = [
-  { to: '/settings', label: 'Akun', icon: User },
-  { to: '/changelog', label: 'Changelog', icon: HelpCircle },
+  { to: '/settings', label: 'Akun', icon: UserIcon },
+  { to: '/changelog', label: 'Changelog', icon: HelpCircleIcon },
 ];
 
 const AppSidebar = () => {

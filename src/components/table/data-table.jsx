@@ -16,11 +16,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  ChevronLeft,
-  ChevronFirst,
-  ChevronRight,
-  ChevronLast,
-  Search,
+  ChevronLeftIcon,
+  ChevronFirstIcon,
+  ChevronRightIcon,
+  ChevronLastIcon,
+  SearchIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -69,7 +69,7 @@ export function DataTable({ columns, data }) {
             }
           />
           <InputGroupAddon align="inline-end">
-            <Search />
+            <SearchIcon />
           </InputGroupAddon>
         </InputGroup>
       </div>
@@ -139,7 +139,7 @@ export function DataTable({ columns, data }) {
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Halaman Awal</span>
-            <ChevronFirst />
+            <ChevronFirstIcon />
           </Button>
           <Button
             variant="outline"
@@ -149,7 +149,7 @@ export function DataTable({ columns, data }) {
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Halaman Sebelumnya</span>
-            <ChevronLeft />
+            <ChevronLeftIcon />
           </Button>
           <Button
             variant="outline"
@@ -159,7 +159,7 @@ export function DataTable({ columns, data }) {
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Halaman Berikutnya</span>
-            <ChevronRight />
+            <ChevronRightIcon />
           </Button>
           <Button
             variant="outline"
@@ -169,7 +169,7 @@ export function DataTable({ columns, data }) {
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Halaman Terakhir</span>
-            <ChevronLast />
+            <ChevronLastIcon />
           </Button>
         </div>
       </div>

@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCwIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { refreshData } from '@/utils/refreshData';
 import { format } from 'date-fns';
@@ -25,7 +25,7 @@ export const RefreshToggle = ({ dataUpdatedAt }) => {
           />
         }
       >
-        <RefreshCw className={cn({ 'animate-spin': isFetching })} />
+        <RefreshCwIcon className={cn({ 'animate-spin': isFetching })} />
       </TooltipTrigger>
       <TooltipContent>
         <p>

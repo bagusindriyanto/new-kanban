@@ -14,7 +14,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { Ban } from 'lucide-react';
+import { BanIcon } from 'lucide-react';
 import {
   ChartContainer,
   ChartLegend,
@@ -73,7 +73,7 @@ const PieChartCard = ({ data = EMPTY_DATA }) => {
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <Ban />
+                <BanIcon />
               </EmptyMedia>
               <EmptyTitle>Tidak Ada Aktivitas</EmptyTitle>
             </EmptyHeader>
