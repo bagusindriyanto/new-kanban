@@ -11,7 +11,7 @@ import z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuthStore from '@/stores/authStore';
-import { api } from '@/lib/api';
+import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import {
   InputGroup,

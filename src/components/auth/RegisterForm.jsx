@@ -24,7 +24,7 @@ import {
   InputGroupInput,
 } from '../ui/input-group';
 import { Link, useNavigate } from 'react-router';
-import { api } from '@/lib/api';
+import { api } from '@/lib/axios';
 import { useFetchDivisions } from '@/api/fetchDivisions';
 import { useFetchRoles } from '@/api/fetchRoles';
 import InputField from '../shared/form/InputField';

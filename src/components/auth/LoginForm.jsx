@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import useAuthStore from '@/stores/authStore';
 import { Link, useNavigate } from 'react-router';
-import { api } from '@/lib/api';
+import { api } from '@/lib/axios';
 import useFilter from '@/stores/filterStore';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';

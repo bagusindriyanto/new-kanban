@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '../lib/api';
+import { api } from '../lib/axios';
 
 export const fetchStats = async (filters = {}) => {
   const response = await api.get('/dashboard/stats', { params: filters });

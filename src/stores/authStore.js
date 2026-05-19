@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { clearTokens, setTokens } from '@/lib/api';
+import { clearTokens, setTokens } from '@/lib/axios';
 
 const useAuthStore = create((set) => ({
   user: null, // { id, name, role, ... }

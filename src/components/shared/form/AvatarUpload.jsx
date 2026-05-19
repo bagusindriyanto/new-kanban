@@ -1,4 +1,4 @@
-import { formatBytes, useFileUpload } from '@/hooks/use-file-upload';
+import { formatBytes, useFileUpload } from '@/hooks/useFileUpload';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 import { cn } from '@/lib/utils';

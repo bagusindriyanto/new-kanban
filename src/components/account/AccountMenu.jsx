@@ -10,7 +10,7 @@ import useAuthStore from '@/stores/authStore';
 import { EllipsisVertical } from 'lucide-react';
 import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
-import { api, getRefreshToken } from '@/lib/api';
+import { api, getRefreshToken } from '@/lib/axios';
 import { useNavigate } from 'react-router';
 import ProfileAvatar from '../shared/ProfileAvatar';
 import { queryClient } from '@/lib/queryClient';

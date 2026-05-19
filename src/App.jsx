@@ -1,10 +1,10 @@
 import './App.css';
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router';
-import { router } from './Router';
+import { router } from './routes/Router';
 
 import useAuthStore from './stores/authStore';
-import { api, getAccessToken } from './lib/api';
+import { api, getAccessToken } from './lib/axios';
 import { Toaster } from './components/ui/sonner';
 import useFilter from './stores/filterStore';
 

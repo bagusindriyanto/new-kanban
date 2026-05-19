@@ -1,22 +1,22 @@
 import { createBrowserRouter } from 'react-router';
 // import { lazy, Suspense } from 'react';
 
-import GuestRoute from './routes/GuestRoute';
-import ProtectedRoute from './routes/ProtectedRoute';
+import GuestRoute from './GuestRoute';
+import ProtectedRoute from './ProtectedRoute';
 
-import AuthLayout from './components/layout/AuthLayout';
-import AppLayout from './components/layout/AppLayout';
+import AuthLayout from '../components/layout/AuthLayout';
+import AppLayout from '../components/layout/AppLayout';
 
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
 
-import HomePage from './pages/HomePage';
-import SummaryPage from './pages/SummaryPage';
-import ChangelogPage from './pages/ChangelogPage';
-import SettingsPage from './pages/SettingsPage';
+import HomePage from '../pages/HomePage';
+import SummaryPage from '../pages/SummaryPage';
+import ChangelogPage from '../pages/ChangelogPage';
+import SettingsPage from '../pages/SettingsPage';
 
-import NotFoundPage from './pages/NotFoundPage';
-import UnauthorizedPage from './pages/UnauthorizedPage';
+import NotFoundPage from '../pages/NotFoundPage';
+import UnauthorizedPage from '../pages/UnauthorizedPage';
 
 // import LoadingPage from './pages/LoadingPage';
 // const HomePage = lazy(() => import('./pages/HomePage'));
