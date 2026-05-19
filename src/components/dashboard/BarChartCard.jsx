@@ -11,7 +11,7 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Grid,
+  Legend,
 } from '@/components/evilcharts/charts/bar-chart';
 import {
   Empty,
@@ -89,66 +89,77 @@ const BarChartCard = ({ data }) => {
         {data?.pics.length === 0 ? (
           <EmptyChartItem />
         ) : (
-          data?.pics.map(({ pic_id, pic_name, rows }) => (
-            <div key={pic_id} className="space-y-2">
-              <h2 className="font-semibold tracking-tight">{pic_name}</h2>
-              <EvilBarChart
-                data={rows}
-                config={getChartConfig(pic_name)}
-                className="w-full h-full max-h-50 p-4"
-              >
-                <ChartBackground variant="grid" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(value) => {
-                    const date = new Date(value);
-                    return date.toLocaleDateString('id', {
-                      month: 'short',
-                      day: 'numeric',
-                    });
-                  }}
-                  tick={{
-                    fontSize: 10,
-                  }}
-                />
-                <YAxis
-                  ticks={ticks}
-                  tickFormatter={(value) => formatDuration(value)}
-                  tick={{
-                    style: { fontVariantNumeric: 'tabular-nums' },
-                    fontSize: 10,
-                  }}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={
-                    <ChartTooltipContent
-                      labelFormatter={(value) => {
-                        const date = new Date(value);
-                        return date.toLocaleDateString('id');
-                      }}
-                      formatter={(value, name) => (
-                        <div className="flex flex-1 items-center gap-2">
-                          <div
-                            className="size-2.5 shrink-0 rounded-[2px]"
-                            style={{
-                              background: `var(--color-${name}-0)`,
-                            }}
-                          />
-                          <span className="flex-1">{name}</span>
-                          <span className="text-muted-foreground font-medium tabular-nums">
-                            {formatDuration(value)}
-                          </span>
-                        </div>
-                      )}
-                    />
-                  }
-                />
-                <Bar dataKey="total_minutes" variant="default" />
-                <Bar dataKey="working_minutes" variant="default" />
-              </EvilBarChart>
-            </div>
-          ))
+          data?.pics.map(({ pic_id, pic_name, rows }) => {
+            const chartConfig = getChartConfig(pic_name);
+            return (
+              <div key={pic_id} className="space-y-2">
+                <h2 className="font-semibold tracking-tight">{pic_name}</h2>
+                <EvilBarChart
+                  data={rows}
+                  config={chartConfig}
+                  className="w-full h-full max-h-50 p-4"
+                  barRadius={6}
+                >
+                  <ChartBackground variant="grid" />
+                  <Legend isClickable />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString('id', {
+                        month: 'short',
+                        day: 'numeric',
+                      });
+                    }}
+                    tick={{
+                      fontSize: 10,
+                    }}
+                  />
+                  <YAxis
+                    ticks={ticks}
+                    tickFormatter={(value) => formatDuration(value)}
+                    tick={{
+                      style: { fontVariantNumeric: 'tabular-nums' },
+                      fontSize: 10,
+                    }}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString('id');
+                        }}
+                        formatter={(value, name) => (
+                          <div className="flex flex-1 items-center gap-2">
+                            <div
+                              className="size-2.5 shrink-0 rounded-[2px]"
+                              style={{
+                                background: `var(--color-${name}-0)`,
+                              }}
+                            />
+                            <span className="flex-1">
+                              {chartConfig?.[name]?.label || name}
+                            </span>
+                            <span className="text-muted-foreground font-medium tabular-nums">
+                              {formatDuration(value)}
+                            </span>
+                          </div>
+                        )}
+                      />
+                    }
+                  />
+                  <Bar dataKey="total_minutes" variant="default" isClickable />
+                  <Bar
+                    dataKey="working_minutes"
+                    variant="default"
+                    isClickable
+                  />
+                </EvilBarChart>
+              </div>
+            );
+          })
         )}
       </CardContent>
     </Card>
