@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatDuration } from '@/utils/formatDuration';
 
@@ -14,8 +14,9 @@ export const columns = [
           onClick={() => column.toggleSorting(isSorted === 'asc')}
         >
           PIC
-          {isSorted === 'asc' && <ArrowUp className="ml-0.5 size-4" />}
-          {isSorted === 'desc' && <ArrowDown className="ml-0.5 size-4" />}
+          {!isSorted && <ChevronsUpDownIcon className="ml-0.5 size-4" />}
+          {isSorted === 'asc' && <ArrowUpIcon className="ml-0.5 size-4" />}
+          {isSorted === 'desc' && <ArrowDownIcon className="ml-0.5 size-4" />}
         </Button>
       );
     },
@@ -31,8 +32,9 @@ export const columns = [
           onClick={() => column.toggleSorting(isSorted === 'asc')}
         >
           Aktivitas
-          {isSorted === 'asc' && <ArrowUp className="ml-0.5 size-4" />}
-          {isSorted === 'desc' && <ArrowDown className="ml-0.5 size-4" />}
+          {!isSorted && <ChevronsUpDownIcon className="ml-0.5 size-4" />}
+          {isSorted === 'asc' && <ArrowUpIcon className="ml-0.5 size-4" />}
+          {isSorted === 'desc' && <ArrowDownIcon className="ml-0.5 size-4" />}
         </Button>
       );
     },
@@ -48,8 +50,9 @@ export const columns = [
           onClick={() => column.toggleSorting(isSorted === 'asc')}
         >
           Total Durasi
-          {isSorted === 'asc' && <ArrowUp className="ml-0.5 size-4" />}
-          {isSorted === 'desc' && <ArrowDown className="ml-0.5 size-4" />}
+          {!isSorted && <ChevronsUpDownIcon className="ml-0.5 size-4" />}
+          {isSorted === 'asc' && <ArrowUpIcon className="ml-0.5 size-4" />}
+          {isSorted === 'desc' && <ArrowDownIcon className="ml-0.5 size-4" />}
         </Button>
       );
     },
@@ -72,8 +75,9 @@ export const columns = [
           onClick={() => column.toggleSorting(isSorted === 'asc')}
         >
           Jumlah
-          {isSorted === 'asc' && <ArrowUp className="ml-0.5 size-4" />}
-          {isSorted === 'desc' && <ArrowDown className="ml-0.5 size-4" />}
+          {!isSorted && <ChevronsUpDownIcon className="ml-0.5 size-4" />}
+          {isSorted === 'asc' && <ArrowUpIcon className="ml-0.5 size-4" />}
+          {isSorted === 'desc' && <ArrowDownIcon className="ml-0.5 size-4" />}
         </Button>
       );
     },
@@ -95,8 +99,9 @@ export const columns = [
           onClick={() => column.toggleSorting(isSorted === 'asc')}
         >
           Rata-Rata Durasi
-          {isSorted === 'asc' && <ArrowUp className="ml-0.5 size-4" />}
-          {isSorted === 'desc' && <ArrowDown className="ml-0.5 size-4" />}
+          {!isSorted && <ChevronsUpDownIcon className="ml-0.5 size-4" />}
+          {isSorted === 'asc' && <ArrowUpIcon className="ml-0.5 size-4" />}
+          {isSorted === 'desc' && <ArrowDownIcon className="ml-0.5 size-4" />}
         </Button>
       );
     },

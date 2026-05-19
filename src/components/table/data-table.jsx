@@ -73,7 +73,7 @@ export function DataTable({ columns, data }) {
           </InputGroupAddon>
         </InputGroup>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-xl border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
