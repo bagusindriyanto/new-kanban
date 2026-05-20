@@ -6,7 +6,7 @@ export const fetchUpcomingTasks = async () => {
   return response.data;
 };
 
-export const fetchUpcomingTasksQueryKey = () => ['tasks-upcoming'];
+export const fetchUpcomingTasksQueryKey = () => ['upcoming-tasks'];
 
 const fetchUpcomingTasksQueryOptions = () => {
   return queryOptions({
