@@ -32,6 +32,7 @@ export const useAddTask = (params = {}) => {
         queryClient.setQueryData(queryKey, [
           {
             ...newTask,
+            id: `temp-${Date.now()}`,
             optimistic: true,
           },
           ...oldTasks,
