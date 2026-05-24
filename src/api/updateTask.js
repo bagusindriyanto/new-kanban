@@ -9,9 +9,13 @@ export const updateTask = async (data) => {
 };
 
 export const useUpdateTask = (params = {}) => {
+  const { mutationConfig = {} } = params;
+  const { onMutate, onError, onSettled, ...restMutationConfig } =
+    mutationConfig;
+
   return useMutation({
     mutationFn: updateTask,
-    onMutate: async (updatedTask, context) => {
+    onMutate: async (updatedTask) => {
       await queryClient.cancelQueries({ queryKey: fetchTasksQueryKey() });
 
       const previousTasks = queryClient.getQueriesData({
@@ -41,27 +45,22 @@ export const useUpdateTask = (params = {}) => {
         );
       });
 
-      params.mutationConfig?.onMutate?.(updatedTask, context);
-      return { previousTasks };
+      const customContext = await onMutate?.(updatedTask);
+      return { previousTasks, ...customContext };
     },
     onError: (err, updatedTask, context) => {
       context?.previousTasks.forEach(([queryKey, data]) => {
         queryClient.setQueryData(queryKey, data);
       });
 
-      params.mutationConfig?.onError?.(err, updatedTask, context);
+      onError?.(err, updatedTask, context);
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
       queryClient.invalidateQueries({ queryKey: fetchTasksQueryKey() });
 
-      params.mutationConfig?.onSettled?.(
-        data,
-        error,
-        variables,
-        onMutateResult,
-        context,
-      );
+      onSettled?.(data, error, variables, onMutateResult, context);
     },
-    ...params.mutationConfig,
+
+    ...restMutationConfig,
   });
 };
