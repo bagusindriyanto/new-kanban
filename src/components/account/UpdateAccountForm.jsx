@@ -77,12 +77,12 @@ const UpdateAccountForm = () => {
           email: '',
           password: '',
         });
-        return 'Berhasil mengubah data!';
+        return 'Akun Anda berhasil diperbarui';
       },
       error: (err) => {
         return {
-          message: err.response?.data?.message || 'Gagal mengubah data.',
-          description: err.response?.data?.error_detail || null,
+          message: 'Akun Anda gagal diperbarui',
+          description: err.response?.data?.message || null,
         };
       },
     });

@@ -27,9 +27,14 @@ const AccountMenu = () => {
           clearUser();
           queryClient.clear();
           navigate('/login');
-          return 'Logout berhasil.';
+          return 'Logout berhasil';
         },
-        error: (err) => err.response?.data?.message || 'Logout gagal.',
+        error: (err) => {
+          return {
+            message: 'Logout gagal',
+            description: err.response?.data?.message || null,
+          };
+        },
       },
     );
   };

@@ -24,16 +24,13 @@ const ActivityCombobox = ({ control, className }) => {
   const onSubmit = (data) => {
     toast.promise(mutateAsync(data), {
       loading: 'Sedang menambahkan aktivitas...',
-      success: (res) => {
-        return `"${res.name}" telah ditambahkan ke daftar aktivitas.`;
+      success: () => {
+        return 'Aktivitas berhasil ditambahkan';
       },
       error: (err) => {
         return {
-          message:
-            err.response?.data?.message ||
-            err.message ||
-            'Gagal menambahkan aktivitas.',
-          description: err.response?.data?.error_detail || null,
+          message: 'Aktivitas gagal ditambahkan',
+          description: err.response?.data?.message || null,
         };
       },
     });

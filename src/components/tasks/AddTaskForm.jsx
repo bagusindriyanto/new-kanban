@@ -95,15 +95,12 @@ const AddTaskForm = ({ onOpenChange }) => {
       success: () => {
         form.reset();
         onOpenChange(false);
-        return 'Task berhasil ditambahkan.';
+        return 'Task berhasil ditambahkan';
       },
       error: (err) => {
         return {
-          message:
-            err.response?.data?.message ||
-            err.message ||
-            'Gagal menambahkan task.',
-          description: err.response?.data?.error_detail || null,
+          message: 'Task gagal ditambahkan',
+          description: err.response?.data?.message || null,
         };
       },
     });

@@ -99,14 +99,14 @@ const RegisterForm = () => {
         setSelectedPicId(res.data.user.pic_id);
         navigate('/');
         return {
-          message: 'Berhasil membuat akun!',
+          message: 'Akun Anda berhasil dibuat',
           description: `Selamat datang, ${res.data.user.name}!`,
         };
       },
       error: (err) => {
         return {
-          message: err.response?.data?.message || 'Gagal membuat akun.',
-          description: err.response?.data?.error_detail || null,
+          message: 'Akun Anda gagal dibuat',
+          description: err.response?.data?.message || null,
         };
       },
     });

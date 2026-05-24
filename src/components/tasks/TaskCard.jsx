@@ -46,14 +46,9 @@ const TaskCard = ({ task, className }) => {
   const { mutate: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
       onError: (err) => {
-        toast.error(
-          err.response?.data?.message ||
-            err.message ||
-            'Gagal memperbarui task.',
-          {
-            description: err.response?.data?.error_detail || null,
-          },
-        );
+        toast.error('Task gagal diperbarui', {
+          description: err.response?.data?.message || null,
+        });
       },
     },
   });

@@ -29,15 +29,12 @@ const DeleteTaskModal = () => {
       loading: 'Sedang menghapus task...',
       success: () => {
         setIsModalOpen(false);
-        return 'Task berhasil dihapus.';
+        return 'Task berhasil dihapus';
       },
       error: (err) => {
         return {
-          message:
-            err.response?.data?.message ||
-            err.message ||
-            'Gagal menghapus task.',
-          description: err.response?.data?.error_detail || null,
+          message: 'Task gagal dihapus',
+          description: err.response?.data?.message || null,
         };
       },
     });

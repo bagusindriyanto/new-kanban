@@ -40,12 +40,15 @@ const LoginForm = () => {
         login(res.data.user, res.data.access_token, res.data.refresh_token);
         setSelectedPicId(res.data.user.pic_id);
         navigate('/');
-        return `Selamat datang, ${res.data.user.name}!`;
+        return {
+          message: 'Login berhasil',
+          description: `Selamat datang, ${res.data.user.name}!`,
+        };
       },
       error: (err) => {
         return {
-          message: err.response?.data?.message || 'Login gagal.',
-          description: err.response?.data?.error_detail || null,
+          message: 'Login gagal',
+          description: err.response?.data?.message || null,
         };
       },
     });

@@ -39,14 +39,9 @@ const HomePage = () => {
   const { mutate: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
       onError: (err) => {
-        toast.error(
-          err.response?.data?.message ||
-            err.message ||
-            'Gagal memperbarui task.',
-          {
-            description: err.response?.data?.error_detail || null,
-          },
-        );
+        toast.error('Task gagal diperbarui', {
+          description: err.response?.data?.message || null,
+        });
       },
     },
   });
@@ -77,8 +72,7 @@ const HomePage = () => {
   // Error log
   if (fetchTasksError) {
     console.error(
-      fetchTasksError?.response?.data?.error_detail ||
-        'Gagal terhubung ke server.',
+      fetchTasksError?.response?.data?.message || 'Gagal terhubung ke server.',
     );
   }
 

@@ -18,7 +18,7 @@ const EmptyState = () => {
         <EmptyTitle>Tidak Ada Task</EmptyTitle>
         <EmptyDescription>
           Anda belum menambahkan task. Klik tombol Tambah Task untuk mulai
-          membuat daftar aktivitasmu.
+          membuat daftar aktivitas Anda.
         </EmptyDescription>
       </EmptyHeader>
     </Empty>
