@@ -54,7 +54,7 @@ const formSchema = z
     minute_pause: 0,
     minute_activity: 0,
     pause_time: null,
-    scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
+    scheduled_at: formatToSQL(data.scheduled_at),
   }));
 
 const AddTaskForm = ({ onOpenChange }) => {
@@ -85,9 +85,6 @@ const AddTaskForm = ({ onOpenChange }) => {
       ...data,
       pic_id: isAssigned ? data.pic_id : user.pic_id,
       assigner_id: isAssigned ? user.pic_id : null,
-      pic_name: isAssigned
-        ? filteredPics?.find((pic) => pic.id === data.pic_id)?.name
-        : user.name,
     };
 
     toast.promise(addTaskMutation(payload), {

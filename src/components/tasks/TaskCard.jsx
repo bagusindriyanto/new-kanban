@@ -13,23 +13,6 @@ import { useRole } from '@/hooks/useRole';
 import ProfileAvatar from '../shared/ProfileAvatar';
 
 const TaskCard = ({ task, className }) => {
-  const {
-    id,
-    pic_id,
-    status,
-    content,
-    detail,
-    timestamp_todo,
-    timestamp_progress,
-    timestamp_done,
-    minute_activity,
-    pause_time,
-    optimistic = false,
-    scheduled_at,
-    pic_name,
-    assigner_name,
-  } = task;
-
   // Zustand store selectors
   const setIsUpdateTaskModalOpen = useUpdateTaskModal(
     (state) => state.setIsModalOpen,
@@ -40,7 +23,7 @@ const TaskCard = ({ task, className }) => {
   const setSelectedTaskId = useFilter((state) => state.setSelectedTaskId);
 
   const { isOwner } = useRole();
-  const canModify = isOwner(pic_id);
+  const canModify = isOwner(task.pic.id);
 
   // Mutation
   const { mutate: updateTaskMutate } = useUpdateTask({
@@ -61,26 +44,26 @@ const TaskCard = ({ task, className }) => {
 
   // Drag and drop
   const { ref: draggableRef, isDragSource } = useDraggable({
-    id: id,
-    data: { task },
-    disabled: optimistic || isPaused || !canModify,
+    id: task.id,
+    data: task,
+    disabled: !!task.optimistic || isPaused || !canModify,
   });
 
   const { isUrgent, diffInMinutes } = useUrgencyCheck({
-    status,
-    scheduled_at,
-    optimistic,
+    status: task.status,
+    scheduled_at: task.scheduled_at,
+    optimistic: !!task.optimistic,
   });
 
   // Event handlers
   const handleUpdateTaskModal = () => {
     setIsUpdateTaskModalOpen(true);
-    setSelectedTaskId(id);
+    setSelectedTaskId(task.id);
   };
 
   const handleDeleteTaskModal = () => {
     setIsDeleteTaskModalOpen(true);
-    setSelectedTaskId(id);
+    setSelectedTaskId(task.id);
   };
 
   return (
@@ -92,12 +75,12 @@ const TaskCard = ({ task, className }) => {
           'hover:shadow-md hover:-translate-y-1 cursor-grab':
             canModify && !isPaused,
           'bg-todo-card border-todo-border shadow-todo-border/50':
-            status === 'todo',
+            task.status === 'todo',
           'bg-progress-card border-progress-border shadow-progress-border/50':
-            status === 'on progress',
+            task.status === 'on progress',
           'bg-done-card border-done-border shadow-done-border/50':
-            status === 'done',
-          'animate-pulse pointer-events-none': optimistic,
+            task.status === 'done',
+          'animate-pulse pointer-events-none': !!task.optimistic,
           'cursor-not-allowed': !canModify,
           'opacity-40': isDragSource,
         },
@@ -106,35 +89,37 @@ const TaskCard = ({ task, className }) => {
     >
       {/* Header: Title */}
       <h3 className="text-base font-bold leading-tight text-card-foreground line-clamp-2">
-        {content}
+        {task.content}
       </h3>
 
       {/* Body: Description */}
-      {detail && <p className="text-sm leading-snug line-clamp-2">{detail}</p>}
+      {task.detail && (
+        <p className="text-sm leading-snug line-clamp-2">{task.detail}</p>
+      )}
 
       {/* Assignee & Metadata */}
       <div className="flex flex-col gap-2 mt-1">
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center text-xs text-muted-foreground">
-            <ProfileAvatar profile={task} size="sm" />
+            <ProfileAvatar profile={task.pic} size="sm" />
             <span className="font-medium text-foreground">
-              {pic_name || '-'}
+              {task.pic.name || '-'}
             </span>
           </div>
-          {assigner_name && (
+          {task.assigner && (
             <span className="text-[10px] text-muted-foreground/70">
-              oleh {assigner_name}
+              oleh {task.assigner.name}
             </span>
           )}
         </div>
 
         <TaskTimestamps
-          status={status}
-          timestamp_todo={timestamp_todo}
-          timestamp_progress={timestamp_progress}
-          timestamp_done={timestamp_done}
-          pause_time={pause_time}
-          scheduled_at={scheduled_at}
+          status={task.status}
+          timestamp_todo={task.timestamp_todo}
+          timestamp_progress={task.timestamp_progress}
+          timestamp_done={task.timestamp_done}
+          pause_time={task.pause_time}
+          scheduled_at={task.scheduled_at}
           isPaused={isPaused}
           isUrgent={isUrgent}
           diffInMinutes={diffInMinutes}
@@ -143,11 +128,11 @@ const TaskCard = ({ task, className }) => {
 
       {/* Footer: Controls */}
       <TaskActions
-        status={status}
-        optimistic={optimistic}
+        status={task.status}
+        optimistic={!!task.optimistic}
         isPaused={isPaused}
         totalPause={totalPause}
-        minute_activity={minute_activity}
+        minute_activity={task.minute_activity}
         togglePause={togglePause}
         onEdit={handleUpdateTaskModal}
         onDelete={handleDeleteTaskModal}

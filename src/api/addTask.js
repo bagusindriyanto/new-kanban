@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '../lib/axios';
 import { queryClient } from '@/lib/queryClient';
 import { fetchTasksQueryKey } from './fetchTasks';
+import { fetchPicsQueryKey } from './fetchPics';
 
 export const addTask = async (data) => {
   const response = await api.post('/tasks', data);
@@ -18,6 +19,11 @@ export const useAddTask = (params = {}) => {
         queryKey: fetchTasksQueryKey(),
       });
 
+      const pics = queryClient.getQueryData(fetchPicsQueryKey());
+      const newPic = pics?.find((pic) => pic.id === newTask.pic_id) ?? null;
+      const newAssigner =
+        pics?.find((pic) => pic.id === newTask.assigner_id) ?? null;
+
       previousTasks.forEach(([queryKey, oldTasks]) => {
         if (!oldTasks) return;
 
@@ -33,6 +39,8 @@ export const useAddTask = (params = {}) => {
           {
             ...newTask,
             id: `temp-${Date.now()}`,
+            pic: newPic,
+            assigner: newAssigner,
             optimistic: true,
           },
           ...oldTasks,

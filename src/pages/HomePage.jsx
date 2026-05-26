@@ -51,17 +51,12 @@ const HomePage = () => {
     if (event.canceled) return;
 
     const { source, target } = event.operation;
-
     if (!source || !target) return;
 
     // target.id = column status id (e.g. "todo", "on progress")
     const newStatus = target.id;
-    const task = source.data?.task;
-
+    const task = source.data;
     if (!task) return;
-
-    // Jangan update jika drop di kolom yang sama
-    if (task.status === newStatus) return;
 
     const data = computeStatusTransition(task, newStatus);
     if (!data) return;
@@ -122,7 +117,7 @@ const HomePage = () => {
               </div>
               <DragOverlay>
                 {(source) => {
-                  const task = source.data?.task;
+                  const task = source.data;
                   if (!task) return null;
                   return (
                     <TaskCard

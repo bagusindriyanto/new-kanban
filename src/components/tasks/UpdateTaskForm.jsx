@@ -68,13 +68,9 @@ const formSchema = z
         : 0,
     pause_time: data.pause_time ? formatToSQL(new Date()) : null,
     timestamp_todo: formatToSQL(data.timestamp_todo),
-    timestamp_progress: data.timestamp_progress
-      ? formatToSQL(data.timestamp_progress)
-      : null,
-    timestamp_done: data.timestamp_done
-      ? formatToSQL(data.timestamp_done)
-      : null,
-    scheduled_at: data.is_scheduled ? formatToSQL(data.scheduled_at) : null,
+    timestamp_progress: formatToSQL(data.timestamp_progress),
+    timestamp_done: formatToSQL(data.timestamp_done),
+    scheduled_at: formatToSQL(data.scheduled_at),
     updated_at: formatToSQL(new Date()),
   }));
 
@@ -150,8 +146,6 @@ const UpdateTaskForm = () => {
       ...data,
       id: selectedTaskId,
       assigner_id: data.pic_id === user.pic_id ? null : user.pic_id,
-      pic_name: pics?.find((pic) => pic.id === data.pic_id)?.name,
-      pic_avatar: pics?.find((pic) => pic.id === data.pic_id)?.avatar,
     };
 
     toast.promise(updateTaskMutate(payload), {
