@@ -12,7 +12,19 @@ const fetchUpcomingTasksQueryOptions = () => {
   return queryOptions({
     queryKey: fetchUpcomingTasksQueryKey(),
     queryFn: fetchUpcomingTasks,
-    placeholderData: (previousData) => previousData,
+    refetchInterval: 45 * 1000,
+    staleTime: 15 * 1000,
+    select: (tasks) => {
+      const now = new Date();
+      const in30min = new Date(now.getTime() + 30 * 60_000);
+      return tasks
+        .filter((task) => {
+          const start = new Date(task.scheduled_at);
+          return start >= now && start <= in30min;
+        })
+        .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+    },
+    // placeholderData: (previousData) => previousData,
   });
 };
 

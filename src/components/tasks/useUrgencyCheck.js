@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
  * @param {boolean} params.optimistic - Whether the task is optimistically rendered
  * @returns {{ isUrgent: boolean, diffInMinutes: number }}
  */
-export function useUrgencyCheck({ status, scheduled_at, optimistic }) {
+export function useUrgencyCheck({ status, scheduled_at, optimistic = false }) {
   const [isUrgent, setIsUrgent] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export function useUrgencyCheck({ status, scheduled_at, optimistic }) {
     };
 
     checkUrgency();
-    const urgentTimer = setInterval(checkUrgency, 15000);
+    const urgentTimer = setInterval(checkUrgency, 1000);
     return () => clearInterval(urgentTimer);
   }, [status, scheduled_at, optimistic]);
 

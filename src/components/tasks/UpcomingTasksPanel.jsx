@@ -17,16 +17,33 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useUrgencyCheck } from './useUrgencyCheck';
+// import { useUrgencyCheck } from './useUrgencyCheck';
 import useDeadlineChecker from '@/hooks/useDeadlineChecker';
 import { useFetchUpcomingTasks } from '@/api/fetchUpcomingTasks';
+import { useState } from 'react';
+import { useEffect } from 'react';
+
+const getMinutesLeft = (scheduledAt) => {
+  return Math.max(
+    0,
+    Math.round((new Date(scheduledAt) - new Date()) / (60 * 1000)),
+  );
+};
 
 const UpcomingTaskCard = ({ task }) => {
-  const { isUrgent, diffInMinutes } = useUrgencyCheck({
-    status: task.status,
-    scheduled_at: task.scheduled_at,
-  });
-  const picName = task.pic_name;
+  const [minsLeft, setMinsLeft] = useState(() =>
+    getMinutesLeft(task.scheduled_at),
+  );
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setMinsLeft(getMinutesLeft(task.scheduled_at)),
+      60000,
+    );
+    return () => clearInterval(interval);
+  }, [task.scheduled_at]);
+
+  const isUrgent = minsLeft <= 15;
 
   return (
     <div
@@ -39,7 +56,7 @@ const UpcomingTaskCard = ({ task }) => {
         <h3 className="text-base font-bold leading-tight line-clamp-2">
           {task.content}
         </h3>
-        <p className="text-sm font-semibold">{picName}</p>
+        <p className="text-sm font-semibold">{task.pic.name}</p>
       </div>
       <p className="text-xs tabular-nums text-muted-foreground">
         {parseFromSQL(task.scheduled_at)}
@@ -51,7 +68,7 @@ const UpcomingTaskCard = ({ task }) => {
             'text-blue-600 dark:text-blue-400': !isUrgent,
           })}
         >
-          {Math.ceil(diffInMinutes)} menit lagi
+          {minsLeft} menit lagi
         </p>
         {isUrgent && (
           <div className="mt-1 bg-red-500 rounded-full animate-pulse shrink-0 size-2"></div>
@@ -63,13 +80,6 @@ const UpcomingTaskCard = ({ task }) => {
 
 const UpcomingTasksPanel = () => {
   const { data: upcomingTasks } = useFetchUpcomingTasks();
-
-  const visibleTasks = upcomingTasks
-    ?.filter((task) => {
-      const diffInMinutes = (new Date(task.scheduled_at) - new Date()) / 60000;
-      return diffInMinutes > 0 && diffInMinutes <= 30;
-    })
-    .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
 
   useDeadlineChecker(upcomingTasks);
 
@@ -87,9 +97,9 @@ const UpcomingTasksPanel = () => {
           <Button variant="outline" size="icon">
             <BellRingIcon />
           </Button>
-          {visibleTasks && visibleTasks?.length > 0 && (
+          {upcomingTasks && upcomingTasks?.length > 0 && (
             <Badge className="absolute -top-1 -right-1 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
-              {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
+              {upcomingTasks.length > 9 ? '9+' : upcomingTasks.length}
             </Badge>
           )}
         </TooltipTrigger>
@@ -104,7 +114,7 @@ const UpcomingTasksPanel = () => {
         </SheetHeader>
         <ScrollArea className="flex-1 min-h-0">
           <div className="px-4 space-y-3 pb-4">
-            {visibleTasks?.map((task) => (
+            {upcomingTasks?.map((task) => (
               <UpcomingTaskCard key={task.id} task={task} />
             ))}
           </div>
