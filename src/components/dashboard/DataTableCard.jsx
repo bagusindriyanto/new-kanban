@@ -14,13 +14,13 @@ import { Button } from '../ui/button';
 import { DownloadIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Spinner } from '../ui/spinner';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 
 const EMPTY_DATA = [];
 
 const DataTableCard = ({ data = EMPTY_DATA }) => {
   const [isExporting, setIsExporting] = useState(false);
-  const range = useFilter((state) => state.range);
+  const range = useFilterStore((state) => state.range);
 
   const dateLabel = range?.from
     ? range?.to

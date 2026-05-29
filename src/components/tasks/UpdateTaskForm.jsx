@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { FieldGroup, FieldSeparator, FieldSet } from '@/components/ui/field';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchProfiles } from '@/api/fetchProfiles';
 import { useUpdateTask } from '@/api/updateTask';
 import { useFetchTasks } from '@/api/fetchTasks';
 import useTaskFilters from '@/hooks/useTaskFilters';
@@ -33,7 +33,7 @@ const statusItems = [
 const formSchema = z
   .object({
     content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
-    pic_id: z.number('Mohon pilih PIC.'),
+    user_id: z.number('Mohon pilih PIC.'),
     status: z.enum(['todo', 'on progress', 'done'], {
       error: 'Status harus dipilih.',
     }),
@@ -78,11 +78,11 @@ const UpdateTaskForm = () => {
   // Custom hook untuk logic filter
   const { queryParams } = useTaskFilters();
   // Fetch data
-  const { data: pics } = useFetchPics();
+  const { data: profiles } = useFetchProfiles();
   const { data: tasks } = useFetchTasks(queryParams);
 
   // State untuk tasks yang dipilih
-  const selectedTaskId = useFilter((state) => state.selectedTaskId);
+  const selectedTaskId = useFilterStore((state) => state.selectedTaskId);
   const task = tasks?.find((task) => task.id === selectedTaskId);
 
   // Update Tasks
@@ -99,7 +99,7 @@ const UpdateTaskForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: task?.content ?? '',
-      pic_id: task?.pic_id ?? null,
+      user_id: task?.user_id ?? null,
       status: task?.status ?? undefined,
       minute_pause: task?.minute_pause ?? 0,
       pause_time: !!task?.pause_time,
@@ -145,7 +145,7 @@ const UpdateTaskForm = () => {
     const payload = {
       ...data,
       id: selectedTaskId,
-      assigner_id: data.pic_id === user.pic.id ? null : user.pic.id,
+      assigner_id: data.user_id === user.id ? null : user.id,
     };
 
     toast.promise(updateTaskMutate(payload), {
@@ -178,12 +178,12 @@ const UpdateTaskForm = () => {
               <ActivityCombobox control={form.control} />
               {/* PIC Combo Box */}
               <ComboboxField
-                name="pic_id"
+                name="user_id"
                 control={form.control}
                 label="PIC"
                 required
-                items={pics}
-                valueKey="id"
+                items={profiles}
+                valueKey="user_id"
                 labelKey="name"
                 placeholder="Pilih PIC"
               />

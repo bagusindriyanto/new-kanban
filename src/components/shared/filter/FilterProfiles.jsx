@@ -1,4 +1,4 @@
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchProfiles } from '@/api/fetchProfiles';
 import {
   Select,
   SelectContent,
@@ -8,27 +8,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 
-const FilterPics = () => {
-  const { data: pics } = useFetchPics();
+const FilterProfiles = () => {
+  const { data: profiles } = useFetchProfiles();
 
-  const selectedPicId = useFilter((state) => state.selectedPicId);
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+  const selectedUserId = useFilterStore((state) => state.selectedUserId);
+  const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const items = [
     { label: 'Semua PIC', value: 'all' },
-    ...(pics?.map((pic) => ({
-      label: pic.name,
-      value: pic.id,
+    ...(profiles?.map((profile) => ({
+      label: profile.name,
+      value: profile.user_id,
     })) || []),
   ];
 
   return (
     <Select
       items={items}
-      value={selectedPicId}
-      onValueChange={(val) => setSelectedPicId(val)}
+      value={selectedUserId}
+      onValueChange={(val) => setSelectedUserId(val)}
     >
       <SelectTrigger className="w-[150px]" size="sm">
         <SelectValue placeholder="Pilih PIC" />
@@ -47,4 +47,4 @@ const FilterPics = () => {
   );
 };
 
-export default FilterPics;
+export default FilterProfiles;

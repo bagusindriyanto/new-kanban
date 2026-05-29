@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
-import { useFetchPics } from '@/api/fetchPics';
+import { useFetchProfiles } from '@/api/fetchProfiles';
 import useAuthStore from '@/stores/authStore';
 import { formatToSQL } from '@/utils/formatTimestamp';
 import TextareaField from '../shared/form/TextareaField';
@@ -19,7 +19,7 @@ import { Spinner } from '../ui/spinner';
 const formSchema = z
   .object({
     content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
-    pic_id: z.number().nullish(),
+    user_id: z.number().nullish(),
     detail: z.coerce
       .string()
       .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
@@ -37,11 +37,11 @@ const formSchema = z
         path: ['scheduled_at'],
       });
     }
-    if (data.is_assigned && !data.pic_id) {
+    if (data.is_assigned && !data.user_id) {
       ctx.addIssue({
-        code: 'no_pic_id',
+        code: 'no_user_id',
         message: 'Mohon pilih PIC.',
-        path: ['pic_id'],
+        path: ['user_id'],
       });
     }
   })
@@ -59,17 +59,19 @@ const formSchema = z
 
 const AddTaskForm = ({ onOpenChange }) => {
   // Fetch Data
-  const { data: pics } = useFetchPics();
+  const { data: profiles } = useFetchProfiles();
   const { mutateAsync: addTaskMutation, isPending } = useAddTask();
 
   const user = useAuthStore((state) => state.user);
-  const filteredPics = pics?.filter((pic) => pic.id !== user.pic.id);
+  const filteredProfiles = profiles?.filter(
+    (profile) => profile.user_id !== user.id,
+  );
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
-      pic_id: null,
+      user_id: null,
       detail: '',
       is_scheduled: false,
       is_assigned: false,
@@ -83,8 +85,8 @@ const AddTaskForm = ({ onOpenChange }) => {
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      pic_id: isAssigned ? data.pic_id : user.pic.id,
-      assigner_id: isAssigned ? user.pic.id : null,
+      user_id: isAssigned ? data.user_id : user.id,
+      assigner_id: isAssigned ? user.id : null,
     };
 
     toast.promise(addTaskMutation(payload), {
@@ -122,13 +124,13 @@ const AddTaskForm = ({ onOpenChange }) => {
             />
             {/* PIC Combo Box */}
             <ComboboxField
-              name="pic_id"
+              name="user_id"
               control={form.control}
               label="Tugaskan ke"
               required={isAssigned}
               disabled={!isAssigned}
-              items={filteredPics}
-              valueKey="id"
+              items={filteredProfiles}
+              valueKey="user_id"
               labelKey="name"
               placeholder="Pilih PIC"
             />

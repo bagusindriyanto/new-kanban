@@ -8,7 +8,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { startOfDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import {
   Select,
   SelectContent,
@@ -65,8 +65,8 @@ const DateDropdown = ({
 };
 
 export const FilterCalendar = () => {
-  const range = useFilter((state) => state.range);
-  const setRange = useFilter((state) => state.setRange);
+  const range = useFilterStore((state) => state.range);
+  const setRange = useFilterStore((state) => state.setRange);
 
   const dateLabel = range?.from
     ? range?.to

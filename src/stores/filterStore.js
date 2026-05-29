@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { startOfDay } from 'date-fns';
 
-const useFilter = create((set) => ({
-  selectedPicId: 'all',
-  setSelectedPicId: (id) => set({ selectedPicId: id }),
+const useFilterStore = create((set) => ({
+  selectedUserId: 'all',
+  setSelectedUserId: (userId) => set({ selectedUserId: userId }),
 
   selectedTaskId: null,
   setSelectedTaskId: (taskId) => set({ selectedTaskId: taskId }),
@@ -13,4 +13,4 @@ const useFilter = create((set) => ({
     set({ range: { from: newRange?.from, to: newRange?.to } }),
 }));
 
-export default useFilter;
+export default useFilterStore;

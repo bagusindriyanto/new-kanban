@@ -1,7 +1,7 @@
 import { toast } from 'sonner';
 import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 import { useDraggable } from '@dnd-kit/react';
@@ -20,10 +20,10 @@ const TaskCard = ({ task, className }) => {
   const setIsDeleteTaskModalOpen = useDeleteTaskModal(
     (state) => state.setIsModalOpen,
   );
-  const setSelectedTaskId = useFilter((state) => state.setSelectedTaskId);
+  const setSelectedTaskId = useFilterStore((state) => state.setSelectedTaskId);
 
   const { isOwner } = useRole();
-  const canModify = isOwner(task.pic.id);
+  const canModify = isOwner(task.user_id);
 
   // Mutation
   const { mutate: updateTaskMutate } = useUpdateTask({
@@ -101,9 +101,9 @@ const TaskCard = ({ task, className }) => {
       <div className="flex flex-col gap-2 mt-1">
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center text-xs text-muted-foreground">
-            <ProfileAvatar profile={task.pic} size="sm" />
+            <ProfileAvatar profile={task.profile} size="sm" />
             <span className="font-medium text-foreground">
-              {task.pic.name || '-'}
+              {task.profile.name || '-'}
             </span>
           </div>
           {task.assigner && (

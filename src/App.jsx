@@ -6,11 +6,11 @@ import { router } from './routes/Router';
 import useAuthStore from './stores/authStore';
 import { api, getAccessToken } from './lib/axios';
 import { Toaster } from './components/ui/sonner';
-import useFilter from './stores/filterStore';
+import useFilterStore from './stores/filterStore';
 
 const App = () => {
   const { setUser, clearUser } = useAuthStore();
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+  const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -24,7 +24,7 @@ const App = () => {
         const res = await api.get('/auth/me');
         const user = res.data.user;
         setUser(user);
-        setSelectedPicId(user.pic.id);
+        setSelectedUserId(user.id);
       } catch (err) {
         console.error(err.response?.data?.message);
         clearUser();
@@ -32,7 +32,7 @@ const App = () => {
     };
 
     checkUser();
-  }, [setUser, clearUser, setSelectedPicId]);
+  }, [setUser, clearUser, setSelectedUserId]);
 
   return (
     <>

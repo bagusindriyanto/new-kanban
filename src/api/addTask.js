@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '../lib/axios';
 import { queryClient } from '@/lib/queryClient';
 import { fetchTasksQueryKey } from './fetchTasks';
-import { fetchPicsQueryKey } from './fetchPics';
+import { fetchProfilesQueryKey } from './fetchProfiles';
 
 export const addTask = async (data) => {
   const response = await api.post('/tasks', data);
@@ -19,10 +19,13 @@ export const useAddTask = (params = {}) => {
         queryKey: fetchTasksQueryKey(),
       });
 
-      const pics = queryClient.getQueryData(fetchPicsQueryKey());
-      const newPic = pics?.find((pic) => pic.id === newTask.pic_id) ?? null;
+      const profiles = queryClient.getQueryData(fetchProfilesQueryKey());
+      const newProfile =
+        profiles?.find((profile) => profile.user_id === newTask.user_id) ??
+        null;
       const newAssigner =
-        pics?.find((pic) => pic.id === newTask.assigner_id) ?? null;
+        profiles?.find((profile) => profile.user_id === newTask.assigner_id) ??
+        null;
 
       previousTasks.forEach(([queryKey, oldTasks]) => {
         if (!oldTasks) return;
@@ -31,7 +34,8 @@ export const useAddTask = (params = {}) => {
         if (!filters) return;
 
         const matchedFilter =
-          !filters?.pic_id || Number(filters.pic_id) === Number(newTask.pic_id);
+          !filters?.user_id ||
+          Number(filters.user_id) === Number(newTask.user_id);
 
         if (!matchedFilter) return;
 
@@ -39,7 +43,7 @@ export const useAddTask = (params = {}) => {
           {
             ...newTask,
             id: `temp-${Date.now()}`,
-            pic: newPic,
+            profile: newProfile,
             assigner: newAssigner,
             optimistic: true,
           },

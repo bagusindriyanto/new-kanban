@@ -16,14 +16,14 @@ import { ErrorBanner } from '@/components/shared/ErrorState';
 import PieChartCard from '@/components/dashboard/PieChartCard';
 import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/dashboard/BarChartCard';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import { format } from 'date-fns';
 import { useFetchTableData } from '@/api/fetchTableData';
 import { useFetchChartData } from '@/api/fetchChartData';
 import DataTableCard from '@/components/dashboard/DataTableCard';
 
 const SummaryPage = () => {
-  const range = useFilter((state) => state.range);
+  const range = useFilterStore((state) => state.range);
 
   const queryParams = {
     from_date: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,

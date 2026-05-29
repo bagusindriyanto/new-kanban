@@ -32,7 +32,7 @@ import PasswordField from '../shared/form/PasswordField';
 import SelectField from '../shared/form/SelectField';
 import AvatarUpload from '../shared/form/AvatarUpload';
 import useAuthStore from '@/stores/authStore';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 
 const formSchema = z
   .object({
@@ -82,7 +82,7 @@ const RegisterForm = () => {
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+  const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -97,11 +97,11 @@ const RegisterForm = () => {
       success: (res) => {
         const { user, access_token, refresh_token } = res.data;
         login(user, access_token, refresh_token);
-        setSelectedPicId(user.pic.id);
+        setSelectedUserId(user.id);
         navigate('/');
         return {
           message: 'Akun Anda berhasil dibuat',
-          description: `Selamat datang, ${user.pic.name}!`,
+          description: `Selamat datang, ${user.profile.name}!`,
         };
       },
       error: (err) => {

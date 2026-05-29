@@ -10,7 +10,7 @@ import {
   AlertDialogMedia,
 } from '@/components/ui/alert-dialog';
 import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { useDeleteTask } from '@/api/deleteTask';
@@ -22,7 +22,7 @@ const DeleteTaskModal = () => {
 
   const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
 
-  const selectedTaskId = useFilter((state) => state.selectedTaskId);
+  const selectedTaskId = useFilterStore((state) => state.selectedTaskId);
 
   const onSubmit = () => {
     toast.promise(deleteTaskMutation(selectedTaskId), {

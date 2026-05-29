@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import useAuthStore from '@/stores/authStore';
 import { Link, useNavigate } from 'react-router';
 import { api } from '@/lib/axios';
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import InputField from '../shared/form/InputField';
 import PasswordField from '../shared/form/PasswordField';
 
@@ -31,7 +31,7 @@ const LoginForm = () => {
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+  const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const onSubmit = (data) => {
     toast.promise(api.post('/auth/login', data), {
@@ -39,11 +39,11 @@ const LoginForm = () => {
       success: (res) => {
         const { user, access_token, refresh_token } = res.data;
         login(user, access_token, refresh_token);
-        setSelectedPicId(user.pic.id);
+        setSelectedUserId(user.id);
         navigate('/');
         return {
           message: 'Login berhasil',
-          description: `Selamat datang, ${user.pic.name}!`,
+          description: `Selamat datang, ${user.profile.name}!`,
         };
       },
       error: (err) => {

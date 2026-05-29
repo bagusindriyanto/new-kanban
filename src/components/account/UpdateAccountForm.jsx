@@ -43,14 +43,14 @@ const formSchema = z.object({
 const UpdateAccountForm = () => {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  const defaultAvatar = getAvatarURL(user.pic.avatar);
+  const defaultAvatar = getAvatarURL(user.profile.avatar);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      full_name: user.pic.full_name,
-      name: user.pic.name,
-      nik: user.pic.nik,
+      full_name: user.profile.full_name,
+      name: user.profile.name,
+      nik: user.profile.nik,
       email: user.email,
       password: '',
     },

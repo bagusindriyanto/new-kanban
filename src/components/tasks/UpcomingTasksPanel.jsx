@@ -26,7 +26,6 @@ const UpcomingTaskCard = ({ task }) => {
     status: task.status,
     scheduled_at: task.scheduled_at,
   });
-  const picName = task.pic_name;
 
   return (
     <div
@@ -39,7 +38,7 @@ const UpcomingTaskCard = ({ task }) => {
         <h3 className="text-base font-bold leading-tight line-clamp-2">
           {task.content}
         </h3>
-        <p className="text-sm font-semibold">{picName}</p>
+        <p className="text-sm font-semibold">{task.profile.name}</p>
       </div>
       <p className="text-xs tabular-nums text-muted-foreground">
         {parseFromSQL(task.scheduled_at)}

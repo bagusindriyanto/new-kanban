@@ -1,21 +1,21 @@
-import useFilter from '@/stores/filterStore';
+import useFilterStore from '@/stores/filterStore';
 import { format } from 'date-fns';
 
 const useTaskFilters = () => {
-  const range = useFilter((state) => state.range);
-  const selectedPicId = useFilter((state) => state.selectedPicId);
-  const setSelectedPicId = useFilter((state) => state.setSelectedPicId);
+  const range = useFilterStore((state) => state.range);
+  const selectedUserId = useFilterStore((state) => state.selectedUserId);
+  const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const queryParams = {
-    pic_id: selectedPicId === 'all' ? undefined : selectedPicId,
+    user_id: selectedUserId === 'all' ? undefined : selectedUserId,
     from_date: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
     to_date: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined,
   };
 
   return {
     range,
-    selectedPicId,
-    setSelectedPicId,
+    selectedUserId,
+    setSelectedUserId,
     queryParams,
   };
 };
