@@ -43,8 +43,16 @@ export const useAddTask = (params = {}) => {
           {
             ...newTask,
             id: `temp-${Date.now()}`,
-            profile: newProfile,
-            assigner: newAssigner,
+            user: {
+              id: newTask.user_id,
+              profile: newProfile,
+            },
+            assigner: newAssigner
+              ? {
+                  id: newTask.assigner_id,
+                  profile: newAssigner,
+                }
+              : null,
             optimistic: true,
           },
           ...oldTasks,

@@ -9,26 +9,24 @@ import {
   AlertDialogAction,
   AlertDialogMedia,
 } from '@/components/ui/alert-dialog';
-import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
-import useFilterStore from '@/stores/filterStore';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { useDeleteTask } from '@/api/deleteTask';
 import { Trash2Icon } from 'lucide-react';
+import useModalStore from '@/stores/modalStore';
 
 const DeleteTaskModal = () => {
-  const isModalOpen = useDeleteTaskModal((state) => state.isModalOpen);
-  const setIsModalOpen = useDeleteTaskModal((state) => state.setIsModalOpen);
+  const isDeleteOpen = useModalStore((state) => state.isDeleteOpen);
+  const setDeleteOpen = useModalStore((state) => state.setDeleteOpen);
+  const selectedTask = useModalStore((state) => state.selectedTask);
 
   const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
 
-  const selectedTaskId = useFilterStore((state) => state.selectedTaskId);
-
   const onSubmit = () => {
-    toast.promise(deleteTaskMutation(selectedTaskId), {
+    toast.promise(deleteTaskMutation(selectedTask?.id), {
       loading: 'Sedang menghapus task...',
       success: () => {
-        setIsModalOpen(false);
+        setDeleteOpen(false);
         return 'Task berhasil dihapus';
       },
       error: (err) => {
@@ -40,12 +38,8 @@ const DeleteTaskModal = () => {
     });
   };
 
-  const onClose = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <AlertDialog open={isDeleteOpen} onOpenChange={setDeleteOpen}>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
           <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20">
@@ -59,7 +53,10 @@ const DeleteTaskModal = () => {
         </AlertDialogHeader>
         {/* Button Modal */}
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose} disabled={isPending}>
+          <AlertDialogCancel
+            onClick={() => setDeleteOpen(false)}
+            disabled={isPending}
+          >
             Batal
           </AlertDialogCancel>
           <AlertDialogAction

@@ -34,12 +34,10 @@ const UpcomingTaskCard = ({ task }) => {
         'bg-red-50 dark:bg-red-950/30': isUrgent,
       })}
     >
-      <div className="flex justify-between items-start">
-        <h3 className="text-base font-bold leading-tight line-clamp-2">
-          {task.content}
-        </h3>
-        <p className="text-sm font-semibold">{task.profile.name}</p>
-      </div>
+      <h3 className="text-base font-bold leading-tight line-clamp-2">
+        {task.content}
+      </h3>
+      {task.detail && <p className="text-sm">{task.detail}</p>}
       <p className="text-xs tabular-nums text-muted-foreground">
         {parseFromSQL(task.scheduled_at)}
       </p>

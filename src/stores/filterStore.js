@@ -5,9 +5,6 @@ const useFilterStore = create((set) => ({
   selectedUserId: 'all',
   setSelectedUserId: (userId) => set({ selectedUserId: userId }),
 
-  selectedTaskId: null,
-  setSelectedTaskId: (taskId) => set({ selectedTaskId: taskId }),
-
   range: { from: startOfDay(new Date()), to: startOfDay(new Date()) },
   setRange: (newRange) =>
     set({ range: { from: newRange?.from, to: newRange?.to } }),

@@ -47,8 +47,16 @@ export const useUpdateTask = (params = {}) => {
                 ? {
                     ...task,
                     ...updatedTask,
-                    profile: updatedProfile,
-                    assigner: updatedAssigner,
+                    user: {
+                      id: updatedTask.user_id,
+                      profile: updatedProfile,
+                    },
+                    assigner: updatedAssigner
+                      ? {
+                          id: updatedTask.assigner_id,
+                          profile: updatedAssigner,
+                        }
+                      : null,
                     optimistic: true,
                   }
                 : task,

@@ -5,14 +5,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import UpdateTaskForm from './UpdateTaskForm';
-import useUpdateTaskModal from '@/stores/updateTaskModalStore';
+import useModalStore from '@/stores/modalStore';
 
 const UpdateTaskModal = () => {
-  const isModalOpen = useUpdateTaskModal((state) => state.isModalOpen);
-  const setIsModalOpen = useUpdateTaskModal((state) => state.setIsModalOpen);
+  const isUpdateOpen = useModalStore((state) => state.isUpdateOpen);
+  const setUpdateOpen = useModalStore((state) => state.setUpdateOpen);
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog open={isUpdateOpen} onOpenChange={setUpdateOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Task</DialogTitle>

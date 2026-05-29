@@ -1,7 +1,4 @@
 import { toast } from 'sonner';
-import useUpdateTaskModal from '@/stores/updateTaskModalStore';
-import useDeleteTaskModal from '@/stores/deleteTaskModalStore';
-import useFilterStore from '@/stores/filterStore';
 import { useUpdateTask } from '@/api/updateTask';
 import { cn } from '@/lib/utils';
 import { useDraggable } from '@dnd-kit/react';
@@ -11,19 +8,16 @@ import TaskTimestamps from './TaskTimestamps';
 import TaskActions from './TaskActions';
 import { useRole } from '@/hooks/useRole';
 import ProfileAvatar from '../shared/ProfileAvatar';
+import useModalStore from '@/stores/modalStore';
 
 const TaskCard = ({ task, className }) => {
+  const { user, assigner } = task;
   // Zustand store selectors
-  const setIsUpdateTaskModalOpen = useUpdateTaskModal(
-    (state) => state.setIsModalOpen,
-  );
-  const setIsDeleteTaskModalOpen = useDeleteTaskModal(
-    (state) => state.setIsModalOpen,
-  );
-  const setSelectedTaskId = useFilterStore((state) => state.setSelectedTaskId);
+  const setUpdateOpen = useModalStore((state) => state.setUpdateOpen);
+  const setDeleteOpen = useModalStore((state) => state.setDeleteOpen);
 
   const { isOwner } = useRole();
-  const canModify = isOwner(task.user_id);
+  const canModify = isOwner(user.id);
 
   // Mutation
   const { mutate: updateTaskMutate } = useUpdateTask({
@@ -57,13 +51,11 @@ const TaskCard = ({ task, className }) => {
 
   // Event handlers
   const handleUpdateTaskModal = () => {
-    setIsUpdateTaskModalOpen(true);
-    setSelectedTaskId(task.id);
+    setUpdateOpen(true, task);
   };
 
   const handleDeleteTaskModal = () => {
-    setIsDeleteTaskModalOpen(true);
-    setSelectedTaskId(task.id);
+    setDeleteOpen(true, task);
   };
 
   return (
@@ -101,14 +93,14 @@ const TaskCard = ({ task, className }) => {
       <div className="flex flex-col gap-2 mt-1">
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center text-xs text-muted-foreground">
-            <ProfileAvatar profile={task.profile} size="sm" />
+            <ProfileAvatar profile={user.profile} size="sm" />
             <span className="font-medium text-foreground">
-              {task.profile.name || '-'}
+              {user.profile.name || '-'}
             </span>
           </div>
-          {task.assigner && (
+          {assigner && (
             <span className="text-[10px] text-muted-foreground/70">
-              oleh {task.assigner.name}
+              oleh {assigner.profile.name}
             </span>
           )}
         </div>

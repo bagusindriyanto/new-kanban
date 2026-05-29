@@ -6,13 +6,9 @@ import { Button } from '@/components/ui/button';
 import { FieldGroup, FieldSeparator, FieldSet } from '@/components/ui/field';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import useFilterStore from '@/stores/filterStore';
-import useUpdateTaskModal from '@/stores/updateTaskModalStore';
 
 import { useFetchProfiles } from '@/api/fetchProfiles';
 import { useUpdateTask } from '@/api/updateTask';
-import { useFetchTasks } from '@/api/fetchTasks';
-import useTaskFilters from '@/hooks/useTaskFilters';
 import { formatToSQL } from '@/utils/formatTimestamp';
 
 import SwitchField from '../shared/form/SwitchField';
@@ -23,6 +19,7 @@ import DateTimeField from '../shared/form/DateTimeField';
 import NumberInputField from '../shared/form/NumberInputField';
 import useAuthStore from '@/stores/authStore';
 import ActivityCombobox from '../activity/ActivityCombobox';
+import useModalStore from '@/stores/modalStore';
 
 const statusItems = [
   { value: 'todo', label: 'To Do' },
@@ -75,21 +72,15 @@ const formSchema = z
   }));
 
 const UpdateTaskForm = () => {
-  // Custom hook untuk logic filter
-  const { queryParams } = useTaskFilters();
   // Fetch data
   const { data: profiles } = useFetchProfiles();
-  const { data: tasks } = useFetchTasks(queryParams);
 
   // State untuk tasks yang dipilih
-  const selectedTaskId = useFilterStore((state) => state.selectedTaskId);
-  const task = tasks?.find((task) => task.id === selectedTaskId);
+  const setUpdateOpen = useModalStore((state) => state.setUpdateOpen);
+  const selectedTask = useModalStore((state) => state.selectedTask);
 
   // Update Tasks
   const { mutateAsync: updateTaskMutate, isPending } = useUpdateTask();
-
-  // Close Modal
-  const setIsModalOpen = useUpdateTaskModal((state) => state.setIsModalOpen);
 
   // State user yang login saat ini
   const user = useAuthStore((state) => state.user);
@@ -98,24 +89,24 @@ const UpdateTaskForm = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      content: task?.content ?? '',
-      user_id: task?.user_id ?? null,
-      status: task?.status ?? undefined,
-      minute_pause: task?.minute_pause ?? 0,
-      pause_time: !!task?.pause_time,
-      detail: task?.detail ?? '',
-      timestamp_todo: task?.timestamp_todo
-        ? new Date(task.timestamp_todo)
+      content: selectedTask?.content ?? '',
+      user_id: selectedTask?.user_id ?? null,
+      status: selectedTask?.status ?? undefined,
+      minute_pause: selectedTask?.minute_pause ?? 0,
+      pause_time: !!selectedTask?.pause_time,
+      detail: selectedTask?.detail ?? '',
+      timestamp_todo: selectedTask?.timestamp_todo
+        ? new Date(selectedTask.timestamp_todo)
         : undefined,
-      timestamp_progress: task?.timestamp_progress
-        ? new Date(task.timestamp_progress)
+      timestamp_progress: selectedTask?.timestamp_progress
+        ? new Date(selectedTask.timestamp_progress)
         : undefined,
-      timestamp_done: task?.timestamp_done
-        ? new Date(task.timestamp_done)
+      timestamp_done: selectedTask?.timestamp_done
+        ? new Date(selectedTask.timestamp_done)
         : undefined,
-      is_scheduled: !!task?.scheduled_at,
-      scheduled_at: task?.scheduled_at
-        ? new Date(task.scheduled_at)
+      is_scheduled: !!selectedTask?.scheduled_at,
+      scheduled_at: selectedTask?.scheduled_at
+        ? new Date(selectedTask.scheduled_at)
         : undefined,
     },
   });
@@ -144,7 +135,7 @@ const UpdateTaskForm = () => {
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      id: selectedTaskId,
+      id: selectedTask.id,
       assigner_id: data.user_id === user.id ? null : user.id,
     };
 
@@ -152,7 +143,7 @@ const UpdateTaskForm = () => {
       loading: 'Sedang memperbarui task...',
       success: () => {
         form.reset();
-        setIsModalOpen(false);
+        setUpdateOpen(false);
         return 'Task berhasil diperbarui';
       },
       error: (err) => {

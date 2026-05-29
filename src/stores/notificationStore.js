@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const useNotification = create((set) => ({
+const useNotificationStore = create((set) => ({
   notifiedTaskIds: new Set(),
   markAsNotified: (taskId) =>
     set((state) => ({
@@ -8,4 +8,4 @@ const useNotification = create((set) => ({
     })),
 }));
 
-export default useNotification;
+export default useNotificationStore;

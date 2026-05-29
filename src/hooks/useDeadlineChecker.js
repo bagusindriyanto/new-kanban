@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import useNotification from '@/stores/notificationStore';
+import useNotificationStore from '@/stores/notificationStore';
 
 const EMPTY_TASKS = [];
 
 const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
-  const { notifiedTaskIds, markAsNotified } = useNotification();
+  const { notifiedTaskIds, markAsNotified } = useNotificationStore();
 
   useEffect(() => {
     const checkDeadlines = () => {
