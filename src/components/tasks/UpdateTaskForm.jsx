@@ -145,7 +145,7 @@ const UpdateTaskForm = () => {
     const payload = {
       ...data,
       id: selectedTaskId,
-      assigner_id: data.pic_id === user.pic_id ? null : user.pic_id,
+      assigner_id: data.pic_id === user.pic.id ? null : user.pic.id,
     };
 
     toast.promise(updateTaskMutate(payload), {

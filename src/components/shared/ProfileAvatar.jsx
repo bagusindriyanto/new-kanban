@@ -13,10 +13,10 @@ const getAvatarColor = (name) => {
 };
 
 const ProfileAvatar = ({ profile, size }) => {
-  const avatarName = profile.name ?? profile.pic_name ?? 'User';
+  const avatarName = profile?.name ?? 'User';
 
   const avatarColor = getAvatarColor(avatarName);
-  const avatarURL = getAvatarURL(profile.avatar ?? profile.pic_avatar ?? null);
+  const avatarURL = getAvatarURL(profile?.avatar ?? null);
 
   return (
     <Avatar size={size}>

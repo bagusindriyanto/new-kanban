@@ -51,13 +51,13 @@ const AccountMenu = () => {
               />
             }
           >
-            <ProfileAvatar profile={user} />
+            <ProfileAvatar profile={user.pic} />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">
-                {user.name ?? 'User'}
+                {user.pic.name ?? 'User'}
               </span>
               <span className="truncate text-xs text-muted-foreground">
-                {user.role ?? '-'}
+                {user.role.name ?? '-'}
               </span>
             </div>
             <EllipsisVerticalIcon className="ml-auto size-4" />
@@ -69,13 +69,13 @@ const AccountMenu = () => {
             sideOffset={4}
           >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <ProfileAvatar profile={user} />
+              <ProfileAvatar profile={user.pic} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {user.name ?? 'User'}
+                  {user.pic.name ?? 'User'}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {user.role ?? '-'}
+                  {user.role.name ?? '-'}
                 </span>
               </div>
             </div>

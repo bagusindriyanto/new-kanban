@@ -27,7 +27,7 @@ import { getAvatarURL } from '@/utils/getAvatarURL';
 const formSchema = z.object({
   full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
   name: z.string().optional(),
-  nik: z.coerce
+  nik: z
     .string()
     .min(1, 'Mohon isi NIK anda.')
     .refine((val) => /^[0-9]+$/.test(val), {
@@ -43,14 +43,14 @@ const formSchema = z.object({
 const UpdateAccountForm = () => {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  const defaultAvatar = getAvatarURL(user.avatar);
+  const defaultAvatar = getAvatarURL(user.pic.avatar);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      full_name: user.full_name,
-      name: user.name,
-      nik: user.nik,
+      full_name: user.pic.full_name,
+      name: user.pic.name,
+      nik: user.pic.nik,
       email: user.email,
       password: '',
     },

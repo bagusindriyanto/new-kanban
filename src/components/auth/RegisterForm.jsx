@@ -95,12 +95,13 @@ const RegisterForm = () => {
     toast.promise(api.post('/auth/register', formData), {
       loading: 'Sedang membuat akun...',
       success: (res) => {
-        login(res.data.user, res.data.access_token, res.data.refresh_token);
-        setSelectedPicId(res.data.user.pic_id);
+        const { user, access_token, refresh_token } = res.data;
+        login(user, access_token, refresh_token);
+        setSelectedPicId(user.pic.id);
         navigate('/');
         return {
           message: 'Akun Anda berhasil dibuat',
-          description: `Selamat datang, ${res.data.user.name}!`,
+          description: `Selamat datang, ${user.pic.name}!`,
         };
       },
       error: (err) => {

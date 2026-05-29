@@ -63,7 +63,7 @@ const AddTaskForm = ({ onOpenChange }) => {
   const { mutateAsync: addTaskMutation, isPending } = useAddTask();
 
   const user = useAuthStore((state) => state.user);
-  const filteredPics = pics?.filter((pic) => pic.id !== user.pic_id);
+  const filteredPics = pics?.filter((pic) => pic.id !== user.pic.id);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -83,8 +83,8 @@ const AddTaskForm = ({ onOpenChange }) => {
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      pic_id: isAssigned ? data.pic_id : user.pic_id,
-      assigner_id: isAssigned ? user.pic_id : null,
+      pic_id: isAssigned ? data.pic_id : user.pic.id,
+      assigner_id: isAssigned ? user.pic.id : null,
     };
 
     toast.promise(addTaskMutation(payload), {

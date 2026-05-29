@@ -22,8 +22,9 @@ const App = () => {
 
       try {
         const res = await api.get('/auth/me');
-        setUser(res.data.user);
-        setSelectedPicId(res.data.user.pic_id);
+        const user = res.data.user;
+        setUser(user);
+        setSelectedPicId(user.pic.id);
       } catch (err) {
         console.error(err.response?.data?.message);
         clearUser();
