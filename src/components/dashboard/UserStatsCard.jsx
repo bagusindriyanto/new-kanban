@@ -44,8 +44,8 @@ const UserStatsCard = ({ user, className }) => {
   const donePercent = total > 0 ? Math.round((done / total) * 100) : 0;
   const completion = total > 0 ? Math.round((done / total) * 100) : 0;
 
-  const effectiveMinute = user.total_effective_minute ?? 0;
-  const workingMinute = user.total_working_minute ?? 0;
+  const effectiveMinute = user.effective_minute ?? 0;
+  const workingMinute = user.working_minute ?? 0;
   const effectivePercent =
     workingMinute > 0 ? Math.round((effectiveMinute / workingMinute) * 100) : 0;
 

@@ -131,7 +131,7 @@ const SummaryPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-semibold tabular-nums">
-                {data?.summary?.total_tasks ?? 0}
+                {data?.summary?.total ?? 0}
               </p>
             </CardContent>
           </Card>
@@ -151,7 +151,7 @@ const SummaryPage = () => {
                 ))
               : data?.users?.map((user) => (
                   <UserStatsCard
-                    key={user.full_name}
+                    key={user.id}
                     user={user}
                     className="w-[calc((100%-4*16px)/5)]"
                   />
