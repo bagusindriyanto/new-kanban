@@ -40,14 +40,14 @@ const SummaryPage = () => {
   const { data: tableData, error: fetchTableDataError } =
     useFetchTableData(queryParams);
 
-  const { data: chartData, error: fetchChartDataError } =
-    useFetchChartData(queryParams);
+  // const { data: chartData, error: fetchChartDataError } =
+  //   useFetchChartData(queryParams);
 
   // Ambil pesan error
   const errorMessage =
     fetchStatsError?.response?.data?.message ||
     fetchTableDataError?.response?.data?.message ||
-    fetchChartDataError?.response?.data?.message ||
+    // fetchChartDataError?.response?.data?.message ||
     null;
 
   // Cek status online/offline
@@ -161,7 +161,7 @@ const SummaryPage = () => {
         {/* Table */}
         <DataTableCard data={tableData?.rows} />
         {/* Bar Chart */}
-        <BarChartCard data={chartData} />
+        {/* <BarChartCard data={chartData} /> */}
         {/* Pie Chart */}
         {/* <PieChartCard data={[]} /> */}
       </main>

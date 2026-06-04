@@ -53,9 +53,6 @@ const processQueue = (error, token = null) => {
 
 api.interceptors.response.use(
   (response) => {
-    if (!response.data.success) {
-      return Promise.reject(response.data);
-    }
     return response.data;
   },
   async (error) => {
