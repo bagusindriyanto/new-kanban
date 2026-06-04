@@ -32,7 +32,7 @@ const TaskActions = ({
           <div
             className={cn(
               'flex gap-1 items-center tabular-nums text-[11px] text-destructive',
-              isPaused ? 'font-medium animate-pulse' : '',
+              isPaused && 'animate-pulse',
             )}
           >
             <CirclePauseIcon className="size-4" />
