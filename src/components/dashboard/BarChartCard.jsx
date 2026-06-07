@@ -26,11 +26,11 @@ import { ChartBackground } from '../evilcharts/ui/background';
 const getChartConfig = (name) => {
   if (!name) {
     return {
-      total_minutes: {
+      effective_minute: {
         label: 'Aktivitas',
         colors: { light: ['hsl(0, 0%, 40%)'], dark: ['hsl(0, 0%, 40%)'] },
       },
-      working_minutes: {
+      working_minute: {
         label: 'Waktu Kerja',
         colors: { light: ['hsl(0, 0%, 60%)'], dark: ['hsl(0, 0%, 60%)'] },
       },
@@ -43,14 +43,14 @@ const getChartConfig = (name) => {
   }
   const hue = ((hash % 360) + 360) % 360;
   return {
-    total_minutes: {
+    effective_minute: {
       label: 'Aktivitas',
       colors: {
         light: [`hsl(${hue}, 70%, 40%)`],
         dark: [`hsl(${hue}, 70%, 40%)`],
       },
     },
-    working_minutes: {
+    working_minute: {
       label: 'Waktu Kerja',
       colors: {
         light: [`hsl(${hue}, 70%, 60%)`],
@@ -74,8 +74,8 @@ const EmptyChartItem = () => {
 };
 
 const BarChartCard = ({ data }) => {
-  const maxMinutes = data?.max_minutes || 2 * 60;
-  const ticks = Array.from({ length: 5 }).map((_, i) => (i * maxMinutes) / 4);
+  const maxMinute = data?.max_minute || 2 * 60;
+  const ticks = Array.from({ length: 5 }).map((_, i) => (i * maxMinute) / 4);
 
   return (
     <Card>
@@ -86,22 +86,23 @@ const BarChartCard = ({ data }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
-        {data?.pics.length === 0 ? (
+        {data?.charts.length === 0 ? (
           <EmptyChartItem />
         ) : (
-          data?.pics.map(({ pic_id, pic_name, rows }) => {
-            const chartConfig = getChartConfig(pic_name);
+          data?.charts.map(({ id, full_name, chart_data }) => {
+            const chartConfig = getChartConfig(full_name);
             return (
-              <div key={pic_id} className="space-y-2">
-                <h2 className="font-semibold tracking-tight">{pic_name}</h2>
+              <div key={id} className="space-y-2">
+                <h2 className="font-semibold tracking-tight">{full_name}</h2>
                 <EvilBarChart
-                  data={rows}
+                  data={chart_data}
                   config={chartConfig}
-                  className="w-full h-full max-h-50 p-4"
-                  barRadius={6}
+                  className="size-full max-h-50 p-4"
+                  barRadius={4}
+                  chartProps={{ maxBarSize: 100 }}
                 >
                   <ChartBackground variant="grid" />
-                  <Legend isClickable />
+                  <Legend />
                   <XAxis
                     dataKey="date"
                     tickFormatter={(value) => {
@@ -150,12 +151,8 @@ const BarChartCard = ({ data }) => {
                       />
                     }
                   />
-                  <Bar dataKey="total_minutes" variant="default" isClickable />
-                  <Bar
-                    dataKey="working_minutes"
-                    variant="default"
-                    isClickable
-                  />
+                  <Bar dataKey="effective_minute" variant="default" />
+                  <Bar dataKey="working_minute" variant="default" />
                 </EvilBarChart>
               </div>
             );

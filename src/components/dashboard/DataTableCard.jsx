@@ -45,11 +45,11 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
       // 1. Create sheet with data starting from row 5 (A5)
       const excelData = data.map((row, i) => ({
         No: i + 1,
-        PIC: row.pic_name,
+        PIC: row.user.profile.full_name,
         Aktivitas: row.content,
-        'Total Durasi (menit)': row.total_minutes,
-        Jumlah: row.total_tasks,
-        'Rata-rata Durasi (menit)': row.avg_minutes,
+        'Total Durasi (menit)': row.sum_effective_minute,
+        Jumlah: row.tasks_count,
+        'Rata-rata Durasi (menit)': row.avg_effective_minute,
       }));
 
       const ws = utils.json_to_sheet(excelData, { origin: 'A6' });
@@ -139,7 +139,7 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
       // 5. Adjust Column Widths
       ws['!cols'] = [
         { wch: 5 }, // A: No
-        { wch: 15 }, // B: PIC
+        { wch: 25 }, // B: PIC
         { wch: 30 }, // C: Aktivitas
         { wch: 15 }, // D: Total Durasi
         { wch: 8 }, // E: Jumlah

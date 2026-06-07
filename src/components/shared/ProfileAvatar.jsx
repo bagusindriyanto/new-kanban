@@ -1,6 +1,20 @@
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { getAvatarURL } from '@/utils/getAvatarURL';
 
+const getAliasName = (name) => {
+  const nameParts = name.split(' ');
+  if (nameParts.length >= 2) {
+    return (
+      nameParts[0].charAt(0).toUpperCase() +
+      nameParts[1].charAt(0).toUpperCase()
+    );
+  } else if (nameParts.length === 1) {
+    return nameParts[0].charAt(0).toUpperCase();
+  } else {
+    return 'U';
+  }
+};
+
 const getAvatarColor = (name) => {
   if (!name) return 'hsl(0, 0%, 60%)';
 
@@ -13,9 +27,10 @@ const getAvatarColor = (name) => {
 };
 
 const ProfileAvatar = ({ profile, size }) => {
-  const avatarName = profile?.name ?? 'User';
+  const avatarName = profile?.full_name ?? 'User';
 
   const avatarColor = getAvatarColor(avatarName);
+  const aliasName = getAliasName(avatarName);
   const avatarURL = getAvatarURL(profile?.avatar ?? null);
 
   return (
@@ -25,7 +40,7 @@ const ProfileAvatar = ({ profile, size }) => {
         className="text-white"
         style={{ backgroundColor: avatarColor }}
       >
-        {avatarName.charAt(0).toUpperCase()}
+        {aliasName}
       </AvatarFallback>
     </Avatar>
   );

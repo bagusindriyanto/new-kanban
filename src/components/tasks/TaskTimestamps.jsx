@@ -29,7 +29,7 @@ const TaskTimestamps = ({
         <div className="relative mt-1">
           {isUrgent && (
             <span className="absolute -right-1.5 -top-0.5 z-10 flex size-2">
-              <span className="inline-flex absolute w-full h-full bg-red-400 rounded-full opacity-75 animate-ping"></span>
+              <span className="inline-flex absolute size-full bg-red-400 rounded-full opacity-75 animate-ping"></span>
               <span className="inline-flex relative bg-red-500 rounded-full size-2"></span>
             </span>
           )}

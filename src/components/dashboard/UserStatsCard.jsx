@@ -70,7 +70,7 @@ const UserStatsCard = ({ user, className }) => {
 
       {/* Bar tasks */}
       <div className="overflow-hidden w-full h-2 rounded-full bg-muted">
-        <div className="flex w-full h-full">
+        <div className="flex size-full">
           <div
             className="h-full bg-todo-accent transition-[width] duration-600 ease-[cubic-bezier(0.76, 0, 0.24, 1)]"
             style={{ width: `${todoPercent}%` }}
