@@ -58,9 +58,7 @@ const SummaryPage = () => {
           <h2 className="text-2xl font-bold tracking-tight">
             Performance Dashboard
           </h2>
-          <p className="text-muted-foreground">
-            {data?.stats?.division ?? '-'}
-          </p>
+          <p className="text-muted-foreground">{data?.division ?? '-'}</p>
         </div>
         <div className="flex gap-2 items-center">
           <RefreshToggle dataUpdatedAt={dataUpdatedAt} />
