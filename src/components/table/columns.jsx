@@ -33,9 +33,7 @@ export const columns = [
           <ProfileAvatar profile={profile} />
           <div className="min-w-0 flex-1">
             <div className="font-medium truncate">{profile.full_name}</div>
-            <div className="text-sm text-muted-foreground truncate">
-              {role.name}
-            </div>
+            <div className="text-sm text-muted-foreground truncate">{role}</div>
           </div>
         </div>
       );

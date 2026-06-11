@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
-import { useFetchStats } from '@/api/fetchStats';
 import { RefreshToggle } from '@/components/layout/RefreshToggle';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { ErrorBanner } from '@/components/shared/ErrorState';
@@ -18,9 +17,8 @@ import { Badge } from '@/components/ui/badge';
 import BarChartCard from '@/components/dashboard/BarChartCard';
 import useFilterStore from '@/stores/filterStore';
 import { format } from 'date-fns';
-import { useFetchTableData } from '@/api/fetchTableData';
-import { useFetchChartData } from '@/api/fetchChartData';
 import DataTableCard from '@/components/dashboard/DataTableCard';
+import { useFetchDashboard } from '@/api/fetchDashboard';
 
 const SummaryPage = () => {
   const range = useFilterStore((state) => state.range);
@@ -30,25 +28,24 @@ const SummaryPage = () => {
     to_date: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined,
   };
 
-  const {
-    data,
-    error: fetchStatsError,
-    isLoading,
-    dataUpdatedAt,
-  } = useFetchStats(queryParams);
+  const { data, error, isLoading, dataUpdatedAt } =
+    useFetchDashboard(queryParams);
 
-  const { data: tableData, error: fetchTableDataError } =
-    useFetchTableData(queryParams);
+  // const {
+  //   data,
+  //   error: fetchStatsError,
+  //   isLoading,
+  //   dataUpdatedAt,
+  // } = useFetchStats(queryParams);
 
-  const { data: chartData, error: fetchChartDataError } =
-    useFetchChartData(queryParams);
+  // const { data: tableData, error: fetchTableDataError } =
+  //   useFetchTableData(queryParams);
+
+  // const { data: chartData, error: fetchChartDataError } =
+  //   useFetchChartData(queryParams);
 
   // Ambil pesan error
-  const errorMessage =
-    fetchStatsError?.response?.data?.message ||
-    fetchTableDataError?.response?.data?.message ||
-    fetchChartDataError?.response?.data?.message ||
-    null;
+  const errorMessage = error?.response?.data?.message || null;
 
   // Cek status online/offline
   const isOnline = useOnlineStatus();
@@ -61,7 +58,9 @@ const SummaryPage = () => {
           <h2 className="text-2xl font-bold tracking-tight">
             Performance Dashboard
           </h2>
-          <p className="text-muted-foreground">{data?.division ?? '-'}</p>
+          <p className="text-muted-foreground">
+            {data?.stats?.division ?? '-'}
+          </p>
         </div>
         <div className="flex gap-2 items-center">
           <RefreshToggle dataUpdatedAt={dataUpdatedAt} />
@@ -71,7 +70,7 @@ const SummaryPage = () => {
       </div>
       {/* Main */}
       <main className="flex flex-col flex-1 gap-4 p-4">
-        {(fetchStatsError || !isOnline) && (
+        {(error || !isOnline) && (
           <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
         )}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -86,7 +85,7 @@ const SummaryPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-semibold tabular-nums">
-                {data?.summary?.todo ?? 0}
+                {data?.stats?.summary?.todo ?? 0}
               </p>
             </CardContent>
           </Card>
@@ -101,7 +100,7 @@ const SummaryPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-semibold tabular-nums">
-                {data?.summary?.on_progress ?? 0}
+                {data?.stats?.summary?.on_progress ?? 0}
               </p>
             </CardContent>
           </Card>
@@ -116,7 +115,7 @@ const SummaryPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-semibold tabular-nums">
-                {data?.summary?.done ?? 0}
+                {data?.stats?.summary?.done ?? 0}
               </p>
             </CardContent>
           </Card>
@@ -131,7 +130,7 @@ const SummaryPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-semibold tabular-nums">
-                {data?.summary?.total ?? 0}
+                {data?.stats?.summary?.total ?? 0}
               </p>
             </CardContent>
           </Card>
@@ -149,7 +148,7 @@ const SummaryPage = () => {
                     className="w-[calc((100%-4*16px)/5)]"
                   />
                 ))
-              : data?.users?.map((user) => (
+              : data?.stats?.users?.map((user) => (
                   <UserStatsCard
                     key={user.id}
                     user={user}
@@ -159,9 +158,9 @@ const SummaryPage = () => {
           </div>
         </section>
         {/* Table */}
-        <DataTableCard data={tableData?.rows} />
+        <DataTableCard data={data?.table?.rows} />
         {/* Bar Chart */}
-        <BarChartCard data={chartData} />
+        <BarChartCard data={data?.chart} />
         {/* Pie Chart */}
         {/* <PieChartCard data={[]} /> */}
       </main>
