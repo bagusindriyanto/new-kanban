@@ -1,14 +1,14 @@
-import StatusColumn from '@/components/dashboard/StatusColumn';
-import UpdateTaskModal from '@/components/tasks/UpdateTaskModal';
-import DeleteTaskModal from '@/components/tasks/DeleteTaskModal';
+import StatusColumn from '@/features/tasks/components/StatusColumn';
+import UpdateTaskModal from '@/features/tasks/components/form/UpdateTaskModal';
+import DeleteTaskModal from '@/features/tasks/components/form/DeleteTaskModal';
 
 // Setting Kolom
 import { columns } from '@/config/column';
 
 // Komponen Filter
 import { Spinner } from '@/components/ui/spinner';
-import TasksControls from '@/components/layout/TasksControls';
-import { useFetchTasks } from '@/api/fetchTasks';
+import TasksControls from '@/features/tasks/components/TasksControls';
+import { useFetchTasks } from '@/features/tasks/api/fetchTasks';
 import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
 import EmptyState from '@/components/shared/EmptyState';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -16,12 +16,12 @@ import useTaskFilters from '@/hooks/useTaskFilters';
 
 // Drag and drop
 import { DragDropProvider } from '@dnd-kit/react';
-import { useUpdateTask } from '@/api/updateTask';
+import { useUpdateTask } from '@/features/tasks/api/updateTask';
 import { computeStatusTransition } from '@/utils/statusTransition';
 import { toast } from 'sonner';
 import { DragOverlay } from '@dnd-kit/react';
-import TaskCard from '@/components/tasks/TaskCard';
-import BoardStatsColumn from '@/components/dashboard/BoardStatsColumn';
+import TaskCard from '@/features/tasks/components/card/TaskCard';
+import BoardStatsColumn from '@/features/tasks/components/BoardStatsColumn';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter

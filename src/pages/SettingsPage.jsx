@@ -1,4 +1,4 @@
-import UpdateAccountForm from '@/components/account/UpdateAccountForm';
+import UpdateUserForm from '@/features/users/components/UpdateUserForm';
 
 const SettingsPage = () => {
   return (
@@ -10,7 +10,7 @@ const SettingsPage = () => {
         </p>
       </div>
       <main className="flex-1 px-6 py-4">
-        <UpdateAccountForm />
+        <UpdateUserForm />
       </main>
     </section>
   );

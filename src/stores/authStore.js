@@ -2,25 +2,25 @@ import { create } from 'zustand';
 import { clearTokens, setTokens } from '@/lib/axios';
 
 const useAuthStore = create((set) => ({
-  user: null, // { id, name, role, ... }
+  currentUser: null, // { id, name, role, ... }
   isLoading: true, // untuk cek token saat pertama buka app
 
-  setUser: (user) => set({ user, isLoading: false }),
+  setCurrentUser: (user) => set({ currentUser: user, isLoading: false }),
 
   /**
    * Login: store user data and JWT tokens.
    */
   login: (user, accessToken, refreshToken) => {
     setTokens(accessToken, refreshToken);
-    set({ user, isLoading: false });
+    set({ currentUser: user, isLoading: false });
   },
 
   /**
    * Clear user data and remove stored tokens.
    */
-  clearUser: () => {
+  clearCurrentUser: () => {
     clearTokens();
-    set({ user: null, isLoading: false });
+    set({ currentUser: null, isLoading: false });
   },
 }));
 

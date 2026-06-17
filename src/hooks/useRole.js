@@ -1,15 +1,15 @@
 import useAuthStore from '@/stores/authStore';
 
 export const useRole = () => {
-  const user = useAuthStore((state) => state.user);
+  const currentUser = useAuthStore((state) => state.currentUser);
 
   return {
-    role: user?.role.name,
-    userId: user?.id,
-    isAdmin: user?.role.name === 'Admin',
-    isManager: user?.role.name === 'Manager',
-    isAdminOrManager: ['Admin', 'Manager'].includes(user?.role.name),
-    isOwner: (taskUserId) => user?.id === taskUserId,
-    hasRole: (...roles) => roles.includes(user?.role.name),
+    role: currentUser?.role.name,
+    userId: currentUser?.id,
+    isAdmin: currentUser?.role.name === 'Admin',
+    isManager: currentUser?.role.name === 'Manager',
+    isAdminOrManager: ['Admin', 'Manager'].includes(currentUser?.role.name),
+    isOwner: (userId) => currentUser?.id === userId,
+    hasRole: (...roles) => roles.includes(currentUser?.role.name),
   };
 };

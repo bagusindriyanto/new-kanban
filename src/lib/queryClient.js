@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { fetchUpcomingTasksQueryKey } from '@/api/fetchUpcomingTasks';
-import { fetchDashboardQueryKey } from '@/api/fetchDashboard';
+import { fetchUpcomingTasksQueryKey } from '@/features/tasks/api/fetchUpcomingTasks';
+import { fetchDashboardQueryKey } from '@/features/dashboard/api/fetchDashboard';
 
 export const queryClient = new QueryClient({
   defaultOptions: {

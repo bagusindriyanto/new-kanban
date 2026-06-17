@@ -1,5 +1,5 @@
-import { Timeline } from '@/components/dashboard/Timeline';
-import Footer from '@/components/layout/Footer';
+import { Timeline } from '@/features/changelog/components/Timeline';
+import Footer from '@/layouts/Footer';
 
 const ChangelogPage = () => {
   return (

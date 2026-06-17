@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from 'react-router';
 import useAuthStore from '@/stores/authStore';
-import LoadingPage from '@/pages/LoadingPage';
+import FullPageLoader from '@/components/shared/FullPageLoader';
 
 const GuestRoute = () => {
-  const { user, isLoading } = useAuthStore();
+  const { currentUser, isLoading } = useAuthStore();
 
-  if (isLoading) return <LoadingPage />;
-  if (user) return <Navigate to="/" replace />;
+  if (isLoading) return <FullPageLoader />;
+  if (currentUser) return <Navigate to="/" replace />;
 
   return <Outlet />;
 };
