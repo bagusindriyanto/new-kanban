@@ -1,8 +1,6 @@
-import { api, getRefreshToken } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
-export const logout = async () => {
-  const response = await api.post('/auth/logout', {
-    refresh_token: getRefreshToken(),
-  });
-  return response.data;
+export const logoutUser = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
 };

@@ -9,6 +9,6 @@ export const formatToSQL = (date) => {
 export const parseFromSQL = (sqlDate) => {
   if (!sqlDate) return '-';
 
-  const parsed = parse(sqlDate, 'yyyy-MM-dd HH:mm:ss', new Date());
-  return format(parsed, 'd/M/yyyy, HH:mm:ss');
+  // const parsed = parse(sqlDate, 'yyyy-MM-dd HH:mm:ss', new Date());
+  return format(sqlDate, 'd/M/yyyy, HH:mm:ss');
 };

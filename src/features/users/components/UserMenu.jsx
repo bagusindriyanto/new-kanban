@@ -10,37 +10,30 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import useAuthStore from '@/stores/authStore';
 import { EllipsisVerticalIcon, LogOutIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { api, getRefreshToken } from '@/lib/axios';
-import { useNavigate } from 'react-router';
-import { queryClient } from '@/lib/queryClient';
 import UserAvatar from './UserAvatar';
+import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useFetchProfile } from '@/features/auth/api/fetchProfile';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AccountMenu = () => {
-  const { currentUser, clearCurrentUser } = useAuthStore();
-  const navigate = useNavigate();
+  const { data: currentUser, isLoading } = useFetchProfile();
+  const { mutateAsync: logoutMutation } = useLogout();
 
   const handleLogout = () => {
-    toast.promise(
-      api.post('/auth/logout', { refresh_token: getRefreshToken() }),
-      {
-        loading: 'Sedang memproses logout...',
-        success: () => {
-          clearCurrentUser();
-          queryClient.clear();
-          navigate('/login');
-          return 'Logout berhasil';
-        },
-        error: (err) => {
-          return {
-            message: 'Logout gagal',
-            description: err.response?.data?.message || null,
-          };
-        },
+    toast.promise(logoutMutation, {
+      loading: 'Sedang memproses logout...',
+      success: () => {
+        return 'Logout berhasil';
       },
-    );
+      error: (err) => {
+        return {
+          message: 'Logout gagal',
+          description: err.response?.data?.message || null,
+        };
+      },
+    });
   };
 
   return (
@@ -55,15 +48,27 @@ const AccountMenu = () => {
               />
             }
           >
-            <UserAvatar profile={currentUser.profile} />
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">
-                {currentUser.profile.name ?? 'User'}
-              </span>
-              <span className="truncate text-xs text-muted-foreground">
-                {currentUser.role.name ?? '-'}
-              </span>
-            </div>
+            {isLoading ? (
+              <>
+                <Skeleton className="size-8 shrink-0 rounded-full" />
+                <div className="grid flex-1 gap-1">
+                  <Skeleton className="h-3 w-[80px]" />
+                  <Skeleton className="h-3 w-[30px]" />
+                </div>
+              </>
+            ) : (
+              <>
+                <UserAvatar profile={currentUser} />
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {currentUser.name ?? 'User'}
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {currentUser.role.name ?? '-'}
+                  </span>
+                </div>
+              </>
+            )}
             <EllipsisVerticalIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -73,15 +78,27 @@ const AccountMenu = () => {
             sideOffset={4}
           >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <UserAvatar profile={currentUser.profile} />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {currentUser.profile.name ?? 'User'}
-                </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {currentUser.role.name ?? '-'}
-                </span>
-              </div>
+              {isLoading ? (
+                <>
+                  <Skeleton className="size-8 shrink-0 rounded-full" />
+                  <div className="grid flex-1 gap-1">
+                    <Skeleton className="h-3 w-[80px]" />
+                    <Skeleton className="h-3 w-[30px]" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <UserAvatar profile={currentUser} />
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">
+                      {currentUser.name ?? 'User'}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {currentUser.role.name ?? '-'}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} variant="destructive">

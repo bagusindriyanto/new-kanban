@@ -5,12 +5,11 @@ import { toast } from 'sonner';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import useAuthStore from '@/stores/authStore';
-import { Link, useNavigate } from 'react-router';
-import { api } from '@/lib/axios';
+import { Link } from 'react-router';
 import useFilterStore from '@/stores/filterStore';
 import InputField from '@/components/shared/form/InputField';
 import PasswordField from '@/components/shared/form/PasswordField';
+import { useLogin } from '../hooks/useLogin';
 
 const formSchema = z.object({
   email: z
@@ -28,22 +27,22 @@ const LoginForm = () => {
     },
   });
 
-  const login = useAuthStore((state) => state.login);
-  const navigate = useNavigate();
+  const { mutateAsync: loginMutation } = useLogin();
 
   const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const onSubmit = (data) => {
-    toast.promise(api.post('/auth/login', data), {
+    toast.promise(loginMutation(data), {
       loading: 'Sedang memproses login...',
       success: (res) => {
-        const { user, access_token, refresh_token } = res.data;
-        login(user, access_token, refresh_token);
-        setSelectedUserId(user.id);
-        navigate('/');
+        console.log(res);
+        // const { user, access_token, refresh_token } = res.data;
+        // login(user, access_token, refresh_token);
+        // setSelectedUserId(user.id);
+        // navigate('/');
         return {
           message: 'Login berhasil',
-          description: `Selamat datang, ${user.profile.name}!`,
+          // description: `Selamat datang, ${user.profile.name}!`,
         };
       },
       error: (err) => {

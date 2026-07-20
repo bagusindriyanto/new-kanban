@@ -3,10 +3,10 @@ import useAuthStore from '@/stores/authStore';
 import FullPageLoader from '@/components/shared/FullPageLoader';
 
 const GuestRoute = () => {
-  const { currentUser, isLoading } = useAuthStore();
+  const { session, isInitialized } = useAuthStore();
 
-  if (isLoading) return <FullPageLoader />;
-  if (currentUser) return <Navigate to="/" replace />;
+  if (!isInitialized) return <FullPageLoader />;
+  if (session) return <Navigate to="/" replace />;
 
   return <Outlet />;
 };

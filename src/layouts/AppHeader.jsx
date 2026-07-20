@@ -13,7 +13,7 @@ const AppHeader = () => {
         <AppBreadcrumb />
       </div>
       <div className="flex gap-2 items-center">
-        <UpcomingTasksPanel />
+        {/* <UpcomingTasksPanel /> */}
         <ModeToggle />
       </div>
     </header>

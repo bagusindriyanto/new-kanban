@@ -1,6 +1,10 @@
-import { api } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
-export const me = async (payload) => {
-  const response = await api.post('/auth/login', payload);
-  return response.data;
+export const loginUser = async ({ email, password }) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error) throw error;
+  return data;
 };

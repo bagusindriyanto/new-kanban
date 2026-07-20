@@ -1,12 +1,16 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
 export const fetchUsers = async () => {
-  const response = await api.get('/profiles');
-  return response.data;
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, name, avatar')
+    .order('name');
+  if (error) throw error;
+  return data;
 };
 
-export const fetchUsersQueryKey = () => ['profiles'];
+export const fetchUsersQueryKey = () => ['users'];
 
 const fetchUsersQueryOptions = () => {
   return queryOptions({

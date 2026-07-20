@@ -1,9 +1,13 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
 export const fetchActivities = async () => {
-  const response = await api.get('/activities');
-  return response.data;
+  const { data, error } = await supabase
+    .from('activities')
+    .select('id, name')
+    .order('updated_at', { ascending: false });
+  if (error) throw error;
+  return data;
 };
 
 export const fetchActivitiesQueryKey = () => ['activities'];

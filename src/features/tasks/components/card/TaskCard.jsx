@@ -93,14 +93,14 @@ const TaskCard = ({ task, className }) => {
       <div className="flex flex-col gap-2 mt-1">
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center text-xs text-muted-foreground">
-            <UserAvatar profile={user.profile} size="sm" />
+            <UserAvatar profile={user} size="sm" />
             <span className="font-medium text-foreground">
-              {user.profile.name || '-'}
+              {user.name || '-'}
             </span>
           </div>
           {assigner && (
             <span className="text-[10px] text-muted-foreground/70">
-              oleh {assigner.profile.name}
+              oleh {assigner.name}
             </span>
           )}
         </div>
