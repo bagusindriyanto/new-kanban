@@ -38,8 +38,7 @@ export function usePauseTimer({ task, updateTaskMutate }) {
     return () => clearInterval(interval);
   }, [isPaused, pause_time]);
 
-  const totalPause =
-    (minute_pause || 0) + (isPaused ? currentPauseMinutes : 0);
+  const totalPause = (minute_pause || 0) + (isPaused ? currentPauseMinutes : 0);
 
   const togglePause = () => {
     if (!task) return;

@@ -27,37 +27,47 @@ const statusItems = [
   { value: 'done', label: 'Done' },
 ];
 
-const formSchema = z
-  .object({
-    content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
-    user_id: z.number('Mohon pilih PIC.'),
-    status: z.enum(['todo', 'on progress', 'done'], {
-      error: 'Status harus dipilih.',
-    }),
-    minute_pause: z.number().nonnegative('Durasi pause harus 0 atau lebih.'),
-    pause_time: z.boolean(),
-    detail: z.coerce
-      .string()
-      .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
-      .trim()
-      .optional(),
-    timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
-    timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
-    timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
-    is_scheduled: z.boolean(),
-    scheduled_at: z.date().nullish(),
+const baseSchema = z.object({
+  content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
+  user_id: z.string().min(1, 'Mohon pilih PIC.'),
+  status: z.enum(['todo', 'on progress', 'done'], {
+    error: 'Status harus dipilih.',
+  }),
+  minute_pause: z.number().nonnegative('Durasi pause harus 0 atau lebih.'),
+  pause_time: z.boolean(),
+  detail: z.coerce
+    .string()
+    .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
+    .trim()
+    .optional(),
+  timestamp_todo: z.date('Mohon isi tanggal dan waktu.'),
+  timestamp_progress: z.date('Mohon isi tanggal dan waktu.').nullish(),
+  timestamp_done: z.date('Mohon isi tanggal dan waktu.').nullish(),
+  is_scheduled: z.boolean(),
+  scheduled_at: z.date().nullish(),
+});
+
+const formSchema = baseSchema.superRefine((data, ctx) => {
+  if (data.is_scheduled && !data.scheduled_at) {
+    ctx.addIssue({
+      code: 'no_scheduled_at',
+      message: 'Mohon isi tanggal dan waktu.',
+      path: ['scheduled_at'],
+    });
+  }
+});
+
+const submitSchema = baseSchema
+  .omit({
+    is_scheduled: true,
   })
-  .superRefine((data, ctx) => {
-    if (data.is_scheduled && !data.scheduled_at) {
-      ctx.addIssue({
-        code: 'no_scheduled_at',
-        message: 'Mohon isi tanggal dan waktu.',
-        path: ['scheduled_at'],
-      });
-    }
+  .extend({
+    id: z.number(),
+    assigner_id: z.string().nullish(),
   })
   .transform((data) => ({
     ...data,
+    detail: data.detail || null,
     minute_activity:
       data.timestamp_progress && data.timestamp_done
         ? Math.floor((data.timestamp_done - data.timestamp_progress) / 60000) -
@@ -133,11 +143,11 @@ const UpdateTaskForm = () => {
 
   // Submit form
   const onSubmit = (data) => {
-    const payload = {
+    const payload = submitSchema.parse({
       ...data,
       id: selectedTask.id,
       assigner_id: data.user_id === currentUser.id ? null : currentUser.id,
-    };
+    });
 
     toast.promise(updateTaskMutate(payload), {
       loading: 'Sedang memperbarui task...',

@@ -1,11 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
 import { queryClient } from '@/lib/queryClient';
 import { fetchActivitiesQueryKey } from './fetchActivities';
+import { supabase } from '@/lib/supabase';
 
 export const addActivity = async (data) => {
-  const response = await api.post('/activities', data);
-  return response.data;
+  const { activity } = data;
+  if (!activity) throw new Error('Nama aktivitas tidak boleh kosong');
+
+  const { error } = await supabase
+    .from('activities')
+    .insert({ name: activity });
+  if (error) throw error;
 };
 
 export const useAddActivity = (params = {}) => {

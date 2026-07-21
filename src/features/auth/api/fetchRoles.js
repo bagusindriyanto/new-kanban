@@ -1,9 +1,10 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
 export const fetchRoles = async () => {
-  const response = await api.get('/roles');
-  return response.data;
+  const { data, error } = await supabase.from('roles').select('id, name');
+  if (error) throw error;
+  return data;
 };
 
 export const fetchRolesQueryKey = () => ['roles'];

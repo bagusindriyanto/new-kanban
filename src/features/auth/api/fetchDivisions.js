@@ -1,9 +1,10 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
 export const fetchDivisions = async () => {
-  const response = await api.get('/divisions');
-  return response.data;
+  const { data, error } = await supabase.from('divisions').select('id, name');
+  if (error) throw error;
+  return data;
 };
 
 export const fetchDivisionsQueryKey = () => ['divisions'];

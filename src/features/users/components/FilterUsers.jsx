@@ -20,7 +20,7 @@ const FilterUsers = () => {
     { label: 'Semua PIC', value: 'all' },
     ...(users?.map((user) => ({
       label: user.name,
-      value: user.id,
+      value: user.user_id,
     })) || []),
   ];
 

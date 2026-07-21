@@ -1,9 +1,9 @@
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 
 export const formatToSQL = (date) => {
   if (!date) return null;
 
-  return format(new Date(date), 'yyyy-MM-dd HH:mm:ss');
+  return new Date(date).toISOString();
 };
 
 export const parseFromSQL = (sqlDate) => {

@@ -34,12 +34,8 @@ const LoginForm = () => {
   const onSubmit = (data) => {
     toast.promise(loginMutation(data), {
       loading: 'Sedang memproses login...',
-      success: (res) => {
-        console.log(res);
-        // const { user, access_token, refresh_token } = res.data;
-        // login(user, access_token, refresh_token);
-        // setSelectedUserId(user.id);
-        // navigate('/');
+      success: ({ user }) => {
+        setSelectedUserId(user.id);
         return {
           message: 'Login berhasil',
           // description: `Selamat datang, ${user.profile.name}!`,

@@ -16,37 +16,47 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import ActivitiesCombobox from '@/features/activities/components/ActivitiesCombobox';
 
-const formSchema = z
-  .object({
-    content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
-    user_id: z.number().nullish(),
-    detail: z.coerce
-      .string()
-      .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
-      .trim()
-      .optional(),
-    is_scheduled: z.boolean(),
-    is_assigned: z.boolean(),
-    scheduled_at: z.date().nullish(),
+const baseSchema = z.object({
+  content: z.string().min(1, 'Mohon pilih salah satu aktivitas.'),
+  user_id: z.string().nullish(),
+  detail: z.coerce
+    .string()
+    .max(100, 'Detail tidak boleh lebih dari 100 karakter.')
+    .trim()
+    .optional(),
+  is_scheduled: z.boolean(),
+  is_assigned: z.boolean(),
+  scheduled_at: z.date().nullish(),
+});
+
+const formSchema = baseSchema.superRefine((data, ctx) => {
+  if (data.is_scheduled && !data.scheduled_at) {
+    ctx.addIssue({
+      code: 'no_scheduled_at',
+      message: 'Mohon isi tanggal dan waktu.',
+      path: ['scheduled_at'],
+    });
+  }
+  if (data.is_assigned && !data.user_id) {
+    ctx.addIssue({
+      code: 'no_user_id',
+      message: 'Mohon pilih PIC.',
+      path: ['user_id'],
+    });
+  }
+});
+
+const submitSchema = baseSchema
+  .omit({
+    is_scheduled: true,
+    is_assigned: true,
   })
-  .superRefine((data, ctx) => {
-    if (data.is_scheduled && !data.scheduled_at) {
-      ctx.addIssue({
-        code: 'no_scheduled_at',
-        message: 'Mohon isi tanggal dan waktu.',
-        path: ['scheduled_at'],
-      });
-    }
-    if (data.is_assigned && !data.user_id) {
-      ctx.addIssue({
-        code: 'no_user_id',
-        message: 'Mohon pilih PIC.',
-        path: ['user_id'],
-      });
-    }
+  .extend({
+    assigner_id: z.string().nullish(),
   })
   .transform((data) => ({
     ...data,
+    detail: data.detail || null,
     status: 'todo',
     timestamp_todo: formatToSQL(new Date()),
     timestamp_progress: null,
@@ -83,11 +93,11 @@ const AddTaskForm = ({ onOpenChange }) => {
   const isAssigned = form.watch('is_assigned');
 
   const onSubmit = (data) => {
-    const payload = {
+    const payload = submitSchema.parse({
       ...data,
       user_id: isAssigned ? data.user_id : currentUser.id,
       assigner_id: isAssigned ? currentUser.id : null,
-    };
+    });
 
     toast.promise(addTaskMutation(payload), {
       loading: 'Sedang menambahkan task...',

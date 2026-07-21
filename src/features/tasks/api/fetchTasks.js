@@ -6,19 +6,21 @@ export const fetchTasks = async (filters = {}) => {
 
   let query = supabase.from('tasks').select(`
     *,
-    user:profiles!profile_id (full_name, name, avatar),
-    assigner:profiles!assigner_id (name)
+    user:profiles!tasks_user_id_fkey (id:user_id, full_name, name, avatar),
+    assigner:profiles!tasks_assigner_id_fkey (name)
     `);
 
   if (user_id) {
-    query = query.eq('profile_id', user_id);
+    query = query.eq('user_id', user_id);
   }
 
   if (from_date && to_date) {
-    query = query
-      .gte('timestamp_progress', from_date)
-      .lte('timestamp_progress', to_date);
+    query = query.or(
+      `status.eq.todo,and(timestamp_progress.gte.${from_date},timestamp_progress.lte.${to_date})`,
+    );
   }
+
+  query = query.order('updated_at', { ascending: false });
 
   const { data, error } = await query;
   if (error) throw error;

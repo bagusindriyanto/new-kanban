@@ -1,12 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
 import { queryClient } from '@/lib/queryClient';
 import { fetchTasksQueryKey } from './fetchTasks';
 import { fetchUsersQueryKey } from '@/features/users/api/fetchUsers';
+import { supabase } from '@/lib/supabase';
 
 export const updateTask = async (data) => {
-  const response = await api.put(`/tasks/${data.id}`, data);
-  return response.data;
+  const { id, user: _, assigner: __, ...updatedData } = data;
+  const { error } = await supabase
+    .from('tasks')
+    .update(updatedData)
+    .eq('id', id);
+  if (error) throw error;
 };
 
 export const useUpdateTask = (params = {}) => {
@@ -48,13 +52,13 @@ export const useUpdateTask = (params = {}) => {
                     ...task,
                     ...updatedTask,
                     user: {
+                      ...updatedUser,
                       id: updatedTask.user_id,
-                      profile: updatedUser,
                     },
                     assigner: updatedAssigner
                       ? {
+                          ...updatedAssigner,
                           id: updatedTask.assigner_id,
-                          profile: updatedAssigner,
                         }
                       : null,
                     optimistic: true,

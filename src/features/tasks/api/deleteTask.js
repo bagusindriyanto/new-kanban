@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
 import { queryClient } from '@/lib/queryClient';
 import { fetchTasksQueryKey } from './fetchTasks';
+import { supabase } from '@/lib/supabase';
 
 export const deleteTask = async (taskId) => {
-  const response = await api.delete(`/tasks/${taskId}`);
-  return response.data;
+  const { error } = await supabase.from('tasks').delete().eq('id', taskId);
+  if (error) throw error;
 };
 
 export const useDeleteTask = (params = {}) => {

@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
 import { queryClient } from '@/lib/queryClient';
 import { fetchTasksQueryKey } from './fetchTasks';
 import { fetchUsersQueryKey } from '@/features/users/api/fetchUsers';
+import { supabase } from '@/lib/supabase';
 
 export const addTask = async (data) => {
-  const response = await api.post('/tasks', data);
-  return response.data;
+  const { error } = await supabase.from('tasks').insert(data);
+  if (error) throw error;
 };
 
 export const useAddTask = (params = {}) => {

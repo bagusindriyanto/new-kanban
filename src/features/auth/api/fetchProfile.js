@@ -7,7 +7,7 @@ export const fetchProfile = async (userId) => {
     .from('profiles')
     .select(
       `
-      id,
+      user_id,
       name,
       full_name,
       avatar,
@@ -15,7 +15,7 @@ export const fetchProfile = async (userId) => {
       role:roles (name)
       `,
     )
-    .eq('id', userId)
+    .eq('user_id', userId)
     .single();
   if (error) throw error;
   return data;

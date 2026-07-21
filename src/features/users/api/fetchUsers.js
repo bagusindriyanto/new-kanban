@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 export const fetchUsers = async () => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, avatar')
+    .select('user_id, name, full_name, avatar')
     .order('name');
   if (error) throw error;
   return data;
