@@ -33,17 +33,17 @@ const LoginForm = () => {
 
   const onSubmit = (data) => {
     toast.promise(loginMutation(data), {
-      loading: 'Sedang memproses login...',
+      loading: 'Sedang memproses log in...',
       success: ({ user }) => {
         setSelectedUserId(user.id);
         return {
-          message: 'Login berhasil',
+          message: 'Log in berhasil',
           // description: `Selamat datang, ${user.profile.name}!`,
         };
       },
       error: (err) => {
         return {
-          message: 'Login gagal',
+          message: 'Log in gagal',
           description: err.response?.data?.message || null,
         };
       },
@@ -72,10 +72,10 @@ const LoginForm = () => {
               label="Kata Sandi"
             />
             <Field>
-              <Button type="submit">Login</Button>
-              <FieldDescription className="text-center">
+              <Button type="submit">Log in</Button>
+              {/* <FieldDescription className="text-center">
                 Belum memiliki akun? <Link to="/register">Sign up di sini</Link>
-              </FieldDescription>
+              </FieldDescription> */}
             </Field>
           </FieldGroup>
         </form>

@@ -15,7 +15,6 @@ import {
   FieldSeparator,
 } from '@/components/ui/field';
 import { toast } from 'sonner';
-import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -24,7 +23,6 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { Link, useNavigate } from 'react-router';
-import { api } from '@/lib/axios';
 import { useFetchDivisions } from '@/features/auth/api/fetchDivisions';
 import { useFetchRoles } from '@/features/auth/api/fetchRoles';
 import InputField from '@/components/shared/form/InputField';
@@ -33,32 +31,8 @@ import SelectField from '@/components/shared/form/SelectField';
 import AvatarUpload from '@/components/shared/form/AvatarUpload';
 import useAuthStore from '@/stores/authStore';
 import useFilterStore from '@/stores/filterStore';
-
-const formSchema = z
-  .object({
-    full_name: z.string().min(1, 'Mohon isi nama lengkap anda.'),
-    name: z.string().optional(),
-    nik: z
-      .string()
-      .min(1, 'Mohon isi NIK anda.')
-      .refine((val) => /^[0-9]+$/.test(val), {
-        error: 'NIK hanya boleh mengandung angka.',
-      }),
-    avatar: z.instanceof(File).optional(),
-    division_id: z.number('Mohon pilih divisi anda.'),
-    role_id: z.number('Mohon pilih jabatan anda.'),
-    email: z
-      .email('Mohon isi email dengan benar.')
-      .min(1, 'Mohon isi email anda.'),
-    password: z
-      .string()
-      .min(8, 'Kata sandi tidak boleh kurang dari 8 karakter.'),
-    confirm_password: z.string(),
-  })
-  .refine((data) => data.password === data.confirm_password, {
-    message: 'Kata sandi tidak sesuai.',
-    path: ['confirm_password'],
-  });
+import { registerSchema } from '../schemas/authSchemas';
+import { useRegister } from '../hooks/useRegister';
 
 const RegisterForm = () => {
   // Ambil data divisi dan jabatan
@@ -66,8 +40,8 @@ const RegisterForm = () => {
   const { data: roles } = useFetchRoles();
 
   const form = useForm({
-    mode: 'onTouched',
-    resolver: zodResolver(formSchema),
+    // mode: 'onTouched',
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       full_name: '',
       nik: '',
@@ -79,29 +53,32 @@ const RegisterForm = () => {
     },
   });
 
-  const login = useAuthStore((state) => state.login);
+  const { mutateAsync: registerMutation } = useRegister();
+
+  // const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
-  const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
+  // const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const onSubmit = (data) => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, value);
-      }
-    });
+    const payload = { ...data, name: data.full_name.split(' ')[0] };
+    // const formData = new FormData();
+    // Object.entries(data).forEach(([key, value]) => {
+    //   if (value !== null && value !== undefined) {
+    //     formData.append(key, value);
+    //   }
+    // });
 
-    toast.promise(api.post('/auth/register', formData), {
+    toast.promise(registerMutation(payload), {
       loading: 'Sedang membuat akun...',
-      success: (res) => {
-        const { user, access_token, refresh_token } = res.data;
-        login(user, access_token, refresh_token);
-        setSelectedUserId(user.id);
-        navigate('/');
+      success: () => {
+        // const { user, access_token, refresh_token } = res.data;
+        // login(user, access_token, refresh_token);
+        // setSelectedUserId(user.id);
+        // navigate('/verify');
         return {
           message: 'Akun Anda berhasil dibuat',
-          description: `Selamat datang, ${user.profile.name}!`,
+          // description: `Selamat datang, ${user.profile.name}!`,
         };
       },
       error: (err) => {
@@ -118,7 +95,7 @@ const RegisterForm = () => {
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Buat Akun Baru</CardTitle>
         <CardDescription>
-          Silahkan isi informasi di bawah ini untuk membuat akun anda.
+          Silakan isi informasi di bawah ini untuk membuat akun anda.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -130,6 +107,7 @@ const RegisterForm = () => {
             {/* Avatar */}
             <AvatarUpload
               name="avatar"
+              maxSize={1 * 1024 * 1024}
               onFileChange={(fileWrapper) =>
                 form.setValue('avatar', fileWrapper?.file || null)
               }

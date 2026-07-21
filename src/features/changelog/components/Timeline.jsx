@@ -7,14 +7,12 @@ import { ArrowUpIcon } from 'lucide-react';
 const timelineData = [
   {
     date: '6 Mar 2026',
-    title: '3.0.0 - Sistem Login',
+    title: '3.0.0 - Sistem Log in',
     content: (
       <>
         <p className="mb-4">Menambahkan:</p>
         <ul>
-          <li className="flex items-center gap-2">
-            🧑 Sistem login dan register akun
-          </li>
+          <li className="flex items-center gap-2">🧑 Sistem log in akun</li>
           <li className="flex items-center gap-2">
             👥 Tugaskan task ke PIC lain
           </li>

@@ -23,13 +23,13 @@ const AccountMenu = () => {
 
   const handleLogout = () => {
     toast.promise(logoutMutation, {
-      loading: 'Sedang memproses logout...',
+      loading: 'Sedang memproses log out...',
       success: () => {
-        return 'Logout berhasil';
+        return 'Log out berhasil';
       },
       error: (err) => {
         return {
-          message: 'Logout gagal',
+          message: 'Log out gagal',
           description: err.response?.data?.message || null,
         };
       },
@@ -103,7 +103,7 @@ const AccountMenu = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} variant="destructive">
               <LogOutIcon />
-              Logout
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

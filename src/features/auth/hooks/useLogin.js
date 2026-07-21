@@ -5,7 +5,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginUser,
     onError: (error) => {
-      console.error('Login failed:', error.message);
+      console.error('Log in gagal:', error.message);
     },
   });
 };

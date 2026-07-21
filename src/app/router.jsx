@@ -41,11 +41,11 @@ export const router = createBrowserRouter(
               element: <LoginPage />,
               handle: { breadcrumb: 'Login' },
             },
-            {
-              path: '/register',
-              element: <RegisterPage />,
-              handle: { breadcrumb: 'Register' },
-            },
+            // {
+            //   path: '/register',
+            //   element: <RegisterPage />,
+            //   handle: { breadcrumb: 'Register' },
+            // },
           ],
         },
       ],
