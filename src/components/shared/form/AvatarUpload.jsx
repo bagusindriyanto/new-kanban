@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { CircleAlertIcon, UserIcon, PencilIcon, XIcon } from 'lucide-react';
 
 function AvatarUpload({
-  maxSize = 2 * 1024 * 1024, // 2MB
+  maxSize = 1 * 1024 * 1024, // 1MB
   className,
   onFileChange,
   defaultAvatar,

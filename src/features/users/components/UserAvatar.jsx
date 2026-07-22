@@ -31,7 +31,7 @@ const UserAvatar = ({ profile, size }) => {
 
   const avatarColor = getAvatarColor(avatarName);
   const aliasName = getAliasName(avatarName);
-  const avatarURL = getAvatarURL(profile?.avatar ?? null);
+  const avatarURL = profile?.avatar ?? null;
 
   return (
     <Avatar size={size}>
