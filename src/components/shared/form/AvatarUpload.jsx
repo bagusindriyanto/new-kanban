@@ -1,16 +1,25 @@
+import { useState } from 'react';
 import { formatBytes, useFileUpload } from '@/hooks/useFileUpload';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { CircleAlertIcon, UserIcon, PencilIcon, XIcon } from 'lucide-react';
+import {
+  CircleAlertIcon,
+  UserIcon,
+  PencilIcon,
+  XIcon,
+  Trash2Icon,
+} from 'lucide-react';
 
 function AvatarUpload({
   maxSize = 1 * 1024 * 1024, // 1MB
   className,
   onFileChange,
+  onDeleteAvatar,
   defaultAvatar,
 }) {
+  const [isDeleted, setIsDeleted] = useState(false);
   const [
     { files, isDragging, errors },
     {
@@ -29,16 +38,25 @@ function AvatarUpload({
     multiple: false,
     onFilesChange: (files) => {
       onFileChange?.(files[0] || null);
+      // Selecting a new file cancels the delete state
+      if (files.length > 0) {
+        setIsDeleted(false);
+      }
     },
   });
 
   const currentFile = files[0];
-  const previewUrl = currentFile?.preview || defaultAvatar;
+  const previewUrl = currentFile?.preview || (isDeleted ? null : defaultAvatar);
 
   const handleRemove = () => {
     if (currentFile) {
       removeFile(currentFile.id);
     }
+  };
+
+  const handleDeleteAvatar = () => {
+    setIsDeleted(true);
+    onDeleteAvatar?.();
   };
 
   return (
@@ -74,17 +92,28 @@ function AvatarUpload({
           )}
         </div>
 
-        {/* Edit Button - only show when default avatar is present */}
-        {defaultAvatar && !currentFile && (
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={openFileDialog}
-            className="absolute inset-e-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
-            aria-label="Change avatar"
-          >
-            <PencilIcon className="size-3.5" />
-          </Button>
+        {/* Edit & Delete Buttons - only show when default avatar is present and not deleted */}
+        {defaultAvatar && !currentFile && !isDeleted && (
+          <>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={openFileDialog}
+              className="absolute inset-e-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
+              aria-label="Change avatar"
+            >
+              <PencilIcon className="size-3.5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={handleDeleteAvatar}
+              className="absolute inset-e-0.5 bottom-0.5 z-10 size-6 rounded-full text-destructive dark:bg-zinc-800 hover:dark:bg-zinc-700"
+              aria-label="Delete avatar"
+            >
+              <Trash2Icon className="size-3.5" />
+            </Button>
+          </>
         )}
 
         {/* Remove Button - only show when file is uploaded */}
@@ -106,9 +135,11 @@ function AvatarUpload({
         <p className="text-sm font-medium">
           {currentFile
             ? 'Foto profil ditambahkan'
-            : defaultAvatar
-              ? 'Ubah Foto Profil'
-              : 'Unggah Foto Profil'}
+            : isDeleted
+              ? 'Foto profil dihapus'
+              : defaultAvatar
+                ? 'Ubah Foto Profil'
+                : 'Unggah Foto Profil'}
         </p>
         <p className="text-muted-foreground text-xs">
           PNG, JPG maksimal {formatBytes(maxSize)}

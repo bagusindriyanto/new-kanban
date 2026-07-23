@@ -36,7 +36,7 @@ const formSchema = z.object({
     }),
   avatar: z
     .instanceof(File)
-    .optional()
+    .nullish()
     .refine(
       (file) => !file || file.size <= MAX_FILE_SIZE,
       'Ukuran file maksimal 1MB',
@@ -45,6 +45,7 @@ const formSchema = z.object({
       (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
       'Format harus JPG, PNG, atau WebP',
     ),
+  delete_avatar: z.boolean().optional(),
 });
 
 const UpdateProfileForm = () => {
@@ -57,6 +58,7 @@ const UpdateProfileForm = () => {
       full_name: '',
       name: '',
       nik: '',
+      delete_avatar: false,
     },
   });
 
@@ -101,9 +103,17 @@ const UpdateProfileForm = () => {
             <AvatarUpload
               name="avatar"
               defaultAvatar={defaultAvatar}
-              onFileChange={(fileWrapper) =>
-                form.setValue('avatar', fileWrapper?.file || null)
-              }
+              onFileChange={(fileWrapper) => {
+                form.setValue('avatar', fileWrapper?.file || null);
+                // Selecting a new file resets the delete flag
+                if (fileWrapper?.file) {
+                  form.setValue('delete_avatar', false);
+                }
+              }}
+              onDeleteAvatar={() => {
+                form.setValue('avatar', null);
+                form.setValue('delete_avatar', true);
+              }}
             />
             <FieldGroup>
               <InputField

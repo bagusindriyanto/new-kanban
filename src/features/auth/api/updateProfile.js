@@ -35,6 +35,8 @@ export const useUpdateProfile = () => {
         .single();
 
       let avatarUrl;
+      const shouldDeleteAvatar =
+        values.delete_avatar && !values.avatar && currentProfile?.avatar;
 
       // Upload avatar dulu kalau user pilih file baru
       const avatarFile = values.avatar;
@@ -47,7 +49,11 @@ export const useUpdateProfile = () => {
         name: values.name || null,
         nik: values.nik,
       };
-      if (avatarUrl) updates.avatar = avatarUrl;
+      if (avatarUrl) {
+        updates.avatar = avatarUrl;
+      } else if (shouldDeleteAvatar) {
+        updates.avatar = null;
+      }
 
       const { error } = await supabase
         .from('profiles')
@@ -57,7 +63,7 @@ export const useUpdateProfile = () => {
       if (error) throw error;
 
       // Cleanup avatar lama setelah update berhasil
-      if (avatarUrl && currentProfile?.avatar) {
+      if ((avatarUrl || shouldDeleteAvatar) && currentProfile?.avatar) {
         const oldPath = currentProfile.avatar.split('/avatars/')[1];
         if (oldPath) {
           await supabase.storage.from('avatars').remove([oldPath]);
