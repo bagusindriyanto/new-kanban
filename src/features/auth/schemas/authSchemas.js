@@ -30,12 +30,10 @@ export const registerSchema = z
     email: z
       .email('Mohon isi email dengan benar.')
       .min(1, 'Mohon isi email anda.'),
-    password: z
-      .string()
-      .min(8, 'Kata sandi tidak boleh kurang dari 8 karakter.'),
+    password: z.string().min(8, 'Password tidak boleh kurang dari 8 karakter.'),
     confirm_password: z.string(),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: 'Kata sandi tidak sesuai.',
+    message: 'Password tidak sesuai.',
     path: ['confirm_password'],
   });

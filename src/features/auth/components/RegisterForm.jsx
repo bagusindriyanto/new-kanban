@@ -198,17 +198,18 @@ const RegisterForm = () => {
             <PasswordField
               name="password"
               control={form.control}
-              label="Kata Sandi"
+              label="Password"
               required
-              placeholder="Masukkan kata sandi anda"
-              description="Kata sandi minimal memiliki 8 karakter."
+              placeholder="Masukkan password anda"
+              description="Password minimal memiliki 8 karakter."
             />
             {/* Confirm Password */}
             <PasswordField
               name="confirm_password"
               control={form.control}
-              label="Konfirmasi Kata Sandi"
+              label="Konfirmasi Password"
               required
+              placeholder="Masukkan kembali password anda"
             />
             <Field>
               <Button type="submit">Daftar</Button>

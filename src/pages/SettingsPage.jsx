@@ -1,4 +1,4 @@
-import UpdateUserForm from '@/features/users/components/UpdateUserForm';
+import UpdateUserTabs from '@/features/users/components/UpdateUserTabs';
 
 const SettingsPage = () => {
   return (
@@ -10,7 +10,7 @@ const SettingsPage = () => {
         </p>
       </div>
       <main className="flex-1 px-6 py-4">
-        <UpdateUserForm />
+        <UpdateUserTabs />
       </main>
     </section>
   );

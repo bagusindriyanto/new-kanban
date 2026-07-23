@@ -15,7 +15,7 @@ const formSchema = z.object({
   email: z
     .email('Mohon isi email dengan benar.')
     .min(1, 'Mohon isi email anda.'),
-  password: z.string().min(1, 'Mohon isi kata sandi anda.'),
+  password: z.string().min(1, 'Mohon isi password anda.'),
 });
 
 const LoginForm = () => {
@@ -69,7 +69,7 @@ const LoginForm = () => {
             <PasswordField
               name="password"
               control={form.control}
-              label="Kata Sandi"
+              label="Password"
             />
             <Field>
               <Button type="submit">Log in</Button>

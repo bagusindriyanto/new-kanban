@@ -1,18 +1,15 @@
 import { useEffect } from 'react';
-import useAuthStore from '@/stores/authStore';
 import z from 'zod';
-import { getAvatarURL } from '../utils/getAvatarURL';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { api } from '@/lib/axios';
-import { refreshData } from '@/utils/refreshData';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSet,
 } from '@/components/ui/field';
 import AvatarUpload from '@/components/shared/form/AvatarUpload';
 import InputField from '@/components/shared/form/InputField';
@@ -21,7 +18,6 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
-import PasswordField from '@/components/shared/form/PasswordField';
 import { Button } from '@/components/ui/button';
 import { useFetchProfile } from '@/features/auth/api/fetchProfile';
 import { useUpdateProfile } from '@/features/auth/api/updateProfile';
@@ -87,7 +83,7 @@ const UpdateProfileForm = () => {
       error: (err) => {
         return {
           message: 'Akun Anda gagal diperbarui',
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         };
       },
     });
@@ -100,7 +96,7 @@ const UpdateProfileForm = () => {
           id="update-profile-account"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <FieldGroup>
+          <FieldSet className="grid gap-5 lg:grid-cols-[0.75fr_2fr] lg:gap-6 items-center">
             {/* Avatar */}
             <AvatarUpload
               name="avatar"
@@ -109,7 +105,7 @@ const UpdateProfileForm = () => {
                 form.setValue('avatar', fileWrapper?.file || null)
               }
             />
-            <Field className="grid gap-5 lg:grid-cols-2 lg:gap-6">
+            <FieldGroup>
               <InputField
                 name="full_name"
                 control={form.control}
@@ -157,8 +153,8 @@ const UpdateProfileForm = () => {
                   </Field>
                 )}
               />
-            </Field>
-          </FieldGroup>
+            </FieldGroup>
+          </FieldSet>
         </form>
       </CardContent>
       <CardFooter className="justify-end">

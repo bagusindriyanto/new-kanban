@@ -52,8 +52,8 @@ const AccountMenu = () => {
               <>
                 <Skeleton className="size-8 shrink-0 rounded-full" />
                 <div className="grid flex-1 gap-1">
-                  <Skeleton className="h-3 w-[80px]" />
-                  <Skeleton className="h-3 w-[30px]" />
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-3 w-7.5" />
                 </div>
               </>
             ) : (
@@ -82,8 +82,8 @@ const AccountMenu = () => {
                 <>
                   <Skeleton className="size-8 shrink-0 rounded-full" />
                   <div className="grid flex-1 gap-1">
-                    <Skeleton className="h-3 w-[80px]" />
-                    <Skeleton className="h-3 w-[30px]" />
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-3 w-7.5" />
                   </div>
                 </>
               ) : (
