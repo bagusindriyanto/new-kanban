@@ -159,7 +159,7 @@ const UpdateTaskForm = () => {
       error: (err) => {
         return {
           message: 'Task gagal diperbarui',
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         };
       },
     });

@@ -32,7 +32,7 @@ const DeleteTaskModal = () => {
       error: (err) => {
         return {
           message: 'Task gagal dihapus',
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         };
       },
     });

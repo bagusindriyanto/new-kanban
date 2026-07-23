@@ -30,7 +30,7 @@ const AccountMenu = () => {
       error: (err) => {
         return {
           message: 'Log out gagal',
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         };
       },
     });

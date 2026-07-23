@@ -30,7 +30,7 @@ const ActivitiesCombobox = ({ control, className }) => {
       error: (err) => {
         return {
           message: 'Aktivitas gagal ditambahkan',
-          description: err.response?.data?.message || null,
+          description: err.message || null,
         };
       },
     });

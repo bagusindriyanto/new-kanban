@@ -84,7 +84,7 @@ const RegisterForm = () => {
       error: (err) => {
         return {
           message: 'Akun Anda gagal dibuat',
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         };
       },
     });

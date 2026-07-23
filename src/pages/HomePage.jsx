@@ -40,7 +40,7 @@ const HomePage = () => {
     mutationConfig: {
       onError: (err) => {
         toast.error('Task gagal diperbarui', {
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         });
       },
     },
@@ -66,13 +66,11 @@ const HomePage = () => {
 
   // Error log
   if (fetchTasksError) {
-    console.error(
-      fetchTasksError?.response?.data?.message || 'Gagal terhubung ke server.',
-    );
+    console.error(fetchTasksError?.message || 'Gagal terhubung ke server.');
   }
 
   // Ambil pesan error
-  const errorMessage = fetchTasksError?.response?.data?.message || null;
+  const errorMessage = fetchTasksError?.message || null;
 
   // Cek status online/offline
   const isOnline = useOnlineStatus();
@@ -93,7 +91,11 @@ const HomePage = () => {
             </div>
           )}
           {tasks?.length > 0 && (fetchTasksError || !isOnline) && (
-            <ErrorBanner isOnline={isOnline} errorMessage={errorMessage} />
+            <ErrorBanner
+              isOnline={isOnline}
+              errorMessage={errorMessage}
+              className="mb-4"
+            />
           )}
           {tasks?.length === 0 && (fetchTasksError || !isOnline) && (
             <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />

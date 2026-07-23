@@ -109,7 +109,7 @@ const AddTaskForm = ({ onOpenChange }) => {
       error: (err) => {
         return {
           message: 'Task gagal ditambahkan',
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         };
       },
     });
@@ -124,7 +124,7 @@ const AddTaskForm = ({ onOpenChange }) => {
             <ActivitiesCombobox control={form.control} />
           </FieldGroup>
 
-          <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+          <FieldGroup className="grid grid-cols-2 gap-4 min-h-17">
             {/* Assigned Switch */}
             <SwitchField
               name="is_assigned"
@@ -146,7 +146,7 @@ const AddTaskForm = ({ onOpenChange }) => {
             />
           </FieldGroup>
 
-          <FieldGroup className="grid grid-cols-2 gap-4 min-h-[68px]">
+          <FieldGroup className="grid grid-cols-2 gap-4 min-h-17">
             {/* Appointment Switch */}
             <SwitchField
               name="is_scheduled"

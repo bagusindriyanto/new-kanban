@@ -44,7 +44,7 @@ const LoginForm = () => {
       error: (err) => {
         return {
           message: 'Log in gagal',
-          description: err.response?.data?.message || null,
+          description: err.message || null,
         };
       },
     });

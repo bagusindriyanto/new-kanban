@@ -24,7 +24,7 @@ const TaskCard = ({ task, className }) => {
     mutationConfig: {
       onError: (err) => {
         toast.error('Task gagal diperbarui', {
-          description: err.response?.data?.message || null,
+          description: err?.message || null,
         });
       },
     },
