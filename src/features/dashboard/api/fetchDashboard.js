@@ -1,9 +1,13 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/axios';
+import { supabase } from '@/lib/supabase';
 
 export const fetchDashboard = async (filters = {}) => {
-  const response = await api.get('/dashboard', { params: filters });
-  return response.data;
+  const { data, error } = await supabase.rpc('get_dashboard_overview', {
+    p_from_date: filters?.from_date ?? null,
+    p_to_date: filters?.to_date ?? null,
+  });
+  if (error) throw error;
+  return data;
 };
 
 export const fetchDashboardQueryKey = (filters = {}) => ['dashboard', filters];

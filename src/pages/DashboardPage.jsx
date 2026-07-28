@@ -45,7 +45,7 @@ const DashboardPage = () => {
   //   useFetchChartData(queryParams);
 
   // Ambil pesan error
-  const errorMessage = error?.response?.data?.message || null;
+  const errorMessage = error?.message || null;
 
   // Cek status online/offline
   const isOnline = useOnlineStatus();
