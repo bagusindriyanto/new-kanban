@@ -75,7 +75,10 @@ const UpdateProfileForm = () => {
   const { mutateAsync: updateProfileMutate, isPending } = useUpdateProfile();
 
   const onSubmit = (data) => {
-    const payload = { ...data, name: data.full_name.split(' ')[0] };
+    const payload = {
+      ...data,
+      name: data.name || data.full_name.split(' ')[0],
+    };
 
     toast.promise(updateProfileMutate(payload), {
       loading: 'Sedang memperbarui akun...',

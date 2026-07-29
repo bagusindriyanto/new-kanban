@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { fetchUpcomingTasksQueryKey } from '@/features/tasks/api/fetchUpcomingTasks';
+// import { fetchUpcomingTasksQueryKey } from '@/features/tasks/api/fetchUpcomingTasks';
 import { fetchDashboardQueryKey } from '@/features/dashboard/api/fetchDashboard';
 
 export const queryClient = new QueryClient({
@@ -27,9 +27,9 @@ export const queryClient = new QueryClient({
         // Invalidate data dashboard
         queryClient.invalidateQueries({ queryKey: fetchDashboardQueryKey() });
         // Invalidate data upcoming tasks
-        queryClient.invalidateQueries({
-          queryKey: fetchUpcomingTasksQueryKey(),
-        });
+        // queryClient.invalidateQueries({
+        //   queryKey: fetchUpcomingTasksQueryKey(),
+        // });
       },
     },
   },

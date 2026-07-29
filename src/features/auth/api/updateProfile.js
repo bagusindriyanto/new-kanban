@@ -2,7 +2,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { queryClient } from '@/lib/queryClient';
-import { fetchProfileQueryKey } from './fetchProfile';
 import useAuthStore from '@/stores/authStore';
 
 const uploadAvatar = async (userId, file) => {
@@ -73,7 +72,7 @@ export const useUpdateProfile = () => {
       return updates;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fetchProfileQueryKey(userId) });
+      queryClient.invalidateQueries();
     },
   });
 };
