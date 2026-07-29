@@ -28,64 +28,61 @@ import ProtectedRoute from '@/routes/ProtectedRoute';
 //   <Suspense fallback={<LoadingPage />}>{children}</Suspense>
 // );
 
-export const router = createBrowserRouter(
-  [
-    {
-      element: <GuestRoute />,
-      children: [
-        {
-          element: <AuthLayout />,
-          children: [
-            {
-              path: '/login',
-              element: <LoginPage />,
-              handle: { breadcrumb: 'Login' },
-            },
-            // {
-            //   path: '/register',
-            //   element: <RegisterPage />,
-            //   handle: { breadcrumb: 'Register' },
-            // },
-          ],
-        },
-      ],
-    },
-    {
-      element: (
-        <ProtectedRoute
-        // allowedRoles={['Admin', 'Manager', 'Supervisor', 'Staff']}
-        />
-      ),
-      children: [
-        {
-          element: <AppLayout />,
-          children: [
-            {
-              index: true,
-              element: <HomePage />,
-              handle: { breadcrumb: 'Kanban Board' },
-            },
-            {
-              path: 'performance',
-              element: <DashboardPage />,
-              handle: { breadcrumb: 'Performance' },
-            },
-            {
-              path: 'changelog',
-              element: <ChangelogPage />,
-              handle: { breadcrumb: 'Changelog' },
-            },
-            {
-              path: 'settings',
-              element: <SettingsPage />,
-              handle: { breadcrumb: 'Pengaturan' },
-            },
-          ],
-        },
-      ],
-    },
-    { path: '/unauthorized', element: <UnauthorizedPage /> },
-    { path: '*', element: <NotFoundPage /> },
-  ],
-  { basename: '/kanban' },
-);
+export const router = createBrowserRouter([
+  {
+    element: <GuestRoute />,
+    children: [
+      {
+        element: <AuthLayout />,
+        children: [
+          {
+            path: '/login',
+            element: <LoginPage />,
+            handle: { breadcrumb: 'Login' },
+          },
+          // {
+          //   path: '/register',
+          //   element: <RegisterPage />,
+          //   handle: { breadcrumb: 'Register' },
+          // },
+        ],
+      },
+    ],
+  },
+  {
+    element: (
+      <ProtectedRoute
+      // allowedRoles={['Admin', 'Manager', 'Supervisor', 'Staff']}
+      />
+    ),
+    children: [
+      {
+        element: <AppLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+            handle: { breadcrumb: 'Kanban Board' },
+          },
+          {
+            path: 'performance',
+            element: <DashboardPage />,
+            handle: { breadcrumb: 'Performance' },
+          },
+          {
+            path: 'changelog',
+            element: <ChangelogPage />,
+            handle: { breadcrumb: 'Changelog' },
+          },
+          {
+            path: 'settings',
+            element: <SettingsPage />,
+            handle: { breadcrumb: 'Pengaturan' },
+          },
+        ],
+      },
+    ],
+  },
+  { path: '/unauthorized', element: <UnauthorizedPage /> },
+  { path: '*', element: <NotFoundPage /> },
+]);
