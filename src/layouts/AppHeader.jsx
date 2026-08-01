@@ -1,7 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import ModeToggle from '@/components/shared/ModeToggle';
-// import UpcomingTasksPanel from '@/features/tasks/components/UpcomingTasksPanel';
+import UpcomingTasksPanel from '@/features/tasks/components/UpcomingTasksPanel';
 import AppBreadcrumb from './AppBreadcrumb';
 
 const AppHeader = () => {
@@ -13,7 +13,7 @@ const AppHeader = () => {
         <AppBreadcrumb />
       </div>
       <div className="flex gap-2 items-center">
-        {/* <UpcomingTasksPanel /> */}
+        <UpcomingTasksPanel />
         <ModeToggle />
       </div>
     </header>
