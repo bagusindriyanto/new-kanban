@@ -1,24 +1,45 @@
-// import { queryOptions, useQuery } from '@tanstack/react-query';
-// import { api } from '@/lib/axios';
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import useAuthStore from '@/stores/authStore';
+import { supabase } from '@/lib/supabase';
 
-// export const fetchUpcomingTasks = async () => {
-//   const response = await api.get('/tasks/upcoming');
-//   return response.data;
-// };
+export const fetchUpcomingTasks = async (userId) => {
+  const { data, error } = await supabase
+    .from('tasks')
+    .select(
+      `
+      id,
+      content,
+      detail,
+      scheduled_at
+      `,
+    )
+    .eq('user_id', userId)
+    .eq('status', 'todo')
+    .gte('scheduled_at', new Date().toISOString())
+    .order('scheduled_at', { ascending: true })
+    .limit(10);
 
-// export const fetchUpcomingTasksQueryKey = () => ['upcoming-tasks'];
+  if (error) throw error;
+  return data;
+};
 
-// const fetchUpcomingTasksQueryOptions = () => {
-//   return queryOptions({
-//     queryKey: fetchUpcomingTasksQueryKey(),
-//     queryFn: fetchUpcomingTasks,
-//     placeholderData: (previousData) => previousData,
-//   });
-// };
+export const fetchUpcomingTasksQueryKey = () => ['upcoming-tasks'];
 
-// export const useFetchUpcomingTasks = (params = {}) => {
-//   return useQuery({
-//     ...fetchUpcomingTasksQueryOptions(),
-//     ...params.queryConfig,
-//   });
-// };
+const fetchUpcomingTasksQueryOptions = (userId) => {
+  return queryOptions({
+    queryKey: fetchUpcomingTasksQueryKey(),
+    queryFn: () => fetchUpcomingTasks(userId),
+    enabled: !!userId,
+    refetchInterval: 60 * 1000,
+  });
+};
+
+export const useFetchUpcomingTasks = (params = {}) => {
+  const currentUser = useAuthStore((state) => state.currentUser);
+  const userId = currentUser?.id;
+
+  return useQuery({
+    ...fetchUpcomingTasksQueryOptions(userId),
+    ...params.queryConfig,
+  });
+};
