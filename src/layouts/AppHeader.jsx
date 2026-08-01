@@ -3,6 +3,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import ModeToggle from '@/components/shared/ModeToggle';
 import UpcomingTasksPanel from '@/features/tasks/components/UpcomingTasksPanel';
 import AppBreadcrumb from './AppBreadcrumb';
+import ChatbotDrawer from '@/features/ai/components/ChatbotDrawer';
 
 const AppHeader = () => {
   return (
@@ -13,6 +14,7 @@ const AppHeader = () => {
         <AppBreadcrumb />
       </div>
       <div className="flex gap-2 items-center">
+        <ChatbotDrawer />
         <UpcomingTasksPanel />
         <ModeToggle />
       </div>
