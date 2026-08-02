@@ -9,12 +9,6 @@ export const queryClient = new QueryClient({
       staleTime: 60 * 1000, // 1 minutes
       // Seberapa lama data di-cache
       gcTime: 5 * 60 * 1000, // 5 minutes
-      retry: (failureCount, error) => {
-        if (error.status && error.status >= 400 && error.status < 500) {
-          return false;
-        }
-        return failureCount < 2;
-      },
     },
     mutations: {
       onSuccess: () => {

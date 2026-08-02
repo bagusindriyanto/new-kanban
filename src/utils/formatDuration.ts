@@ -1,4 +1,4 @@
-export const formatDuration = (minutes) => {
+export const formatDuration = (minutes: number): string => {
   if (!minutes || minutes === 0) return '0m';
 
   if (minutes < 60) {
