@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { fetchUpcomingTasksQueryKey } from '@/features/tasks/api/fetchUpcomingTasks';
 import { fetchDashboardQueryKey } from '@/features/dashboard/api/fetchDashboard';
 
@@ -11,12 +10,7 @@ export const queryClient = new QueryClient({
       // Seberapa lama data di-cache
       gcTime: 5 * 60 * 1000, // 5 minutes
       retry: (failureCount, error) => {
-        if (
-          error instanceof AxiosError &&
-          error.status &&
-          error.status >= 400 &&
-          error.status < 500
-        ) {
+        if (error.status && error.status >= 400 && error.status < 500) {
           return false;
         }
         return failureCount < 2;
