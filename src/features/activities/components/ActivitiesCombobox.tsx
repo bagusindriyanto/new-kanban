@@ -15,13 +15,20 @@ import { Controller } from 'react-hook-form';
 import { PlusIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
+import type { ActivityInsert } from '@/types/activity';
+import type { Control } from 'react-hook-form';
 
-const ActivitiesCombobox = ({ control, className }) => {
+type ActivitiesComboboxProps = {
+  control: Control<any>;
+  className?: string;
+};
+
+const ActivitiesCombobox = ({ control, className }: ActivitiesComboboxProps) => {
   const id = useId();
   const { data: contents, isLoading } = useFetchActivities();
   const { mutateAsync, isPending } = useAddActivity();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: ActivityInsert) => {
     toast.promise(mutateAsync(data), {
       loading: 'Sedang menambahkan aktivitas...',
       success: () => {
@@ -85,7 +92,7 @@ const ActivitiesCombobox = ({ control, className }) => {
                       size="sm"
                       disabled={isPending}
                       onClick={() => {
-                        onSubmit({ activity: field.value });
+                        onSubmit({ name: field.value });
                       }}
                     >
                       {isPending ? (
