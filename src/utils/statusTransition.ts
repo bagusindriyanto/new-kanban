@@ -1,17 +1,13 @@
+import type { Task, TaskStatus } from '@/types/task';
 import { formatToSQL } from './formatTimestamp';
 import { columns } from '@/config/column';
 
 const statusOrder = columns.map((column) => column.id);
 
-/**
- * Menghitung data transisi status task.
- * Digunakan oleh onMove (arrow buttons) dan drag-and-drop.
- *
- * @param {Object} task - Task yang akan diubah statusnya
- * @param {string} newStatus - Status tujuan
- * @returns {Object|null} - Data update, atau null jika transisi tidak valid
- */
-export const computeStatusTransition = (task, newStatus) => {
+export const computeStatusTransition = (
+  task: Task,
+  newStatus: TaskStatus,
+): Task | null => {
   if (newStatus === task.status) return null;
 
   const currentIndex = statusOrder.indexOf(task.status);
@@ -37,7 +33,7 @@ export const computeStatusTransition = (task, newStatus) => {
         case 'done':
           done = now;
           if (progress) {
-            const diff = new Date(now) - new Date(progress);
+            const diff = new Date(now).getTime() - new Date(progress).getTime();
             mnt_activity = Math.floor(diff / 60000) - mnt_pause;
           }
           break;

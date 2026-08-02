@@ -8,7 +8,8 @@ export const useAuthListener = () => {
   const setSession = useAuthStore((state) => state.setSession);
   const setInitialized = useAuthStore((state) => state.setInitialized);
   const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
-  const currentUserIdRef = useRef(null);
+  const resetFilter = useFilterStore((state) => state.resetFilter);
+  const currentUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const {
@@ -21,7 +22,7 @@ export const useAuthListener = () => {
 
       if (event === 'SIGNED_OUT') {
         currentUserIdRef.current = null;
-        setSelectedUserId('all');
+        resetFilter();
         queryClient.clear();
       }
       if (event === 'INITIAL_SESSION') {
@@ -43,5 +44,5 @@ export const useAuthListener = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [setSession, setInitialized, setSelectedUserId]);
+  }, [setSession, setInitialized, setSelectedUserId, resetFilter]);
 };

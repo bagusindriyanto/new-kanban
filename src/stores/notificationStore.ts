@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 
-const useNotificationStore = create((set) => ({
+type NotificationState = {
+  notifiedTaskIds: Set<number>;
+  markAsNotified: (taskId: number) => void;
+};
+
+const useNotificationStore = create<NotificationState>()((set) => ({
   notifiedTaskIds: new Set(),
   markAsNotified: (taskId) =>
     set((state) => ({

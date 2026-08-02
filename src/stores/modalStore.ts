@@ -1,6 +1,16 @@
+import type { Task } from '@/types/task';
 import { create } from 'zustand';
 
-const useModalStore = create((set) => ({
+type ModalState = {
+  isUpdateOpen: boolean;
+  isDeleteOpen: boolean;
+  selectedTask: Task | null;
+
+  setUpdateOpen: (open: boolean, task: Task | null) => void;
+  setDeleteOpen: (open: boolean, task: Task | null) => void;
+};
+
+const useModalStore = create<ModalState>()((set) => ({
   isUpdateOpen: false,
   isDeleteOpen: false,
   selectedTask: null,

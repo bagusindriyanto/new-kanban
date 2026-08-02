@@ -1,5 +1,12 @@
+import type { TaskStatus } from '@/types/task';
+
 // Kolom status
-export const columns = [
+type Column = {
+  id: TaskStatus;
+  title: 'To Do' | 'On Progress' | 'Done';
+};
+
+export const columns: Column[] = [
   {
     id: 'todo',
     title: 'To Do',
