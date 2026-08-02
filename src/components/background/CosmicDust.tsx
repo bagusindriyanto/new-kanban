@@ -1,15 +1,22 @@
-'use client';
-import { motion, useMotionValue, useSpring } from 'motion/react';
+import {
+  motion,
+  useMotionValue,
+  // useSpring
+} from 'motion/react';
 import { useCallback } from 'react';
 
-export default function CosmicDustBackground({ children }) {
+export default function AuroraBackground({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  // const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  // const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   const handleMouseMove = useCallback(
-    (e) => {
+    (e: React.MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       const y = (e.clientY / window.innerHeight - 0.5) * 2;
       mouseX.set(x);
@@ -20,7 +27,7 @@ export default function CosmicDustBackground({ children }) {
 
   return (
     <div
-      className="overflow-hidden relative w-full min-h-screen"
+      className="relative w-full min-h-screen overflow-hidden"
       onMouseMove={handleMouseMove}
       style={{ filter: 'saturate(1.1)' }}
     >
@@ -110,7 +117,7 @@ export default function CosmicDustBackground({ children }) {
       />
 
       <div
-        className="absolute inset-0 mix-blend-overlay pointer-events-none"
+        className="absolute inset-0 pointer-events-none mix-blend-overlay"
         style={{ opacity: 0.3 }}
       >
         <svg className="w-full h-full">

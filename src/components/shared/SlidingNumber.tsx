@@ -1,15 +1,21 @@
 import { useEffect, useId } from 'react';
-import { motion, useSpring, useTransform, motionValue } from 'motion/react';
+import {
+  MotionValue,
+  motion,
+  useSpring,
+  useTransform,
+  motionValue,
+} from 'motion/react';
 import useMeasure from 'react-use-measure';
 
 const TRANSITION = {
-  type: 'spring',
+  type: 'spring' as const,
   stiffness: 280,
   damping: 18,
   mass: 0.3,
 };
 
-function Digit({ value, place }) {
+function Digit({ value, place }: { value: number; place: number }) {
   const valueRoundedToPlace = Math.floor(value / place) % 10;
   const initial = motionValue(valueRoundedToPlace);
   const animatedValue = useSpring(initial, TRANSITION);
@@ -28,7 +34,7 @@ function Digit({ value, place }) {
   );
 }
 
-function Number({ mv, number }) {
+function Number({ mv, number }: { mv: MotionValue<number>; number: number }) {
   const uniqueId = useId();
   const [ref, bounds] = useMeasure();
 
@@ -67,11 +73,17 @@ function Number({ mv, number }) {
   );
 }
 
+type SlidingNumberProps = {
+  value: number;
+  padStart?: boolean;
+  decimalSeparator?: string;
+};
+
 export function SlidingNumber({
   value,
   padStart = false,
   decimalSeparator = '.',
-}) {
+}: SlidingNumberProps) {
   const absValue = Math.abs(value);
   const [integerPart, decimalPart] = absValue.toString().split('.');
   const integerValue = parseInt(integerPart, 10);

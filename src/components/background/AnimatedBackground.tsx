@@ -2,7 +2,7 @@ import { useTheme } from 'next-themes';
 import AuroraDreamBackground from './AuroraDream';
 import CosmicDustBackground from './CosmicDust';
 
-const AnimatedBackground = ({ children }) => {
+const AnimatedBackground = ({ children }: { children?: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();
 
   // resolvedTheme otomatis resolve "system" → "light"/"dark"

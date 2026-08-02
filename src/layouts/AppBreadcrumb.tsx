@@ -21,18 +21,25 @@ import { Button } from '@/components/ui/button';
 
 const MAX_VISIBLE = 3; // tampil semua jika ≤ 3, elipsis jika > 3
 
+type BreadcrumbHandle = {
+  breadcrumb?: string | ((data: any) => React.ReactNode);
+};
+
 const AppBreadcrumb = () => {
   const matches = useMatches();
 
   const crumbs = matches
-    .filter((m) => m.handle?.breadcrumb)
-    .map((m) => {
-      const handle = m.handle;
+    .filter((match) => {
+      const handle = match.handle as BreadcrumbHandle | undefined;
+      return !!handle?.breadcrumb;
+    })
+    .map((match) => {
+      const handle = match.handle as BreadcrumbHandle;
       return {
-        path: m.pathname,
+        path: match.pathname,
         label:
           typeof handle.breadcrumb === 'function'
-            ? handle.breadcrumb(m.data)
+            ? handle.breadcrumb(match.data)
             : handle.breadcrumb,
       };
     });

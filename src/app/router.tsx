@@ -4,7 +4,6 @@ import AuthLayout from '@/layouts/AuthLayout';
 import AppLayout from '@/layouts/AppLayout';
 
 import LoginPage from '@/pages/LoginPage';
-import RegisterPage from '@/pages/RegisterPage';
 
 import HomePage from '@/pages/HomePage';
 import DashboardPage from '@/pages/DashboardPage';

@@ -10,7 +10,7 @@ import { refreshData } from '@/utils/refreshData';
 import { format } from 'date-fns';
 import { useIsFetching } from '@tanstack/react-query';
 
-export const RefreshToggle = ({ dataUpdatedAt }) => {
+export const RefreshToggle = ({ dataUpdatedAt }: { dataUpdatedAt: number }) => {
   const isFetching = useIsFetching();
 
   return (
@@ -21,7 +21,7 @@ export const RefreshToggle = ({ dataUpdatedAt }) => {
             variant="secondary"
             size="icon-sm"
             onClick={refreshData}
-            disabled={isFetching}
+            disabled={!!isFetching}
           />
         }
       >

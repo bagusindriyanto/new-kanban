@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router';
 import useAuthStore from '@/stores/authStore';
 import FullPageLoader from '@/components/shared/FullPageLoader';
 
-const ProtectedRoute = ({ allowedRoles }) => {
+const ProtectedRoute = () => {
   const { session, isInitialized } = useAuthStore();
 
   if (!isInitialized) return <FullPageLoader />;

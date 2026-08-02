@@ -9,6 +9,7 @@ import { id } from 'date-fns/locale';
 import { startOfDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import useFilterStore from '@/stores/filterStore';
+import type { DropdownProps } from '@daypicker/react';
 import {
   Select,
   SelectContent,
@@ -23,14 +24,14 @@ const DateDropdown = ({
   value,
   onChange,
   'aria-label': ariaLabel,
-}) => {
-  const handleValueChange = (newValue) => {
+}: DropdownProps) => {
+  const handleValueChange = (newValue: string) => {
     if (onChange && newValue !== null) {
       const syntheticEvent = {
         target: {
           value: newValue,
         },
-      };
+      } as React.ChangeEvent<HTMLSelectElement>;
 
       onChange(syntheticEvent);
     }
@@ -93,7 +94,7 @@ export const FilterCalendar = () => {
           classNames={{
             nav: 'flex items-center w-full absolute top-0 inset-x-0 justify-between pointer-events-none [&>button]:pointer-events-auto',
           }}
-          defaultMonth={range.from}
+          defaultMonth={range?.from}
           weekStartsOn={1}
           selected={range}
           onSelect={setRange}

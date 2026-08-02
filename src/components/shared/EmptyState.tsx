@@ -1,7 +1,6 @@
 import { ClipboardCheckIcon } from 'lucide-react';
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,

@@ -18,10 +18,18 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const getMessage = (errorMessage) =>
+const getMessage = (errorMessage?: string) =>
   errorMessage || 'Gagal terhubung ke server.';
 
-export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
+export const ErrorBanner = ({
+  isOnline,
+  errorMessage,
+  className,
+}: {
+  isOnline: boolean;
+  errorMessage?: string;
+  className?: string;
+}) => {
   return (
     <Item className={cn('bg-destructive/15', className)} variant="muted">
       <ItemMedia variant="icon">
@@ -43,7 +51,7 @@ export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
       </ItemContent>
       <ItemActions>
         <Button
-          onClick={() => window.location.reload(false)}
+          onClick={() => window.location.reload()}
           size="sm"
           variant="outline"
         >
@@ -55,7 +63,13 @@ export const ErrorBanner = ({ isOnline, errorMessage, className }) => {
   );
 };
 
-export const ErrorFull = ({ isOnline, errorMessage }) => {
+export const ErrorFull = ({
+  isOnline,
+  errorMessage,
+}: {
+  isOnline: boolean;
+  errorMessage?: string;
+}) => {
   return (
     <Empty>
       <EmptyHeader>
@@ -76,7 +90,7 @@ export const ErrorFull = ({ isOnline, errorMessage }) => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button onClick={() => window.location.reload(false)} variant="outline">
+        <Button onClick={() => window.location.reload()} variant="outline">
           <RotateCwIcon />
           Refresh Halaman
         </Button>

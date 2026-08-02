@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import useNotificationStore from '@/stores/notificationStore';
+import type { Task } from '@/types/task';
 
-const EMPTY_TASKS = [];
+const EMPTY_TASKS: Task[] = [];
 
 const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
   const { notifiedTaskIds, markAsNotified } = useNotificationStore();
@@ -11,11 +12,11 @@ const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
     const checkDeadlines = () => {
       if (!Array.isArray(tasks) || tasks.length === 0) return;
 
-      const now = new Date();
+      const now = new Date().getTime();
       tasks.forEach((task) => {
         if (!task.scheduled_at) return;
 
-        const scheduledTime = new Date(task.scheduled_at);
+        const scheduledTime = new Date(task.scheduled_at).getTime();
         const diffInMinutes = Math.ceil((scheduledTime - now) / 60000);
 
         if (diffInMinutes > 15 && diffInMinutes <= 30) {

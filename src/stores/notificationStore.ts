@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
 type NotificationState = {
-  notifiedTaskIds: Set<number>;
-  markAsNotified: (taskId: number) => void;
+  notifiedTaskIds: Set<string>;
+  markAsNotified: (notifyId: string) => void;
 };
 
 const useNotificationStore = create<NotificationState>()((set) => ({
   notifiedTaskIds: new Set(),
-  markAsNotified: (taskId) =>
+  markAsNotified: (notifyId) =>
     set((state) => ({
-      notifiedTaskIds: new Set(state.notifiedTaskIds).add(taskId),
+      notifiedTaskIds: new Set(state.notifiedTaskIds).add(notifyId),
     })),
 }));
 
