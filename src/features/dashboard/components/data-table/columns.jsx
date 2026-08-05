@@ -1,7 +1,7 @@
 import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatDuration } from '@/utils/formatDuration';
-import UserAvatar from '@/features/users/components/UserAvatar';
+import UserAvatar from '@/components/shared/UserAvatar';
 
 export const columns = [
   {

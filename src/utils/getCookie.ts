@@ -1,4 +1,3 @@
-// lib/get-cookie.ts
 export function getCookie(name: string): string | undefined {
   const match = document.cookie
     .split('; ')

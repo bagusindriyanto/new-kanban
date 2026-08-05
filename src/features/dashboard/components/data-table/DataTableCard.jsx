@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { DownloadIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
-import useFilterStore from '@/stores/filterStore';
+import { useFilterStore } from '@/stores/filterStore';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 

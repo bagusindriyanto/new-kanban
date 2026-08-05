@@ -8,7 +8,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { id } from 'date-fns/locale';
 import { startOfDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import useFilterStore from '@/stores/filterStore';
+import { useFilterStore } from '@/stores/filterStore';
 import type { DropdownProps } from '@daypicker/react';
 import {
   Select,

@@ -1,13 +1,14 @@
-import type { Task, TaskStatus } from '@/types/task';
+import type { TaskStatus, TaskUpdate } from '@/types/task';
 import { formatToSQL } from './formatTimestamp';
 import { columns } from '@/config/column';
+import type { TaskQueryResult } from '@/features/tasks/api/fetchTasks';
 
 const statusOrder = columns.map((column) => column.id);
 
 export const computeStatusTransition = (
-  task: Task,
+  task: TaskQueryResult,
   newStatus: TaskStatus,
-): Task | null => {
+): TaskUpdate | null => {
   if (newStatus === task.status) return null;
 
   const currentIndex = statusOrder.indexOf(task.status);
@@ -56,7 +57,9 @@ export const computeStatusTransition = (
   }
 
   return {
-    ...task,
+    id: task.id,
+    user_id: task.user_id,
+    assigner_id: task.assigner_id,
     status: newStatus,
     timestamp_progress: progress,
     timestamp_done: done,

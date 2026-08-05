@@ -11,7 +11,7 @@ import { RefreshToggle } from '@/components/shared/RefreshToggle';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { ErrorBanner } from '@/components/shared/ErrorState';
 import { Badge } from '@/components/ui/badge';
-import useFilterStore from '@/stores/filterStore';
+import { useFilterStore } from '@/stores/filterStore';
 import { format } from 'date-fns';
 import { useFetchDashboard } from '@/features/dashboard/api/fetchDashboard';
 import UserStatsCardSkeleton from '../features/dashboard/components/stats/UserStatsCardSkeleton';

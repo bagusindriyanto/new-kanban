@@ -1,7 +1,7 @@
 import { queryClient } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
 import useAuthStore from '@/stores/authStore';
-import useFilterStore from '@/stores/filterStore';
+import { useFilterStore } from '@/stores/filterStore';
 import { useEffect, useRef } from 'react';
 
 export const useAuthListener = () => {

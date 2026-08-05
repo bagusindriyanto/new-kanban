@@ -1,7 +1,7 @@
 import type { TaskStatus } from '@/types/task';
 
 // Kolom status
-type Column = {
+export type Column = {
   id: TaskStatus;
   title: 'To Do' | 'On Progress' | 'Done';
 };

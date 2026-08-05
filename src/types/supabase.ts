@@ -181,59 +181,53 @@ export type Database = {
         Row: {
           assigner_id: string | null
           content: string
-          created_at: string | null
+          created_at: string
           detail: string | null
           id: number
           minute_activity: number
           minute_pause: number
-          old_assigner_id: number | null
-          old_pic_id: number | null
           pause_time: string | null
           scheduled_at: string | null
           status: Database["public"]["Enums"]["task_status"]
           timestamp_done: string | null
           timestamp_progress: string | null
           timestamp_todo: string
-          updated_at: string | null
-          user_id: string | null
+          updated_at: string
+          user_id: string
         }
         Insert: {
           assigner_id?: string | null
           content: string
-          created_at?: string | null
+          created_at?: string
           detail?: string | null
           id?: number
           minute_activity?: number
           minute_pause?: number
-          old_assigner_id?: number | null
-          old_pic_id?: number | null
           pause_time?: string | null
           scheduled_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           timestamp_done?: string | null
           timestamp_progress?: string | null
           timestamp_todo: string
-          updated_at?: string | null
-          user_id?: string | null
+          updated_at?: string
+          user_id: string
         }
         Update: {
           assigner_id?: string | null
           content?: string
-          created_at?: string | null
+          created_at?: string
           detail?: string | null
           id?: number
           minute_activity?: number
           minute_pause?: number
-          old_assigner_id?: number | null
-          old_pic_id?: number | null
           pause_time?: string | null
           scheduled_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           timestamp_done?: string | null
           timestamp_progress?: string | null
           timestamp_todo?: string
-          updated_at?: string | null
-          user_id?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -299,7 +293,7 @@ export type Database = {
           p_minute_activity: number
           p_minute_pause: number
           p_pause_time: string
-          p_status: string
+          p_status: Database["public"]["Enums"]["task_status"]
           p_timestamp_progress: string
         }
         Returns: number

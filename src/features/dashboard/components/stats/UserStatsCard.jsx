@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/utils/formatDuration';
-import UserAvatar from '@/features/users/components/UserAvatar';
+import UserAvatar from '@/components/shared/UserAvatar';
 
 const statItems = [
   {

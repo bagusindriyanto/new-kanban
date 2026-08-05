@@ -1,4 +1,4 @@
-import UpdateUserTabs from '@/features/users/components/UpdateUserTabs';
+import UpdateUserTabs from '@/features/auth/components/UpdateUserTabs';
 
 const SettingsPage = () => {
   return (

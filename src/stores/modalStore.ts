@@ -6,8 +6,8 @@ type ModalState = {
   isDeleteOpen: boolean;
   selectedTask: Task | null;
 
-  setUpdateOpen: (open: boolean, task: Task | null) => void;
-  setDeleteOpen: (open: boolean, task: Task | null) => void;
+  setUpdateOpen: (open: boolean, task?: Task | null) => void;
+  setDeleteOpen: (open: boolean, task?: Task | null) => void;
 };
 
 const useModalStore = create<ModalState>()((set) => ({

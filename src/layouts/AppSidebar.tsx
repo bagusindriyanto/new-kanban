@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import AccountMenu from '@/features/users/components/UserMenu';
+import AccountMenu from '@/features/auth/components/UserMenu';
 import logo from '@/assets/logo.png';
 import {
   SquareKanbanIcon,
