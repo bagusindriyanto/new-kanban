@@ -1,4 +1,4 @@
-import { Timeline } from '@/features/changelog/components/Timeline';
+import Timeline from '@/features/changelog/components/Timeline';
 import Footer from '@/layouts/Footer';
 
 const ChangelogPage = () => {

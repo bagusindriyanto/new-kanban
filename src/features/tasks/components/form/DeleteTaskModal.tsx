@@ -23,7 +23,9 @@ const DeleteTaskModal = () => {
   const { mutateAsync: deleteTaskMutation, isPending } = useDeleteTask();
 
   const onSubmit = () => {
-    toast.promise(deleteTaskMutation(selectedTask?.id), {
+    if (!selectedTask?.id) return;
+
+    toast.promise(deleteTaskMutation(selectedTask.id), {
       loading: 'Sedang menghapus task...',
       success: () => {
         setDeleteOpen(false);

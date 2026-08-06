@@ -1,32 +1,15 @@
-import StatusColumn from '@/features/tasks/components/StatusColumn';
 import UpdateTaskModal from '@/features/tasks/components/form/UpdateTaskModal';
 import DeleteTaskModal from '@/features/tasks/components/form/DeleteTaskModal';
 
-// Setting Kolom
-import { columns } from '@/config/column';
-
 // Komponen Filter
-import { Spinner } from '@/components/ui/spinner';
 import TasksControls from '@/features/tasks/components/TasksControls';
 import { useFetchTasks } from '@/features/tasks/api/fetchTasks';
-import { ErrorBanner, ErrorFull } from '@/components/shared/ErrorState';
-import EmptyState from '@/components/shared/EmptyState';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import useTaskFilters from '@/features/tasks/hooks/useTaskFilters';
 
-// Drag and drop
-import {
-  DragDropProvider,
-  DragOverlay,
-  type DragEndEvent,
-} from '@dnd-kit/react';
-import { useUpdateTask } from '@/features/tasks/api/updateTask';
-import { computeStatusTransition } from '@/utils/statusTransition';
-import { toast } from 'sonner';
-import TaskCard from '@/features/tasks/components/card/TaskCard';
-import BoardStatsColumn from '@/features/tasks/components/BoardStatsColumn';
-import type { TaskQueryResult } from '@/features/tasks/api/fetchTasks';
-import type { TaskStatus } from '@/types/task';
+import TasksContents from '@/features/tasks/components/TasksContents';
+import OfflineBanner from '@/components/shared/OfflineBanner';
+import ErrorBanner from '@/components/shared/ErrorBanner';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter
@@ -35,47 +18,10 @@ const HomePage = () => {
   // Tanstack query untuk tasks
   const {
     data: tasks,
-    isLoading: isFetchTasksLoading,
-    error: fetchTasksError,
+    isLoading,
+    error,
     dataUpdatedAt,
   } = useFetchTasks({ filters: queryParams });
-
-  // Mutation untuk drag and drop
-  const { mutate: updateTaskMutate } = useUpdateTask({
-    mutationConfig: {
-      onError: (err) => {
-        toast.error('Task gagal diperbarui', {
-          description: err?.message || null,
-        });
-      },
-    },
-  });
-
-  // Handle drag end untuk update status
-  const handleDragEnd: DragEndEvent = (event) => {
-    if (event.canceled) return;
-
-    const { source, target } = event.operation;
-    if (!source || !target) return;
-
-    // target.id = column status id (e.g. "todo", "on progress")
-    const newStatus = target.id as TaskStatus;
-    const task = source.data as TaskQueryResult | undefined;
-    if (!task) return;
-
-    const data = computeStatusTransition(task, newStatus);
-    if (!data) return;
-
-    updateTaskMutate(data);
-  };
-
-  // Error log
-  if (fetchTasksError) {
-    console.error(fetchTasksError?.message || 'Gagal terhubung ke server.');
-  }
-
-  // Ambil pesan error
-  const errorMessage = fetchTasksError?.message || null;
 
   // Cek status online/offline
   const isOnline = useOnlineStatus();
@@ -88,54 +34,19 @@ const HomePage = () => {
           <h2 className="ml-1 text-2xl font-bold tracking-tight">Tasks</h2>
           <TasksControls dataUpdatedAt={dataUpdatedAt} />
         </div>
+        {/* Tasks Contents */}
         <div className="flex flex-col flex-1 min-h-0 p-4">
-          {/* Main */}
-          {isOnline && isFetchTasksLoading && !fetchTasksError && (
-            <div className="flex flex-1 justify-center items-center">
-              <Spinner className="size-10" />
-            </div>
-          )}
-          {tasks?.length > 0 && (fetchTasksError || !isOnline) && (
-            <ErrorBanner
-              isOnline={isOnline}
-              errorMessage={errorMessage}
-              className="mb-4"
-            />
-          )}
-          {tasks?.length === 0 && (fetchTasksError || !isOnline) && (
-            <ErrorFull isOnline={isOnline} errorMessage={errorMessage} />
-          )}
-          {tasks?.length === 0 &&
-            !isFetchTasksLoading &&
-            !fetchTasksError &&
-            isOnline && <EmptyState />}
-          {tasks?.length > 0 && !isFetchTasksLoading && (
-            <DragDropProvider onDragEnd={handleDragEnd}>
-              <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
-                {columns.map((column) => (
-                  <StatusColumn
-                    key={column.id}
-                    columnId={column.id}
-                    title={column.title}
-                    tasks={tasks?.filter((task) => task.status === column.id)}
-                  />
-                ))}
-                <BoardStatsColumn tasks={tasks} />
-              </div>
-              <DragOverlay>
-                {(source) => {
-                  const task = source?.data as TaskQueryResult | undefined;
-                  if (!task) return null;
-                  return (
-                    <TaskCard
-                      task={task}
-                      className="opacity-100 scale-105 rotate-1"
-                    />
-                  );
-                }}
-              </DragOverlay>
-            </DragDropProvider>
-          )}
+          {tasks && !isOnline ? (
+            <OfflineBanner className="mb-4" />
+          ) : tasks && error ? (
+            <ErrorBanner errorMessage={error.message} className="mb-4" />
+          ) : null}
+          <TasksContents
+            isOnline={isOnline}
+            isLoading={isLoading}
+            error={error}
+            tasks={tasks}
+          />
         </div>
         {/* Modal untuk update task */}
         <UpdateTaskModal />

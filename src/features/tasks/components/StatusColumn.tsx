@@ -6,17 +6,15 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useCallback, useRef } from 'react';
 import type { TasksQueryResult } from '../api/fetchTasks';
 
-const StatusColumn = ({
-  title,
-  columnId,
-  tasks,
-}: {
+type StatusColumnProps = {
   title: Column['title'];
   columnId: Column['id'];
   tasks: TasksQueryResult;
-}) => {
+};
+
+const StatusColumn = ({ title, columnId, tasks }: StatusColumnProps) => {
   // Ref untuk scroll container (dipakai oleh virtualizer + droppable)
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const { ref: droppableRef, isDropTarget } = useDroppable({
     id: columnId,
@@ -31,7 +29,7 @@ const StatusColumn = ({
 
   // Gabungkan droppable ref dan scroll ref
   const mergedRef = useCallback(
-    (node) => {
+    (node: HTMLDivElement | null) => {
       scrollRef.current = node;
 
       if (typeof droppableRef === 'function') {

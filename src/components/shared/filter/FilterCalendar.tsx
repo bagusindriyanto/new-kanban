@@ -25,7 +25,7 @@ const DateDropdown = ({
   onChange,
   'aria-label': ariaLabel,
 }: DropdownProps) => {
-  const handleValueChange = (newValue: string) => {
+  const handleValueChange = (newValue: string | null) => {
     if (onChange && newValue !== null) {
       const syntheticEvent = {
         target: {
@@ -86,6 +86,7 @@ export const FilterCalendar = () => {
       <PopoverContent align="end" className="p-0 w-auto">
         <Calendar
           mode="range"
+          required={true}
           resetOnSelect
           locale={id}
           showWeekNumber

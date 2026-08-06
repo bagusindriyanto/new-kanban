@@ -34,7 +34,7 @@ export const computeStatusTransition = (
         case 'done':
           done = now;
           if (progress) {
-            const diff = new Date(now).getTime() - new Date(progress).getTime();
+            const diff = new Date().getTime() - new Date(progress).getTime();
             mnt_activity = Math.floor(diff / 60000) - mnt_pause;
           }
           break;
@@ -66,6 +66,5 @@ export const computeStatusTransition = (
     minute_activity: mnt_activity,
     minute_pause: mnt_pause,
     pause_time: pause,
-    updated_at: now,
   };
 };

@@ -4,7 +4,7 @@ import type { QueryConfig } from '@/lib/queryClient';
 import type { QueryData } from '@supabase/supabase-js';
 import type { QueryParams } from '../hooks/useTaskFilters';
 
-const buildFetchTasksQuery = (filters: QueryParams = {}) => {
+const buildFetchTasksQuery = (filters: QueryParams) => {
   const { user_id, from_date, to_date } = filters;
 
   let query = supabase.from('tasks').select(`
@@ -39,7 +39,7 @@ export type OptimisticTaskQueryResult = TaskQueryResult & {
   optimistic: boolean;
 };
 
-export const fetchTasks = async (filters: QueryParams = {}) => {
+export const fetchTasks = async (filters: QueryParams) => {
   const { data, error } = await buildFetchTasksQuery(filters);
   if (error) throw error;
   return data;
@@ -47,13 +47,13 @@ export const fetchTasks = async (filters: QueryParams = {}) => {
 
 export const fetchTasksQueryKeys = {
   all: ['tasks'] as const,
-  filters: (filters: QueryParams = {}) =>
+  filters: (filters: QueryParams) =>
     [...fetchTasksQueryKeys.all, filters] as const,
 };
 
 export type TasksQueryKey = ReturnType<typeof fetchTasksQueryKeys.filters>;
 
-const fetchTasksQueryOptions = (filters: QueryParams = {}) => {
+const fetchTasksQueryOptions = (filters: QueryParams) => {
   return queryOptions({
     queryKey: fetchTasksQueryKeys.filters(filters),
     queryFn: () => fetchTasks(filters),
@@ -63,13 +63,13 @@ const fetchTasksQueryOptions = (filters: QueryParams = {}) => {
 
 type UseFetchTasksParams = {
   queryConfig?: QueryConfig<typeof fetchTasksQueryOptions>;
-  filters?: QueryParams;
+  filters: QueryParams;
 };
 
 export const useFetchTasks = ({
   queryConfig,
   filters,
-}: UseFetchTasksParams = {}) => {
+}: UseFetchTasksParams) => {
   return useQuery({
     ...fetchTasksQueryOptions(filters),
     ...queryConfig,

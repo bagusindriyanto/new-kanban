@@ -45,8 +45,8 @@ const RegisterForm = () => {
     defaultValues: {
       full_name: '',
       nik: '',
-      division_id: null,
-      role_id: null,
+      division_id: undefined,
+      role_id: undefined,
       email: '',
       password: '',
       confirm_password: '',
@@ -115,7 +115,7 @@ const RegisterForm = () => {
               onFileChange={(fileWrapper) => {
                 const file = fileWrapper?.file;
                 const isFile = file instanceof File;
-                form.setValue('avatar', isFile ? file : null);
+                form.setValue('avatar', isFile ? file : undefined);
               }}
             />
             <Field className="grid grid-cols-2 gap-4">

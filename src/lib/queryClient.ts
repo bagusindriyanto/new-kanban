@@ -1,6 +1,6 @@
 import { QueryClient, type UseMutationOptions } from '@tanstack/react-query';
 import { fetchUpcomingTasksQueryKey } from '@/features/tasks/api/fetchUpcomingTasks';
-import { fetchDashboardQueryKey } from '@/features/dashboard/api/fetchDashboard';
+import { fetchDashboardQueryKeys } from '@/features/dashboard/api/fetchDashboard';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,7 +13,9 @@ export const queryClient = new QueryClient({
     mutations: {
       onSuccess: () => {
         // Invalidate data dashboard
-        queryClient.invalidateQueries({ queryKey: fetchDashboardQueryKey() });
+        queryClient.invalidateQueries({
+          queryKey: fetchDashboardQueryKeys.all,
+        });
         // Invalidate data upcoming tasks
         queryClient.invalidateQueries({
           queryKey: fetchUpcomingTasksQueryKey(),

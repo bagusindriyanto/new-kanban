@@ -1,0 +1,105 @@
+import { Spinner } from '@/components/ui/spinner';
+import type { TaskQueryResult, TasksQueryResult } from '../api/fetchTasks';
+import OfflineScreen from '@/components/shared/OfflineScreen';
+import ErrorScreen from '@/components/shared/ErrorScreen';
+import EmptyScreen from '@/components/shared/EmptyScreen';
+import {
+  DragDropProvider,
+  DragOverlay,
+  type DragEndEvent,
+} from '@dnd-kit/react';
+import { columns } from '@/config/column';
+import StatusColumn from './StatusColumn';
+import BoardStatsColumn from './BoardStatsColumn';
+import TaskCard from './card/TaskCard';
+import type { TaskStatus } from '@/types/task';
+import { computeStatusTransition } from '@/utils/statusTransition';
+import { useUpdateTask } from '../api/updateTask';
+import { toast } from 'sonner';
+
+const TasksContents = ({
+  isLoading,
+  isOnline,
+  error,
+  tasks,
+}: {
+  isLoading: boolean;
+  isOnline: boolean;
+  error: Error | null;
+  tasks: TasksQueryResult | undefined;
+}) => {
+  const { mutate: updateTaskMutate } = useUpdateTask({
+    mutationConfig: {
+      onError: (err) => {
+        toast.error('Task gagal diperbarui', {
+          description: err?.message || null,
+        });
+      },
+    },
+  });
+
+  // Handle drag end untuk update status
+  const handleDragEnd: DragEndEvent = (event) => {
+    if (event.canceled) return;
+
+    const { source, target } = event.operation;
+    if (!source || !target) return;
+
+    // target.id = column status id (e.g. "todo", "on progress")
+    const newStatus = target.id as TaskStatus;
+    const task = source.data as TaskQueryResult | undefined;
+    if (!task) return;
+
+    const data = computeStatusTransition(task, newStatus);
+    if (!data) return;
+
+    updateTaskMutate(data);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 justify-center items-center">
+        <Spinner className="size-10" />
+      </div>
+    );
+  }
+
+  if (!isOnline && !tasks) {
+    return <OfflineScreen />;
+  }
+
+  if (error && !tasks) {
+    return <ErrorScreen errorMessage={error.message} />;
+  }
+
+  if (!tasks || tasks.length === 0) {
+    return <EmptyScreen />;
+  }
+
+  return (
+    <DragDropProvider onDragEnd={handleDragEnd}>
+      <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
+        {columns.map((column) => (
+          <StatusColumn
+            key={column.id}
+            columnId={column.id}
+            title={column.title}
+            tasks={tasks.filter((task) => task.status === column.id)}
+          />
+        ))}
+        <BoardStatsColumn tasks={tasks} />
+      </div>
+      <DragOverlay>
+        {(source) => {
+          const task = source?.data as TaskQueryResult | undefined;
+          if (!task) return null;
+          return (
+            <TaskCard task={task} className="opacity-100 scale-105 rotate-1" />
+          );
+        }}
+      </DragOverlay>
+    </DragDropProvider>
+  );
+};
+
+export default TasksContents;

@@ -71,7 +71,7 @@ export const submitSchema = baseSchema
     timestamp_progress: formatToSQL(data.timestamp_progress),
     timestamp_done: formatToSQL(data.timestamp_done),
     scheduled_at: formatToSQL(data.scheduled_at),
-    updated_at: formatToSQL(new Date()),
+    // updated_at: formatToSQL(new Date()),
   }));
 
 export type UpdateTaskSubmitInput = z.infer<typeof submitSchema>;

@@ -15,7 +15,7 @@ export function usePauseTimer({
   const isPaused = !!pause_time;
 
   const [currentPauseMinutes, setCurrentPauseMinutes] = useState(0);
-  const pauseStartRef = useRef(null);
+  const pauseStartRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isPaused) {

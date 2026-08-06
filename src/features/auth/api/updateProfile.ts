@@ -47,7 +47,7 @@ export const useUpdateProfile = () => {
 
       const updates: ProfileUpdate = {
         full_name: payload.full_name,
-        name: payload.name || null,
+        name: payload.name,
         nik: payload.nik,
       };
       if (avatarUrl) {

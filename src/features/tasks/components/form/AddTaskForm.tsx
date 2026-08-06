@@ -18,7 +18,6 @@ import {
   submitSchema,
   type AddTaskFormInput,
 } from '../../schemas/addTaskSchema';
-import { formatToSQL } from '@/utils/formatTimestamp';
 
 const AddTaskForm = ({
   onOpenChange,
@@ -54,7 +53,6 @@ const AddTaskForm = ({
 
     const payload = {
       ...data,
-      scheduled_at: formatToSQL(data.scheduled_at),
       user_id: isAssigned ? data.user_id : currentUser.id,
       assigner_id: isAssigned ? currentUser.id : null,
     };

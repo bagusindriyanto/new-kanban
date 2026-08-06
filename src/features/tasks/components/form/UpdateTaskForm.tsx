@@ -49,7 +49,7 @@ const UpdateTaskForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: selectedTask?.content ?? '',
-      user_id: selectedTask?.user_id ?? null,
+      user_id: selectedTask?.user_id ?? undefined,
       status: selectedTask?.status ?? undefined,
       minute_pause: selectedTask?.minute_pause ?? 0,
       pause_time: !!selectedTask?.pause_time,

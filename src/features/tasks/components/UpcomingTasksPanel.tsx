@@ -66,6 +66,7 @@ const UpcomingTasksPanel = () => {
 
   const visibleTasks = upcomingTasks
     ?.filter((task) => {
+      if (!task.scheduled_at) return false;
       const diffInMinutes =
         (new Date(task.scheduled_at).getTime() - new Date().getTime()) / 60000;
       return diffInMinutes > 0 && diffInMinutes <= 30;

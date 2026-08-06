@@ -34,7 +34,7 @@ const DateDropdown = ({
   onChange,
   'aria-label': ariaLabel,
 }: DropdownProps) => {
-  const handleValueChange = (newValue: string) => {
+  const handleValueChange = (newValue: string | null) => {
     if (onChange && newValue !== null) {
       const syntheticEvent = {
         target: {

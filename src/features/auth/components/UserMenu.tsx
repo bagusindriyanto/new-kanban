@@ -27,7 +27,7 @@ const AccountMenu = () => {
       success: () => {
         return 'Log out berhasil';
       },
-      error: (err) => {
+      error: (err: Error) => {
         return {
           message: 'Log out gagal',
           description: err?.message || null,
@@ -48,7 +48,7 @@ const AccountMenu = () => {
               />
             }
           >
-            {isLoading ? (
+            {isLoading || currentUser === undefined ? (
               <>
                 <Skeleton className="size-8 shrink-0 rounded-full" />
                 <div className="grid flex-1 gap-1">
@@ -64,7 +64,7 @@ const AccountMenu = () => {
                     {currentUser.name ?? 'User'}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">
-                    {currentUser.role.name ?? '-'}
+                    {currentUser.role?.name ?? '-'}
                   </span>
                 </div>
               </>
@@ -78,7 +78,7 @@ const AccountMenu = () => {
             sideOffset={4}
           >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              {isLoading ? (
+              {isLoading || currentUser === undefined ? (
                 <>
                   <Skeleton className="size-8 shrink-0 rounded-full" />
                   <div className="grid flex-1 gap-1">
@@ -94,7 +94,7 @@ const AccountMenu = () => {
                       {currentUser.name ?? 'User'}
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {currentUser.role.name ?? '-'}
+                      {currentUser.role?.name ?? '-'}
                     </span>
                   </div>
                 </>

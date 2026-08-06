@@ -55,7 +55,6 @@ export const useUpdateTask = ({
         profiles?.find(
           (profile) => profile.user_id === updatedTask.assigner_id,
         ) ?? null;
-      console.log(updatedTask);
       previousTasks.forEach(([queryKey, oldTasks]) => {
         if (!oldTasks) return;
 
@@ -85,6 +84,7 @@ export const useUpdateTask = ({
                 ? {
                     ...task,
                     ...updatedTask,
+                    updated_at: new Date().toISOString(),
                     user: updatedUser,
                     assigner: updatedAssigner
                       ? { name: updatedAssigner.name }

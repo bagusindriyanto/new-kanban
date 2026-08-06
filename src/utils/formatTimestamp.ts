@@ -1,12 +1,12 @@
 import { format } from 'date-fns';
 
-export const formatToSQL = (date: Date | null): string | null => {
+export const formatToSQL = (date: Date | null | undefined): string | null => {
   if (!date) return null;
 
   return new Date(date).toISOString();
 };
 
-export const parseFromSQL = (sqlDate: string | null): string => {
+export const parseFromSQL = (sqlDate: string | null | undefined): string => {
   if (!sqlDate) return '-';
 
   // const parsed = parse(sqlDate, 'yyyy-MM-dd HH:mm:ss', new Date());

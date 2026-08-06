@@ -27,7 +27,7 @@ import {
 
 const UpdateProfileForm = () => {
   const { data: currentUser } = useFetchProfile();
-  const defaultAvatar = currentUser?.avatar;
+  const defaultAvatar = currentUser?.avatar ?? undefined;
 
   const form = useForm<UpdateProfileInput>({
     resolver: zodResolver(updateProfileSchema),

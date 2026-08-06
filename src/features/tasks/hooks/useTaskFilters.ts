@@ -2,7 +2,7 @@ import { useFilterStore, type SelectedUserId } from '@/stores/filterStore';
 import { endOfDay, startOfDay } from 'date-fns';
 
 export type QueryParams = {
-  user_id?: SelectedUserId;
+  user_id: SelectedUserId;
   from_date?: string;
   to_date?: string;
 };
