@@ -3,7 +3,7 @@ import Footer from '@/layouts/Footer';
 
 const ChangelogPage = () => {
   return (
-    <div className="min-h-screen flex flex-col" id="top">
+    <div className="min-h-screen flex flex-col">
       <Timeline />
       <Footer />
     </div>

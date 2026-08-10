@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Fragment } from 'react';
 
 type TimelineContent = {
   action:
@@ -219,6 +220,13 @@ const timelineData: TimelineData[] = [
 ];
 
 const Timeline = () => {
+  const handleBackToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <section className="py-20">
       <h1 className="mb-10 text-center text-3xl font-bold tracking-tighter text-foreground sm:text-6xl">
@@ -230,7 +238,7 @@ const Timeline = () => {
           className="absolute top-4 left-2 bg-muted"
         />
         {timelineData.map(({ title, date, content }, index) => (
-          <div key={index} className="relative mb-10 pl-8">
+          <div key={`timeline-${index}`} className="relative mb-10 pl-8">
             <div className="absolute top-3.5 left-0 flex size-4 items-center justify-center rounded-full bg-foreground" />
             <h4 className="rounded-xl py-2 text-xl font-bold tracking-tight xl:mb-4 xl:px-3">
               {title}
@@ -244,16 +252,26 @@ const Timeline = () => {
               <CardContent>
                 <div className="prose text-foreground dark:prose-invert">
                   {content.map(({ action, lists }, index) => (
-                    <>
-                      <p className={cn('mb-4', index > 0 && 'mt-6')}>
+                    <Fragment key={`content-${index}`}>
+                      <p
+                        className={cn(
+                          'mb-4 font-semibold',
+                          index > 0 && 'mt-6',
+                        )}
+                      >
                         {action}
                       </p>
-                      <ul>
-                        {lists.map((list) => (
-                          <li className="flex items-center gap-2">{list}</li>
+                      <ul className="space-y-1">
+                        {lists.map((list, index) => (
+                          <li
+                            key={`list-${index}`}
+                            className="flex items-center gap-2"
+                          >
+                            {list}
+                          </li>
                         ))}
                       </ul>
-                    </>
+                    </Fragment>
                   ))}
                 </div>
               </CardContent>
@@ -262,9 +280,13 @@ const Timeline = () => {
         ))}
       </div>
       <div className="mx-auto max-w-7xl mt-12 flex justify-center">
-        <Button variant="link" className="text-foreground">
-          <ArrowUpIcon />
-          <a href="#top">Kembali ke atas</a>
+        <Button
+          variant="link"
+          className="text-foreground"
+          onClick={handleBackToTop}
+        >
+          <ArrowUpIcon data-icon="inline-start" />
+          Kembali ke atas
         </Button>
       </div>
     </section>
