@@ -1,4 +1,4 @@
-import { flexRender, type Table as TanstackTable } from '@tanstack/react-table';
+import { type RowData, type ReactTable } from '@tanstack/react-table';
 import {
   Table,
   TableBody,
@@ -7,12 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import type { DataTableFeatures } from './DataTableFeatures';
 
-type DataTableProps<TData> = {
-  table: TanstackTable<TData>;
+type DataTableProps<TData extends RowData> = {
+  table: ReactTable<DataTableFeatures, TData>;
 };
 
-const DataTable = <TData,>({ table }: DataTableProps<TData>) => {
+const DataTable = <TData extends RowData>({ table }: DataTableProps<TData>) => {
   return (
     <div className="overflow-hidden rounded-xl border">
       <Table>
@@ -22,12 +23,9 @@ const DataTable = <TData,>({ table }: DataTableProps<TData>) => {
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead className="px-0 w-1/4" key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                    {header.isPlaceholder ? null : (
+                      <table.FlexRender header={header} />
+                    )}
                   </TableHead>
                 );
               })}
@@ -43,7 +41,7 @@ const DataTable = <TData,>({ table }: DataTableProps<TData>) => {
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <table.FlexRender cell={cell} />
                   </TableCell>
                 ))}
               </TableRow>

@@ -4,10 +4,11 @@ import { formatDuration } from '@/utils/formatDuration';
 import UserAvatar from '@/components/shared/UserAvatar';
 import { createColumnHelper } from '@tanstack/react-table';
 import type { TableData } from '@/types/dashboard';
+import type { DataTableFeatures } from './DataTableFeatures';
 
-const columnHelper = createColumnHelper<TableData>();
+const columnHelper = createColumnHelper<DataTableFeatures, TableData>();
 
-export const columns = [
+export const tableColumns = columnHelper.columns([
   columnHelper.accessor('user', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
@@ -24,7 +25,7 @@ export const columns = [
         </Button>
       );
     },
-    sortingFn: (rowA, rowB) => {
+    sortFn: (rowA, rowB) => {
       const nameA = rowA.original.user.profile.full_name ?? '';
       const nameB = rowB.original.user.profile.full_name ?? '';
       return nameA.localeCompare(nameB);
@@ -138,4 +139,4 @@ export const columns = [
       );
     },
   }),
-];
+]);

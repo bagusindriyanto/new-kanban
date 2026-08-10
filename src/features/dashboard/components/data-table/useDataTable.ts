@@ -1,48 +1,43 @@
-// use-data-table.ts
-import { useState } from 'react';
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
+  useTable,
   type ColumnDef,
+  type RowData,
   type SortingState,
   type ColumnFiltersState,
+  type ColumnVisibilityState,
 } from '@tanstack/react-table';
+import { features, type DataTableFeatures } from './DataTableFeatures';
+import { useState } from 'react';
 
-type UseDataTableProps<TData> = {
+type UseDataTableProps<TData extends RowData> = {
   data: TData[];
-  columns: ColumnDef<TData>[];
-  pageSize?: number;
+  columns: ColumnDef<DataTableFeatures, TData>[];
 };
 
-export const useDataTable = <TData>({
+export const useDataTable = <TData extends RowData>({
   data,
   columns,
-  pageSize = 10,
 }: UseDataTableProps<TData>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    useState<ColumnVisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
-  const table = useReactTable({
+  const table = useTable({
     data,
     columns,
+    features,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
+      rowSelection,
     },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
-    },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return table;

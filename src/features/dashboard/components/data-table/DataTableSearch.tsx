@@ -4,16 +4,17 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
-import type { Table as TanstackTable } from '@tanstack/react-table';
+import type { ReactTable, RowData } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
+import type { DataTableFeatures } from './DataTableFeatures';
 
-type DataTableSearchProps<TData> = {
-  table: TanstackTable<TData>;
+type DataTableSearchProps<TData extends RowData> = {
+  table: ReactTable<DataTableFeatures, TData>;
   columnId: string; // kolom mana yang mau di-search
   placeholder?: string;
 };
 
-const DataTableSearch = <TData,>({
+const DataTableSearch = <TData extends RowData>({
   table,
   columnId,
   placeholder = 'Cari...',

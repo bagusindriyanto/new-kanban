@@ -12,7 +12,7 @@ import { DownloadIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
 import { useFilterStore } from '@/stores/filterStore';
-import { columns } from './columns';
+import { tableColumns } from './DataTableColumns';
 import DataTable from './DataTable';
 import type { TableData } from '@/types/dashboard';
 import type { JSON2SheetOpts, OriginOption } from 'xlsx-js-style';
@@ -26,7 +26,7 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
   const [isExporting, setIsExporting] = useState(false);
   const range = useFilterStore((state) => state.range);
 
-  const table = useDataTable({ data, columns });
+  const table = useDataTable({ data, columns: tableColumns });
 
   const dateLabel = range?.from
     ? range?.to
@@ -39,9 +39,9 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
   const dateToFileName = range?.from
     ? range?.to
       ? range.from.getTime() === range.to.getTime()
-        ? format(range.from, 'yyyyMMdd')
-        : `${format(range.from, 'yyyyMMdd')}_${format(range.to, 'yyyyMMdd')}`
-      : format(range.from, 'yyyyMMdd')
+        ? format(range.from, 'd-M-yyyy')
+        : `${format(range.from, 'd-M-yyyy')} - ${format(range.to, 'd-M-yyyy')}`
+      : format(range.from, 'd-M-yyyy')
     : 'all';
 
   const exportFile = async () => {
@@ -157,7 +157,7 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
 
       const wb = utils.book_new();
       utils.book_append_sheet(wb, ws, 'Data');
-      writeFile(wb, `data_aktivitas_${dateToFileName}.xlsx`);
+      writeFile(wb, `Data Aktivitas ${dateToFileName}.xlsx`);
     } finally {
       setIsExporting(false);
     }
