@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { FieldGroup, FieldSeparator, FieldSet } from '@/components/ui/field';
@@ -71,8 +71,10 @@ const UpdateTaskForm = () => {
   });
 
   // Cek input status untuk disable timestamp
-  const statusInput = form.watch('status');
-  const isScheduled = form.watch('is_scheduled');
+  const [statusInput, isScheduled] = useWatch({
+    control: form.control,
+    name: ['status', 'is_scheduled'],
+  });
 
   // Reset value timestamp
   switch (statusInput) {

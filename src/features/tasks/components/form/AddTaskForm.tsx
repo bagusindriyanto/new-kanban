@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
 import { useFetchUsers } from '@/features/users/api/fetchUsers';
@@ -46,8 +46,10 @@ const AddTaskForm = ({
     },
   });
 
-  const isScheduled = form.watch('is_scheduled');
-  const isAssigned = form.watch('is_assigned');
+  const [isScheduled, isAssigned] = useWatch({
+    control: form.control,
+    name: ['is_scheduled', 'is_assigned'],
+  });
 
   const onSubmit = (data: AddTaskFormInput) => {
     if (!currentUser) return;
