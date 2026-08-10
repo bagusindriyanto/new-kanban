@@ -13,6 +13,7 @@ const fetchDivisionsQueryOptions = () => {
   return queryOptions({
     queryKey: divisionKeys.all,
     queryFn: fetchDivisions,
+    staleTime: Infinity,
   });
 };
 

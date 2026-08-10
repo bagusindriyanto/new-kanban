@@ -13,6 +13,7 @@ const fetchRolesQueryOptions = () => {
   return queryOptions({
     queryKey: roleKeys.all,
     queryFn: fetchRoles,
+    staleTime: Infinity,
   });
 };
 
