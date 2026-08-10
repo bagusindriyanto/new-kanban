@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useState } from 'react';
-import { FieldSeparator } from '@/components/ui/field';
+import { Separator } from '@/components/ui/separator';
 
 const PRESETS = [
   {
@@ -132,9 +132,12 @@ export const FilterCalendar = ({ title }: { title?: string }) => {
       <PopoverContent align="end" className="p-0 w-auto gap-2">
         {title && (
           <div className="px-4 pt-4 pb-1">
-            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-popover">
-              {title}
-            </FieldSeparator>
+            <div className="relative -my-2 h-5">
+              <Separator className="absolute inset-0 top-1/2" />
+              <span className="relative mx-auto block w-fit bg-popover px-2 text-muted-foreground text-xs pt-0.5">
+                {title}
+              </span>
+            </div>
           </div>
         )}
         <Calendar
