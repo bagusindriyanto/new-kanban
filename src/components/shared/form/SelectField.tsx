@@ -18,7 +18,7 @@ import {
 type SelectFieldProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TItem extends Record<string, any> = Record<string, any>,
+  TItem extends Record<string, unknown> = Record<string, unknown>,
 > = {
   name: TName;
   control: Control<TFieldValues>;
@@ -35,7 +35,7 @@ type SelectFieldProps<
 const SelectField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TItem extends Record<string, any> = Record<string, any>,
+  TItem extends Record<string, unknown> = Record<string, unknown>,
 >({
   name,
   control,
@@ -78,11 +78,11 @@ const SelectField = <
             <Select
               items={formattedItems}
               value={selectedItem}
-              onValueChange={(item) => {
+              onValueChange={(item: TItem | null) => {
                 field.onChange(item ? item[valueKey] : null);
               }}
-              itemToStringLabel={(item) => String(item[labelKey])}
-              itemToStringValue={(item) => String(item[valueKey])}
+              itemToStringLabel={(item: TItem | null) => (item ? String(item[labelKey]) : '')}
+              itemToStringValue={(item: TItem | null) => (item ? String(item[valueKey]) : '')}
             >
               <SelectTrigger
                 id={id}
