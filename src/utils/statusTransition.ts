@@ -1,12 +1,12 @@
 import type { TaskStatus, TaskUpdate } from '@/types/task';
 import { formatToSQL } from './formatTimestamp';
 import { columns } from '@/config/column';
-import type { TaskQueryResult } from '@/features/tasks/api/fetchTasks';
+import type { TaskWithProfile } from '@/features/tasks/api/query';
 
 const statusOrder = columns.map((column) => column.id);
 
 export const computeStatusTransition = (
-  task: TaskQueryResult,
+  task: TaskWithProfile,
   newStatus: TaskStatus,
 ): TaskUpdate | null => {
   if (newStatus === task.status) return null;

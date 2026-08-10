@@ -1,12 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import { queryClient, type MutationConfig } from '@/lib/queryClient';
-import { fetchActivitiesQueryKey } from './fetchActivities';
+import type { MutationConfig } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
 import type { ActivityInsert } from '@/types/activity';
+import { activityKeys } from './queryKeys';
 
 export const addActivity = async (data: ActivityInsert) => {
   const { name } = data;
-  if (!name) throw new Error('Nama aktivitas tidak boleh kosong');
 
   const { error } = await supabase.from('activities').insert({ name });
   if (error) throw error;
@@ -21,7 +20,7 @@ export const useAddActivity = (params: UseAddActivityParams = {}) => {
     ...params.mutationConfig,
     mutationFn: addActivity,
     onSuccess: (data, variables, onMutateResult, context) => {
-      queryClient.invalidateQueries({ queryKey: fetchActivitiesQueryKey() });
+      context.client.invalidateQueries({ queryKey: activityKeys.all });
 
       params.mutationConfig?.onSuccess?.(
         data,

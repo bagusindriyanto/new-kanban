@@ -1,18 +1,17 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 import type { QueryConfig } from '@/lib/queryClient';
+import { divisionsQuery } from './query';
+import { divisionKeys } from './queryKeys';
 
 export const fetchDivisions = async () => {
-  const { data, error } = await supabase.from('divisions').select('id, name');
+  const { data, error } = await divisionsQuery();
   if (error) throw error;
   return data;
 };
 
-export const fetchDivisionsQueryKey = () => ['divisions'];
-
 const fetchDivisionsQueryOptions = () => {
   return queryOptions({
-    queryKey: fetchDivisionsQueryKey(),
+    queryKey: divisionKeys.all,
     queryFn: fetchDivisions,
   });
 };

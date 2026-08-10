@@ -13,9 +13,9 @@ import {
 } from 'recharts';
 import { ChartContainer } from '@/components/ui/chart';
 import { SlidingNumber } from '@/components/shared/SlidingNumber';
-import type { TasksQueryResult } from '../api/fetchTasks';
+import type { TaskWithProfile } from '../api/query';
 
-const BoardStatsColumn = ({ tasks }: { tasks: TasksQueryResult }) => {
+const BoardStatsColumn = ({ tasks }: { tasks: TaskWithProfile[] }) => {
   const todoCount = tasks?.filter((task) => task.status === 'todo').length || 0;
   const onProgressCount =
     tasks?.filter((task) => task.status === 'on progress').length || 0;

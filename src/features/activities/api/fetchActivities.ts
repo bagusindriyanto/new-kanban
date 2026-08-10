@@ -1,21 +1,17 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 import type { QueryConfig } from '@/lib/queryClient';
+import { activitiesQuery } from './query';
+import { activityKeys } from './queryKeys';
 
 export const fetchActivities = async () => {
-  const { data, error } = await supabase
-    .from('activities')
-    .select('id, name')
-    .order('updated_at', { ascending: false });
+  const { data, error } = await activitiesQuery();
   if (error) throw error;
   return data;
 };
 
-export const fetchActivitiesQueryKey = () => ['activities'];
-
 const fetchActivitiesQueryOptions = () => {
   return queryOptions({
-    queryKey: fetchActivitiesQueryKey(),
+    queryKey: activityKeys.all,
     queryFn: fetchActivities,
   });
 };

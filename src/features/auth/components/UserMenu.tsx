@@ -15,10 +15,10 @@ import { EllipsisVerticalIcon, LogOutIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import UserAvatar from '../../../components/shared/UserAvatar';
 import { useLogout } from '../api/logout';
-import { useFetchProfile } from '../api/fetchProfile';
+import { useFetchCurrentUser } from '@/features/users/api/fetchCurrentUser';
 
 const AccountMenu = () => {
-  const { data: currentUser, isLoading } = useFetchProfile();
+  const { data: currentUser, isLoading } = useFetchCurrentUser();
   const { mutateAsync: logoutMutation } = useLogout();
 
   const handleLogout = () => {

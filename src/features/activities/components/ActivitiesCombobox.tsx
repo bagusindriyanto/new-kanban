@@ -16,14 +16,26 @@ import { PlusIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 import type { ActivityInsert } from '@/types/activity';
-import type { Control } from 'react-hook-form';
+import type { Control, FieldPath, FieldValues } from 'react-hook-form';
+import type { Activity } from '../api/query';
 
-type ActivitiesComboboxProps = {
-  control: Control<any>;
+type ActivitiesComboboxProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+> = {
+  name: TName;
+  control: Control<TFieldValues>;
   className?: string;
 };
 
-const ActivitiesCombobox = ({ control, className }: ActivitiesComboboxProps) => {
+const ActivitiesCombobox = <
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+>({
+  name,
+  control,
+  className,
+}: ActivitiesComboboxProps<TFieldValues, TName>) => {
   const id = useId();
   const { data: contents, isLoading } = useFetchActivities();
   const { mutateAsync, isPending } = useAddActivity();
@@ -45,7 +57,7 @@ const ActivitiesCombobox = ({ control, className }: ActivitiesComboboxProps) => 
 
   return (
     <Controller
-      name="content"
+      name={name}
       control={control}
       render={({ field, fieldState }) => {
         const selectedContent =
@@ -63,16 +75,16 @@ const ActivitiesCombobox = ({ control, className }: ActivitiesComboboxProps) => 
               Aktivitas <span className="text-red-500">*</span>
             </FieldLabel>
             <Combobox
-              inputValue={field.value || ''}
-              onInputValueChange={field.onChange}
               autoHighlight
               items={contents}
               value={selectedContent}
+              inputValue={field.value || ''}
+              onInputValueChange={field.onChange}
               onValueChange={(content) => {
                 if (content) field.onChange(content.name);
               }}
-              itemToStringLabel={(content) => String(content.name)}
-              itemToStringValue={(content) => String(content.name)}
+              itemToStringLabel={(content) => content.name}
+              itemToStringValue={(content) => content.name}
             >
               <ComboboxInput
                 id={id}
@@ -110,9 +122,9 @@ const ActivitiesCombobox = ({ control, className }: ActivitiesComboboxProps) => 
                   )}
                 </ComboboxEmpty>
                 <ComboboxList>
-                  {(content) => (
-                    <ComboboxItem key={String(content.name)} value={content}>
-                      {String(content.name)}
+                  {(content: Activity) => (
+                    <ComboboxItem key={content.name} value={content}>
+                      {content.name}
                     </ComboboxItem>
                   )}
                 </ComboboxList>

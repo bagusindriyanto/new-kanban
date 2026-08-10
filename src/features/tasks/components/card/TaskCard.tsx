@@ -9,13 +9,13 @@ import UserAvatar from '@/components/shared/UserAvatar';
 import { usePauseTimer } from '../../hooks/usePauseTimer';
 import { useUrgencyCheck } from '../../hooks/useUrgencyCheck';
 import TaskActions from './TaskActions';
-import type { TaskQueryResult } from '../../api/fetchTasks';
+import type { TaskWithProfile } from '../../api/query';
 
 const TaskCard = ({
   task,
   className,
 }: {
-  task: TaskQueryResult;
+  task: TaskWithProfile;
   className?: string;
 }) => {
   const { user, assigner } = task;

@@ -54,7 +54,7 @@ const timelineData: TimelineData[] = [
             </Badge>{' '}
             tidak terhitung dengan benar pada halaman Ringkasan
           </>,
-          <>📅 Pilihan tanggal untuk “Jadwalkan Task” yang tidak tepat</>,
+          `📅 Pilihan tanggal untuk “Jadwalkan Task” yang tidak tepat`,
         ],
       },
       {
@@ -121,7 +121,7 @@ const timelineData: TimelineData[] = [
       {
         action: 'Menambahkan:',
         lists: [
-          '📅 Filter task berdasarkan tanggal',
+          '📅 Filter task yang sudah selesai berdasarkan tanggal',
           '⚙️ Otomatis menyimpan preferensi filter terakhir yang digunakan',
         ],
       },

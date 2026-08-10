@@ -1,18 +1,17 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 import type { QueryConfig } from '@/lib/queryClient';
+import { rolesQuery } from './query';
+import { roleKeys } from './queryKeys';
 
 export const fetchRoles = async () => {
-  const { data, error } = await supabase.from('roles').select('id, name');
+  const { data, error } = await rolesQuery();
   if (error) throw error;
   return data;
 };
 
-export const fetchRolesQueryKey = () => ['roles'];
-
 const fetchRolesQueryOptions = () => {
   return queryOptions({
-    queryKey: fetchRolesQueryKey(),
+    queryKey: roleKeys.all,
     queryFn: fetchRoles,
   });
 };

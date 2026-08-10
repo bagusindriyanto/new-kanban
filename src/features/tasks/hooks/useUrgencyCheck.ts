@@ -1,7 +1,7 @@
 import type { TaskStatus } from '@/types/task';
 import { useEffect, useState } from 'react';
 
-export function useUrgencyCheck({
+export const useUrgencyCheck = ({
   status,
   scheduled_at,
   optimistic = false,
@@ -9,7 +9,7 @@ export function useUrgencyCheck({
   status: TaskStatus;
   scheduled_at: string | null | undefined;
   optimistic?: boolean;
-}) {
+}) => {
   const [isUrgent, setIsUrgent] = useState(false);
 
   useEffect(() => {
@@ -31,4 +31,4 @@ export function useUrgencyCheck({
     : 0;
 
   return { isUrgent, diffInMinutes };
-}
+};

@@ -23,8 +23,8 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { Link } from 'react-router';
-import { useFetchDivisions } from '@/features/auth/api/fetchDivisions';
-import { useFetchRoles } from '@/features/auth/api/fetchRoles';
+import { useFetchDivisions } from '@/features/divisions/api/fetchDivisions';
+import { useFetchRoles } from '@/features/roles/api/fetchRoles';
 import InputField from '@/components/shared/form/InputField';
 import PasswordField from '@/components/shared/form/PasswordField';
 import SelectField from '@/components/shared/form/SelectField';

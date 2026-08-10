@@ -1,6 +1,6 @@
 import { parseFromSQL } from '@/utils/formatTimestamp';
 import { cn } from '@/lib/utils';
-import type { TaskQueryResult } from '../../api/fetchTasks';
+import type { TaskWithProfile } from '../../api/query';
 
 /**
  * Renders the status-context row of a TaskCard,
@@ -12,7 +12,7 @@ const TaskTimestamps = ({
   isUrgent,
   diffInMinutes,
 }: {
-  task: TaskQueryResult;
+  task: TaskWithProfile;
   isPaused: boolean;
   isUrgent: boolean;
   diffInMinutes: number;

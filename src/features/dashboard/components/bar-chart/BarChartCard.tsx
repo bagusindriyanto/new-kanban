@@ -69,10 +69,12 @@ const EmptyChartItem = () => {
 const BarChartCard = ({
   data,
 }: {
-  data: {
-    max_minute: number;
-    charts: ChartData[];
-  };
+  data:
+    | {
+        max_minute: number;
+        charts: ChartData[];
+      }
+    | undefined;
 }) => {
   const maxMinute = data?.max_minute || 2 * 60;
   const ticks = Array.from({ length: 5 }).map((_, i) => (i * maxMinute) / 4);

@@ -1,18 +1,18 @@
 import { useFilterStore, type SelectedUserId } from '@/stores/filterStore';
 import { endOfDay, startOfDay } from 'date-fns';
 
-export type QueryParams = {
+export type TaskFilters = {
   user_id: SelectedUserId;
   from_date?: string;
   to_date?: string;
 };
 
-const useTaskFilters = () => {
+export const useTaskFilters = () => {
   const range = useFilterStore((state) => state.range);
   const selectedUserId = useFilterStore((state) => state.selectedUserId);
   const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
-  const queryParams: QueryParams = {
+  const taskFilters: TaskFilters = {
     user_id: selectedUserId,
     from_date: range?.from ? startOfDay(range.from).toISOString() : undefined,
     to_date: range?.to
@@ -26,8 +26,6 @@ const useTaskFilters = () => {
     range,
     selectedUserId,
     setSelectedUserId,
-    queryParams,
+    taskFilters,
   };
 };
-
-export default useTaskFilters;

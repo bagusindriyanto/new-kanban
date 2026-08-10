@@ -67,7 +67,7 @@ export const submitSchema = baseSchema
           ) - data.minute_pause
         : 0,
     pause_time: data.pause_time ? formatToSQL(new Date()) : null,
-    timestamp_todo: formatToSQL(data.timestamp_todo),
+    timestamp_todo: new Date(data.timestamp_todo).toISOString(),
     timestamp_progress: formatToSQL(data.timestamp_progress),
     timestamp_done: formatToSQL(data.timestamp_done),
     scheduled_at: formatToSQL(data.scheduled_at),

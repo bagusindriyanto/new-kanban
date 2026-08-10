@@ -21,7 +21,7 @@ export const useUpdatePassword = () => {
         throw new Error('Password lama salah');
       }
 
-      // 2. Baru update ke password baru
+      // Update ke password baru
       const { error: updateError } = await supabase.auth.updateUser({
         password: payload.new_password,
       });

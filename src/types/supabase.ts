@@ -107,7 +107,7 @@ export type Database = {
           avatar: string | null
           created_at: string
           division_id: number | null
-          full_name: string | null
+          full_name: string
           name: string
           nik: string | null
           role_id: number | null
@@ -118,7 +118,7 @@ export type Database = {
           avatar?: string | null
           created_at?: string
           division_id?: number | null
-          full_name?: string | null
+          full_name: string
           name: string
           nik?: string | null
           role_id?: number | null
@@ -129,7 +129,7 @@ export type Database = {
           avatar?: string | null
           created_at?: string
           division_id?: number | null
-          full_name?: string | null
+          full_name?: string
           name?: string
           nik?: string | null
           role_id?: number | null

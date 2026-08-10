@@ -18,15 +18,15 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { Button } from '@/components/ui/button';
-import { useFetchProfile } from '@/features/auth/api/fetchProfile';
 import { useUpdateProfile } from '@/features/auth/api/updateProfile';
+import { useFetchCurrentUser } from '@/features/users/api/fetchCurrentUser';
 import {
   updateProfileSchema,
   type UpdateProfileInput,
 } from '../schemas/updateUserSchemas';
 
 const UpdateProfileForm = () => {
-  const { data: currentUser } = useFetchProfile();
+  const { data: currentUser } = useFetchCurrentUser();
   const defaultAvatar = currentUser?.avatar ?? undefined;
 
   const form = useForm<UpdateProfileInput>({
@@ -47,7 +47,7 @@ const UpdateProfileForm = () => {
       name: currentUser.name ?? '',
       nik: currentUser.nik ?? '',
     });
-  }, [currentUser]);
+  }, [currentUser, form]);
 
   const { mutateAsync: updateProfileMutate, isPending } = useUpdateProfile();
 
@@ -62,7 +62,7 @@ const UpdateProfileForm = () => {
       success: () => {
         return 'Akun Anda berhasil diperbarui';
       },
-      error: (err) => {
+      error: (err: Error) => {
         return {
           message: 'Akun Anda gagal diperbarui',
           description: err?.message || null,

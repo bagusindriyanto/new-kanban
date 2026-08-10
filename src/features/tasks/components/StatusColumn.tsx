@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useCallback, useRef } from 'react';
-import type { TasksQueryResult } from '../api/fetchTasks';
+import type { TaskWithProfile } from '../api/query';
 
 type StatusColumnProps = {
   title: Column['title'];
   columnId: Column['id'];
-  tasks: TasksQueryResult;
+  tasks: TaskWithProfile[];
 };
 
 const StatusColumn = ({ title, columnId, tasks }: StatusColumnProps) => {

@@ -1,24 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
 import { type MutationConfig } from '@/lib/queryClient';
-import {
-  fetchUsersQueryKey,
-  type UsersQueryResult,
-} from '@/features/users/api/fetchUsers';
 import { supabase } from '@/lib/supabase';
-import {
-  fetchTasksQueryKeys,
-  type TasksQueryResult,
-  type TasksQueryKey,
-} from './fetchTasks';
 import type { TaskUpdate } from '@/types/task';
+import { taskKeys, type TaskKeys } from './queryKeys';
+import type { TaskWithProfile } from './query';
+import { userKeys } from '@/features/users/api/queryKeys';
+import type { User } from '@/features/users/api/query';
 
 export const updateTask = async (data: TaskUpdate) => {
   const { id, ...updatedData } = data;
+  if (!id) throw new Error('ID task diperlukan');
+
   const { error } = await supabase
     .from('tasks')
     .update(updatedData)
     .eq('id', id);
   if (error) throw error;
+};
+
+type UpdateTaskContext = {
+  previousTasks?: [TaskKeys, TaskWithProfile[] | undefined][];
 };
 
 type UseUpdateTaskParams = {
@@ -28,10 +29,6 @@ type UseUpdateTaskParams = {
   >;
 };
 
-type UpdateTaskContext = {
-  previousTasks?: [TasksQueryKey, TasksQueryResult | undefined][];
-};
-
 export const useUpdateTask = ({
   mutationConfig = {},
 }: UseUpdateTaskParams = {}) => {
@@ -39,22 +36,28 @@ export const useUpdateTask = ({
 
   return useMutation<void, Error, TaskUpdate, UpdateTaskContext>({
     mutationFn: updateTask,
+
     onMutate: async (updatedTask, context) => {
-      await context.client.cancelQueries({ queryKey: fetchTasksQueryKeys.all });
+      await context.client.cancelQueries({ queryKey: taskKeys.all });
 
-      const previousTasks = context.client.getQueriesData<TasksQueryResult>({
-        queryKey: fetchTasksQueryKeys.all,
-      }) as [TasksQueryKey, TasksQueryResult | undefined][];
+      const previousTasks = context.client.getQueriesData<TaskWithProfile[]>({
+        queryKey: taskKeys.all,
+      }) as [TaskKeys, TaskWithProfile[] | undefined][];
 
-      const profiles =
-        context.client.getQueryData<UsersQueryResult>(fetchUsersQueryKey());
-      const updatedUser =
-        profiles?.find((profile) => profile.user_id === updatedTask.user_id) ??
-        null;
+      const profiles = context.client.getQueryData<User[]>(userKeys.all);
+      const updatedUser = profiles?.find(
+        (profile) => profile.user_id === updatedTask.user_id,
+      ) ?? {
+        full_name: 'User',
+        name: 'User',
+        user_id: crypto.randomUUID(),
+        avatar: null,
+      };
       const updatedAssigner =
         profiles?.find(
           (profile) => profile.user_id === updatedTask.assigner_id,
         ) ?? null;
+
       previousTasks.forEach(([queryKey, oldTasks]) => {
         if (!oldTasks) return;
 
@@ -79,19 +82,20 @@ export const useUpdateTask = ({
         context.client.setQueryData(
           queryKey,
           oldTasks
-            .map((task) =>
-              task.id === updatedTask.id
-                ? {
-                    ...task,
-                    ...updatedTask,
-                    updated_at: new Date().toISOString(),
-                    user: updatedUser,
-                    assigner: updatedAssigner
-                      ? { name: updatedAssigner.name }
-                      : null,
-                    optimistic: true,
-                  }
-                : task,
+            .map(
+              (task): TaskWithProfile =>
+                task.id === updatedTask.id
+                  ? {
+                      ...task,
+                      ...updatedTask,
+                      updated_at: new Date().toISOString(),
+                      user: updatedUser,
+                      assigner: updatedAssigner
+                        ? { name: updatedAssigner.name }
+                        : null,
+                      optimistic: true,
+                    }
+                  : task,
             )
             .sort(
               (a, b) =>
@@ -103,15 +107,17 @@ export const useUpdateTask = ({
 
       return { previousTasks };
     },
+
     onError: (err, updatedTask, onMutateResult, context) => {
-      onMutateResult?.previousTasks.forEach(([queryKey, data]) => {
+      onMutateResult?.previousTasks?.forEach(([queryKey, data]) => {
         context.client.setQueryData(queryKey, data);
       });
 
       onError?.(err, updatedTask, onMutateResult, context);
     },
+
     onSettled: (_data, _error, _variables, _onMutateResult, context) => {
-      context.client.invalidateQueries({ queryKey: fetchTasksQueryKeys.all });
+      context.client.invalidateQueries({ queryKey: taskKeys.all });
     },
 
     ...restMutationConfig,

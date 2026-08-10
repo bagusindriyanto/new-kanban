@@ -29,9 +29,10 @@ const AddTaskForm = ({
   const { mutateAsync: addTaskMutation, isPending } = useAddTask();
 
   const currentUser = useAuthStore((state) => state.currentUser);
-  const filteredUsers = users?.filter(
-    (user) => user.user_id !== currentUser.id,
-  );
+  const filteredUsers = users?.filter((user) => {
+    if (!currentUser) return true;
+    return user.user_id !== currentUser.id;
+  });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -86,7 +87,7 @@ const AddTaskForm = ({
         <FieldSet>
           <FieldGroup>
             {/* Activity */}
-            <ActivitiesCombobox control={form.control} />
+            <ActivitiesCombobox name="content" control={form.control} />
           </FieldGroup>
 
           <FieldGroup className="grid grid-cols-2 gap-4 min-h-17">

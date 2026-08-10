@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import useNotificationStore from '@/stores/notificationStore';
-import type { UpcomingTasksQueryResult } from '@/features/tasks/api/fetchUpcomingTasks';
+import type { UpcomingTask } from '../api/query';
 
-const EMPTY_TASKS: UpcomingTasksQueryResult = [];
+const EMPTY_TASKS: UpcomingTask[] = [];
 
-const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
+export const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
   const { notifiedTaskIds, markAsNotified } = useNotificationStore();
 
   useEffect(() => {
@@ -51,5 +51,3 @@ const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
     return () => clearInterval(interval);
   }, [tasks, notifiedTaskIds, markAsNotified]);
 };
-
-export default useDeadlineChecker;

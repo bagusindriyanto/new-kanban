@@ -1,5 +1,4 @@
 import { Spinner } from '@/components/ui/spinner';
-import type { TaskQueryResult, TasksQueryResult } from '../api/fetchTasks';
 import OfflineScreen from '@/components/shared/OfflineScreen';
 import ErrorScreen from '@/components/shared/ErrorScreen';
 import EmptyScreen from '@/components/shared/EmptyScreen';
@@ -16,18 +15,21 @@ import type { TaskStatus } from '@/types/task';
 import { computeStatusTransition } from '@/utils/statusTransition';
 import { useUpdateTask } from '../api/updateTask';
 import { toast } from 'sonner';
+import type { TaskWithProfile } from '../api/query';
+
+type TasksContentsProps = {
+  isLoading: boolean;
+  isOnline: boolean;
+  error: Error | null;
+  tasks: TaskWithProfile[] | undefined;
+};
 
 const TasksContents = ({
   isLoading,
   isOnline,
   error,
   tasks,
-}: {
-  isLoading: boolean;
-  isOnline: boolean;
-  error: Error | null;
-  tasks: TasksQueryResult | undefined;
-}) => {
+}: TasksContentsProps) => {
   const { mutate: updateTaskMutate } = useUpdateTask({
     mutationConfig: {
       onError: (err) => {
@@ -47,7 +49,7 @@ const TasksContents = ({
 
     // target.id = column status id (e.g. "todo", "on progress")
     const newStatus = target.id as TaskStatus;
-    const task = source.data as TaskQueryResult | undefined;
+    const task = source.data as TaskWithProfile | undefined;
     if (!task) return;
 
     const data = computeStatusTransition(task, newStatus);
@@ -91,7 +93,7 @@ const TasksContents = ({
       </div>
       <DragOverlay>
         {(source) => {
-          const task = source?.data as TaskQueryResult | undefined;
+          const task = source?.data as TaskWithProfile | undefined;
           if (!task) return null;
           return (
             <TaskCard task={task} className="opacity-100 scale-105 rotate-1" />

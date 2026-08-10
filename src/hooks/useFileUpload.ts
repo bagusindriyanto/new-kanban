@@ -271,6 +271,7 @@ export const useFileUpload = (
       clearFiles,
       onFilesChange,
       onFilesAdded,
+      onError,
     ],
   );
 

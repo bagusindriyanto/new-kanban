@@ -42,36 +42,30 @@ const chartDataSchema = z.object({
 
 export const dashboardSchema = z.object({
   division: z.string().optional().default(''),
-  stats: z
-    .object({
-      summary: z
-        .object({
-          todo: z.coerce.number(),
-          on_progress: z.coerce.number(),
-          done: z.coerce.number(),
-          total: z.coerce.number(),
-        })
-        .default({
-          todo: 0,
-          on_progress: 0,
-          done: 0,
-          total: 0,
-        }),
-      users: z.array(userStatsSchema).default([]),
-    })
-    .default({}),
-  table: z
-    .object({
-      rows: z.array(tableDataSchema).default([]),
-      rows_count: z.coerce.number().default(0),
-    })
-    .default({}),
-  chart: z
-    .object({
-      max_minute: z.coerce.number().default(0),
-      charts: z.array(chartDataSchema).default([]),
-    })
-    .default({}),
+  stats: z.object({
+    summary: z
+      .object({
+        todo: z.coerce.number(),
+        on_progress: z.coerce.number(),
+        done: z.coerce.number(),
+        total: z.coerce.number(),
+      })
+      .default({
+        todo: 0,
+        on_progress: 0,
+        done: 0,
+        total: 0,
+      }),
+    users: z.array(userStatsSchema).default([]),
+  }),
+  table: z.object({
+    rows: z.array(tableDataSchema).default([]),
+    rows_count: z.coerce.number().default(0),
+  }),
+  chart: z.object({
+    max_minute: z.coerce.number().default(0),
+    charts: z.array(chartDataSchema).default([]),
+  }),
 });
 
 export type UserStats = z.infer<typeof userStatsSchema>;

@@ -30,7 +30,7 @@ const UpdatePasswordForm = () => {
         form.reset();
         return 'Password Anda berhasil diperbarui';
       },
-      error: (err) => {
+      error: (err: Error) => {
         return {
           message: 'Password Anda gagal diperbarui',
           description: err?.message || null,

@@ -134,7 +134,7 @@ const UpdateTaskForm = () => {
             </FieldSeparator>
             <FieldGroup className="grid grid-cols-2 gap-4">
               {/* Activity */}
-              <ActivitiesCombobox control={form.control} />
+              <ActivitiesCombobox name="content" control={form.control} />
               {/* PIC Combo Box */}
               <ComboboxField
                 name="user_id"

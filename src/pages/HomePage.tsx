@@ -5,7 +5,7 @@ import DeleteTaskModal from '@/features/tasks/components/form/DeleteTaskModal';
 import TasksControls from '@/features/tasks/components/TasksControls';
 import { useFetchTasks } from '@/features/tasks/api/fetchTasks';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
-import useTaskFilters from '@/features/tasks/hooks/useTaskFilters';
+import { useTaskFilters } from '@/features/tasks/hooks/useTaskFilters';
 
 import TasksContents from '@/features/tasks/components/TasksContents';
 import OfflineBanner from '@/components/shared/OfflineBanner';
@@ -13,7 +13,7 @@ import ErrorBanner from '@/components/shared/ErrorBanner';
 
 const HomePage = () => {
   // Gunakan custom hook untuk logic filter
-  const { queryParams } = useTaskFilters();
+  const { taskFilters } = useTaskFilters();
 
   // Tanstack query untuk tasks
   const {
@@ -21,7 +21,7 @@ const HomePage = () => {
     isLoading,
     error,
     dataUpdatedAt,
-  } = useFetchTasks({ filters: queryParams });
+  } = useFetchTasks({ filters: taskFilters });
 
   // Cek status online/offline
   const isOnline = useOnlineStatus();

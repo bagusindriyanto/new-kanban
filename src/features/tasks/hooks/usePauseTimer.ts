@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { formatToSQL } from '@/utils/formatTimestamp';
-import type { TaskQueryResult } from '../api/fetchTasks';
+import type { TaskWithProfile } from '../api/query';
 import type { TaskUpdate } from '@/types/task';
 
-export function usePauseTimer({
+export const usePauseTimer = ({
   task,
   updateTaskMutate,
 }: {
-  task: TaskQueryResult;
+  task: TaskWithProfile;
   updateTaskMutate: (task: TaskUpdate) => void;
-}) {
+}) => {
   const { id, user_id, assigner_id, minute_pause, pause_time } = task;
 
   const isPaused = !!pause_time;
@@ -19,14 +19,18 @@ export function usePauseTimer({
 
   useEffect(() => {
     if (!isPaused) {
-      setCurrentPauseMinutes(0);
       pauseStartRef.current = null;
       return;
     }
 
     pauseStartRef.current = new Date(pause_time).getTime();
 
+    // Initialize the minutes immediately so it doesn't wait 1 second for the first tick
+    const diffMs = Date.now() - pauseStartRef.current;
+    setCurrentPauseMinutes(Math.floor(diffMs / 60000));
+
     const interval = setInterval(() => {
+      if (pauseStartRef.current === null) return;
       const diffMs = Date.now() - pauseStartRef.current;
       setCurrentPauseMinutes(Math.floor(diffMs / 60000));
     }, 1000);
@@ -34,7 +38,8 @@ export function usePauseTimer({
     return () => clearInterval(interval);
   }, [isPaused, pause_time]);
 
-  const totalPause = (minute_pause || 0) + (isPaused ? currentPauseMinutes : 0);
+  const livePauseMinutes = isPaused ? currentPauseMinutes : 0;
+  const totalPause = (minute_pause || 0) + livePauseMinutes;
 
   const togglePause = () => {
     if (!task) return;
@@ -42,7 +47,7 @@ export function usePauseTimer({
     if (isPaused) {
       // Play pressed: calculate total pause duration and reset pause_time
       const pauseDuration = Math.floor(
-        (Date.now() - pauseStartRef.current) / 60000,
+        (Date.now() - (pauseStartRef.current ?? 0)) / 60000,
       );
       updateTaskMutate({
         id,
@@ -63,4 +68,4 @@ export function usePauseTimer({
   };
 
   return { isPaused, totalPause, togglePause };
-}
+};

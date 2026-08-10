@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 const MAX_VISIBLE = 3; // tampil semua jika ≤ 3, elipsis jika > 3
 
 type BreadcrumbHandle = {
-  breadcrumb?: string | ((data: any) => React.ReactNode);
+  breadcrumb?: string | ((loaderData: unknown) => React.ReactNode);
 };
 
 const AppBreadcrumb = () => {
@@ -39,7 +39,7 @@ const AppBreadcrumb = () => {
         path: match.pathname,
         label:
           typeof handle.breadcrumb === 'function'
-            ? handle.breadcrumb(match.data)
+            ? handle.breadcrumb(match.loaderData)
             : handle.breadcrumb,
       };
     });

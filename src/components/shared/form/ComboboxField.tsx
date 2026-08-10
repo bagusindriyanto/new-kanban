@@ -25,7 +25,7 @@ type ComboboxFieldProps<
   label: string;
   required?: boolean;
   disabled?: boolean;
-  items: TItem[];
+  items: TItem[] | undefined;
   valueKey: keyof TItem;
   labelKey: keyof TItem;
   placeholder?: string;
@@ -42,7 +42,7 @@ const ComboboxField = <
   label,
   required,
   disabled,
-  items,
+  items = [],
   valueKey,
   labelKey,
   placeholder,

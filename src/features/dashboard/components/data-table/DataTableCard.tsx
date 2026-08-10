@@ -1,4 +1,3 @@
-// xlsx-js-style is imported dynamically inside the exportFile function.
 import { useState } from 'react';
 import {
   Card,
@@ -14,15 +13,20 @@ import { format } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
 import { useFilterStore } from '@/stores/filterStore';
 import { columns } from './columns';
-import { DataTable } from './data-table';
+import DataTable from './DataTable';
 import type { TableData } from '@/types/dashboard';
 import type { JSON2SheetOpts, OriginOption } from 'xlsx-js-style';
+import DataTableSearch from './DataTableSearch';
+import { DataTablePagination } from './DataTablePagination';
+import { useDataTable } from './useDataTable';
 
 const EMPTY_DATA: TableData[] = [];
 
 const DataTableCard = ({ data = EMPTY_DATA }) => {
   const [isExporting, setIsExporting] = useState(false);
   const range = useFilterStore((state) => state.range);
+
+  const table = useDataTable({ data, columns });
 
   const dateLabel = range?.from
     ? range?.to
@@ -100,6 +104,7 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
       ];
 
       // 4. Apply Zebra Styling and Borders
+      if (!ws['!ref']) return;
       const range = utils.decode_range(ws['!ref']);
       for (let R = 5; R <= range.e.r; ++R) {
         // Row index 5 is A6 (the table header)
@@ -181,7 +186,17 @@ const DataTableCard = ({ data = EMPTY_DATA }) => {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <DataTable columns={columns} data={data} />
+        <div className="h-full">
+          <div className="flex items-center mb-4">
+            <DataTableSearch
+              columnId="content"
+              table={table}
+              placeholder="Cari aktivitas..."
+            />
+          </div>
+          <DataTable table={table} />
+          <DataTablePagination table={table} />
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,21 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 import { type MutationConfig } from '@/lib/queryClient';
-import {
-  fetchTasksQueryKeys,
-  type OptimisticTaskQueryResult,
-  type TasksQueryKey,
-  type TasksQueryResult,
-} from './fetchTasks';
-import {
-  fetchUsersQueryKey,
-  type UsersQueryResult,
-} from '@/features/users/api/fetchUsers';
 import { supabase } from '@/lib/supabase';
 import type { AddTaskSubmitInput } from '../schemas/addTaskSchema';
+import { taskKeys, type TaskKeys } from './queryKeys';
+import type { TaskWithProfile } from './query';
+import { userKeys } from '@/features/users/api/queryKeys';
+import type { User } from '@/features/users/api/query';
 
-export const addTask = async (data: AddTaskSubmitInput) => {
-  const { error } = await supabase.from('tasks').insert(data);
+export const addTask = async (payload: AddTaskSubmitInput) => {
+  const { error } = await supabase.from('tasks').insert(payload);
   if (error) throw error;
+};
+
+type AddTaskContext = {
+  previousTasks?: [TaskKeys, TaskWithProfile[] | undefined][];
 };
 
 type UseAddTaskParams = {
@@ -25,25 +23,26 @@ type UseAddTaskParams = {
   >;
 };
 
-type AddTaskContext = {
-  previousTasks?: [TasksQueryKey, TasksQueryResult | undefined][];
-};
-
 export const useAddTask = ({ mutationConfig }: UseAddTaskParams = {}) => {
   return useMutation<void, Error, AddTaskSubmitInput, AddTaskContext>({
     mutationFn: addTask,
+
     onMutate: async (newTask, context) => {
-      await context.client.cancelQueries({ queryKey: fetchTasksQueryKeys.all });
+      await context.client.cancelQueries({ queryKey: taskKeys.all });
 
-      const previousTasks = context.client.getQueriesData<TasksQueryResult>({
-        queryKey: fetchTasksQueryKeys.all,
-      }) as [TasksQueryKey, TasksQueryResult | undefined][];
+      const previousTasks = context.client.getQueriesData<TaskWithProfile[]>({
+        queryKey: taskKeys.all,
+      }) as [TaskKeys, TaskWithProfile[] | undefined][];
 
-      const profiles =
-        context.client.getQueryData<UsersQueryResult>(fetchUsersQueryKey());
-      const newUser =
-        profiles?.find((profile) => profile.user_id === newTask.user_id) ??
-        null;
+      const profiles = context.client.getQueryData<User[]>(userKeys.all);
+      const newUser = profiles?.find(
+        (profile) => profile.user_id === newTask.user_id,
+      ) ?? {
+        full_name: 'User',
+        name: 'User',
+        user_id: crypto.randomUUID(),
+        avatar: null,
+      };
       const newAssigner =
         profiles?.find((profile) => profile.user_id === newTask.assigner_id) ??
         null;
@@ -61,7 +60,7 @@ export const useAddTask = ({ mutationConfig }: UseAddTaskParams = {}) => {
 
         if (!matchedFilter) return;
 
-        const optimisticTask: OptimisticTaskQueryResult = {
+        const optimisticTask: TaskWithProfile = {
           ...newTask,
           id: Date.now(),
           detail: newTask.detail ?? null,
@@ -79,16 +78,20 @@ export const useAddTask = ({ mutationConfig }: UseAddTaskParams = {}) => {
 
         context.client.setQueryData(queryKey, [optimisticTask, ...oldTasks]);
       });
+
       return { previousTasks };
     },
+
     onError: (_err, _newTask, onMutateResult, context) => {
-      onMutateResult?.previousTasks.forEach(([queryKey, data]) => {
+      onMutateResult?.previousTasks?.forEach(([queryKey, data]) => {
         context.client.setQueryData(queryKey, data);
       });
     },
+
     onSettled: (_data, _error, _variables, _onMutateResult, context) => {
-      context.client.invalidateQueries({ queryKey: fetchTasksQueryKeys.all });
+      context.client.invalidateQueries({ queryKey: taskKeys.all });
     },
+
     ...mutationConfig,
   });
 };

@@ -34,9 +34,9 @@ export const useAuthListener = () => {
         }
       }
       if (event === 'SIGNED_IN') {
-        setSelectedUserId(userId ?? 'all');
         // Only invalidate if user actually changed (not just a token refresh)
         if (userId !== currentUserIdRef.current) {
+          setSelectedUserId(userId ?? 'all');
           currentUserIdRef.current = userId;
           queryClient.invalidateQueries();
         }

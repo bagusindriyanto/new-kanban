@@ -33,7 +33,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from '@/components/ui/input-group';
-import { BotIcon, SendIcon, SparklesIcon, XIcon } from 'lucide-react';
+import { BotIcon, SendIcon, XIcon } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,

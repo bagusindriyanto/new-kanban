@@ -17,14 +17,12 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useUrgencyCheck } from '../hooks/useUrgencyCheck';
-import useDeadlineChecker from '@/hooks/useDeadlineChecker';
-import {
-  useFetchUpcomingTasks,
-  type UpcomingTaskQueryResult,
-} from '../api/fetchUpcomingTasks';
+import { useDeadlineChecker } from '@/features/upcoming-tasks/hooks/useDeadlineChecker';
+import { useFetchUpcomingTasks } from '../api/fetchUpcomingTasks';
+import { useUrgencyCheck } from '@/features/tasks/hooks/useUrgencyCheck';
+import type { UpcomingTask } from '../api/query';
 
-const UpcomingTaskCard = ({ task }: { task: UpcomingTaskQueryResult }) => {
+const UpcomingTaskCard = ({ task }: { task: UpcomingTask }) => {
   const { isUrgent, diffInMinutes } = useUrgencyCheck({
     status: task.status,
     scheduled_at: task.scheduled_at,
@@ -64,17 +62,12 @@ const UpcomingTaskCard = ({ task }: { task: UpcomingTaskQueryResult }) => {
 const UpcomingTasksPanel = () => {
   const { data: upcomingTasks } = useFetchUpcomingTasks();
 
-  const visibleTasks = upcomingTasks
-    ?.filter((task) => {
-      if (!task.scheduled_at) return false;
-      const diffInMinutes =
-        (new Date(task.scheduled_at).getTime() - new Date().getTime()) / 60000;
-      return diffInMinutes > 0 && diffInMinutes <= 30;
-    })
-    .sort(
-      (a, b) =>
-        new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime(),
-    );
+  const visibleTasks = upcomingTasks?.filter((task) => {
+    if (!task.scheduled_at) return false;
+    const diffInMinutes =
+      (new Date(task.scheduled_at).getTime() - new Date().getTime()) / 60000;
+    return diffInMinutes > 0 && diffInMinutes <= 30;
+  });
 
   useDeadlineChecker(upcomingTasks);
 

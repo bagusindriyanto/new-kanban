@@ -16,14 +16,14 @@ import UserStatsCardSkeleton from '../features/dashboard/components/stats/UserSt
 import UserStatsCard from '../features/dashboard/components/stats/UserStatsCard';
 import BarChartCard from '../features/dashboard/components/bar-chart/BarChartCard';
 import DataTableCard from '../features/dashboard/components/data-table/DataTableCard';
-import useDashboardFilters from '@/features/dashboard/hooks/useDashboardFilters';
+import { useDashboardFilters } from '@/features/dashboard/hooks/useDashboardFilters';
 // import PieChartCard from '../components/pie-chart/PieChartCard';
 
 const DashboardPage = () => {
-  const { queryParams } = useDashboardFilters();
+  const { dashboardFilters } = useDashboardFilters();
 
   const { data, error, isLoading, dataUpdatedAt } = useFetchDashboard({
-    filters: queryParams,
+    filters: dashboardFilters,
   });
 
   // const {
@@ -40,7 +40,7 @@ const DashboardPage = () => {
   //   useFetchChartData(queryParams);
 
   // Ambil pesan error
-  const errorMessage = error?.message || null;
+  const errorMessage = error?.message;
 
   // Cek status online/offline
   const isOnline = useOnlineStatus();

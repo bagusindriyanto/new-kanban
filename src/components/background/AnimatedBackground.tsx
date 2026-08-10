@@ -1,6 +1,6 @@
 import { useTheme } from 'next-themes';
-import AuroraDreamBackground from './AuroraDream';
-import CosmicDustBackground from './CosmicDust';
+import AuroraDream from './AuroraDream';
+import CosmicDust from './CosmicDust';
 
 const AnimatedBackground = ({ children }: { children?: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();
@@ -14,10 +14,10 @@ const AnimatedBackground = ({ children }: { children?: React.ReactNode }) => {
       : 'light');
 
   if (effective === 'dark') {
-    return <CosmicDustBackground>{children}</CosmicDustBackground>;
+    return <CosmicDust>{children}</CosmicDust>;
   }
 
-  return <AuroraDreamBackground>{children}</AuroraDreamBackground>;
+  return <AuroraDream>{children}</AuroraDream>;
 };
 
 export default AnimatedBackground;

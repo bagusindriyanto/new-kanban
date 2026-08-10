@@ -30,7 +30,8 @@
 
     /* JS interoperability for incremental migration */
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "strictNullChecks": true // tapi ini worth dinyalakan dari awal, bug null/undefined paling sering nangkep
   },
   "include": ["src"]
 }

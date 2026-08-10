@@ -32,13 +32,12 @@ const statItems = [
   },
 ] as const;
 
-const UserStatsCard = ({
-  user,
-  className,
-}: {
+type UserStatsCardProps = {
   user: UserStats;
   className?: string;
-}) => {
+};
+
+const UserStatsCard = ({ user, className }: UserStatsCardProps) => {
   // Calculate completion percentage
   const todo = user.todo ?? 0;
   const onProgress = user.on_progress ?? 0;

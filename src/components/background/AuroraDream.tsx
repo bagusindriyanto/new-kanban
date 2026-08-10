@@ -5,11 +5,7 @@ import {
 } from 'motion/react';
 import { useCallback } from 'react';
 
-export default function AuroraBackground({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+const AuroraDream = ({ children }: { children?: React.ReactNode }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   // const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
@@ -94,4 +90,6 @@ export default function AuroraBackground({
       <div className="relative z-30">{children}</div>
     </div>
   );
-}
+};
+
+export default AuroraDream;

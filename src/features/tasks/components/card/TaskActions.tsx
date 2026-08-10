@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/utils/formatDuration';
-import type { TaskQueryResult } from '../../api/fetchTasks';
+import type { TaskWithProfile } from '../../api/query';
 
 /**
  * Renders the footer section of a TaskCard,
@@ -23,7 +23,7 @@ const TaskActions = ({
   onDelete,
   canModify,
 }: {
-  task: TaskQueryResult;
+  task: TaskWithProfile;
   isPaused: boolean;
   totalPause: number;
   togglePause: () => void;
