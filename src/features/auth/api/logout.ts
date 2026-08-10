@@ -9,8 +9,5 @@ export const logoutUser = async () => {
 export const useLogout = () => {
   return useMutation({
     mutationFn: logoutUser,
-    onError: (error) => {
-      console.error('Log out gagal:', error.message);
-    },
   });
 };

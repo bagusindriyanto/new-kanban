@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --build --noEmit",
-    "migration:progress": "find src -name '*.js' -o -name '*.jsx' | wc -l"
+    "migration:progress": "find src -type f ( -name '*.js' -o -name '*.jsx' ) -not -path '*/node_modules/*'"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

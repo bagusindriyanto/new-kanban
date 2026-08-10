@@ -32,6 +32,8 @@ import AvatarUpload from '@/components/shared/form/AvatarUpload';
 // import useAuthStore from '@/stores/authStore';
 // import { useFilterStore } from '@/stores/filterStore';
 import { registerSchema, type RegisterInput } from '../schemas/authSchemas';
+import { useRegister } from '../api/register';
+import { toast } from 'sonner';
 // import { useRegister } from '../hooks/useRegister';
 
 const RegisterForm = () => {
@@ -53,7 +55,7 @@ const RegisterForm = () => {
     },
   });
 
-  // const { mutateAsync: registerMutation } = useRegister();
+  const { mutateAsync: registerMutate } = useRegister();
 
   // const login = useAuthStore((state) => state.login);
   // const navigate = useNavigate();
@@ -61,8 +63,26 @@ const RegisterForm = () => {
   // const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const onSubmit = (data: RegisterInput) => {
-    console.log(data);
-    return;
+    const payload = {
+      ...data,
+      name: data.name || data.full_name.split(' ')[0],
+    };
+
+    toast.promise(registerMutate(payload), {
+      loading: 'Sedang membuat akun...',
+      success: () => {
+        return {
+          message: 'Akun Anda berhasil dibuat',
+          description: 'Silakan cek email untuk verifikasi akun Anda',
+        };
+      },
+      error: (err: Error) => {
+        return {
+          message: 'Akun Anda gagal dibuat',
+          description: err?.message || null,
+        };
+      },
+    });
   };
 
   // const onSubmit = (data) => {
@@ -74,7 +94,7 @@ const RegisterForm = () => {
   //   }
   // });
 
-  // toast.promise(registerMutation(payload), {
+  // toast.promise(registerMutate(payload), {
   // loading: 'Sedang membuat akun...',
   // success: () => {
   // const { user, access_token, refresh_token } = res.data;

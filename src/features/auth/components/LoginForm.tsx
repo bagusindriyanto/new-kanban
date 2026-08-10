@@ -19,12 +19,12 @@ const LoginForm = () => {
     },
   });
 
-  const { mutateAsync: loginMutation } = useLogin();
+  const { mutateAsync: loginMutate } = useLogin();
 
   const setSelectedUserId = useFilterStore((state) => state.setSelectedUserId);
 
   const onSubmit = (data: LoginInput) => {
-    toast.promise(loginMutation(data), {
+    toast.promise(loginMutate(data), {
       loading: 'Sedang memproses log in...',
       success: ({ user }) => {
         setSelectedUserId(user.id);

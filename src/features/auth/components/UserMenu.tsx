@@ -19,10 +19,10 @@ import { useFetchCurrentUser } from '@/features/users/api/fetchCurrentUser';
 
 const AccountMenu = () => {
   const { data: currentUser, isLoading } = useFetchCurrentUser();
-  const { mutateAsync: logoutMutation } = useLogout();
+  const { mutateAsync: logoutMutate } = useLogout();
 
   const handleLogout = () => {
-    toast.promise(logoutMutation, {
+    toast.promise(logoutMutate, {
       loading: 'Sedang memproses log out...',
       success: () => {
         return 'Log out berhasil';

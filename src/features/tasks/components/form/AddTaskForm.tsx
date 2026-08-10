@@ -26,7 +26,7 @@ const AddTaskForm = ({
 }) => {
   // Fetch Data
   const { data: users } = useFetchUsers();
-  const { mutateAsync: addTaskMutation, isPending } = useAddTask();
+  const { mutateAsync: addTaskMutate, isPending } = useAddTask();
 
   const currentUser = useAuthStore((state) => state.currentUser);
   const filteredUsers = users?.filter((user) => {
@@ -67,7 +67,7 @@ const AddTaskForm = ({
       return;
     }
 
-    toast.promise(addTaskMutation(result.data), {
+    toast.promise(addTaskMutate(result.data), {
       loading: 'Sedang menambahkan task...',
       success: () => {
         form.reset();

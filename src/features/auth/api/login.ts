@@ -14,8 +14,5 @@ export const loginUser = async ({ email, password }: LoginInput) => {
 export const useLogin = () => {
   return useMutation({
     mutationFn: loginUser,
-    onError: (error) => {
-      console.error('Log in gagal:', error.message);
-    },
   });
 };

@@ -101,7 +101,7 @@ const ChatbotDrawer = () => {
     }, delay);
   }, [inputValue, isTyping]);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
