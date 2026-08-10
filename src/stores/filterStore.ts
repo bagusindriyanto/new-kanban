@@ -8,7 +8,7 @@ export type SelectedUserId = Profile['user_id'] | typeof ALL_USER;
 
 const initialState = {
   selectedUserId: ALL_USER,
-  range: { from: startOfDay(new Date()), to: startOfDay(new Date()) },
+  range: { from: startOfDay(new Date()), to: undefined },
 };
 
 type FilterState = {

@@ -8,7 +8,7 @@ const TasksControls = ({ dataUpdatedAt }: { dataUpdatedAt: number }) => {
     <div className="flex justify-end gap-2 items-center">
       <RefreshToggle dataUpdatedAt={dataUpdatedAt} />
       <FilterUsers />
-      <FilterCalendar />
+      <FilterCalendar title="Filter Tasks yang Selesai" />
       <AddTaskModal />
     </div>
   );
