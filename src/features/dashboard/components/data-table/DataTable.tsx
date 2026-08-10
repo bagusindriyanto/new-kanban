@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { DataTableFeatures } from './DataTableFeatures';
+import type { DataTableFeatures } from './features';
 
 type DataTableProps<TData extends RowData> = {
   table: ReactTable<DataTableFeatures, TData>;

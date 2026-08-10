@@ -4,7 +4,7 @@ import { formatDuration } from '@/utils/formatDuration';
 import UserAvatar from '@/components/shared/UserAvatar';
 import { createColumnHelper } from '@tanstack/react-table';
 import type { TableData } from '@/types/dashboard';
-import type { DataTableFeatures } from './DataTableFeatures';
+import type { DataTableFeatures } from './features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, TableData>();
 

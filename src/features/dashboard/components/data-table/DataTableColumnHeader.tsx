@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { type DataTableFeatures } from './DataTableFeatures';
+import { type DataTableFeatures } from './features';
 
 type DataTableColumnHeaderProps<TData extends RowData, TValue> = {
   column: Column<DataTableFeatures, TData, TValue>;

@@ -6,7 +6,7 @@ import {
   type ColumnFiltersState,
   type ColumnVisibilityState,
 } from '@tanstack/react-table';
-import { features, type DataTableFeatures } from './DataTableFeatures';
+import { features, type DataTableFeatures } from './features';
 import { useState } from 'react';
 
 type UseDataTableProps<TData extends RowData> = {

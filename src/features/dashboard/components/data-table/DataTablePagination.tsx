@@ -7,7 +7,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from 'lucide-react';
-import type { DataTableFeatures } from './DataTableFeatures';
+import type { DataTableFeatures } from './features';
 
 type DataTablePaginationProps<TData extends RowData> = {
   table: ReactTable<DataTableFeatures, TData>;

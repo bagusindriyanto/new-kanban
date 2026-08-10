@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/input-group';
 import type { ReactTable, RowData } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
-import type { DataTableFeatures } from './DataTableFeatures';
+import type { DataTableFeatures } from './features';
 
 type DataTableSearchProps<TData extends RowData> = {
   table: ReactTable<DataTableFeatures, TData>;
