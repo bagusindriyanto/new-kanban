@@ -39,27 +39,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      _migration_user_map: {
-        Row: {
-          email: string | null
-          old_pic_id: number | null
-          old_user_id: number | null
-          user_id: string | null
-        }
-        Insert: {
-          email?: string | null
-          old_pic_id?: number | null
-          old_user_id?: number | null
-          user_id?: string | null
-        }
-        Update: {
-          email?: string | null
-          old_pic_id?: number | null
-          old_user_id?: number | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       activities: {
         Row: {
           created_at: string
@@ -208,7 +187,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["task_status"]
           timestamp_done?: string | null
           timestamp_progress?: string | null
-          timestamp_todo: string
+          timestamp_todo?: string
           updated_at?: string
           user_id: string
         }

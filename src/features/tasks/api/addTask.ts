@@ -1,13 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import { type MutationConfig } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
-import type { AddTaskSubmitInput } from '../schemas/addTaskSchema';
+import type { TaskInsert } from '@/types/task';
 import { taskKeys, type TaskKeys } from './queryKeys';
 import type { TaskWithProfile } from './query';
 import { userKeys } from '@/features/users/api/queryKeys';
 import type { User } from '@/features/users/api/query';
 
-export const addTask = async (payload: AddTaskSubmitInput) => {
+export const addTask = async (payload: TaskInsert) => {
   const { error } = await supabase.from('tasks').insert(payload);
   if (error) throw error;
 };
@@ -24,7 +24,7 @@ type UseAddTaskParams = {
 };
 
 export const useAddTask = ({ mutationConfig }: UseAddTaskParams = {}) => {
-  return useMutation<void, Error, AddTaskSubmitInput, AddTaskContext>({
+  return useMutation<void, Error, TaskInsert, AddTaskContext>({
     mutationFn: addTask,
 
     onMutate: async (newTask, context) => {
@@ -63,9 +63,13 @@ export const useAddTask = ({ mutationConfig }: UseAddTaskParams = {}) => {
         const optimisticTask: TaskWithProfile = {
           ...newTask,
           id: Date.now(),
+          status: 'todo',
           detail: newTask.detail ?? null,
+          timestamp_todo: new Date().toISOString(),
           timestamp_progress: null,
           timestamp_done: null,
+          minute_activity: 0,
+          minute_pause: 0,
           scheduled_at: newTask.scheduled_at ?? null,
           pause_time: null,
           created_at: new Date().toISOString(),
