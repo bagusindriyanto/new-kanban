@@ -23,6 +23,7 @@ import {
   submitSchema,
   type UpdateTaskFormInput,
 } from '../../schemas/updateTaskSchema';
+import { useEffect } from 'react';
 
 const statusItems = [
   { value: 'todo', label: 'To Do' },
@@ -77,20 +78,22 @@ const UpdateTaskForm = () => {
   });
 
   // Reset value timestamp
-  switch (statusInput) {
-    case 'todo':
-      form.setValue('pause_time', false);
-      form.setValue('minute_pause', 0);
-      form.setValue('timestamp_progress', undefined);
-      form.setValue('timestamp_done', undefined);
-      break;
-    case 'on progress':
-      form.setValue('timestamp_done', undefined);
-      break;
-    case 'done':
-      form.setValue('pause_time', false);
-      break;
-  }
+  useEffect(() => {
+    switch (statusInput) {
+      case 'todo':
+        form.setValue('pause_time', false);
+        form.setValue('minute_pause', 0);
+        form.setValue('timestamp_progress', undefined);
+        form.setValue('timestamp_done', undefined);
+        break;
+      case 'on progress':
+        form.setValue('timestamp_done', undefined);
+        break;
+      case 'done':
+        form.setValue('pause_time', false);
+        break;
+    }
+  }, [statusInput, form]);
 
   // Submit form
   const onSubmit = (data: UpdateTaskFormInput) => {
