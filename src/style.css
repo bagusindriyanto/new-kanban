@@ -256,9 +256,11 @@
   }
   html {
     @apply scroll-smooth font-sans;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: clip;
   }
   button:not(:disabled),
   [role='button']:not(:disabled) {

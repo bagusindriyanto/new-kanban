@@ -27,7 +27,7 @@ const HomePage = () => {
   const isOnline = useOnlineStatus();
 
   return (
-    <section className="flex-1 relative">
+    <section className="flex-1 relative overflow-clip">
       <div className="absolute inset-0 flex flex-col">
         {/* Tasks Controls */}
         <div className="flex justify-between px-4 pt-4">
