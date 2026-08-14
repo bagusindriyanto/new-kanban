@@ -41,7 +41,7 @@ const TasksContents = ({
   });
 
   // Handle drag end untuk update status
-  const handleDragEnd: DragEndEvent = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     if (event.canceled) return;
 
     const { source, target } = event.operation;

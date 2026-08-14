@@ -81,27 +81,21 @@ export const useUpdateTask = ({
 
         context.client.setQueryData(
           queryKey,
-          oldTasks
-            .map(
-              (task): TaskWithProfile =>
-                task.id === updatedTask.id
-                  ? {
-                      ...task,
-                      ...updatedTask,
-                      updated_at: new Date().toISOString(),
-                      user: updatedUser,
-                      assigner: updatedAssigner
-                        ? { name: updatedAssigner.name }
-                        : null,
-                      optimistic: true,
-                    }
-                  : task,
-            )
-            .sort(
-              (a, b) =>
-                new Date(b.updated_at).getTime() -
-                new Date(a.updated_at).getTime(),
-            ),
+          oldTasks.map(
+            (task): TaskWithProfile =>
+              task.id === updatedTask.id
+                ? {
+                    ...task,
+                    ...updatedTask,
+                    updated_at: new Date().toISOString(),
+                    user: updatedUser,
+                    assigner: updatedAssigner
+                      ? { name: updatedAssigner.name }
+                      : null,
+                    optimistic: true,
+                  }
+                : task,
+          ),
         );
       });
 

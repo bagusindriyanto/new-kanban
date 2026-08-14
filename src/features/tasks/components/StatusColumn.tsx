@@ -21,9 +21,10 @@ const StatusColumn = ({ title, columnId, tasks }: StatusColumnProps) => {
   });
 
   const virtualizer = useVirtualizer({
-    count: tasks?.length || 0,
+    count: tasks.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => 100,
+    getItemKey: (index) => tasks[index]?.id ?? index,
   });
   const virtualItems = virtualizer.getVirtualItems();
 
