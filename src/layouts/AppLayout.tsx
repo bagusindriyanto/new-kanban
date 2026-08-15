@@ -10,9 +10,11 @@ const AppLayout = () => {
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="[--dashboard-header-height:--spacing(12)]">
         <AppHeader />
-        <Outlet />
+        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden p-4 has-data-[content-padding=false]:p-0">
+          <Outlet />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
