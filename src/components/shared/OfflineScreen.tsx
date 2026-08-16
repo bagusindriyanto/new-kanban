@@ -25,7 +25,7 @@ const OfflineScreen = () => {
       </EmptyHeader>
       <EmptyContent>
         <Button onClick={() => window.location.reload()} variant="outline">
-          <RotateCwIcon />
+          <RotateCwIcon data-icon="inline-start" />
           Refresh Halaman
         </Button>
       </EmptyContent>

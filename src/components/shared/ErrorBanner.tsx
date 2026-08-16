@@ -34,7 +34,7 @@ const ErrorBanner = ({
           size="sm"
           variant="outline"
         >
-          <RotateCwIcon />
+          <RotateCwIcon data-icon="inline-start" />
           Refresh Halaman
         </Button>
       </ItemActions>

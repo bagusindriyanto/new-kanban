@@ -28,7 +28,7 @@ const OfflineBanner = ({ className }: { className?: string }) => {
           size="sm"
           variant="outline"
         >
-          <RotateCwIcon />
+          <RotateCwIcon data-icon="inline-start" />
           Refresh Halaman
         </Button>
       </ItemActions>

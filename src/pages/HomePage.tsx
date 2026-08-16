@@ -27,36 +27,32 @@ const HomePage = () => {
   const isOnline = useOnlineStatus();
 
   return (
-    <section
-      data-content-padding="false"
-      className="flex h-[calc(100dvh-var(--dashboard-header-height))] min-h-0 min-w-0 flex-col overflow-hidden px-4"
-    >
-      {/* <div className="absolute inset-0 flex flex-col"> */}
-      {/* Tasks Controls */}
-      <div className="flex shrink-0 flex-col gap-3 md:flex-row md:justify-between py-4">
-        <h2 className="text-2xl font-bold tracking-tight">Tasks</h2>
-        <TasksControls dataUpdatedAt={dataUpdatedAt} />
+    <div data-content-padding="false">
+      <div className="flex h-[calc(100dvh-var(--dashboard-header-height))] min-h-0 min-w-0 flex-col overflow-hidden">
+        {/* Tasks Controls */}
+        <div className="flex shrink-0 gap-3 justify-between p-4">
+          <h2 className="text-2xl font-bold tracking-tight">Tasks</h2>
+          <TasksControls dataUpdatedAt={dataUpdatedAt} />
+        </div>
+        {/* Error Banner */}
+        {tasks && !isOnline ? (
+          <OfflineBanner />
+        ) : tasks && error ? (
+          <ErrorBanner errorMessage={error.message} className="mb-4" />
+        ) : null}
+        {/* Tasks Contents */}
+        <TasksContents
+          isOnline={isOnline}
+          isLoading={isLoading}
+          error={error}
+          tasks={tasks}
+        />
+        {/* Modal untuk update task */}
+        <UpdateTaskModal />
+        {/* Modal untuk hapus task */}
+        <DeleteTaskModal />
       </div>
-      {tasks && !isOnline ? (
-        <OfflineBanner />
-      ) : tasks && error ? (
-        <ErrorBanner errorMessage={error.message} className="mb-4" />
-      ) : null}
-      {/* Tasks Contents */}
-      {/* <div className="min-h-0 min-w-0 flex-1 overflow-x-auto overflow-y-hidden"> */}
-      <TasksContents
-        isOnline={isOnline}
-        isLoading={isLoading}
-        error={error}
-        tasks={tasks}
-      />
-      {/* </div> */}
-      {/* Modal untuk update task */}
-      <UpdateTaskModal />
-      {/* Modal untuk hapus task */}
-      <DeleteTaskModal />
-      {/* </div> */}
-    </section>
+    </div>
   );
 };
 

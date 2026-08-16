@@ -13,8 +13,9 @@ import {
   type SelectedUserId,
 } from '@/stores/filterStore';
 import { useFetchUsers } from '../api/fetchUsers';
+import { cn } from '@/lib/utils';
 
-const FilterUsers = () => {
+const FilterUsers = ({ className }: { className?: string }) => {
   const { data: users } = useFetchUsers();
 
   const selectedUserId = useFilterStore((state) => state.selectedUserId);
@@ -23,17 +24,16 @@ const FilterUsers = () => {
   const selectedUserLabel =
     selectedUserId === ALL_USER
       ? 'Semua PIC'
-      : users?.find((user) => user.user_id === selectedUserId)?.name ?? 'Semua PIC';
+      : (users?.find((user) => user.user_id === selectedUserId)?.name ??
+        'Semua PIC');
 
   return (
     <Select
       value={selectedUserId}
       onValueChange={(val) => setSelectedUserId(val as SelectedUserId)}
     >
-      <SelectTrigger className="w-37.5" size="sm">
-        <SelectValue placeholder="Pilih PIC">
-          {selectedUserLabel}
-        </SelectValue>
+      <SelectTrigger className={cn('w-37.5', className)} size="sm">
+        <SelectValue placeholder="Pilih PIC">{selectedUserLabel}</SelectValue>
       </SelectTrigger>
       <SelectContent alignItemWithTrigger={false}>
         <SelectGroup>

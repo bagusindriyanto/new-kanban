@@ -98,7 +98,15 @@ const DateDropdown = ({
   );
 };
 
-export const FilterCalendar = ({ title }: { title?: string }) => {
+export const FilterCalendar = ({
+  title,
+  className,
+  align = 'end',
+}: {
+  title?: string;
+  className?: string;
+  align?: 'center' | 'start' | 'end';
+}) => {
   const range = useFilterStore((state) => state.range);
   const setRange = useFilterStore((state) => state.setRange);
   const [currentMonth, setCurrentMonth] = useState<Date | undefined>(
@@ -125,11 +133,14 @@ export const FilterCalendar = ({ title }: { title?: string }) => {
 
   return (
     <Popover>
-      <PopoverTrigger render={<Button variant="secondary" size="sm" />}>
+      <PopoverTrigger
+        className={className}
+        render={<Button variant="secondary" size="sm" />}
+      >
         <CalendarIcon data-icon="inline-start" />
         {dateLabel}
       </PopoverTrigger>
-      <PopoverContent align="end" className="p-0 w-auto gap-2">
+      <PopoverContent align={align} className="p-0 w-auto gap-2">
         {title && (
           <div className="px-4 pt-4 pb-1">
             <div className="relative -my-2 h-5">
