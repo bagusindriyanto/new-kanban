@@ -7,7 +7,7 @@ import ChatbotDrawer from '@/features/ai/components/ChatbotDrawer';
 
 const AppHeader = () => {
   return (
-    <header className="sticky top-0 z-30 bg-background flex px-4 h-12 shrink-0 justify-between items-center gap-2 border-b">
+    <header className="sticky top-0 z-30 bg-background/70 flex px-4 h-12 shrink-0 justify-between items-center gap-2 border-b backdrop-blur-sm">
       <div className="flex gap-2 items-center">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2" />

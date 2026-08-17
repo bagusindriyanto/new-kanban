@@ -228,7 +228,7 @@ const Timeline = () => {
   };
 
   return (
-    <section className="py-20">
+    <div className="py-10 px-4">
       <h1 className="mb-10 text-center text-3xl font-bold tracking-tighter text-foreground sm:text-6xl">
         Kanban App Changelog
       </h1>
@@ -263,12 +263,7 @@ const Timeline = () => {
                       </p>
                       <ul className="space-y-1">
                         {lists.map((list, index) => (
-                          <li
-                            key={`list-${index}`}
-                            className="flex items-center gap-2"
-                          >
-                            {list}
-                          </li>
+                          <li key={`list-${index}`}>{list}</li>
                         ))}
                       </ul>
                     </Fragment>
@@ -289,7 +284,7 @@ const Timeline = () => {
           Kembali ke atas
         </Button>
       </div>
-    </section>
+    </div>
   );
 };
 
