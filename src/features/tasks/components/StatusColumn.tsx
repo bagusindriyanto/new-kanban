@@ -3,7 +3,7 @@ import TaskCard from './card/TaskCard';
 import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import type { TaskWithProfile } from '../api/query';
 
 type StatusColumnProps = {
@@ -29,21 +29,15 @@ const StatusColumn = ({ title, columnId, tasks }: StatusColumnProps) => {
   const virtualItems = virtualizer.getVirtualItems();
 
   // Gabungkan droppable ref dan scroll ref
-  const mergedRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      scrollRef.current = node;
-
-      if (typeof droppableRef === 'function') {
-        droppableRef(node);
-      }
-    },
-    [droppableRef],
-  );
+  const mergedRef = (node: HTMLDivElement | null) => {
+    scrollRef.current = node;
+    droppableRef(node);
+  };
 
   return (
     <div
       className={cn(
-        'flex flex-col min-h-0 h-full rounded-xl border shadow-sm border-border/70 overflow-clip',
+        'flex flex-col min-h-0 rounded-xl border shadow-sm border-border/70',
         {
           'bg-todo': title === 'To Do',
           'bg-progress': title === 'On Progress',
@@ -63,7 +57,7 @@ const StatusColumn = ({ title, columnId, tasks }: StatusColumnProps) => {
       <div
         ref={mergedRef}
         className={cn(
-          'overflow-y-auto flex-1 rounded-b-lg transition-colors duration-200',
+          'overflow-y-auto flex-1 rounded-b-xl transition-colors duration-200',
           {
             'ring-2 ring-inset bg-primary/5 dark:bg-primary/10 ring-primary/30':
               isDropTarget,
