@@ -15,6 +15,7 @@ import UnauthorizedPage from '@/pages/UnauthorizedPage';
 
 import GuestRoute from '@/routes/GuestRoute';
 import ProtectedRoute from '@/routes/ProtectedRoute';
+import SchedulePage from '@/pages/SchedulePage';
 // import { lazy, Suspense } from 'react';
 
 // import LoadingPage from './pages/LoadingPage';
@@ -77,6 +78,11 @@ export const router = createBrowserRouter([
             path: 'settings',
             element: <SettingsPage />,
             handle: { breadcrumb: 'Pengaturan' },
+          },
+          {
+            path: 'schedules',
+            element: <SchedulePage />,
+            handle: { breadcrumb: 'Jadwal' },
           },
         ],
       },

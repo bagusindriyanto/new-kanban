@@ -19,11 +19,13 @@ import {
   ChartNoAxesCombinedIcon,
   HelpCircleIcon,
   UserIcon,
+  CalendarIcon,
 } from 'lucide-react';
 
 const navMain = [
   { to: '/', label: 'Kanban Board', icon: SquareKanbanIcon },
   { to: '/performance', label: 'Performance', icon: ChartNoAxesCombinedIcon },
+  { to: '/schedules', label: 'Jadwal', icon: CalendarIcon },
 ];
 
 const navSecondary = [
