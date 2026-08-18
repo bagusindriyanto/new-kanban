@@ -229,21 +229,18 @@ export type Database = {
         Row: {
           date: string
           id: number
-          old_pic_id: number
           user_id: string
           working_minute: number
         }
         Insert: {
           date: string
           id?: number
-          old_pic_id: number
           user_id: string
           working_minute?: number
         }
         Update: {
           date?: string
           id?: number
-          old_pic_id?: number
           user_id?: string
           working_minute?: number
         }

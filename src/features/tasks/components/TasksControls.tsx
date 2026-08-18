@@ -1,5 +1,6 @@
 import { RefreshToggle } from '@/components/shared/RefreshToggle';
 import { FilterCalendar } from '@/components/shared/filter/FilterCalendar';
+import WorktimeMenu from '@/features/work-time/components/WorktimeMenu';
 import FilterUsers from '@/features/users/components/FilterUsers';
 import AddTaskModal from './form/AddTaskModal';
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ const TasksFilters = () => {
 const TasksControls = ({ dataUpdatedAt }: { dataUpdatedAt: number }) => {
   return (
     <div className="flex min-w-0 gap-2 flex-wrap items-center justify-end">
+      <WorktimeMenu />
       <RefreshToggle dataUpdatedAt={dataUpdatedAt} />
       <TasksFilters />
       <AddTaskModal />

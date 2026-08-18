@@ -1,7 +1,6 @@
 // hooks/useUpdateProfile.ts
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { queryClient } from '@/lib/queryClient';
 import useAuthStore from '@/stores/authStore';
 import type { UpdateProfileInput } from '../schemas/updateUserSchemas';
 import type { ProfileUpdate } from '@/types/profile';
@@ -59,8 +58,8 @@ export const useUpdateProfile = () => {
 
       return updates;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries();
+    onSuccess: (_data, _variables, _onMutateResult, context) => {
+      context.client.invalidateQueries();
     },
   });
 };

@@ -20,9 +20,11 @@ type UseFetchActivitiesParams = {
   queryConfig?: QueryConfig<typeof fetchActivitiesQueryOptions>;
 };
 
-export const useFetchActivities = (params: UseFetchActivitiesParams = {}) => {
+export const useFetchActivities = ({
+  queryConfig,
+}: UseFetchActivitiesParams = {}) => {
   return useQuery({
     ...fetchActivitiesQueryOptions(),
-    ...params.queryConfig,
+    ...queryConfig,
   });
 };

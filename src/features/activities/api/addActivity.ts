@@ -12,22 +12,18 @@ export const addActivity = async (data: ActivityInsert) => {
 };
 
 type UseAddActivityParams = {
-  mutationConfig?: MutationConfig<typeof addActivity>;
+  mutationConfig?: Omit<
+    MutationConfig<typeof addActivity>,
+    'mutationFn' | 'onSuccess'
+  >;
 };
 
 export const useAddActivity = (params: UseAddActivityParams = {}) => {
   return useMutation({
-    ...params.mutationConfig,
     mutationFn: addActivity,
-    onSuccess: (data, variables, onMutateResult, context) => {
+    onSuccess: (_data, _variables, _onMutateResult, context) => {
       context.client.invalidateQueries({ queryKey: activityKeys.all });
-
-      params.mutationConfig?.onSuccess?.(
-        data,
-        variables,
-        onMutateResult,
-        context,
-      );
     },
+    ...params.mutationConfig,
   });
 };
