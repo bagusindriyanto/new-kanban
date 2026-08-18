@@ -1,7 +1,5 @@
-import { parseFromSQL } from '@/utils/formatTimestamp';
-import { BellRingIcon } from 'lucide-react';
+import { BellRingIcon, CalendarClockIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import {
   Tooltip,
   TooltipTrigger,
@@ -15,54 +13,22 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useDeadlineChecker } from '@/features/upcoming-tasks/hooks/useDeadlineChecker';
 import { useFetchUpcomingTasks } from '../api/fetchUpcomingTasks';
-import { useUrgencyCheck } from '@/features/tasks/hooks/useUrgencyCheck';
-import type { UpcomingTask } from '../api/query';
-
-const UpcomingTaskCard = ({ task }: { task: UpcomingTask }) => {
-  const { isUrgent, diffInMinutes } = useUrgencyCheck({
-    status: task.status,
-    scheduled_at: task.scheduled_at,
-  });
-
-  return (
-    <div
-      key={task.id}
-      className={cn('p-3 space-y-2 text-sm rounded-lg border bg-card', {
-        'bg-red-50 dark:bg-red-950/30': isUrgent,
-      })}
-    >
-      <h3 className="text-base font-bold leading-tight line-clamp-2">
-        {task.content}
-      </h3>
-      {task.detail && <p className="text-sm">{task.detail}</p>}
-      <p className="text-xs tabular-nums text-muted-foreground">
-        {parseFromSQL(task.scheduled_at)}
-      </p>
-      <div className="flex justify-between items-center mt-1">
-        <p
-          className={cn('text-xs font-semibold', {
-            'text-red-600 dark:text-red-400': isUrgent,
-            'text-blue-600 dark:text-blue-400': !isUrgent,
-          })}
-        >
-          {Math.ceil(diffInMinutes)} menit lagi
-        </p>
-        {isUrgent && (
-          <div className="mt-1 bg-red-500 rounded-full animate-pulse shrink-0 size-2"></div>
-        )}
-      </div>
-    </div>
-  );
-};
+import UpcomingTaskCard from './UpcomingTaskCard';
 
 const UpcomingTasksPanel = () => {
-  const { data: upcomingTasks } = useFetchUpcomingTasks();
+  const { data: upcomingTasks = [] } = useFetchUpcomingTasks();
 
-  const visibleTasks = upcomingTasks?.filter((task) => {
+  const visibleTasks = upcomingTasks.filter((task) => {
     if (!task.scheduled_at) return false;
     const diffInMinutes =
       (new Date(task.scheduled_at).getTime() - new Date().getTime()) / 60000;
@@ -85,7 +51,7 @@ const UpcomingTasksPanel = () => {
           <Button variant="outline" size="icon">
             <BellRingIcon />
           </Button>
-          {visibleTasks && visibleTasks?.length > 0 && (
+          {visibleTasks.length > 0 && (
             <Badge className="absolute -top-1 -right-1 size-4 tabular-nums p-0 bg-red-300 text-red-700 dark:bg-red-700 dark:text-red-300">
               {visibleTasks.length > 9 ? '9+' : visibleTasks.length}
             </Badge>
@@ -100,13 +66,24 @@ const UpcomingTasksPanel = () => {
             Menampilkan task yang akan dimulai dalam 30 menit ke depan.
           </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="flex-1 min-h-0">
-          <div className="px-4 space-y-3 pb-4">
-            {visibleTasks?.map((task) => (
-              <UpcomingTaskCard key={task.id} task={task} />
-            ))}
-          </div>
-        </ScrollArea>
+        {visibleTasks.length > 0 ? (
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="px-6 space-y-6 pb-4">
+              {visibleTasks.map((task) => (
+                <UpcomingTaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          </ScrollArea>
+        ) : (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CalendarClockIcon />
+              </EmptyMedia>
+              <EmptyTitle>Tidak Ada Task</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
+        )}
       </SheetContent>
     </Sheet>
   );

@@ -3,9 +3,7 @@ import { toast } from 'sonner';
 import useNotificationStore from '@/stores/notificationStore';
 import type { UpcomingTask } from '../api/query';
 
-const EMPTY_TASKS: UpcomingTask[] = [];
-
-export const useDeadlineChecker = (tasks = EMPTY_TASKS) => {
+export const useDeadlineChecker = (tasks: UpcomingTask[]) => {
   const { notifiedTaskIds, markAsNotified } = useNotificationStore();
 
   useEffect(() => {
