@@ -22,7 +22,7 @@ const TasksFilters = () => {
 
   if (isMobile) {
     return (
-      <Drawer showSwipeHandle modal="trap-focus">
+      <Drawer showSwipeHandle>
         <DrawerTrigger render={<Button variant="secondary" />}>
           <FilterIcon data-icon="inline-start" />
           Filter

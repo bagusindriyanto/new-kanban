@@ -43,7 +43,7 @@ const BoardStatsColumn = ({ tasks }: { tasks: TaskWithProfile[] }) => {
   }).format(progress);
 
   return (
-    <div className="flex flex-col h-full min-h-0 rounded-xl border select-none shadow-xs border-border/70 bg-card">
+    <div className="flex flex-col min-h-0 rounded-xl border select-none shadow-xs border-border/70 bg-card">
       <h2 className="p-3 text-lg font-semibold tracking-tight text-card-foreground">
         Statistik
       </h2>

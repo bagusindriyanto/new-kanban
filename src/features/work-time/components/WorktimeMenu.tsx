@@ -31,7 +31,7 @@ const WorktimeMenu = () => {
 
   if (isMobile) {
     return (
-      <Drawer showSwipeHandle modal="trap-focus">
+      <Drawer showSwipeHandle>
         <Tooltip>
           <TooltipTrigger
             render={

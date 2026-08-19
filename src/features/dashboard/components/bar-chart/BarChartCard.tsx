@@ -16,7 +16,18 @@ import { BanIcon } from 'lucide-react';
 import type { ChartData } from '@/types/dashboard';
 import { EvilBarChart } from '@/components/evilcharts/charts/recharts-bar-chart';
 
-const getChartConfig = (name: string) => {
+type ChartConfig = {
+  effective_minute: {
+    label: 'Aktivitas';
+    colors: { light: string[]; dark: string[] };
+  };
+  working_minute: {
+    label: 'Waktu Kerja';
+    colors: { light: string[]; dark: string[] };
+  };
+};
+
+const getChartConfig = (name: string): ChartConfig => {
   if (!name) {
     return {
       effective_minute: {
@@ -88,10 +99,10 @@ const BarChartCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
-        {data?.charts.length === 0 ? (
+        {!data?.charts || data.charts.length === 0 ? (
           <EmptyChartItem />
         ) : (
-          data?.charts.map(({ id, full_name, chart_data }) => {
+          data.charts.map(({ id, full_name, chart_data }) => {
             const chartConfig = getChartConfig(full_name);
             return (
               <div key={id} className="space-y-2">
@@ -99,7 +110,7 @@ const BarChartCard = ({
                 <EvilBarChart
                   data={chart_data}
                   config={chartConfig}
-                  className="size-full max-h-50 p-4"
+                  className="size-full max-h-100 p-4"
                   barRadius={4}
                   chartProps={{ maxBarSize: 100 }}
                 >

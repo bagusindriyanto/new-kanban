@@ -40,6 +40,19 @@ const chartDataSchema = z.object({
   ),
 });
 
+const pieChartDataSchema = z.object({
+  id: z.string(),
+  full_name: z.string(),
+  avatar: z.string().nullable(),
+  tasks: z.array(
+    z.object({
+      content: z.string(),
+      effective_minute: z.coerce.number(),
+      tasks_count: z.coerce.number(),
+    }),
+  ),
+});
+
 export const dashboardSchema = z.object({
   division: z.string().optional().default(''),
   stats: z.object({
@@ -66,9 +79,11 @@ export const dashboardSchema = z.object({
     max_minute: z.coerce.number().default(0),
     charts: z.array(chartDataSchema).default([]),
   }),
+  pie_chart: z.array(pieChartDataSchema).default([]),
 });
 
 export type UserStats = z.infer<typeof userStatsSchema>;
 export type TableData = z.infer<typeof tableDataSchema>;
 export type ChartData = z.infer<typeof chartDataSchema>;
+export type PieChartData = z.infer<typeof pieChartDataSchema>;
 export type Dashboard = z.infer<typeof dashboardSchema>;

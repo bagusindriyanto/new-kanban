@@ -11,7 +11,7 @@ import DataTableCard from '../features/dashboard/components/data-table/DataTable
 import { useDashboardFilters } from '@/features/dashboard/hooks/useDashboardFilters';
 import OfflineBanner from '@/components/shared/OfflineBanner';
 import KpiStrip from '@/features/dashboard/components/stats/KpiStrip';
-// import PieChartCard from '../components/pie-chart/PieChartCard';
+import PieChartCard from '@/features/dashboard/components/pie-chart/PieChartCard';
 
 const DashboardPage = () => {
   const { dashboardFilters } = useDashboardFilters();
@@ -87,7 +87,7 @@ const DashboardPage = () => {
       {/* Bar Chart */}
       <BarChartCard data={data?.chart} />
       {/* Pie Chart */}
-      {/* <PieChartCard data={[]} /> */}
+      <PieChartCard data={data?.pie_chart} />
     </div>
   );
 };

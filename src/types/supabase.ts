@@ -259,6 +259,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _dashboard_get_chart: {
+        Args: { p_division_id: number; p_from: string; p_to: string }
+        Returns: Json
+      }
+      _dashboard_get_pie_chart: {
+        Args: { p_division_id: number; p_from: string; p_to: string }
+        Returns: Json
+      }
+      _dashboard_get_stats: {
+        Args: { p_division_id: number; p_from: string; p_to: string }
+        Returns: Json
+      }
+      _dashboard_get_table: {
+        Args: { p_division_id: number; p_from: string; p_to: string }
+        Returns: Json
+      }
       get_dashboard_overview: {
         Args: { p_from_date?: string; p_to_date?: string }
         Returns: Json
